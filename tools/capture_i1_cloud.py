@@ -12,6 +12,7 @@ import json
 from pathlib import Path
 import signal
 import time
+import traceback
 
 
 def main():
@@ -40,6 +41,7 @@ def main():
     odom_stamps, cloud_stamps = set(), set()
     ages = []
     interrupted = False
+    failure = None
 
     def stop(*_):
         nonlocal interrupted
@@ -79,6 +81,9 @@ def main():
     try:
         while not interrupted and len(odom_stamps & cloud_stamps) < args.matched_clouds:
             rclpy.spin_once(node, timeout_sec=0.1)
+    except Exception:
+        failure = traceback.format_exc()
+        print(failure, flush=True)
     finally:
         # Close storage before potentially slow DDS teardown.
         del writer
@@ -86,7 +91,7 @@ def main():
         ordered = sorted(ages)
         summary = {'counts': dict(counts), 'matched_clouds': matched,
                    'quota': args.matched_clouds, 'interrupted': interrupted,
-                   'quota_met': matched >= args.matched_clouds,
+                   'quota_met': matched >= args.matched_clouds, 'error': failure,
                    'cloud_receipt_age_s': {'max': max(ordered) if ordered else None,
                        'p95': ordered[int(.95 * (len(ordered)-1))] if ordered else None},
                    'files_sha256': {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
