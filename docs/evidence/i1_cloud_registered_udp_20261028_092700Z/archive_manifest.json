@@ -1,0 +1,74 @@
+{
+  "status": "PASS_CAPTURE_100_MATCHED_PAIRS",
+  "raw_sha256": "76e6f510427ff98ae690fbf538dfb61ee5309e11213a238e8df8e7c8f99191a1",
+  "gzip_sha256": "182bd4a292f9947804412c1f121a0a9582cc8e2fbe138558874472e0a111380c",
+  "raw_bytes": 51703808,
+  "gzip_bytes": 15014929,
+  "parts": [
+    {
+      "path": "docs/evidence/i1_cloud_registered_udp_20261028_092700Z/parts/i1_cloud_registered_udp_20261028_092700Z_0.db3.gz.part000",
+      "bytes": 2097152,
+      "sha256": "57ea3a0339a6aca748401f21ea57933c5207af36332ebc36c8d84403ea9aff45"
+    },
+    {
+      "path": "docs/evidence/i1_cloud_registered_udp_20261028_092700Z/parts/i1_cloud_registered_udp_20261028_092700Z_0.db3.gz.part001",
+      "bytes": 2097152,
+      "sha256": "ce9e53042d289606db0771392e799c51fcf01b816f608d4d489b67dc6516a4d7"
+    },
+    {
+      "path": "docs/evidence/i1_cloud_registered_udp_20261028_092700Z/parts/i1_cloud_registered_udp_20261028_092700Z_0.db3.gz.part002",
+      "bytes": 2097152,
+      "sha256": "5d7e5cb5fc04a799433778fd2a291c113081196cf12693906bbf17e0b2a55395"
+    },
+    {
+      "path": "docs/evidence/i1_cloud_registered_udp_20261028_092700Z/parts/i1_cloud_registered_udp_20261028_092700Z_0.db3.gz.part003",
+      "bytes": 2097152,
+      "sha256": "69dfcf60ae7e5e0b55b070ee63fc6bad89c4681f1601f8f21126ecfd1e0bdd04"
+    },
+    {
+      "path": "docs/evidence/i1_cloud_registered_udp_20261028_092700Z/parts/i1_cloud_registered_udp_20261028_092700Z_0.db3.gz.part004",
+      "bytes": 2097152,
+      "sha256": "fd7127ebb7ecc8f43936f4677104b84220543e55e4f401342bce543cac146d76"
+    },
+    {
+      "path": "docs/evidence/i1_cloud_registered_udp_20261028_092700Z/parts/i1_cloud_registered_udp_20261028_092700Z_0.db3.gz.part005",
+      "bytes": 2097152,
+      "sha256": "4b5af700448fd52f073808c27645c4dad778c2d33d7737302af8281395c0dd0e"
+    },
+    {
+      "path": "docs/evidence/i1_cloud_registered_udp_20261028_092700Z/parts/i1_cloud_registered_udp_20261028_092700Z_0.db3.gz.part006",
+      "bytes": 2097152,
+      "sha256": "15a0d63854fde2e913bcd24f9e321392dbd48823a51dcc53f3970dfccd2efa50"
+    },
+    {
+      "path": "docs/evidence/i1_cloud_registered_udp_20261028_092700Z/parts/i1_cloud_registered_udp_20261028_092700Z_0.db3.gz.part007",
+      "bytes": 334865,
+      "sha256": "119d4575b5df6ebc2575f6074f19e70f2ed71df4dd41abb6109b323254e85e55"
+    }
+  ],
+  "summary": {
+    "counts": {
+      "/aima/hal/sensor/lidar_chest_front/imu": 9363,
+      "/aima/mc/leg_odometry": 7726,
+      "/qazbot_lio/cloud_registered": 100,
+      "/qazbot_lio/odometry": 100
+    },
+    "matched_clouds": 100,
+    "quota": 100,
+    "interrupted": false,
+    "quota_met": true,
+    "error": null,
+    "cloud_receipt_age_s": {
+      "max": 0.092492428,
+      "p95": 0.066520754
+    },
+    "files_sha256": {
+      "i1_cloud_registered_udp_20261028_092700Z_0.db3": "76e6f510427ff98ae690fbf538dfb61ee5309e11213a238e8df8e7c8f99191a1",
+      "metadata.yaml": "ac8e20b986a775284b56784d7ff769b49c0feedf2aa14ba71b5d73c797f9101b"
+    }
+  },
+  "geometry_result": "docs/evidence/I1_real_cloud_final_20261028.json",
+  "candidate_commit": "2d240dbd09ca69de87e9ac4b1acde735293ad6b2",
+  "reassemble": "cat docs/evidence/i1_cloud_registered_udp_20261028_092700Z/parts/*.part* > docs/evidence/i1_cloud_registered_udp_20261028_092700Z/i1_cloud_registered_udp_20261028_092700Z_0.db3.gz",
+  "robot_path": "/home/agi/control_backend/docs/evidence/i1_cloud_registered_udp_20261028_092700Z"
+}

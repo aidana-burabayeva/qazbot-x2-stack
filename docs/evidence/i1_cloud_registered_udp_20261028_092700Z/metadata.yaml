@@ -1,0 +1,50 @@
+rosbag2_bagfile_information:
+  version: 5
+  storage_identifier: sqlite3
+  duration:
+    nanoseconds: 46793569479
+  starting_time:
+    nanoseconds_since_epoch: 1793179772759024463
+  message_count: 17289
+  topics_with_message_count:
+    - topic_metadata:
+        name: /tf_static
+        type: tf2_msgs/msg/TFMessage
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 0
+    - topic_metadata:
+        name: /aima/mc/leg_odometry
+        type: nav_msgs/msg/Odometry
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 7726
+    - topic_metadata:
+        name: /qazbot_lio/odometry
+        type: nav_msgs/msg/Odometry
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 100
+    - topic_metadata:
+        name: /aima/hal/sensor/lidar_chest_front/imu
+        type: sensor_msgs/msg/Imu
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 9363
+    - topic_metadata:
+        name: /qazbot_lio/cloud_registered
+        type: sensor_msgs/msg/PointCloud2
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 100
+  compression_format: ""
+  compression_mode: ""
+  relative_file_paths:
+    - i1_cloud_registered_udp_20261028_092700Z_0.db3
+  files:
+    - path: i1_cloud_registered_udp_20261028_092700Z_0.db3
+      starting_time:
+        nanoseconds_since_epoch: 1793179772759024463
+      duration:
+        nanoseconds: 46793569479
+      message_count: 17289

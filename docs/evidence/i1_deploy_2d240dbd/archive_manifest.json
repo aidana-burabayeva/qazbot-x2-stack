@@ -1,0 +1,50 @@
+{
+  "snapshot.py": {
+    "bytes": 1345,
+    "sha256": "bb1a3443e94ce1932fa96581e325ffe94d34cb3b713a20798fee63fd6bdf3683"
+  },
+  "passive_costmap.yaml": {
+    "bytes": 1417,
+    "sha256": "b2b4781b5ea3f99dbbb47de5276f9d486ec0e810d4efbc602e405ba17d6706ad"
+  },
+  "deployment.json": {
+    "bytes": 639,
+    "sha256": "604fe2c9bd26fc037fd04d2de2d0c1765019c3349f58006e397d615670c98552"
+  },
+  "trust.log.gz": {
+    "bytes": 23189,
+    "sha256": "c6e7ca9fda897671ca5df379e1e13a1a0e0f03f7f71728439cc4b4732a9324e7"
+  },
+  "costmap.log.gz": {
+    "bytes": 24892,
+    "sha256": "596af6cefe252f6520e1f9d501413e267a887c38555a3a6ae51972bad6539932"
+  },
+  "passive_snapshot.json": {
+    "bytes": 8618,
+    "sha256": "65946c9d5edf2d70362f6376e69bd63cc090eac900f5159b0d6d7dec3b91e2ca"
+  },
+  "passive_observer.py": {
+    "bytes": 4711,
+    "sha256": "fca27f7b6a91564f834d0f35125645f2e6e80966d92ab7a0cf76530b56fac9a1"
+  },
+  "localization.log.gz": {
+    "bytes": 133172,
+    "sha256": "0971daee4ca1968e23afd504750ea066607fd20886c9432652ca6dafb01249df"
+  },
+  "process_snapshot.txt": {
+    "bytes": 3089,
+    "sha256": "5fc5b19d24ea845ed45d813ed5db453cc2a34e1ee49a6aa9bc9c3a27a4a6ce9b"
+  },
+  "dds_udp_only.xml": {
+    "bytes": 924,
+    "sha256": "29d4c736a364691689ccc8f27c62f566c65af946df1b6fc9dd5ec03ae239ec63"
+  },
+  "passive_observer.jsonl.gz": {
+    "bytes": 93678,
+    "sha256": "44599e89913ec9faac0253dd03d8cda5efc4759e0ab9eddc9c7736ea97157b13"
+  },
+  "observer.log.gz": {
+    "bytes": 204610,
+    "sha256": "513d6bfa53eb6ee867ff85be1e1cce70fdda1f102cb42ed228f638dfcc97e2a2"
+  }
+}
