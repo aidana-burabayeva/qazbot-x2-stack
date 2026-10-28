@@ -53,6 +53,51 @@ N_BINS = 1440
 RANGE_MIN, RANGE_MAX = 0.45, 25.0
 
 
+def clearing_endpoints(points, yaw, range_max=RANGE_MAX, fov_deg=(-46.0, 44.5)):
+    """Conservative projected ray endpoints, NOT azimuthal coverage.
+
+    Input is the current cloud in the gravity-levelled frame, relative to
+    the LiDAR IMU (as used by on_cloud). A ray ends at its actual return or
+    where it first leaves the obstacle height slice. A 1 m floor return
+    therefore cannot authorize clearing a distant obstacle. No interpolation,
+    azimuth dilation, infinity or remembered coverage is used.
+
+    Keep the longest actually observed free ray in each bin, capped by the
+    nearest in-slice obstacle return. An independent distant measurement may
+    extend a short floor ray; the floor ray alone never extends observation.
+    These points are for a marking=false source, never obstacle returns.
+    Deskewed-cloud origin assumptions still require real cloud validation.
+    """
+    q = np.asarray(points, dtype=np.float64).reshape(-1, 3)
+    q = q[np.isfinite(q).all(axis=1)]
+    c, s = math.cos(-yaw), math.sin(-yaw)
+    bx, by = c * q[:, 0] - s * q[:, 1], s * q[:, 0] + c * q[:, 1]
+    r = np.hypot(bx, by)
+    a = np.arctan2(by, bx)
+    valid = (r > 0) & (a >= math.radians(fov_deg[0])) & (a <= math.radians(fov_deg[1]))
+    bx, by, r, a, z = bx[valid], by[valid], r[valid], a[valid], q[valid, 2]
+    t = np.minimum(1.0, range_max / r)
+    # Along a ray: z(t)=t*z, flat(t)=t*r. Stop at the first
+    # intersection with z=Z_MIN+FLOOR_MARGIN_PER_M*flat or z=Z_MAX.
+    slope = z - FLOOR_MARGIN_PER_M * r
+    down, up = slope < 0, z > 0
+    t[down] = np.minimum(t[down], Z_MIN / slope[down])
+    t[up] = np.minimum(t[up], Z_MAX / z[up])
+    end = np.nextafter(r * t, 0.0)
+    idx = ((a + math.pi) / (2 * math.pi) * N_BINS).astype(int) % N_BINS
+    hit = (r > RANGE_MIN) & (r < range_max) & (z > Z_MIN + FLOOR_MARGIN_PER_M*r) & (z < Z_MAX)
+    obstacle = np.full(N_BINS, np.inf)
+    np.minimum.at(obstacle, idx[hit], r[hit])
+    order = np.lexsort((-end, idx))
+    _, first = np.unique(idx[order], return_index=True)
+    keep = order[first]
+    bounded = np.nextafter(np.minimum(end[keep], obstacle[idx[keep]]), 0.0)
+    valid = bounded > RANGE_MIN
+    keep, bounded = keep[valid], bounded[valid]
+    scale = bounded / r[keep]
+    return np.column_stack((bx[keep] * scale, by[keep] * scale, np.zeros(len(keep))))
+
+
 def quat_to_rot(q):
     x, y, z, w = q.x, q.y, q.z, q.w
     return np.array([
@@ -87,6 +132,10 @@ class LevelBridge(Node):
         self.create_subscription(Odometry, '/Odometry', self.on_odom, 100)
         self.create_subscription(PointCloud2, '/cloud_registered', self.on_cloud, 20)
         self.pub_scan = self.create_publisher(LaserScan, '/scan', 20)
+        # Follow the resolved/remapped scan topic. Only Nav2's separate,
+        # clearing-only source consumes this cloud; AMCL still uses /scan.
+        self.pub_clearing = self.create_publisher(PointCloud2, self.pub_scan.topic_name + '_clearing', 20)
+        self.pub_obstacles = self.create_publisher(PointCloud2, self.pub_scan.topic_name + '_obstacles', 20)
         self.pub_odom = self.create_publisher(Odometry, '/odom_level', 50)
         global RANGE_MAX
         RANGE_MAX = float(self.declare_parameter('range_max', RANGE_MAX).value)
@@ -181,6 +230,7 @@ class LevelBridge(Node):
         if P.size == 0:
             return
         Q = P.astype(np.float64) @ self.R_lv.T - p_lv
+        clear = clearing_endpoints(Q, yaw, RANGE_MAX)
         flat = np.hypot(Q[:, 0], Q[:, 1])
         Q = Q[(Q[:, 2] > Z_MIN + FLOOR_MARGIN_PER_M * flat) & (Q[:, 2] < Z_MAX)]
         c, s = math.cos(-yaw), math.sin(-yaw)
@@ -193,6 +243,14 @@ class LevelBridge(Node):
         ranges = np.full(N_BINS, np.inf, dtype=np.float32)
         idx = ((a + math.pi) / (2 * math.pi) * N_BINS).astype(int) % N_BINS
         np.minimum.at(ranges, idx, r.astype(np.float32))
+        # Mark and clear in the same actual point geometry. Reprojecting the
+        # marking LaserScan's float32 angles can put an axial return into the
+        # neighbouring costmap row while the actual clearing ray stays on-axis.
+        order = np.lexsort((r, idx))
+        _, first = np.unique(idx[order], return_index=True)
+        selected = order[first]
+        obstacles = np.column_stack((r[selected]*np.cos(a[selected]),
+                                     r[selected]*np.sin(a[selected]), np.zeros(len(selected))))
         scan = LaserScan()
         scan.header.stamp = m.header.stamp
         scan.header.frame_id = 'base_footprint'
@@ -201,6 +259,8 @@ class LevelBridge(Node):
         scan.range_min, scan.range_max = RANGE_MIN, RANGE_MAX
         scan.ranges = ranges.tolist()
         self.pub_scan.publish(scan)
+        self.pub_obstacles.publish(pc2.create_cloud_xyz32(scan.header, obstacles.tolist()))
+        self.pub_clearing.publish(pc2.create_cloud_xyz32(scan.header, clear.tolist()))
 
 
 def main():
