@@ -1,0 +1,70 @@
+[INFO] [launch]: All log files can be found below /home/agi/.ros/log/2026-10-20-18-37-23-657385-agi-18949
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [fastlio_mapping-1]: process started with pid [18979]
+[INFO] [python3-2]: process started with pid [18981]
+[INFO] [map_server-3]: process started with pid [18983]
+[INFO] [amcl-4]: process started with pid [18985]
+[INFO] [lifecycle_manager-5]: process started with pid [18987]
+[amcl-4] [INFO] [1792492644.124069013] [qazbot_d1_map.amcl]: 
+[amcl-4] 	amcl lifecycle node launched. 
+[amcl-4] 	Waiting on external lifecycle transitions to activate
+[amcl-4] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[amcl-4] [INFO] [1792492644.127238947] [qazbot_d1_map.amcl]: Creating
+[map_server-3] [INFO] [1792492644.195684675] [qazbot_d1_map.map_server]: 
+[map_server-3] 	map_server lifecycle node launched. 
+[map_server-3] 	Waiting on external lifecycle transitions to activate
+[map_server-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[map_server-3] [INFO] [1792492644.197915626] [qazbot_d1_map.map_server]: Creating
+[lifecycle_manager-5] [INFO] [1792492644.201936835] [qazbot_d1_map.lifecycle_manager_localization]: Creating
+[fastlio_mapping-1] [INFO] [1792492644.203161827] [qazbot_lio_mapping]: p_pre->lidar_type 5
+[fastlio_mapping-1] Multi thread started 
+[fastlio_mapping-1] ~~~~/home/agi/ws_lio/src/FAST_LIO/ doesn't exist
+[fastlio_mapping-1] [INFO] [1792492644.300316417] [qazbot_lio_mapping]: Node init finished.
+[lifecycle_manager-5] [INFO] [1792492644.360166590] [qazbot_d1_map.lifecycle_manager_localization]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[lifecycle_manager-5] [INFO] [1792492644.622319272] [qazbot_d1_map.lifecycle_manager_localization]: [34m[1mStarting managed nodes bringup...[0m[0m
+[lifecycle_manager-5] [INFO] [1792492644.622416070] [qazbot_d1_map.lifecycle_manager_localization]: [34m[1mConfiguring map_server[0m[0m
+[map_server-3] [INFO] [1792492644.624161081] [qazbot_d1_map.map_server]: Configuring
+[map_server-3] [INFO] [1792492644.624295318] [map_io]: Loading yaml file: /home/agi/control_backend/maps/first_map_nav2_v1/map.yaml
+[map_server-3] [INFO] [1792492644.624702219] [map_io]: resolution: 0.05
+[map_server-3] [INFO] [1792492644.624722699] [map_io]: origin[0]: -8.15
+[map_server-3] [INFO] [1792492644.624730058] [map_io]: origin[1]: -11.5
+[map_server-3] [INFO] [1792492644.624735306] [map_io]: origin[2]: 0
+[map_server-3] [INFO] [1792492644.624740458] [map_io]: free_thresh: 0.196
+[map_server-3] [INFO] [1792492644.624745322] [map_io]: occupied_thresh: 0.65
+[map_server-3] [INFO] [1792492644.624751242] [map_io]: mode: trinary
+[map_server-3] [INFO] [1792492644.624758090] [map_io]: negate: 0
+[map_server-3] [INFO] [1792492644.626306402] [map_io]: Loading image_file: /home/agi/control_backend/maps/first_map_nav2_v1/map.pgm
+[map_server-3] [INFO] [1792492644.685790120] [map_io]: Read map /home/agi/control_backend/maps/first_map_nav2_v1/map.pgm: 438 X 415 map @ 0.05 m/cell
+[lifecycle_manager-5] [INFO] [1792492644.714729760] [qazbot_d1_map.lifecycle_manager_localization]: [34m[1mConfiguring amcl[0m[0m
+[amcl-4] [INFO] [1792492644.715801540] [qazbot_d1_map.amcl]: Configuring
+[amcl-4] [INFO] [1792492644.716746924] [qazbot_d1_map.amcl]: initTransforms
+[amcl-4] [INFO] [1792492644.766020569] [qazbot_d1_map.amcl]: initPubSub
+[amcl-4] [INFO] [1792492644.779979346] [qazbot_d1_map.amcl]: Subscribed to map topic.
+[lifecycle_manager-5] [INFO] [1792492644.795620384] [qazbot_d1_map.lifecycle_manager_localization]: [34m[1mActivating map_server[0m[0m
+[map_server-3] [INFO] [1792492644.796363885] [qazbot_d1_map.map_server]: Activating
+[map_server-3] [INFO] [1792492644.796903071] [qazbot_d1_map.map_server]: Creating bond (map_server) to lifecycle manager.
+[amcl-4] [INFO] [1792492644.798154559] [qazbot_d1_map.amcl]: Received a 438 X 415 map @ 0.050 m/pix
+[lifecycle_manager-5] [INFO] [1792492644.934950753] [qazbot_d1_map.lifecycle_manager_localization]: Server map_server connected with bond.
+[lifecycle_manager-5] [INFO] [1792492644.935068926] [qazbot_d1_map.lifecycle_manager_localization]: [34m[1mActivating amcl[0m[0m
+[amcl-4] [INFO] [1792492644.936481434] [qazbot_d1_map.amcl]: Activating
+[amcl-4] [INFO] [1792492644.936583575] [qazbot_d1_map.amcl]: Creating bond (amcl) to lifecycle manager.
+[lifecycle_manager-5] [INFO] [1792492645.060069456] [qazbot_d1_map.lifecycle_manager_localization]: Server amcl connected with bond.
+[lifecycle_manager-5] [INFO] [1792492645.060179373] [qazbot_d1_map.lifecycle_manager_localization]: [34m[1mManaged nodes are active[0m[0m
+[lifecycle_manager-5] [INFO] [1792492645.060212748] [qazbot_d1_map.lifecycle_manager_localization]: [34m[1mCreating bond timer...[0m[0m
+[fastlio_mapping-1] IMU Initial Done
+[fastlio_mapping-1] [WARN] [1792492646.621307842] [qazbot_lio_mapping]: No point, skip this scan!
+[fastlio_mapping-1] 
+[fastlio_mapping-1] [INFO] [1792492646.740373942] [qazbot_lio_mapping]: Initialize the map kdtree
+[python3-2] [INFO] [1792492648.788495393] [qazbot_level_bridge]: levelled: up in FAST-LIO world [ 0.9973 -0.0125  0.0727]
+[amcl-4] [INFO] [1792492648.849656496] [qazbot_d1_map.amcl]: createLaserObject
+[amcl-4] [WARN] [1792492648.904465021] [qazbot_d1_map.amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-4] [WARN] [1792492651.037986651] [qazbot_d1_map.amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-4] [WARN] [1792492653.038968964] [qazbot_d1_map.amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-4] [WARN] [1792492655.239513153] [qazbot_d1_map.amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-4] [WARN] [1792492657.243425523] [qazbot_d1_map.amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-4] [WARN] [1792492659.440109840] [qazbot_d1_map.amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-4] [WARN] [1792492661.653715251] [qazbot_d1_map.amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-4] [WARN] [1792492663.861350046] [qazbot_d1_map.amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-4] [INFO] [1792492665.656823240] [qazbot_d1_map.amcl]: Initializing with uniform distribution
+[amcl-4] [INFO] [1792492665.665568522] [qazbot_d1_map.amcl]: Global initialisation done!
+[amcl-4] [INFO] [1792492665.666799403] [qazbot_d1_map.amcl]: createLaserObject

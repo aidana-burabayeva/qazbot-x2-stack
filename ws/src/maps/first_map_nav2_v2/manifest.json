@@ -1,0 +1,26 @@
+{
+  "source": "D1 first_map (saved 2026-10-21T18:07:30+05:00)",
+  "source_yaml_sha256": "a5938d701b8a0dcc41a280277bcc6ce3edd444d030237f042feeb078e9c9de54",
+  "pgm_sha256": "545630c14f0e37cf2385af8780a09ad7a3fddf7765460c1624e645c42aee2e33",
+  "change": "free_thresh 0.25 -> 0.196: 205 unknown, 254 free, 0 occupied; no pixel or geometry changes",
+  "status": "localization candidate, not accepted for movement",
+  "source_meta_sha256": "3a8e9fd9384422d91820b949ff9742f33ac17a5eda1756f06b19cb214741ea29",
+  "source_meta_saved": "2026-10-21 18:07:30+05:00",
+  "map_yaml_sha256": "f49dd066e7ed40699fb26558745d743383b49b16043b1d079af645d17d821e6d",
+  "size_px": [
+    319,
+    426
+  ],
+  "resolution": 0.05,
+  "origin": [
+    -13.3,
+    -10.4,
+    0
+  ],
+  "pixel_histogram": {
+    "0": 4708,
+    "205": 76223,
+    "254": 54963
+  },
+  "derived_by": "tools/derive_nav2_map.py (procedure of first_map_nav2_v1)"
+}

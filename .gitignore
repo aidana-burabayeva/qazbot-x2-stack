@@ -1,0 +1,28 @@
+# bytecode / backups
+__pycache__/
+*.pyc
+*.bak
+*.bak_*
+*.orig
+# build / runtime artifacts
+build/
+install/
+log/
+logs/
+runtime/
+runtime_x86
+runtime_arm64.tar.gz
+vendor
+vendor_snapshots/
+candidates/
+.pytest_cache/
+fastdds.log
+# recorded evidence (bags, big tarballs) - kept off-repo
+docs/roadmap_v13/evidence/
+tests/integration_results/
+*.db3
+*.mcap
+*.npy
+*.tar.gz
+*.tgz
+*.zip

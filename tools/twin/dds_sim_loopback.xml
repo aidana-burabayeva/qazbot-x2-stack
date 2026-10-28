@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dds>
+  <profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+    <transport_descriptors>
+      <transport_descriptor>
+        <transport_id>UDPv4_transport</transport_id>
+        <type>UDPv4</type>
+        <sendBufferSize>10388608</sendBufferSize>
+        <receiveBufferSize>10388608</receiveBufferSize>        
+        <interfaceWhiteList>
+          <address>127.0.0.1</address>
+        </interfaceWhiteList>
+      </transport_descriptor>
+      <transport_descriptor>
+        <transport_id>SHM_transport</transport_id>
+        <type>SHM</type>
+        <segment_size>33554432</segment_size>
+        <port_queue_capacity>1024</port_queue_capacity>
+      </transport_descriptor>
+    </transport_descriptors>
+
+    <participant profile_name="participant_profile" is_default_profile="true">
+      <rtps>
+        <builtin><metatrafficUnicastLocatorList><locator><udpv4><address>127.0.0.1</address></udpv4></locator></metatrafficUnicastLocatorList><initialPeersList><locator><udpv4><address>127.0.0.1</address><port>29160</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29162</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29164</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29166</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29168</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29170</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29172</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29174</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29176</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29178</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29180</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29182</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29184</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29186</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29188</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29190</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29192</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29194</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29196</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29198</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29200</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29202</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29204</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29206</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29208</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29210</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29212</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29214</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29216</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29218</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29220</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29222</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29224</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29226</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29228</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29230</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29232</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29234</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29236</port></udpv4></locator><locator><udpv4><address>127.0.0.1</address><port>29238</port></udpv4></locator></initialPeersList></builtin><useBuiltinTransports>false</useBuiltinTransports>
+        <userTransports>
+          <transport_id>SHM_transport</transport_id>
+          <transport_id>UDPv4_transport</transport_id>
+        </userTransports>
+      </rtps>
+    </participant>
+  </profiles>
+  <log>
+    <use_default>FALSE</use_default>
+    <consumer>
+      <class>FileConsumer</class>
+      <property>
+        <name>filename</name>
+        <value>fastdds.log</value>
+      </property>
+      <property>
+        <name>append</name>
+        <value>TRUE</value>
+      </property>
+    </consumer>
+  </log>
+</dds>

@@ -1,0 +1,1296 @@
+{
+  "duration_s": 12.002810180000097,
+  "topics": {
+    "/tf_static": {
+      "count": 5
+    },
+    "/aima/mc/leg_odometry": {
+      "count": 2027,
+      "frame_id": "leg_odom",
+      "age_s": 0.006607770919799805,
+      "child_frame_id": "lidar_imu_chest_front",
+      "pose": [
+        1.8828029794526797,
+        -1.627629703972654,
+        0.9105649927842703,
+        0.5116820437660158,
+        0.47152813832902174,
+        0.519293675270619,
+        -0.4961620498137006
+      ],
+      "covariance_diagonal": [
+        0.0007574000291294209,
+        0.0007574000291294209,
+        0.00014092525032550002,
+        7.258200507630437e-05,
+        7.258200507630437e-05,
+        7.258200504025306e-05
+      ]
+    },
+    "/aima/hal/sensor/lidar_chest_front/lidar_pointcloud": {
+      "count": 120,
+      "frame_id": "lidar_chest_front",
+      "age_s": 0.10419893264770508,
+      "width": 25481,
+      "height": 1,
+      "fields": [
+        "x",
+        "y",
+        "z",
+        "intensity",
+        "ring",
+        "timestamp"
+      ]
+    },
+    "/tf": {
+      "count": 563
+    }
+  },
+  "tf_edges": {
+    "stereo_head_front -> stereo_head_front_right": {
+      "stamp": 1792491652.6506605,
+      "translation": [
+        -0.06160784613581016,
+        0.0010709658089940867,
+        -0.0012218455223592932
+      ],
+      "rotation": [
+        -0.005460752366673183,
+        -0.007041579397161284,
+        -0.0001489070886512262,
+        0.999960286296342
+      ],
+      "topic": "/tf_static"
+    },
+    "stereo_head_front -> stereo_imu_head_front": {
+      "stamp": 1792491652.6667173,
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "topic": "/tf_static"
+    },
+    "map -> foot_contact": {
+      "stamp": 1792491664.2030127,
+      "translation": [
+        0.0,
+        0.0,
+        -0.6
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "topic": "/tf_static"
+    },
+    "right_wrist_pitch_link -> right_wrist_roll_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        -0.008296871359677603,
+        0.0,
+        0.0,
+        0.999965580370465
+      ],
+      "topic": "/tf"
+    },
+    "torso_link -> left_shoulder_pitch_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        0.00329906676354264,
+        0.143031506663431,
+        0.241647721005027
+      ],
+      "rotation": [
+        0.10254825304392697,
+        0.19266289289026942,
+        0.020249680522219562,
+        0.9756817185637636
+      ],
+      "topic": "/tf"
+    },
+    "right_wrist_yaw_link -> right_wrist_pitch_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        0.0,
+        0.0,
+        -0.081799999999999
+      ],
+      "rotation": [
+        -7.960497254709859e-08,
+        -0.004863719836976122,
+        -1.6366903037300054e-05,
+        0.9999881719107809
+      ],
+      "topic": "/tf"
+    },
+    "left_shoulder_pitch_link -> left_shoulder_roll_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        -0.000499991072907324,
+        0.0495,
+        0.0
+      ],
+      "rotation": [
+        -0.008101136285893878,
+        0.0,
+        0.0,
+        0.999967185257035
+      ],
+      "topic": "/tf"
+    },
+    "left_shoulder_yaw_link -> left_elbow_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        0.0140000000488655,
+        0.000199986464082369,
+        -0.0829500000002385
+      ],
+      "rotation": [
+        0.0,
+        -0.5496770851780568,
+        0.0,
+        0.8353772213977081
+      ],
+      "topic": "/tf"
+    },
+    "left_wrist_yaw_link -> left_wrist_pitch_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        0.000490001227040848,
+        0.0,
+        -0.0819985359552045
+      ],
+      "rotation": [
+        0.0,
+        -0.008995856998807021,
+        0.0,
+        0.9999595364597796
+      ],
+      "topic": "/tf"
+    },
+    "right_shoulder_pitch_link -> right_shoulder_roll_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        -0.000499999994070091,
+        -0.0495000000000002,
+        0.0
+      ],
+      "rotation": [
+        0.007717771182285195,
+        7.699925309301821e-05,
+        -5.942803174582529e-07,
+        0.999970214595785
+      ],
+      "topic": "/tf"
+    },
+    "left_elbow_link -> left_wrist_yaw_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        -0.0132797235062217,
+        -9.75487744990788e-05,
+        -0.120575783591803
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.005416605211409467,
+        0.9999853300863887
+      ],
+      "topic": "/tf"
+    },
+    "left_wrist_pitch_link -> left_wrist_roll_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        -0.0031471200490800683,
+        0.0,
+        0.0,
+        0.9999950478054362
+      ],
+      "topic": "/tf"
+    },
+    "left_shoulder_roll_link -> left_shoulder_yaw_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        0.00122423638490546,
+        0.0,
+        -0.121194848262102
+      ],
+      "rotation": [
+        1.3605890685640864e-05,
+        -0.002987793050109818,
+        -0.004553758796097076,
+        0.9999851679842039
+      ],
+      "topic": "/tf"
+    },
+    "right_shoulder_roll_link -> right_shoulder_yaw_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        0.000499999999999765,
+        0.0,
+        -0.121199999999934
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0065671925554365235,
+        0.9999784357584617
+      ],
+      "topic": "/tf"
+    },
+    "right_shoulder_yaw_link -> right_elbow_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        0.0139999999999662,
+        -0.0002000000000143,
+        -0.0829500000000745
+      ],
+      "rotation": [
+        0.0,
+        -0.5516111090996614,
+        0.0,
+        0.8341014232800718
+      ],
+      "topic": "/tf"
+    },
+    "torso_link -> right_shoulder_pitch_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        0.00330093831251838,
+        -0.143030971450747,
+        0.241648201390685
+      ],
+      "rotation": [
+        -0.10250695517848887,
+        0.19472019076574615,
+        -0.02046624178990865,
+        0.9752730409455518
+      ],
+      "topic": "/tf"
+    },
+    "right_elbow_link -> right_wrist_yaw_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        -0.0140000017961392,
+        9.7526096753231e-05,
+        -0.120694276209686
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.004857914073676444,
+        0.9999882002658097
+      ],
+      "topic": "/tf"
+    },
+    "head_yaw_link -> head_pitch_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        0.0,
+        0.0,
+        0.0889
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "topic": "/tf"
+    },
+    "torso_link -> head_yaw_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        0.00834772789983268,
+        0.0,
+        0.309397077276121
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        2.3961067197414225e-05,
+        0.9999999997129336
+      ],
+      "topic": "/tf"
+    },
+    "right_knee_link -> right_ankle_pitch_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        -0.00999999999984942,
+        0.000124910735223305,
+        -0.282000000000021
+      ],
+      "rotation": [
+        0.0,
+        -0.14601696763351857,
+        0.0,
+        0.9892820857384976
+      ],
+      "topic": "/tf"
+    },
+    "right_hip_pitch_link -> right_hip_roll_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        0.0,
+        -0.0657000004916197,
+        0.0
+      ],
+      "rotation": [
+        -0.016537150890543854,
+        0.0,
+        0.0,
+        0.9998632519701999
+      ],
+      "topic": "/tf"
+    },
+    "right_ankle_pitch_link -> right_ankle_roll_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        -0.00174999998537372,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        0.0049373902939231495,
+        0.0,
+        0.0,
+        0.999987811014257
+      ],
+      "topic": "/tf"
+    },
+    "pelvis -> right_hip_pitch_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        0.0,
+        -0.0713499997541464,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        -0.13510129084720254,
+        0.0,
+        0.9908317925921734
+      ],
+      "topic": "/tf"
+    },
+    "left_ankle_pitch_link -> left_ankle_roll_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        -0.00174999998947351,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        0.004553779122146005,
+        0.0,
+        0.0,
+        0.9999896314941003
+      ],
+      "topic": "/tf"
+    },
+    "right_hip_roll_link -> right_hip_yaw_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        0.0,
+        0.0,
+        -0.136850000000023
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        -0.05706117933854328,
+        0.9983706835702332
+      ],
+      "topic": "/tf"
+    },
+    "left_knee_link -> left_ankle_pitch_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        -0.0100000000000136,
+        -0.000124910735236235,
+        -0.282000000000081
+      ],
+      "rotation": [
+        0.0,
+        -0.1419374273137294,
+        0.0,
+        0.9898756319495696
+      ],
+      "topic": "/tf"
+    },
+    "right_hip_yaw_link -> right_knee_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        -0.00766000000003646,
+        -0.000225000000000253,
+        -0.183100000000014
+      ],
+      "rotation": [
+        0.0,
+        0.24497576672997814,
+        0.0,
+        0.9695292020950473
+      ],
+      "topic": "/tf"
+    },
+    "left_hip_yaw_link -> left_knee_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        -0.00765999999995284,
+        0.000225000000070329,
+        -0.18309999999998
+      ],
+      "rotation": [
+        0.0,
+        0.25314655883214404,
+        0.0,
+        0.9674279403404905
+      ],
+      "topic": "/tf"
+    },
+    "left_hip_roll_link -> left_hip_yaw_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        0.000574999999972778,
+        0.0,
+        -0.136850000000045
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.035896455513117084,
+        0.9993555145600563
+      ],
+      "topic": "/tf"
+    },
+    "left_hip_pitch_link -> left_hip_roll_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        -0.000574999999960968,
+        0.0657000000000312,
+        0.0
+      ],
+      "rotation": [
+        0.007142483062291649,
+        0.0,
+        0.0,
+        0.999974492142527
+      ],
+      "topic": "/tf"
+    },
+    "pelvis -> left_hip_pitch_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        0.0,
+        0.0713499997541465,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        -0.1467756966182465,
+        0.0,
+        0.9891698008341282
+      ],
+      "topic": "/tf"
+    },
+    "waist_pitch_link -> torso_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        -0.0011261544935978706,
+        0.0,
+        0.0,
+        0.9999993658878272
+      ],
+      "topic": "/tf"
+    },
+    "waist_yaw_link -> waist_pitch_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        0.0,
+        0.0,
+        0.0880106468356499
+      ],
+      "rotation": [
+        0.0,
+        -0.012582182887334804,
+        0.0,
+        0.9999208412038373
+      ],
+      "topic": "/tf"
+    },
+    "pelvis -> waist_yaw_link": {
+      "stamp": 1792492325.7812734,
+      "translation": [
+        0.0,
+        0.0,
+        0.0670600000000297
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.00666303472711613,
+        0.9999778017377312
+      ],
+      "topic": "/tf"
+    },
+    "lidar_chest_front -> lidar_imu_chest_front": {
+      "stamp": 1792491646.386356,
+      "translation": [
+        -0.011181603072868402,
+        0.00445470615857365,
+        0.015723420984147713
+      ],
+      "rotation": [
+        0.49663641882000004,
+        -0.5029199702534357,
+        -0.49899247121076695,
+        0.5014282448136531
+      ],
+      "topic": "/tf_static"
+    },
+    "camera_depth_frame -> camera_color_frame": {
+      "stamp": 1792491653.1259632,
+      "translation": [
+        0.0018371303081512452,
+        -0.013729924201965333,
+        9.516546130180359e-05
+      ],
+      "rotation": [
+        0.00106471951585263,
+        0.003008435247465968,
+        0.0008730320259928703,
+        0.9999945163726807
+      ],
+      "topic": "/tf_static"
+    },
+    "camera_color_frame -> camera_color_optical_frame": {
+      "stamp": 1792491653.1259632,
+      "translation": [
+        0.0,
+        -0.0,
+        -0.0
+      ],
+      "rotation": [
+        -0.5,
+        0.4999999999999999,
+        -0.5,
+        0.5000000000000001
+      ],
+      "topic": "/tf_static"
+    },
+    "camera_depth_frame -> camera_depth_optical_frame": {
+      "stamp": 1792491653.1261704,
+      "translation": [
+        0.0,
+        -0.0,
+        -0.0
+      ],
+      "rotation": [
+        -0.5,
+        0.4999999999999999,
+        -0.5,
+        0.5000000000000001
+      ],
+      "topic": "/tf_static"
+    },
+    "camera_depth_frame -> camera_accel_frame": {
+      "stamp": 1792491653.1263258,
+      "translation": [
+        -0.016947999954223632,
+        -0.0002460000067949295,
+        -6.499999761581421e-05
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "topic": "/tf_static"
+    },
+    "camera_accel_frame -> camera_accel_optical_frame": {
+      "stamp": 1792491653.1263258,
+      "translation": [
+        0.0,
+        -0.0,
+        -0.0
+      ],
+      "rotation": [
+        -0.5,
+        0.4999999999999999,
+        -0.5,
+        0.5000000000000001
+      ],
+      "topic": "/tf_static"
+    },
+    "camera_depth_frame -> camera_gyro_frame": {
+      "stamp": 1792491653.1264396,
+      "translation": [
+        -0.016947999954223632,
+        -0.0002460000067949295,
+        -6.499999761581421e-05
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "topic": "/tf_static"
+    },
+    "camera_gyro_frame -> camera_gyro_optical_frame": {
+      "stamp": 1792491653.1264396,
+      "translation": [
+        0.0,
+        -0.0,
+        -0.0
+      ],
+      "rotation": [
+        -0.5,
+        0.4999999999999999,
+        -0.5,
+        0.5000000000000001
+      ],
+      "topic": "/tf_static"
+    },
+    "camera_link -> camera_depth_frame": {
+      "stamp": 1792491653.1264863,
+      "translation": [
+        0.0,
+        -0.0,
+        -0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "topic": "/tf_static"
+    },
+    "rgbd_head_front -> rgbd_depth_head_front": {
+      "stamp": 1792491653.1265237,
+      "translation": [
+        -0.013732865333557128,
+        0.0001353854089975353,
+        -0.0018124606609344453
+      ],
+      "rotation": [
+        0.003008435278647444,
+        0.0008730320350415698,
+        -0.0010647195268881106,
+        0.9999945267373062
+      ],
+      "topic": "/tf_static"
+    },
+    "base_link -> pelvis": {
+      "stamp": 0.0,
+      "translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "topic": "/tf_static"
+    },
+    "head_pitch_link -> imu_in_head_link": {
+      "stamp": 0.0,
+      "translation": [
+        0.0259998716312927,
+        -8.2538922380776e-05,
+        0.0175999960932565
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "topic": "/tf_static"
+    },
+    "pelvis -> imu_in_pelvis_link": {
+      "stamp": 0.0,
+      "translation": [
+        0.0239464627920677,
+        -0.00022868187247424,
+        0.0417100000000296
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "topic": "/tf_static"
+    },
+    "torso_link -> imu_in_torso_link": {
+      "stamp": 0.0,
+      "translation": [
+        -0.0248787003951661,
+        0.0019852778697029,
+        0.105938055641669
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "topic": "/tf_static"
+    },
+    "torso_link -> lidar_chest_front": {
+      "stamp": 0.0,
+      "translation": [
+        0.102632855873251,
+        0.0,
+        0.181586916322065
+      ],
+      "rotation": [
+        -0.7071067811865488,
+        0.0,
+        0.0,
+        0.7071067811865462
+      ],
+      "topic": "/tf_static"
+    },
+    "head_pitch_link -> rgb_head_center": {
+      "stamp": 0.0,
+      "translation": [
+        0.0684,
+        -0.00021713,
+        0.05
+      ],
+      "rotation": [
+        -0.4991993573995339,
+        0.5008011962589988,
+        -0.5007993567168674,
+        0.4991975237412744
+      ],
+      "topic": "/tf_static"
+    },
+    "head_pitch_link -> rgb_head_rear": {
+      "stamp": 0.0,
+      "translation": [
+        -0.0834,
+        0.00026495,
+        0.0
+      ],
+      "rotation": [
+        -0.5007993625939929,
+        -0.4992011969416761,
+        0.4991993632766596,
+        0.500797523058597
+      ],
+      "topic": "/tf_static"
+    },
+    "head_pitch_link -> rgbd_head_front": {
+      "stamp": 0.0,
+      "translation": [
+        0.05761,
+        -0.011183,
+        -0.04837
+      ],
+      "rotation": [
+        0.6408510171708244,
+        0.6408533711523742,
+        0.29884576839096944,
+        0.298844670671184
+      ],
+      "topic": "/tf_static"
+    },
+    "head_pitch_link -> stereo_head_front": {
+      "stamp": 0.0,
+      "translation": [
+        0.067995,
+        0.029784,
+        0.05
+      ],
+      "rotation": [
+        -0.4991993573995339,
+        0.5008011962589988,
+        -0.5007993567168674,
+        0.4991975237412744
+      ],
+      "topic": "/tf_static"
+    }
+  },
+  "publishers": {
+    "/tf": [
+      {
+        "node": "/camera/camera",
+        "type": "tf2_msgs/msg/TFMessage",
+        "reliability": "ReliabilityPolicy.RELIABLE",
+        "durability": "DurabilityPolicy.VOLATILE"
+      },
+      {
+        "node": "//aimrt_perception_node4320",
+        "type": "tf2_msgs/msg/TFMessage",
+        "reliability": "ReliabilityPolicy.RELIABLE",
+        "durability": "DurabilityPolicy.VOLATILE"
+      },
+      {
+        "node": "//mc_ros2_node3024",
+        "type": "tf2_msgs/msg/TFMessage",
+        "reliability": "ReliabilityPolicy.RELIABLE",
+        "durability": "DurabilityPolicy.VOLATILE"
+      }
+    ],
+    "/tf_static": [
+      {
+        "node": "//soc1_hal_camera3166",
+        "type": "tf2_msgs/msg/TFMessage",
+        "reliability": "ReliabilityPolicy.RELIABLE",
+        "durability": "DurabilityPolicy.TRANSIENT_LOCAL"
+      },
+      {
+        "node": "/camera/camera",
+        "type": "tf2_msgs/msg/TFMessage",
+        "reliability": "ReliabilityPolicy.RELIABLE",
+        "durability": "DurabilityPolicy.TRANSIENT_LOCAL"
+      },
+      {
+        "node": "//soc1_hal_sensor_orin2451",
+        "type": "tf2_msgs/msg/TFMessage",
+        "reliability": "ReliabilityPolicy.RELIABLE",
+        "durability": "DurabilityPolicy.TRANSIENT_LOCAL"
+      },
+      {
+        "node": "//static_transform_publisher_4XODFlhAn4AL1OLJ",
+        "type": "tf2_msgs/msg/TFMessage",
+        "reliability": "ReliabilityPolicy.RELIABLE",
+        "durability": "DurabilityPolicy.TRANSIENT_LOCAL"
+      },
+      {
+        "node": "//mc_ros2_node3024",
+        "type": "tf2_msgs/msg/TFMessage",
+        "reliability": "ReliabilityPolicy.RELIABLE",
+        "durability": "DurabilityPolicy.TRANSIENT_LOCAL"
+      },
+      {
+        "node": "//soc2_hal_sensor1793",
+        "type": "tf2_msgs/msg/TFMessage",
+        "reliability": "ReliabilityPolicy.RELIABLE",
+        "durability": "DurabilityPolicy.TRANSIENT_LOCAL"
+      }
+    ],
+    "/map": [
+      {
+        "node": "//costmap_ros_node",
+        "type": "nav_msgs/msg/OccupancyGrid",
+        "reliability": "ReliabilityPolicy.RELIABLE",
+        "durability": "DurabilityPolicy.TRANSIENT_LOCAL"
+      }
+    ],
+    "/odom": [],
+    "/aima/mc/leg_odometry": [
+      {
+        "node": "//mc_ros2_node3024",
+        "type": "nav_msgs/msg/Odometry",
+        "reliability": "ReliabilityPolicy.BEST_EFFORT",
+        "durability": "DurabilityPolicy.TRANSIENT_LOCAL"
+      }
+    ],
+    "/slam/lidar_odom": [],
+    "/slam/localization/odometry": [],
+    "/aima/hal/sensor/lidar_chest_front/lidar_pointcloud": [
+      {
+        "node": "//soc1_hal_sensor_orin2451",
+        "type": "sensor_msgs/msg/PointCloud2",
+        "reliability": "ReliabilityPolicy.RELIABLE",
+        "durability": "DurabilityPolicy.TRANSIENT_LOCAL"
+      }
+    ],
+    "/scan": []
+  },
+  "nodes": [
+    [
+      "launch_ros_2359",
+      "/"
+    ],
+    [
+      "lx_webrtc_app_manager",
+      "/"
+    ],
+    [
+      "soc1_hds_slave3395",
+      "/"
+    ],
+    [
+      "aimrt_planning_planning_node4166",
+      "/"
+    ],
+    [
+      "aimrt_slam_node3929",
+      "/"
+    ],
+    [
+      "soc1_hal_camera3166",
+      "/"
+    ],
+    [
+      "aimrt_auto_integrated_node4722",
+      "/"
+    ],
+    [
+      "soc1_ota_mcu2932",
+      "/"
+    ],
+    [
+      "soc1_ec3707",
+      "/"
+    ],
+    [
+      "soc1_housekeeper",
+      "/"
+    ],
+    [
+      "camera_container",
+      "/camera"
+    ],
+    [
+      "camera",
+      "/camera"
+    ],
+    [
+      "aimrt_planning_planning_node4495",
+      "/"
+    ],
+    [
+      "ros2_bridge_node",
+      "/"
+    ],
+    [
+      "costmap_ros_node",
+      "/"
+    ],
+    [
+      "controller_server_ros_node",
+      "/"
+    ],
+    [
+      "planner_server_ros_node",
+      "/"
+    ],
+    [
+      "re_plan_check_server_ros_node",
+      "/"
+    ],
+    [
+      "transform_ros_node",
+      "/"
+    ],
+    [
+      "behavior_tree_ros_node",
+      "/"
+    ],
+    [
+      "perception_ros_node",
+      "/"
+    ],
+    [
+      "common_timed_vel_ros_node",
+      "/"
+    ],
+    [
+      "HighPrecisionTrackingController",
+      "/"
+    ],
+    [
+      "MPPIController",
+      "/"
+    ],
+    [
+      "SpinToGoal",
+      "/"
+    ],
+    [
+      "SpinToGoalCollisionAbort",
+      "/"
+    ],
+    [
+      "SpinToGoalNoAvoid",
+      "/"
+    ],
+    [
+      "SpinToGoalOdom",
+      "/"
+    ],
+    [
+      "SpinToNear",
+      "/"
+    ],
+    [
+      "SpinToNearExtend",
+      "/"
+    ],
+    [
+      "SpinToNearExtendCollisionAbort",
+      "/"
+    ],
+    [
+      "SpinToNearOdom",
+      "/"
+    ],
+    [
+      "SpinToStart",
+      "/"
+    ],
+    [
+      "SpinToStartOdom",
+      "/"
+    ],
+    [
+      "SpinToSwarmStart",
+      "/"
+    ],
+    [
+      "ToPose",
+      "/"
+    ],
+    [
+      "ToPoseLateral",
+      "/"
+    ],
+    [
+      "ToPoseLateralNoAvoid",
+      "/"
+    ],
+    [
+      "ToPoseLateralOdom",
+      "/"
+    ],
+    [
+      "ToPoseNoAvoid",
+      "/"
+    ],
+    [
+      "ToPoseOdom",
+      "/"
+    ],
+    [
+      "TrackingController",
+      "/"
+    ],
+    [
+      "TrajController",
+      "/"
+    ],
+    [
+      "GridBased",
+      "/"
+    ],
+    [
+      "GridBasedAstar",
+      "/"
+    ],
+    [
+      "Ego",
+      "/"
+    ],
+    [
+      "EgoSwarm",
+      "/"
+    ],
+    [
+      "TaskPipelineVisualizeTask",
+      "/"
+    ],
+    [
+      "soc1_hal_sensor_orin2451",
+      "/"
+    ],
+    [
+      "static_transform_publisher_4XODFlhAn4AL1OLJ",
+      "/"
+    ],
+    [
+      "soc1_drp_ros2_node2714",
+      "/"
+    ],
+    [
+      "soc1_hds_master3497",
+      "/"
+    ],
+    [
+      "qazbot_passive_navigation_probe",
+      "/"
+    ],
+    [
+      "soc1_dm3794",
+      "/"
+    ],
+    [
+      "transform_listener_impl_aaab03640a30",
+      "/"
+    ],
+    [
+      "aimrt_perception_node4320",
+      "/"
+    ],
+    [
+      "transform_listener_impl_aaab03e6a6a0",
+      "/"
+    ],
+    [
+      "_ros2cli_daemon_0_c06f21e4ae9340468e248c4cdd68f2a1",
+      "/"
+    ],
+    [
+      "soc1_ota_slave3061",
+      "/"
+    ],
+    [
+      "soc1_robot_chores3577",
+      "/"
+    ],
+    [
+      "app_proxy",
+      "/"
+    ],
+    [
+      "imu_sub_node",
+      "/"
+    ],
+    [
+      "app_proxy_ros2_node",
+      "/"
+    ],
+    [
+      "soc0_hds_slave3382",
+      "/"
+    ],
+    [
+      "soc0_sm3898",
+      "/"
+    ],
+    [
+      "linkswarm_manager3403",
+      "/"
+    ],
+    [
+      "soc0_ota_slave3933",
+      "/"
+    ],
+    [
+      "soc0_hal_4852672",
+      "/"
+    ],
+    [
+      "soc0_robot_chores3443",
+      "/"
+    ],
+    [
+      "soc0_hal_imu2426",
+      "/"
+    ],
+    [
+      "hal_ethercat_x22186",
+      "/"
+    ],
+    [
+      "soc0_housekeeper",
+      "/"
+    ],
+    [
+      "soc0_ota_master4016",
+      "/"
+    ],
+    [
+      "soc0_hal_pmu2505",
+      "/"
+    ],
+    [
+      "mc_ros2_node3024",
+      "/"
+    ],
+    [
+      "tf_base_imu_subscriber",
+      "/"
+    ],
+    [
+      "soc0_rc3030",
+      "/"
+    ],
+    [
+      "soc0_cloud_proxy3299",
+      "/"
+    ],
+    [
+      "soc0_drp_ros2_node2021",
+      "/"
+    ],
+    [
+      "soc0_task_manager4346",
+      "/"
+    ],
+    [
+      "soc0_ota_mcu3835",
+      "/"
+    ],
+    [
+      "soc2_hal_sensor1793",
+      "/"
+    ],
+    [
+      "soc2_interaction_slave1549",
+      "/"
+    ],
+    [
+      "aimrt_agent_node1917",
+      "/"
+    ],
+    [
+      "soc2_ota_slave1923",
+      "/"
+    ],
+    [
+      "display_proxy_node1458",
+      "/"
+    ],
+    [
+      "soc2_hal_audio2741",
+      "/"
+    ],
+    [
+      "soc2_housekeeper",
+      "/"
+    ],
+    [
+      "soc2_hds_slave2269",
+      "/"
+    ],
+    [
+      "soc2_drp_ros2_node2791",
+      "/"
+    ]
+  ]
+}

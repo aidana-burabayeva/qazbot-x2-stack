@@ -1,0 +1,222 @@
+"""Scenario tests for ws/src/navigation/loc_trust.py on synthetic maps (no robot, no ROS).
+Run: python3 -W ignore tests/loc_trust/test_loc_trust.py"""
+import math
+import os
+import sys
+import unittest
+
+import numpy as np
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(HERE, '..', '..', 'ws', 'src', 'navigation'))
+import loc_trust as L  # noqa: E402
+
+RES = 0.05
+
+
+def room_grid():
+    """8 x 8 m room, origin (-4, -4), with a wall stub, a pillar and a short wall so every direction is constrained."""
+    n = 160
+    occ = np.zeros((n, n), bool)
+    occ[0, :] = occ[-1, :] = occ[:, 0] = occ[:, -1] = True
+    occ[100:160, 60:64] = True
+    occ[30:50, 110:130] = True
+    occ[60:90, 20:22] = True
+    return L.OccGrid(occ, RES, (-4.0, -4.0))
+
+
+def wall_grid():
+    """Only one long straight wall x = 0 (y in -10..10): degenerate along y."""
+    occ = np.zeros((400, 200), bool)
+    occ[:, 100:102] = True
+    return L.OccGrid(occ, RES, (-5.0, -10.0))
+
+
+def simulate_scan(grid, pose, sector=math.radians(52), n=240, rmax=8.0):
+    """Ray-cast endpoints in the base frame within +-sector (the real lidar sees ~52 deg)."""
+    pts = []
+    for a in np.linspace(-sector, sector, n):
+        t = np.arange(0.1, rmax, 0.02)
+        p = L.to_map(np.column_stack((t * math.cos(a), t * math.sin(a))), pose)
+        d = grid.dist_at(p)
+        hit = np.where(d <= 0.5 * RES)[0]
+        if len(hit):
+            k = hit[0]
+            pts.append((t[k] * math.cos(a), t[k] * math.sin(a)))
+    return np.array(pts)
+
+
+COV = np.diag([0.01, 0.01, 1e-6, 1e-6, 1e-6, 0.004]).ravel()
+CLOUD_XY = np.random.default_rng(1).normal(0, 0.05, (200, 2))
+CLOUD_W = np.ones(200)
+
+
+def make_inputs(t, mo, odom, scan, **kw):
+    d = dict(now=t, map_odom=mo, map_odom_stamp=t, odom_base=odom, odom_stamp=t, odom_msg_stamp=t, amcl_cov=COV, amcl_stamp=t,
+             cloud_xy=CLOUD_XY, cloud_w=CLOUD_W, cloud_stamp=t, scan_pts=scan, scan_stamp=t, moving=False,
+             map_ok='')                    # served map verified identical (T8); tests of T8 override it
+    d.update(kw)
+    return L.Inputs(**d)
+
+
+class Pieces(unittest.TestCase):
+    def test_sigmas(self):
+        sxy, syaw = L.pose_sigmas(COV)
+        self.assertAlmostEqual(sxy, 0.1)
+        self.assertAlmostEqual(syaw, math.sqrt(0.004))
+
+    def test_cloud_single_and_two_modes(self):
+        s, o = L.cloud_stats(CLOUD_XY, CLOUD_W, 0.5)
+        self.assertLess(s, 0.1)
+        self.assertEqual(o, 0.0)
+        xy = np.vstack((CLOUD_XY[:120], CLOUD_XY[120:] + [2.0, 0.0]))
+        s, o = L.cloud_stats(xy, np.ones(200), 0.5)
+        self.assertAlmostEqual(o, 0.4, delta=0.01)
+
+    def test_compose_inverse(self):
+        a, b = (1.0, 2.0, 0.7), (0.3, -0.2, -0.4)
+        r = L.compose(a, L.compose(L.inverse(a), b))
+        for x, y in zip(r, b):
+            self.assertAlmostEqual(x, y)
+
+    def test_real_map_loads(self):
+        g = L.OccGrid.from_pgm(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../ws/src/maps/first_map_nav2_v2/map.yaml'))   # repo-relative (twin copy)
+        self.assertLess(g.dist.min(), 1e-9)
+        self.assertTrue(np.isfinite(g.dist).all())
+
+
+class Landscape(unittest.TestCase):
+    def test_true_pose_beats_shifted(self):
+        g, pose = room_grid(), (0.0, 0.0, 0.1)
+        sc = simulate_scan(g, pose)
+        s0 = L.soft_score(sc, g, pose, 0.05)
+        for sh in ((0.3, 0, 0), (0, 0.3, 0), (0, 0, 0.15)):
+            self.assertLess(L.soft_score(sc, g, (pose[0] + sh[0], pose[1] + sh[1], pose[2] + sh[2]), 0.05), s0 - 0.2)
+
+    def test_room_is_not_ambiguous(self):
+        g, pose = room_grid(), (0.0, 0.0, 0.0)
+        a = L.ambiguity(simulate_scan(g, pose), g, pose, L.TrustConfig(admission_policy='strict'))
+        self.assertFalse(a['ambiguous'], a)
+
+    def test_single_wall_is_ambiguous_along_wall(self):
+        g, pose = wall_grid(), (-1.5, 0.0, 0.0)
+        a = L.ambiguity(simulate_scan(g, pose), g, pose, L.TrustConfig(admission_policy='strict'))
+        self.assertTrue(a['ambiguous'], a)
+        self.assertGreater(abs(a['competitor_offset'][1]), 0.4)
+
+
+class Evaluator(unittest.TestCase):
+    def setUp(self):
+        self.g = room_grid()
+        self.true_map = (0.5, -0.3, 0.2)
+        self.mo = (0.5, -0.3, 0.2)                                       # map->odom; odom starts at the origin
+        self.ev = L.TrustEvaluator(self.g, L.TrustConfig(admission_policy='strict'))
+        self.scan0 = simulate_scan(self.g, self.true_map)
+        self.ev.set_baseline([L.soft_score(self.scan0, self.g, self.true_map, 0.05)] * 5)
+        self.ev.confirm_anchor(make_inputs(0.0, self.mo, (0, 0, 0), self.scan0))
+        self.assertTrue(self.ev.evaluate(make_inputs(0.0, self.mo, (0, 0, 0), self.scan0))['ready'])
+
+    def run_for(self, t0, secs, mo_fn, odom_fn, hz=5):
+        res = None
+        for k in range(int(secs * hz)):
+            t = t0 + k / hz
+            mo, odom = mo_fn(t), odom_fn(t)
+            res = self.ev.evaluate(make_inputs(t, mo, odom, simulate_scan(self.g, L.compose(mo, odom))))
+        return res, t0 + secs
+
+    def test_ready_at_first_clean_gate_after_confirm(self):
+        # was test_trust_after_settling: no 5 s settling any more; READY latches at the first clean gate evaluation
+        ev = L.TrustEvaluator(self.g, L.TrustConfig(admission_policy='strict'))
+        i = make_inputs(0.0, self.mo, (0, 0, 0), self.scan0)
+        self.assertIn('not_ready:no_anchor', ev.evaluate(i)['reasons'])
+        ev.confirm_anchor(i)
+        r = ev.evaluate(make_inputs(0.2, self.mo, (0, 0, 0), self.scan0))
+        self.assertTrue(r['ready'] and r['motion_ok'] and r['trusted'], r)
+
+    def test_no_anchor_no_trust(self):
+        self.ev = L.TrustEvaluator(self.g, L.TrustConfig(admission_policy='strict'))                      # never confirmed by the operator
+        r, _ = self.run_for(0.0, 8.0, lambda t: self.mo, lambda t: (0, 0, 0))
+        self.assertFalse(r['trusted'])
+        self.assertIn('not_ready:no_anchor', r['reasons'])
+
+    def test_walking_with_consistent_amcl_stays_trusted(self):
+        r, _ = self.run_for(0.0, 9.0, lambda t: self.mo, lambda t: (0.2 * min(t, 8.0), 0.0, 0.0))
+        self.assertTrue(r['trusted'], r)
+
+    def test_false_global_lock_jump_never_regains_trust(self):
+        """AMCL snaps 1.0 m away: T5 clears READY; it stays lost (T6 only diagnostic) until the operator confirms."""
+        _, t = self.run_for(0.0, 8.0, lambda t: self.mo, lambda t: (0, 0, 0))
+        self.assertTrue(self.ev.last['trusted'])
+        wrong = (self.mo[0] + 1.0, self.mo[1], self.mo[2])
+        r, t = self.run_for(t, 0.4, lambda t: wrong, lambda t: (0, 0, 0))
+        self.assertFalse(r['trusted'] or r['ready'])
+        self.assertIn('not_ready:T5_map_odom_jump', r['reasons'])
+        r, t = self.run_for(t, 12.0, lambda t: wrong, lambda t: (0, 0, 0))
+        self.assertFalse(r['trusted'] or r['ready'])
+        self.assertIn('T6_anchor_disagreement', r['diagnostics'])
+        self.assertIn('not_ready:T5_map_odom_jump', r['reasons'])
+
+    def test_slow_slide_along_wall_is_caught_by_anchor_not_by_score(self):
+        """Single wall: the score is perfect everywhere along the wall, so T4 cannot see the slide; T6 does."""
+        g = wall_grid()
+        ev = L.TrustEvaluator(g, L.TrustConfig(admission_policy='strict', stable_s=1.0))
+        true = (-1.5, 0.0, 0.0)
+        sc0 = simulate_scan(g, true)
+        ev.set_baseline([L.soft_score(sc0, g, true, 0.05)])
+        ev.confirm_anchor(make_inputs(0.0, true, (0, 0, 0), sc0))
+        tripped_at, scores = None, []
+        for k in range(1, 200):
+            t = k / 5
+            slid = (true[0], true[1] + 0.02 * t, 0.0)
+            r = ev.evaluate(make_inputs(t, slid, (0, 0, 0), simulate_scan(g, slid)))
+            scores.append(r['metrics'].get('scan_score', 0))
+            if 'T6_anchor_disagreement' in r['diagnostics'] and tripped_at is None:
+                tripped_at = slid[1] - true[1]
+            self.assertNotIn('T4_scan_score', r['diagnostics'])
+            self.assertTrue(r['trusted'] or k == 1, r)            # 2026-10-22: T6 is a diagnostic, no stop
+        self.assertIsNotNone(tripped_at)
+        self.assertLess(tripped_at, 0.25)
+        self.assertGreater(min(scores), 0.9)
+
+    def test_stale_tf_and_scan(self):
+        r = self.ev.evaluate(make_inputs(10.0, self.mo, (0, 0, 0), self.scan0, map_odom_stamp=7.0, scan_stamp=9.0))
+        self.assertIn('T1_tf_stale', r['reasons'])
+        self.assertIn('T1_scan_stale', r['reasons'])
+        self.assertFalse(r['motion_ok'])
+        self.assertTrue(r['ready'])
+
+    def test_wrong_place_scan_fails_score(self):
+        r = self.ev.evaluate(make_inputs(1.0, self.mo, (0, 0, 0), simulate_scan(self.g, (-2.5, 2.0, 1.0))))
+        self.assertIn('T4_scan_score', r['diagnostics'])
+        self.assertTrue(r['trusted'], r)                          # diagnostic after READY
+
+    def test_covariance_and_two_hypotheses(self):
+        bad = np.diag([0.2, 0.2, 1e-6, 1e-6, 1e-6, 0.004]).ravel()
+        r = self.ev.evaluate(make_inputs(1.0, self.mo, (0, 0, 0), self.scan0, amcl_cov=bad))
+        self.assertIn('T2_covariance', r['diagnostics'])
+        self.assertTrue(r['trusted'], r)
+        xy = np.vstack((CLOUD_XY[:120], CLOUD_XY[120:] + [2.0, 0.0]))
+        r = self.ev.evaluate(make_inputs(1.2, self.mo, (0, 0, 0), self.scan0, cloud_xy=xy))
+        self.assertIn('T3_particles', r['diagnostics'])
+        self.assertTrue(r['trusted'], r)
+
+    def test_degenerate_scene_travel_budget(self):
+        g = wall_grid()
+        ev = L.TrustEvaluator(g, L.TrustConfig(admission_policy='strict', stable_s=0.0, degenerate_budget_m=2.0))
+        pose = (-1.5, 0.0, 0.0)
+        sc = simulate_scan(g, pose)
+        ev.set_baseline([L.soft_score(sc, g, pose, 0.05)])
+        i0 = make_inputs(0.0, pose, (0, 0, 0), sc)
+        ev.confirm_anchor(i0)
+        self.assertTrue(ev.arm_check(i0)['ambiguous'])
+        r = ev.evaluate(make_inputs(0.2, pose, (0, 0, 0), sc))
+        self.assertNotIn('T7_degenerate_budget', r['diagnostics'])
+        for k in range(1, 40):
+            odom = (0.0, 0.1 * k, 0.0)
+            r = ev.evaluate(make_inputs(0.2 + k * 0.2, pose, odom, simulate_scan(g, L.compose(pose, odom))))
+        self.assertIn('T7_degenerate_budget', r['diagnostics'])
+        self.assertTrue(r['trusted'], r)
+
+
+if __name__ == '__main__':
+    unittest.main()

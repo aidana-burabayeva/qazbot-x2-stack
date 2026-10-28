@@ -1,0 +1,155 @@
+#!/usr/bin/env python3
+"""End-to-end ROS test of localization_trust_node on the REAL D1 map with a synthetic robot (no hardware).
+Needs: node running (python3 localization_trust_node.py), localization stack NOT running (this feeds its topics).
+Phases: A good pose -> confirm anchor -> trusted;  B AMCL snaps 1 m away -> untrusted and STAYS untrusted;
+        C back to the right pose -> trusted again only after the settling time.
+Usage: ros_e2e_synthetic.py            exit 0 = all checks passed"""
+import json
+import math
+import os
+import sys
+import time
+
+import numpy as np
+import rclpy
+from geometry_msgs.msg import PoseWithCovarianceStamped, TransformStamped
+from nav2_msgs.msg import Particle, ParticleCloud
+from nav_msgs.msg import OccupancyGrid, Odometry
+from rclpy.node import Node
+from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
+from sensor_msgs.msg import LaserScan
+from std_msgs.msg import Bool, String
+from std_srvs.srv import Trigger
+from tf2_msgs.msg import TFMessage
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(HERE, '..', '..', 'ws', 'src', 'navigation'))
+import loc_trust as L  # noqa: E402
+
+GRID = L.OccGrid.from_pgm(os.path.join(HERE, '..', '..', 'ws', 'src', 'maps', 'first_map_nav2_v2', 'map.yaml'))
+TRUE = (-1.275, -4.825, 0.0)       # free fixture pose on first_map_nav2_v2 (= tests/nav_e2e/e2e_map.START; no walk record exists for the new map)
+
+
+def scan_msg(stamp, pose, n=360):
+    s = LaserScan()
+    s.header.stamp, s.header.frame_id = stamp, 'base_footprint'
+    a0, inc = -math.radians(52), math.radians(104) / (n - 1)
+    s.angle_min, s.angle_max, s.angle_increment, s.range_min, s.range_max = a0, a0 + inc * (n - 1), inc, 0.45, 25.0
+    t = np.arange(0.2, 8.0, 0.02)
+    r = []
+    for k in range(n):
+        a = a0 + k * inc
+        p = L.to_map(np.column_stack((t * math.cos(a), t * math.sin(a))), pose)
+        hit = np.where(GRID.dist_at(p) <= 0.025)[0]
+        r.append(float(t[hit[0]]) if len(hit) else float('inf'))
+    s.ranges = r
+    return s
+
+
+class Feeder(Node):
+    def __init__(self):
+        super().__init__('trust_feeder')
+        self.odom = self.create_publisher(Odometry,'/qazbot_lio/odom_level',10)
+        self.tf = self.create_publisher(TFMessage, '/qazbot_d1_map/tf', 10)
+        self.amcl = self.create_publisher(PoseWithCovarianceStamped, '/qazbot_d1_map/amcl_pose',
+                                          QoSProfile(depth=1, reliability=ReliabilityPolicy.RELIABLE,
+                                                     durability=DurabilityPolicy.TRANSIENT_LOCAL))
+        self.cloud = self.create_publisher(ParticleCloud, '/qazbot_d1_map/particle_cloud',
+                                           QoSProfile(depth=1, reliability=ReliabilityPolicy.BEST_EFFORT))
+        self.scan = self.create_publisher(LaserScan, '/qazbot_lio/scan', QoSProfile(depth=1, reliability=ReliabilityPolicy.BEST_EFFORT))
+        self.status = None
+        # served map (T8 identity check): same occupied cells as the trust grid, map_server trinary values
+        g = OccupancyGrid(); g.header.frame_id = 'map'; g.info.resolution = GRID.res
+        g.info.width, g.info.height = GRID.w, GRID.h
+        g.info.origin.position.x, g.info.origin.position.y = GRID.ox, GRID.oy; g.info.origin.orientation.w = 1.0
+        g.data = np.where(GRID.occ, 100, 0).astype(np.int8).ravel().tolist()
+        self.map = self.create_publisher(OccupancyGrid, '/qazbot_d1_map/map',
+                                         QoSProfile(depth=1, reliability=ReliabilityPolicy.RELIABLE,
+                                                    durability=DurabilityPolicy.TRANSIENT_LOCAL))
+        self.map.publish(g)
+        self.create_subscription(String, '/qazbot_d1_map/localization_trust/status', self._st, 10)
+        self.mo = TRUE            # map->odom (odom origin = robot at start; LIO does not move)
+        self.believed = TRUE      # pose AMCL claims
+        self.true_scan = scan_msg(self.get_clock().now().to_msg(), TRUE)
+
+    def _st(self, m):
+        self.status = json.loads(m.data)
+
+    def pump(self, secs, hz=10):
+        end = time.monotonic() + secs
+        while time.monotonic() < end:
+            st = self.get_clock().now().to_msg()
+            tfs = []
+            for par, ch, pose in (('map', 'odom', self.mo), ('odom', 'base_footprint', (0.0, 0.0, 0.0))):
+                t = TransformStamped()
+                t.header.stamp, t.header.frame_id, t.child_frame_id = st, par, ch
+                t.transform.translation.x, t.transform.translation.y = pose[0], pose[1]
+                t.transform.rotation.z, t.transform.rotation.w = math.sin(pose[2] / 2), math.cos(pose[2] / 2)
+                tfs.append(t)
+            self.tf.publish(TFMessage(transforms=tfs))
+            o=Odometry();o.header.stamp=st;o.header.frame_id='odom';o.child_frame_id='base_footprint';o.pose.pose.orientation.w=1.;self.odom.publish(o)
+            a = PoseWithCovarianceStamped()
+            a.header.stamp, a.header.frame_id = st, 'map'
+            a.pose.pose.position.x, a.pose.pose.position.y = self.believed[0], self.believed[1]
+            a.pose.covariance[0] = a.pose.covariance[7] = 0.01
+            a.pose.covariance[35] = 0.004
+            self.amcl.publish(a)
+            c = ParticleCloud()
+            c.header.stamp, c.header.frame_id = st, 'map'
+            rng = np.random.default_rng(3)
+            for dx, dy in rng.normal(0, 0.05, (100, 2)):
+                q = Particle()
+                q.pose.position.x, q.pose.position.y, q.weight = self.believed[0] + dx, self.believed[1] + dy, 0.01
+                c.particles.append(q)
+            self.cloud.publish(c)
+            # the lidar keeps seeing the TRUE surroundings; the scan is recorded once for the true pose
+            self.true_scan.header.stamp = st
+            self.scan.publish(self.true_scan)
+            rclpy.spin_once(self, timeout_sec=1.0 / hz)
+
+    def call(self, name):
+        cli = self.create_client(Trigger, f'/qazbot_d1_map/localization_trust/{name}')
+        assert cli.wait_for_service(timeout_sec=10.0), name
+        fut = cli.call_async(Trigger.Request())
+        rclpy.spin_until_future_complete(self, fut, timeout_sec=10.0)
+        return fut.result()
+
+
+def main():
+    rclpy.init()
+    f = Feeder()
+    ok = True
+
+    def check(name, cond, detail=''):
+        nonlocal ok
+        ok &= bool(cond)
+        print(('OK  ' if cond else 'BAD ') + name, detail if not cond else '')
+
+    f.pump(3.0)
+    check('node alive, untrusted without anchor', f.status and not f.status['trusted'] and 'T6_no_anchor' in f.status['reasons'], f.status)
+    r = f.call('baseline_start'); f.pump(6.0); r = f.call('baseline_finish')
+    print('baseline:', r.message)
+    check('baseline accepted', r.success, r.message)
+    r = f.call('confirm_anchor')
+    check('anchor confirmed', r.success, r.message)
+    f.pump(7.0)
+    check('A trusted after settling', f.status['trusted'], f.status)
+    print('   metrics', {k: round(v, 3) for k, v in f.status['metrics'].items()})
+    f.mo = (TRUE[0] + 1.0, TRUE[1], TRUE[2]); f.believed = f.mo        # B: false global lock 1 m away
+    f.pump(1.0)
+    check('B untrusted right after the snap', not f.status['trusted'], f.status['reasons'])
+    f.pump(12.0)
+    check('B stays untrusted after the jump window', (not f.status['trusted']) and 'T6_anchor_disagreement' in f.status['reasons'], f.status['reasons'])
+    f.mo = f.believed = TRUE
+    f.pump(2.0)
+    check('C not trusted while settling', not f.status['trusted'], f.status['reasons'])
+    f.pump(8.0)
+    check('C trusted again when AMCL agrees with the anchor', f.status['trusted'], f.status['reasons'])
+    r = f.call('arm_check')
+    print('arm_check:', r.success, r.message[:200])
+    rclpy.shutdown()
+    return 0 if ok else 1
+
+
+if __name__ == '__main__':
+    sys.exit(main())

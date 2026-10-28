@@ -1,0 +1,7 @@
+<!-- Plan-only NavigateToPose: computes and publishes the path, never follows it.
+     No controller_server exists in this stack, and no /cmd_vel publisher. -->
+<root main_tree_to_execute="MainTree">
+  <BehaviorTree ID="MainTree">
+    <ComputePathToPose goal="{goal}" path="{path}" planner_id="GridBased"/>
+  </BehaviorTree>
+</root>

@@ -1,0 +1,38 @@
+name: main_map
+saved: 2026-10-21T18:07:30+05:00
+source: official slam_toolbox async mapping via d1_mapping.launch.py, map_saver_cli
+run:
+  started: '2026-10-21T17:53:48'
+  launch_args:
+    port: /dev/serial/by-id/usb-Silicon_Labs_CP2102_USB_to_UART_Bridge_Controller_0001-if00-port0
+    scan_topic: /d1/ld14/raw_scan
+    laser_frame: laser
+    laser_x: '0.0'
+    laser_y: '0.0'
+    laser_z: '0.215'
+    laser_yaw: '3.14159'
+    slam_overrides: /home/firefly/control_backend/ws/install/qazbot_d1_bringup/share/qazbot_d1_bringup/config/slam_overrides.yaml
+  driver:
+    package: qazbot_ldlidar 0.1.0
+    upstream_commit: 0f6101c93db0b4448cbe7a654826adcdee50622f
+    sdk: v3.3.1
+    baud: 115200
+    beam_count: 240
+    range_m:
+    - 0.12
+    - 8.0
+  slam_toolbox_deb: 2.6.10-1jammy.20260916.165114
+  slam_params_official: /opt/ros/humble/share/slam_toolbox/config/mapper_params_online_async.yaml
+  slam_params_overrides: /home/firefly/control_backend/ws/install/qazbot_d1_bringup/share/qazbot_d1_bringup/config/slam_overrides.yaml
+  slam_params_effective:
+    base_frame: base_link
+    do_loop_closing: true
+    map_frame: map
+    max_laser_range: 8.0
+    min_laser_range: 0.0
+    minimum_time_interval: 0.5
+    minimum_travel_distance: 0.5
+    mode: mapping
+    odom_frame: odom
+    resolution: 0.05
+    scan_topic: /d1/ld14/raw_scan

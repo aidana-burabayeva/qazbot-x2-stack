@@ -1,0 +1,6 @@
+<!-- Plan-only NavigateThroughPoses; see plan_to_pose.xml. -->
+<root main_tree_to_execute="MainTree">
+  <BehaviorTree ID="MainTree">
+    <ComputePathThroughPoses goals="{goals}" path="{path}" planner_id="GridBased"/>
+  </BehaviorTree>
+</root>

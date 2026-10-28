@@ -1,0 +1,49 @@
+/arc_platform
+/behavior_server
+/bt_navigator
+/bt_navigator_navigate_through_poses_rclcpp_node
+/bt_navigator_navigate_to_pose_rclcpp_node
+/collision_monitor
+/controller_server
+/dog_task
+/ecal2ros2
+/error_aggregator
+/global_costmap/global_costmap
+/launch_ros_1668
+/ldlidar_force
+/lifecycle_manager_navigation
+/local_costmap/local_costmap
+/local_costmap_controller/local_costmap_controller
+/map_server
+/nav2_container
+/planner_server
+/qorgan_bridge
+/qorgan_custom_detector
+/robot_event_clipper
+/robot_monitor
+/robot_tf
+/velocity_optimizer
+/waypoint_follower
+/backup [robots_dog_msgs/action/BackUp]
+/compute_path_through_poses [robots_dog_msgs/action/ComputePathThroughPoses]
+/compute_path_to_pose [robots_dog_msgs/action/ComputePathToPose]
+/compute_paths_to_poses [robots_dog_msgs/action/ComputePathsToPoses]
+/drive_on_heading [nav2_msgs/action/DriveOnHeading]
+/follow_path [robots_dog_msgs/action/FollowPath]
+/follow_waypoints [robots_dog_msgs/action/FollowWaypoints]
+/navigate_through_poses [robots_dog_msgs/action/NavigateThroughPoses]
+/navigate_to_pose [robots_dog_msgs/action/NavigateToPose]
+/qorgan_nav2/navigate_to_pose [nav2_msgs/action/NavigateToPose]
+/spin [nav2_msgs/action/Spin]
+/wait [nav2_msgs/action/Wait]
+/home/firefly/control_backend/logs/nav_20261020_142148.log
+/home/firefly/control_backend/logs/nav_20261020_140904.log
+#!/bin/bash
+# nav_check.sh: read-only status of the stack, localization, TF and the bridge's view.
+HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd); source "$HERE/nav_env.sh"
+echo "== lifecycle"; for n in amcl planner_server controller_server bt_navigator; do echo -n "$n: "; timeout 8 ros2 lifecycle get /qorgan_nav2/$n 2>&1 | tail -1; done
+echo "== TF qorgan_map -> base_link"; timeout 8 ros2 run tf2_ros tf2_echo qorgan_map base_link 2>&1 | grep -m1 -E "Translation|Invalid|exception"
+echo "== /laser_scan"; timeout 8 ros2 topic hz /laser_scan --window 10 2>&1 | tail -1
+echo "== amcl_pose (x y)"; timeout 6 ros2 topic echo --once /qorgan_nav2/amcl_pose --field pose.pose.position 2>&1 | head -3
+echo "== bridge (executor/status)"; timeout 6 ros2 topic echo --once /qorgan/executor/status 2>&1 | head -3
+echo "== bridge nav status (via :8080)"; python3 "$HERE/nav_goal.py" status

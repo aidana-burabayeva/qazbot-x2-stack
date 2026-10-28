@@ -1,0 +1,39 @@
+import os,subprocess,signal,time,json
+from pathlib import Path
+import sys
+sys.path.insert(0,str(Path(__file__).resolve().parent))
+from e2e_map import START
+if os.environ.get('ROS_DOMAIN_ID')!='87':raise RuntimeError('isolated domain required')
+import rclpy
+from rclpy.node import Node
+from rclpy.action import ActionClient
+from nav2_msgs.action import ComputePathToPose
+from lifecycle_msgs.srv import GetState
+r=Path.home()/'control_backend';o=r/'tests/integration_results/smac_bounds_gdb';o.mkdir();logs=[];procs=[]
+def start(name,args):
+ f=(o/(name+'.log')).open('w');logs.append(f);p=subprocess.Popen(args,stdout=f,stderr=subprocess.STDOUT,start_new_session=True);procs.append(p);return p
+rclpy.init();n=Node('bounds_repro');c=ActionClient(n,ComputePathToPose,'/qazbot_e2e/nav2/compute_path_to_pose');s=n.create_client(GetState,'/qazbot_e2e/nav2/planner_server/get_state')
+def wait(f,limit=40):
+ end=time.monotonic()+limit
+ while not f():
+  if time.monotonic()>end:raise RuntimeError('diagnostic observation deadline')
+  rclpy.spin_once(n,timeout_sec=.05)
+try:
+ start('model',['python3',str(r/'tests/nav_e2e/model_fixture.py'),'qazbot_e2e'])
+ nav=start('gdb',['ros2','launch',str(r/'ws/src/navigation/nav_debug_bounds.launch.py'),'ns:=qazbot_e2e','robot_radius:=0.454','scan_topic:=/qazbot_e2e/scan','odom_topic:=/qazbot_e2e/odom'])
+ wait(lambda:c.server_is_ready() and s.service_is_ready())
+ while True:
+  f=s.call_async(GetState.Request());wait(f.done)
+  if f.result().current_state.id==3:break
+ g=ComputePathToPose.Goal();g.use_start=True;g.planner_id='GridBased'
+ for p,x,y in [(g.start,START[0],START[1]),(g.goal,99.,99.)]:
+  p.header.frame_id='map';p.pose.position.x=x;p.pose.position.y=y;p.pose.orientation.w=1.
+ f=c.send_goal_async(g);wait(f.done);print('bad-goal accepted by planner:',f.result().accepted,flush=True)
+ wait(lambda:nav.poll() is not None,40)
+finally:
+ for p in reversed(procs):
+  if p.poll() is None:p.send_signal(signal.SIGINT)
+ for p in reversed(procs):p.wait(timeout=15)
+ for f in logs:f.close()
+ n.destroy_node();rclpy.try_shutdown()
+print('gdb evidence:',o)

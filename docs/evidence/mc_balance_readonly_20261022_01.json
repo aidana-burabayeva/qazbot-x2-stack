@@ -1,0 +1,62 @@
+{
+  "read_only": true,
+  "MC_last": {
+    "source": "rc",
+    "body": 1,
+    "fsm": 4,
+    "action_info": {
+      "current_action": {
+        "value": 0
+      },
+      "action_desc": "STAND_DEFAULT",
+      "status": {
+        "value": 100
+      }
+    },
+    "runtime_model": {
+      "waist_status": true,
+      "left_hand_status": {
+        "value": 0
+      },
+      "right_hand_status": {
+        "value": 0
+      }
+    }
+  },
+  "leg_command_messages": 774,
+  "observed_leg_command_hz": 323.8407671160571,
+  "publishers": {
+    "/aima/hal/joint/leg/command": [
+      {
+        "node": "mc_ros2_node3117",
+        "namespace": "/"
+      }
+    ],
+    "/aima/hal/joint/arm/command": [
+      {
+        "node": "mc_ros2_node3117",
+        "namespace": "/"
+      }
+    ],
+    "/aima/hal/joint/waist/command": [
+      {
+        "node": "mc_ros2_node3117",
+        "namespace": "/"
+      }
+    ],
+    "/aima/hal/joint/head/command": [
+      {
+        "node": "mc_ros2_node3117",
+        "namespace": "/"
+      }
+    ]
+  },
+  "source_sha256": {
+    "ws/src/navigation/x2_motion_adapter.py": "09a31d6273ac81410eec0e99971b2cdd7590342bc3e84f423023ed264cb9a0e4",
+    "ws/src/navigation/goal_coordinator.py": "236fff30ded2fed02c57f851ae3851b8f8eaa1d43aefe1d50a6fab1784359116",
+    "ws/src/navigation/nav_control.launch.py": "1a6edf82863ec6e2b8da3c397fcd48206dcc126168c33839c065cbf35ee8bedc",
+    "ws/src/navigation/nav_full.launch.py": "c7b7cf6b0dbba531485652d6b11162aa67f350dd9d4e7d6cd3744e48b079eb67",
+    "ws/src/navigation/run_x2_driver.sh": "d49ae8cdabea6f1edbbf91548781fa79864ae7b721aeae9c8328249378882a6d",
+    "ws/src/navigation/run_nav_full.sh": "ebebc482e78e71793c06f58aa153655aae1ecbda4d5b5c8445bcc1ae298abadb"
+  }
+}

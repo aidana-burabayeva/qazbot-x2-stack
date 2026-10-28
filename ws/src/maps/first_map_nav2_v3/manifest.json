@@ -1,0 +1,68 @@
+{
+  "source": "D1 first_map (saved 2026-10-21T18:07:30+05:00)",
+  "source_yaml_sha256": "a5938d701b8a0dcc41a280277bcc6ce3edd444d030237f042feeb078e9c9de54",
+  "pgm_sha256": "f6032f75ffd386361993a4b4864cf0816713fc27f6d037c88d929ae5d48562fb",
+  "change": "free_thresh 0.25 -> 0.196: 205 unknown, 254 free, 0 occupied; no pixel or geometry changes; PLUS explicit erase of robot imprint (see erase_record)",
+  "status": "localization candidate, not accepted for movement",
+  "source_meta_sha256": "3a8e9fd9384422d91820b949ff9742f33ac17a5eda1756f06b19cb214741ea29",
+  "source_meta_saved": "2026-10-21 18:07:30+05:00",
+  "map_yaml_sha256": "f49dd066e7ed40699fb26558745d743383b49b16043b1d079af645d17d821e6d",
+  "size_px": [
+    319,
+    426
+  ],
+  "resolution": 0.05,
+  "origin": [
+    -13.3,
+    -10.4,
+    0
+  ],
+  "pixel_histogram": {
+    "0": 4669,
+    "205": 76222,
+    "254": 55003
+  },
+  "derived_by": "tools/derive_nav2_map.py (procedure of first_map_nav2_v1)",
+  "source_pgm_sha256": "545630c14f0e37cf2385af8780a09ad7a3fddf7765460c1624e645c42aee2e33",
+  "derivation_params": {
+    "argv": [
+      "first_map",
+      "first_map_nav2_v3",
+      "D1 first_map (saved 2026-10-21T18:07:30+05:00)",
+      "--extra",
+      "--erase-imprint",
+      "-7.361",
+      "6.053",
+      "0.45",
+      "--erase-reason",
+      "X2 self-imprint during D1 mapping, operator-confirmed 2026-10-21"
+    ],
+    "free_thresh": "0.25 -> 0.196"
+  },
+  "erase_record": {
+    "center": [
+      -7.361,
+      6.053
+    ],
+    "radius_m": 0.45,
+    "keep_margin_m": 0.15,
+    "components_erased": 3,
+    "components_kept_as_structure": [],
+    "cells_erased": 40,
+    "cells_occupied_erased": 39,
+    "cells_unknown_erased": 1,
+    "bbox_px_rowcol": [
+      92,
+      115,
+      100,
+      124
+    ],
+    "bbox_map_m": [
+      -7.525,
+      5.875,
+      -7.075,
+      6.275
+    ],
+    "reason": "X2 self-imprint during D1 mapping, operator-confirmed 2026-10-21"
+  }
+}

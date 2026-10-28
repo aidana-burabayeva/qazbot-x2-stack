@@ -1,0 +1,14 @@
+<!-- No autonomous recovery MOTION. FollowPath failure (e.g. RPP "collision ahead" caused by stale
+     local-costmap marks) clears the local costmap and retries FollowPath, at most 2 times; then the
+     task terminates. Planner is not retried. Coordinator/Trust/adapter gating is outside the BT. -->
+<root main_tree_to_execute="MainTree">
+  <BehaviorTree ID="MainTree">
+    <Sequence>
+      <ComputePathToPose goal="{goal}" path="{path}" planner_id="GridBased"/>
+      <RecoveryNode number_of_retries="2" name="FollowPathRecovery">
+        <FollowPath path="{path}" controller_id="FollowPath" goal_checker_id="goal_checker"/>
+        <ClearEntireCostmap name="ClearLocalCostmap-Follow" service_name="local_costmap/clear_entirely_local_costmap"/>
+      </RecoveryNode>
+    </Sequence>
+  </BehaviorTree>
+</root>

@@ -1,0 +1,4 @@
+ 16:34:33 up  3:29,  1 user,  load average: 7.11, 7.57, 7.59
+13.1 111040 python3 /home/agi/control_backend/tests/controller_dry/sim_robot.py qazbot_ctl
+ 6.9 94800 /home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/nav2_
+ 3.8 77180 /home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/nav2_

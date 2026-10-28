@@ -1,0 +1,6 @@
+# X2 experiment inspired by Go2's initialpose -> Nav2 workflow.
+# No Go2 speed, footprint, AMCL, or controller parameters are imported.
+/**:
+  ros__parameters:
+    admission_policy: go2
+    pose_store: ''
