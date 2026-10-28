@@ -1,0 +1,3 @@
+[INFO] [launch]: All log files can be found below /home/agi/.ros/log/2026-10-28-22-27-52-739769-agi-495619
+[INFO] [launch]: Default logging verbosity is set to INFO
+[ERROR] [launch]: Caught exception in launch (see debug for traceback): Qualified Smac prefix is not selected in the ament index

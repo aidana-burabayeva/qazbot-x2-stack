@@ -1,0 +1,2 @@
+[INFO] [1793195405.950346551] [qazbot_d1_map.motion_adapter]: x2_motion_adapter started: live=True cmd_topic=/qazbot_d1_map/cmd_vel_authorized source=sdk_qazbot_nav2_1028a priority=30
+[ERROR] [1793195563.261521647] [qazbot_d1_map.motion_adapter]: SDK response code=1; no retry or ENABLE fallback

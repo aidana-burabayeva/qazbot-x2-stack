@@ -1,0 +1,52 @@
+== publishers
+/qazbot_lio/cloud_registered pubs=Type: sensor_msgs/msg/PointCloud2 Publisher count: 1 
+/qazbot_lio/scan pubs=Type: sensor_msgs/msg/LaserScan Publisher count: 1 
+/qazbot_lio/scan_obstacles pubs=Type: sensor_msgs/msg/PointCloud2 Publisher count: 1 
+/qazbot_lio/scan_clearing pubs=Type: sensor_msgs/msg/PointCloud2 Publisher count: 1 
+== nodes
+/qazbot_d1_map/amcl /qazbot_d1_map/goal_coordinator /qazbot_d1_map/lifecycle_manager_localization /qazbot_d1_map/localization_trust /qazbot_d1_map/localization_trust_inputs /qazbot_d1_map/map_server /qazbot_d1_map/motion_adapter /qazbot_d1_map/nav2/bt_navigator /qazbot_d1_map/nav2/bt_navigator_navigate_through_poses_rclcpp_node /qazbot_d1_map/nav2/bt_navigator_navigate_to_pose_rclcpp_node /qazbot_d1_map/nav2/controller_server /qazbot_d1_map/nav2/global_costmap/global_costmap /qazbot_d1_map/nav2/lifecycle_manager_navigation /qazbot_d1_map/nav2/local_costmap/local_costmap /qazbot_d1_map/nav2/planner_server /qazbot_d1_map/nav2/transform_listener_impl_aaaadac3b930 /qazbot_d1_map/nav2/transform_listener_impl_aaaaf719dde0 /qazbot_d1_map/nav2/velocity_smoother /qazbot_d1_map/rviz /qazbot_d1_map/transform_listener_impl_5e11c71a0690 /qazbot_d1_map/transform_listener_impl_aaab1e763750 /qazbot_level_bridge /qazbot_lio_mapping /qazbot_native_odom_bridge 
+== costmap obs
+/qazbot_d1_map/nav2/local_costmap/local_costmap observation_sources = String value is:  
+/qazbot_d1_map/nav2/local_costmap/local_costmap obstacle_layer.bounded_rays.data_type = String value is: PointCloud2 
+/qazbot_d1_map/nav2/local_costmap/local_costmap obstacle_layer.bounded_rays.topic = String value is: /qazbot_lio/scan_clearing 
+/qazbot_d1_map/nav2/local_costmap/local_costmap obstacle_layer.observation_sources = String value is: scan bounded_rays 
+/qazbot_d1_map/nav2/local_costmap/local_costmap obstacle_layer.scan.data_type = String value is: PointCloud2 
+/qazbot_d1_map/nav2/local_costmap/local_costmap obstacle_layer.scan.topic = String value is: /qazbot_lio/scan_obstacles 
+/qazbot_d1_map/nav2/local_costmap/local_costmap plugins = String values are: ['obstacle_layer', 'inflation_layer'] 
+/qazbot_d1_map/nav2/global_costmap/global_costmap observation_sources = String value is:  
+/qazbot_d1_map/nav2/global_costmap/global_costmap plugins = String values are: ['static_layer', 'inflation_layer'] 
+== amcl
+max_beams=Integer value is: 60 alpha1=Double value is: 0.1 alpha2=Double value is: 0.1 alpha3=Double value is: 0.1 alpha4=Double value is: 0.1 alpha5=Double value is: 0.1 
+== lifecycle
+controller_server: active [3]
+velocity_smoother: active [3]
+planner_server: 
+bt_navigator: inactive [2]
+map_server: active [3]
+amcl: active [3]
+== actions
+/qazbot_d1_map/nav2/navigate_through_poses
+/qazbot_d1_map/nav2/navigate_to_pose
+/qazbot_d1_map/navigate_to_pose
+== GC
+{"busy": false, "latched": false, "gate": false, "fault": "", "source_zero": true, "trusted": false, "paused": false, "driver_ready": false, "driver_mode": "live", "ready": false, "child_uuid": null}
+== adapter
+{"state": "idle", "reason": "registration_failed", "latch": "", "live": true, "mode": "live", "dry_run": false, "mc_source": "rc", "trusted": false, "registration": "failed", "registration_error": "SDK response code=1", "sdk_service_ready": true, "motion_armed": false, "t1_pause": false, "ready": false, "foreign_publishers": [], "counters": {"saturated": 0, "rejected": 0, "latched": 0, "published": 0}}
+== trust
+{"trusted": false, "ready": false, "motion_ok": false, "t1_transient": false, "reasons": ["T1_tf_stale", "not_ready:awaiting_initialpose_and_amcl"], "diagnostics": ["T1_amcl_pose_stale", "T3_no_particles", "T4_no_baseline", "T6_no_anchor"], "metrics": {"jump_xy": 0.0, "jump_yaw": 0.0}, "admission_policy": "go2", "initialized": false, "ready_cause": "awaiting_initialpose_and_amcl", "anchor": false, "baseline": null, "moving": false, "map_sha256": "6fc67526d5314447d3ffa25d4144310d78b5202a649e87d852735b87c9f320e5", "map_ok": "", "odom_source": "native_imu", "odom_topic": "/qazbot_native/odom", "stamp_rejections": {}, "input_callbacks": {"_odom": {"count": 7910, "duration_s": 0.0001341460010735318, "max_duration_s": 0.0277259780013992, "received": 28377.91400523}, "_scan": {"count": 1327, "duration_s": 0.01967525700092665, "max_duration_s": 0.01967525700092665, "received": 28377.93662783}, "
+== MC
+ name: rc  priority: 80  action_desc: STAND_DEFAULT 
+== tf owners
+/qazbot_d1_map/tf: amcl	/qazbot_d1_map;qazbot_native_odom_bridge	/;motion_adapter	/qazbot_d1_map;transform_listener_impl_aaab1e763750	/qazbot_d1_map;transform_listener_impl_aaaaf719dde0	/qazbot_d1_map/nav2;transform_listener_impl_aaaadac3b930	/qazbot_d1_map/nav2;bt_navigator	/qazbot_d1_map/nav2;localization_trust_inputs	/qazbot_d1_map;transform_listener_impl_5e11c71a0690	/qazbot_d1_map;
+/tf: mc_ros2_node3201	/;_NODE_NAME_UNKNOWN_	_NODE_NAMESPACE_UNKNOWN_;tf_base_imu_subscriber	/;mc_ros2_node3201	/;soc2_drp_ros2_node2873	/;
+== tf pairs 3s
+     30     frame_id: odom	  child_frame_id: base_footprint
+== cmd 10s
+/cmd_vel msgs10s=0 pubs=1
+/aima/mc/locomotion/velocity msgs10s=142 pubs=4
+/cmd_vel_final msgs10s=0 pubs=1
+/qazbot_d1_map/cmd_vel msgs10s=0 pubs=1
+/cmd_vel_dbg_in msgs10s=0 pubs=0
+/qazbot_d1_map/cmd_vel_authorized msgs10s=0 pubs=1
+/qazbot_d1_map/nav2/cmd_vel_nav msgs10s=0 pubs=1
+/pnc/cmd_vel_integration msgs10s=0 pubs=1

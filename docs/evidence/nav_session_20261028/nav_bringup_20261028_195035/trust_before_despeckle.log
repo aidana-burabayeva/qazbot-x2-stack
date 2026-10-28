@@ -1,0 +1,7 @@
+/usr/lib/python3/dist-packages/scipy/__init__.py:146: UserWarning: A NumPy version >=1.17.3 and <1.25.0 is required for this version of SciPy (detected version 1.26.1
+  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
+[INFO] [1793188269.970602680] [qazbot_d1_map.localization_trust]: localization_trust started, map=/home/agi/control_backend/ws/src/maps/first_map_nav2_v3/map.yaml, policy=go2, odom_source=native_imu, odom_topic=/qazbot_native/odom
+[WARN] [1793188754.055493470] [qazbot_d1_map.localization_trust]: initialpose received: READY cleared; policy=go2
+[WARN] [1793188762.847594553] [qazbot_d1_map.localization_trust]: initialpose received: READY cleared; policy=go2
+[ERROR] [1793192522.030272207] [qazbot_d1_map.localization_trust]: served map differs from the trust grid: occupied_cells
+The following exception was never retrieved: cannot use Destroyable because destruction was requested

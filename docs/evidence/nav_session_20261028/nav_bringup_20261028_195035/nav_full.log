@@ -1,0 +1,114 @@
+[INFO] [launch]: All log files can be found below /home/agi/.ros/log/2026-10-28-22-44-55-357126-agi-509608
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [controller_server-1]: process started with pid [509619]
+[controller_server-1] [INFO] [1793198695.559279652] [qazbot_d1_map.nav2.controller_server]: 
+[controller_server-1] 	controller_server lifecycle node launched. 
+[controller_server-1] 	Waiting on external lifecycle transitions to activate
+[controller_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-1] [INFO] [1793198695.563412627] [qazbot_d1_map.nav2.controller_server]: Creating controller server
+[controller_server-1] [INFO] [1793198695.588599970] [qazbot_d1_map.nav2.local_costmap.local_costmap]: 
+[controller_server-1] 	local_costmap lifecycle node launched. 
+[controller_server-1] 	Waiting on external lifecycle transitions to activate
+[controller_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-1] [INFO] [1793198695.589633446] [qazbot_d1_map.nav2.local_costmap.local_costmap]: Creating Costmap
+[INFO] [velocity_smoother-2]: process started with pid [509636]
+[velocity_smoother-2] [INFO] [1793198696.556797688] [qazbot_d1_map.nav2.velocity_smoother]: 
+[velocity_smoother-2] 	velocity_smoother lifecycle node launched. 
+[velocity_smoother-2] 	Waiting on external lifecycle transitions to activate
+[velocity_smoother-2] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [planner_server-3]: process started with pid [509665]
+[INFO] [bt_navigator-4]: process started with pid [509688]
+[planner_server-3] [INFO] [1793198697.535260772] [qazbot_d1_map.nav2.planner_server]: 
+[planner_server-3] 	planner_server lifecycle node launched. 
+[planner_server-3] 	Waiting on external lifecycle transitions to activate
+[planner_server-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[planner_server-3] [INFO] [1793198697.537921259] [qazbot_d1_map.nav2.planner_server]: Creating
+[planner_server-3] [INFO] [1793198697.827529650] [qazbot_d1_map.nav2.global_costmap.global_costmap]: 
+[planner_server-3] 	global_costmap lifecycle node launched. 
+[planner_server-3] 	Waiting on external lifecycle transitions to activate
+[planner_server-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[planner_server-3] [INFO] [1793198697.828858451] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Creating Costmap
+[INFO] [lifecycle_manager-5]: process started with pid [509713]
+[bt_navigator-4] [INFO] [1793198698.111050072] [qazbot_d1_map.nav2.bt_navigator]: 
+[bt_navigator-4] 	bt_navigator lifecycle node launched. 
+[bt_navigator-4] 	Waiting on external lifecycle transitions to activate
+[bt_navigator-4] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[bt_navigator-4] [INFO] [1793198698.114128751] [qazbot_d1_map.nav2.bt_navigator]: Creating
+[lifecycle_manager-5] [INFO] [1793198698.135852778] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: Creating
+[lifecycle_manager-5] [INFO] [1793198698.197032347] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[INFO] [python3-6]: process started with pid [509734]
+[lifecycle_manager-5] [INFO] [1793198699.374628696] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mStarting managed nodes bringup...[0m[0m
+[lifecycle_manager-5] [INFO] [1793198699.374889476] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mConfiguring controller_server[0m[0m
+[controller_server-1] [INFO] [1793198699.378576808] [qazbot_d1_map.nav2.controller_server]: Configuring controller interface
+[controller_server-1] [INFO] [1793198699.383560775] [qazbot_d1_map.nav2.controller_server]: getting goal checker plugins..
+[controller_server-1] [INFO] [1793198699.393969143] [qazbot_d1_map.nav2.controller_server]: Controller frequency set to 20.0000Hz
+[controller_server-1] [INFO] [1793198699.394243043] [qazbot_d1_map.nav2.local_costmap.local_costmap]: Configuring
+[controller_server-1] [INFO] [1793198699.860749819] [qazbot_d1_map.nav2.local_costmap.local_costmap]: Using plugin "obstacle_layer"
+[controller_server-1] [INFO] [1793198699.947957922] [qazbot_d1_map.nav2.local_costmap.local_costmap]: Subscribed to Topics: scan bounded_rays
+[controller_server-1] [INFO] [1793198700.560430219] [qazbot_d1_map.nav2.local_costmap.local_costmap]: Initialized plugin "obstacle_layer"
+[controller_server-1] [INFO] [1793198700.560617651] [qazbot_d1_map.nav2.local_costmap.local_costmap]: Using plugin "inflation_layer"
+[controller_server-1] [INFO] [1793198700.617686741] [qazbot_d1_map.nav2.local_costmap.local_costmap]: Initialized plugin "inflation_layer"
+[controller_server-1] [INFO] [1793198700.950192254] [qazbot_d1_map.nav2.controller_server]: Created progress_checker : progress_checker of type nav2_controller::PoseProgressChecker
+[controller_server-1] [INFO] [1793198700.965431123] [qazbot_d1_map.nav2.controller_server]: Created goal checker : goal_checker of type nav2_controller::SimpleGoalChecker
+[controller_server-1] [INFO] [1793198700.978104201] [qazbot_d1_map.nav2.controller_server]: Controller Server has goal_checker  goal checkers available.
+[controller_server-1] [INFO] [1793198700.979903425] [qazbot_d1_map.nav2.controller_server]: Created controller : FollowPath of type nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[controller_server-1] [INFO] [1793198701.212650194] [qazbot_d1_map.nav2.controller_server]: Controller Server has FollowPath  controllers available.
+[lifecycle_manager-5] [INFO] [1793198701.445606265] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mConfiguring velocity_smoother[0m[0m
+[velocity_smoother-2] [INFO] [1793198701.447090544] [qazbot_d1_map.nav2.velocity_smoother]: Configuring velocity smoother
+[lifecycle_manager-5] [INFO] [1793198701.549913122] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mConfiguring planner_server[0m[0m
+[planner_server-3] [INFO] [1793198701.551816869] [qazbot_d1_map.nav2.planner_server]: Configuring
+[planner_server-3] [INFO] [1793198701.551973798] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Configuring
+[planner_server-3] [INFO] [1793198701.672101007] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Using plugin "static_layer"
+[planner_server-3] [INFO] [1793198701.724720838] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Subscribing to the map topic (/qazbot_d1_map/map) with transient local durability
+[planner_server-3] [INFO] [1793198701.738787777] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Initialized plugin "static_layer"
+[planner_server-3] [INFO] [1793198701.738873160] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Using plugin "obstacle_layer"
+[planner_server-3] [INFO] [1793198701.781209446] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Subscribed to Topics: scan bounded_rays
+[planner_server-3] [INFO] [1793198702.000470841] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Initialized plugin "obstacle_layer"
+[planner_server-3] [INFO] [1793198702.000567393] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Using plugin "inflation_layer"
+[planner_server-3] [INFO] [1793198702.028102022] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Initialized plugin "inflation_layer"
+[planner_server-3] [INFO] [1793198702.225102606] [qazbot_d1_map.nav2.global_costmap.global_costmap]: StaticLayer: Resizing costmap to 319 X 426 at 0.050000 m/pix
+[planner_server-3] [INFO] [1793198702.243305028] [qazbot_d1_map.nav2.planner_server]: Created global planner plugin GridBased of type nav2_smac_planner/SmacPlanner2D
+[planner_server-3] [INFO] [1793198702.243409229] [qazbot_d1_map.nav2.planner_server]: Configuring GridBased of type SmacPlanner2D
+[planner_server-3] [INFO] [1793198702.323985330] [qazbot_d1_map.nav2.planner_server]: Configured plugin GridBased of type SmacPlanner2D with tolerance 0.30, maximum iterations 1000000, max on approach iterations 1000, and not allowing unknown traversal.
+[planner_server-3] [INFO] [1793198702.324124221] [qazbot_d1_map.nav2.planner_server]: Planner Server has GridBased  planners available.
+[lifecycle_manager-5] [INFO] [1793198702.488560570] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mConfiguring bt_navigator[0m[0m
+[bt_navigator-4] [INFO] [1793198702.489525067] [qazbot_d1_map.nav2.bt_navigator]: Configuring
+[lifecycle_manager-5] [INFO] [1793198703.328949859] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mActivating controller_server[0m[0m
+[controller_server-1] [INFO] [1793198703.330422912] [qazbot_d1_map.nav2.controller_server]: Activating
+[controller_server-1] [INFO] [1793198703.330578470] [qazbot_d1_map.nav2.local_costmap.local_costmap]: Activating
+[controller_server-1] [INFO] [1793198703.330611335] [qazbot_d1_map.nav2.local_costmap.local_costmap]: Checking transform
+[controller_server-1] [INFO] [1793198703.330799887] [qazbot_d1_map.nav2.local_costmap.local_costmap]: start
+[controller_server-1] [INFO] [1793198703.578766954] [qazbot_d1_map.nav2.controller_server]: Activating controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[controller_server-1] [INFO] [1793198703.578870862] [qazbot_d1_map.nav2.controller_server]: Creating bond (controller_server) to lifecycle manager.
+[lifecycle_manager-5] [INFO] [1793198703.707532577] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: Server controller_server connected with bond.
+[lifecycle_manager-5] [INFO] [1793198703.707627774] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mActivating velocity_smoother[0m[0m
+[velocity_smoother-2] [INFO] [1793198703.709405859] [qazbot_d1_map.nav2.velocity_smoother]: Activating
+[velocity_smoother-2] [INFO] [1793198703.709539454] [qazbot_d1_map.nav2.velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
+[lifecycle_manager-5] [INFO] [1793198703.902947120] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: Server velocity_smoother connected with bond.
+[lifecycle_manager-5] [INFO] [1793198703.903124715] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mActivating planner_server[0m[0m
+[planner_server-3] [INFO] [1793198703.909133795] [qazbot_d1_map.nav2.planner_server]: Activating
+[planner_server-3] [INFO] [1793198703.909478232] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Activating
+[planner_server-3] [INFO] [1793198703.909523990] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Checking transform
+[planner_server-3] [INFO] [1793198703.909731407] [qazbot_d1_map.nav2.global_costmap.global_costmap]: start
+[planner_server-3] [INFO] [1793198704.148507009] [qazbot_d1_map.nav2.planner_server]: Activating plugin GridBased of type SmacPlanner2D
+[planner_server-3] [INFO] [1793198704.171507686] [qazbot_d1_map.nav2.planner_server]: Creating bond (planner_server) to lifecycle manager.
+[lifecycle_manager-5] [INFO] [1793198704.341142509] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: Server planner_server connected with bond.
+[lifecycle_manager-5] [INFO] [1793198704.341247113] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mActivating bt_navigator[0m[0m
+[bt_navigator-4] [INFO] [1793198704.343791957] [qazbot_d1_map.nav2.bt_navigator]: Activating
+[bt_navigator-4] [INFO] [1793198704.599788843] [qazbot_d1_map.nav2.bt_navigator]: Creating bond (bt_navigator) to lifecycle manager.
+[lifecycle_manager-5] [INFO] [1793198704.741247913] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: Server bt_navigator connected with bond.
+[lifecycle_manager-5] [INFO] [1793198704.741335972] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mManaged nodes are active[0m[0m
+[lifecycle_manager-5] [INFO] [1793198704.741357602] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mCreating bond timer...[0m[0m
+[python3-6] [INFO] [1793198710.467545702] [qazbot_d1_map.goal_coordinator]: Goal Pose accepted
+[bt_navigator-4] [INFO] [1793198710.469884581] [qazbot_d1_map.nav2.bt_navigator]: Begin navigating from current location (-3.62, 0.86) to (-5.82, 4.84)
+[controller_server-1] [INFO] [1793198710.491964513] [qazbot_d1_map.nav2.controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1793198711.542193331] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1793198712.592192674] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+[python3-6] [WARN] [1793198712.634582684] [qazbot_d1_map.goal_coordinator]: trust lost while busy: gate paused (goal kept pending T1 classification)
+[python3-6] [ERROR] [1793198712.636127079] [qazbot_d1_map.goal_coordinator]: TRIP localization_untrusted: busy=True trust_t1=False trust_reasons=['T5_map_odom_jump', 'not_ready:awaiting_initialpose_and_amcl'] -> gate closed, zero, cancel requested, latched
+[controller_server-1] [INFO] [1793198712.642189112] [qazbot_d1_map.nav2.controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1793198712.642276821] [qazbot_d1_map.nav2.controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-4] [INFO] [1793198712.644463979] [qazbot_d1_map.nav2.bt_navigator]: [navigate_to_pose] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-4] [INFO] [1793198712.645010936] [qazbot_d1_map.nav2.bt_navigator]: Goal canceled
+[python3-6] [WARN] [1793198734.723191057] [qazbot_d1_map.goal_coordinator]: Goal rejected (precondition): busy=False reserving=False latched=True fault='localization_untrusted' trust=False trusted_raw=False trust_age_s=0.088 zero=True driver_ready=False driver_mode=live driver_status={'state': 'latched', 'reason': 'localization_untrusted', 'latch': 'localization_untrusted', 'ready': False, 'registration': 'registered', 'motion_armed': False} driver_status_age_s=0.434 driver_arm_svc=True trust_arm_svc=True lifecycle_svc=True nav_active=True nav2_ready=True
+[python3-6] [INFO] [1793198734.728276864] [qazbot_d1_map.goal_coordinator]: Goal Pose rejected by readiness policy

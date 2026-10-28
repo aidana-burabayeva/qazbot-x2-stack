@@ -1,0 +1,8 @@
+349261 FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/latency_20261028_192628/dds_nav_two_iface.xml threads_shm=0
+349272 FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/latency_20261028_192628/dds_nav_two_iface.xml threads_shm=0
+349291 FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/latency_20261028_192628/dds_nav_two_iface.xml threads_shm=0
+349303 FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/latency_20261028_192628/dds_nav_two_iface.xml threads_shm=0
+349335 FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/latency_20261028_192628/dds_nav_two_iface.xml threads_shm=0
+349356 FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/latency_20261028_192628/dds_nav_two_iface.xml threads_shm=0
+349381 FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/latency_20261028_192628/dds_nav_two_iface.xml threads_shm=0
+349442 FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/latency_20261028_192628/dds_nav_two_iface.xml threads_shm=0

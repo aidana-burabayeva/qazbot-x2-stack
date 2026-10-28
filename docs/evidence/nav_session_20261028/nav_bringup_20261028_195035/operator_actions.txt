@@ -1,0 +1,34 @@
+1793192267 operator-requested ClearEntireCostmap local+global
+1793192523 operator-requested map despeckle (<=4px) loaded via load_map: first_map_nav2_v3_despeckled
+1793192587 trust restarted with despeckled map pid 425353
+1793195169 P9: recorder 389912 already dead (sqlite 'database is locked'); started ros2 bag reindex goal_bag_201325 (pid 460689)
+1793195200 P9: pre-stop MC:  name: rc  priority: 80  action_desc: STAND_DEFAULT 
+1793195202 P9: running stop.sh (GC stop, adapter stop/INT, nav_full INT, trust INT, localization INT)
+1793195294 P9: stop done (nav/motion INT->TERM leftovers 387282..387399, localization 372186.. TERM); Trust 425355 exited; zero QazBot procs; HAL 204720 alive; MC  name: rc  priority: 80  action_desc: STAND_DEFAULT 
+1793195365 P9: I1 2d240dbd installed via deploy_i1 (wrapped no_stack ignoring bash -c rows; foreign shell 450989 false positive), backup docs/evidence/i1_deploy_2d240dbd_r2, status INSTALLED_NOT_STARTED
+1793195365 P9: mirrored I1 files into qazbot-x2-stack/ws/src (uncommitted)
+1793195378 P9: start.sh/start_nav.sh -> despeckled map (MAP_SHA 6fc67526...), copies *.pre_P9; start.sh guard also ignores '/bin/bash -c' rows (foreign shell 450989 false positive)
+1793195378 P9: bash start.sh
+1793195385 P9: start.sh guard also ignores 'ros2 topic hz|echo' diagnostic subscribers (foreign hung 451004/451006); re-run start.sh
+1793195403 P9: start.sh OK; owned 464092 464097 464127 464153 464185 464211 464263 464350 
+1793195403 P9: bash start_nav.sh (REGISTER=1)
+1793195566 P9: start_nav.sh exited 6 (nav_full not active within 120s: waits map->odom, needs operator initialpose); launch left running; ADD done manually: 
+1793195709 P9: record_goal.sh fixed (copy .pre_P9): mcap storage, exclude scan_obstacles/scan_clearing/cloud_registered/particle_cloud/global_costmap, keep local_costmap/costmap, aimdk_env sourced; started goal_bag_mcap_215509.log pid 469877
+1793195772 P9: recorder 469877 SIGINT (captured PointCloud2 /qazbot_lio/cloud_effected,/qazbot_lio/map and growing /qazbot_lio/path, ~1.5MB/s); excludes extended; restarted goal_bag_mcap_215612.log pid 471147
+1793195872 P9: done; report appended to .orchestrator/reports/20261028-restart-P9.md
+
+## P9b adapter re-registration (22:0x)
+- Cause: stale MC source sdk_qazbot_nav2_1028a from old adapter (stopped w/o DEL) -> ADD code=1.
+- One-shot SetMcInputSource DELETE of sdk_qazbot_nav2_1028a -> code 0 (needs FASTRTPS_DEFAULT_PROFILES_FILE=$EV/dds_nav_two_iface_log.xml, else no discovery).
+- Adapter restarted with source sdk_qazbot_nav2_1028b (pid 479952, adapter.pid updated, old log adapter_1028a.log); one register call -> 'SDK source registered'. status: registered, motion_armed=false, mc_source=rc, 0 msgs on cmd_vel_authorized 8s. A transient duplicate launch (1028a) died on owner lock, harmless.
+- Adapter does NOT DEL on shutdown (destroy_node only zero-burst + lock release). Not changed (async service call at teardown unverified); TODO: DEL own source in destroy_node, or run DEL one-shot before stopping. start_nav.sh default name still 1028a: use QAZBOT_SOURCE_NAME=sdk_qazbot_nav2_1028b next time.
+[2026-10-28 22:25-22:31] P12 (operator decision 22:2x, overrides AGENTS.md T5 rule):
+  - AMCL update_min_d 0.25->0.10, update_min_a 0.20->0.10: localization.launch.py (backup .bak_20261028_pre_p12, mirrored to qazbot-x2-stack) + live `ros2 param set /qazbot_d1_map/amcl` (successful, verified by param get). AMCL NOT restarted.
+  - Trust T5 jump_xy_max/jump_yaw_max 0.10->0.25 via ROS param override (loc_trust.py defaults unchanged): start.sh (backup start.sh.pre_P12) + new restart_trust.sh. Trust restarted 22:26:23 (old 464350 SIGINT) -> PID 494295, verified jump_*_max=0.25. T1 thresholds untouched.
+  - nav_full restart (restart_gc.sh CONFIRM=1) 22:27: first attempt FAILED (old launch stopped, new launch died: 'Qualified Smac prefix is not selected' - QAZBOT_SMAC_PREFIX exported after env.sh). restart_gc.sh fixed (export before env.sh as in start_nav.sh; skip-stop when nav_full already down; backup restart_gc.sh.pre_P12fix). Relaunch 22:30:33 -> launch PID 498193, Managed nodes active. Loads P10 GC logging + P11 BT replanning/global obstacle_layer/tolerance 0.3.
+  - Operator initialpose observed in trust.log at ~22:29:42 (during nav_full restart). Adapter 479952 untouched (still latched). No goals/cmd_vel/initialpose/resume by agent.
+  - P12 live state 22:33: Trust trusted/ready/motion_ok; GC idle not latched; adapter latched localization_untrusted (resume pending, orchestrator). Report /home/agi/.orchestrator/reports/20261028-p12.md
+1793198336 orchestrator: motion_adapter/resume after operator initialpose (P12)
+[P13 22:45:43] failure_tolerance 0.3->3.0; BT wrapped in RecoveryNode(3 retries, recovery=ComputePathToPose); added nav2_recovery_node_bt_node to plugin_lib_names (nav_full.launch.py); nav_full restarted (pid 509608), adapter 479952 untouched, adapter still latched localization_untrusted (NOT resumed). Backups *.bak_20261028_pre_p13. Mirrored to qazbot-x2-stack.
+1793198752 orchestrator: AMCL max_beams 60->180 live (convergence; cameras stopped so CPU ok)
+1793198822 orchestrator: controller failure_tolerance 10.0 live + file

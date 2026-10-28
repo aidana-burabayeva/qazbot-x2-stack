@@ -1,0 +1,22 @@
+top - 19:54:42 up  5:53,  0 users,  load average: 26.98, 21.86, 17.39
+Tasks: 343 total,   6 running, 337 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 31.9 us, 17.7 sy,  0.0 ni, 42.6 id,  0.0 wa,  4.3 hi,  3.5 si,  0.0 st
+MiB Mem :  15656.2 total,    577.8 free,   6767.5 used,   8310.9 buff/cache
+MiB Swap:   7828.1 total,   6881.8 free,    946.2 used.   7902.3 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+   4674 run       20   0   20.0g 681316 168168 S  56.2   4.2 109:18.35 perception
+   2936 run       20   0   19.6g 271412 120216 S  37.5   1.7 133:08.97 component_conta
+   3361 run       20   0   38.6g 769712 214104 S  37.5   4.8 150:22.45 soc1_hal..amera
+ 372200 agi       20   0 1191616 180504  39860 R  37.5   1.1   1:09.55 fastlio_mapping
+   1196 root     -76   0   18.1g 210936  26024 S  31.2   1.3 116:57.07 nvargus-daemon
+ 372313 agi       20   0  928776  74128  28508 R  25.0   0.5   1:11.96 python3
+    354 root     -51   0       0      0      0 R  18.8   0.0  48:19.03 irq/188-host1x_
+ 204720 run       20   0   20.7g 248908 120156 S  18.8   1.6  24:19.48 soc1_hal.._orin
+   2950 run       20   0 2600876 265416 111756 S  12.5   1.7  62:16.07 soc1_drp
+   3691 run       20   0 3016116 156092  39664 S  12.5   1.0  15:40.07 soc1_hds..aster
+   4787 run       20   0 5712748 347428 180828 S  12.5   2.2  64:22.87 pnc
+ 319571 agi       20   0 6121288 351316 108192 S  12.5   2.2   1:14.23 claude
+    701 root      19  -1  208496 127956 126364 S   6.2   0.8   1:19.52 systemd-journal
+    901 root      20   0    6336    864    764 S   6.2   0.0  10:40.68 awk
+   2514 run       20   0 1694800  75128  34336 S   6.2   0.5   8:34.43 ros2
