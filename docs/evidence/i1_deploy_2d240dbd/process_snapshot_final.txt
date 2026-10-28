@@ -1,0 +1,2 @@
+run         3361    2860 ./aima-hal_sensor-app-main --cfg_file_path=cfg/hal_camera_orin_t2d5.yaml --process_name=hal_camera
+run       204720  204714 ./aima-hal_sensor-app-main --cfg_file_path=cfg/hal_sensor_orin_t2d5.yaml --process_name=hal_sensor_orin

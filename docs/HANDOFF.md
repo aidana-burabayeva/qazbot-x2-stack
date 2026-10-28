@@ -1,10 +1,10 @@
 # QazBot X2: продолжение к первому физическому RViz Goal
 
-Обновлено 2026-10-28, snapshot X2 около 18:48 +08:00. Начать с этой передачи и AGENTS.md, не с нового аудита. Первый физический NavigateToPose SUCCEEDED **пока не подтверждён**.
+Обновлено 2026-10-28, финальная проверка X2 18:56:05 +08:00. Начать с этой передачи и AGENTS.md, не с нового аудита. Первый физический NavigateToPose SUCCEEDED **пока не подтверждён**.
 
 ## Активная задача и Git
 
-Оператор одобрил diff PR #1 и **временную пассивную установку I1 2d240dbd**. Установка выполнена, один localization/Trust и один пассивный Costmap работают. **Ожидается новая initialpose оператора** через RViz; запрос отправлен. MC, Motion Adapter, Goal Coordinator, goals и движение НЕ разрешены и агентом не запускались.
+Оператор одобрил diff PR #1 и **временную пассивную установку I1 2d240dbd**. Установка и пассивный запуск выполнены, затем **LIVE freshness FAIL → проверенный rollback**. Наши localization/Trust/Costmap и наблюдатели остановлены. Оператор задал новую initialpose, AMCL принял её; READY/TRUSTED/MOTION_OK достигнуты, но допуск прерывался из-за T1. Стульчик оператор поставил, запрос убрать ещё НЕ давался; удаление не проверено. **Сейчас действий оператора не требуется. Ждать подтверждения каждого запрошенного действия прежде следующего шага.** MC, Motion Adapter, Goal Coordinator, goals и движение НЕ разрешены и агентом не запускались.
 
 - main: 6e70c0f90665c06dfc704162c9ddc84efce977c1 (документация поверх production baseline c15dd6c6c8fe8d5e6cc1014c68bb9da51dd8a3fa).
 - I1 / PR #1: **2d240dbd09ca69de87e9ac4b1acde735293ad6b2**, https://github.com/aidana-burabayeva/qazbot-x2-stack/pull/1. Код I1 не merged в main.
@@ -13,11 +13,11 @@
 - ПК: /home/adn/QazBot/control_backend и control_backend_i1. Digital Twin доступен /home/adn/QazBot/digital_twin, пока вне Git. Не восстанавливать отсутствующие исходники по догадке.
 - X2 agi@192.168.1.72: /home/agi/control_backend — deployed-каталог без .git; не git init/reset поверх runtime.
 
-## Установлено на X2
+## Испытанная версия и текущий rollback X2
 
-Только два production-файла из 2d240dbd, исходный backup проверен. Manifest: `/home/agi/control_backend/docs/evidence/i1_deploy_2d240dbd/deployment.json` (копия в evidence). Manifest INSTALLED_NOT_STARTED фиксирует именно транзакцию установки; последующий запуск фиксируется отдельным passive_snapshot.json.
+Временно ставились только два production-файла из 2d240dbd, исходный backup проверен. После отказа свежести возвращены baseline SHA256: level_bridge.py 86c434ce0ee5a48de1a324f7a3eb5e2136f8d9d3f1b91b582f6fa522707be686; nav_control.launch.py ebea6637578530f0b30be6dd5d720ef1011270ce2a4df902d2bd1e1b5c266bec. Повторная SHA-проверка PASS. **I1 сейчас не установлен.** Manifest: `/home/agi/control_backend/docs/evidence/i1_deploy_2d240dbd/deployment.json` (копия в evidence). Manifest теперь ROLLED_BACK; пассивный результат FAIL_LIVE_FRESHNESS_ROLLED_BACK фиксирует passive_snapshot.json.
 
-| Файл | Установленный SHA256 |
+| Файл | SHA256 испытанной версии (I1 впоследствии откачен) |
 | --- | --- |
 | ws/src/lio/level_bridge.py | c817a5ed503386be742fa7b6fdab2b3209bdefaf42be799d2a130cd198f9369b |
 | ws/src/navigation/nav_control.launch.py | c4e46506069481f3cebd3fef38af7e83bac858f9d6d4e344edeb657a137de38e |
@@ -26,13 +26,13 @@
 
 UDP-only process-local profile dds_udp_only.xml: 29d4c736a364691689ccc8f27c62f566c65af946df1b6fc9dd5ec03ae239ec63; включает develop0 и wifi0 для RViz. Vendor/global DDS XML не изменялись. После `source ws/src/navigation/env.sh` обязательно переопределять FASTRTPS_DEFAULT_PROFILES_FILE, ROS_DOMAIN_ID=0, ROS_LOCALHOST_ONLY=0.
 
-## Последние процессы и пассивные данные
+## Последние процессы и пассивные данные (запуск остановлен)
 
-Сессия i1_deploy_2d240dbd, PID snapshot: launch 287375, FAST-LIO 287381, level_bridge 287406 publish_tf=false, AMCL 287436, native bridge 287488 native_imu publish_tf=true, Trust 287803, observer 288603, standalone Costmap 288900. Все принадлежат этой сессии; **PID не считать актуальными без новой проверки**. map_server/lifecycle также входят в launch.
+Сессия i1_deploy_2d240dbd, PID snapshot: launch 287375, FAST-LIO 287381, level_bridge 287406 publish_tf=false, AMCL 287436, native bridge 287488 native_imu publish_tf=true, Trust 287803, observer 288603, standalone Costmap 288900. Позднее observer заменён облегчённым PID295474, отдельный obstacle probe PID293649. **Все эти owned процессы уже остановлены**; финальная проверка 18:56:05: нет QazBot FAST-LIO/bridge/native/AMCL/Trust/Costmap/probes. Штатный HAL204720 оставлен работающим, камера не тронута. Не считать старые PID текущим состоянием. map_server/lifecycle также входят в launch.
 
-Проверено: свежие cloud_registered, scan, scan_obstacles, scan_clearing; по одному publisher. Оба новых PointCloud2 в base_footprint. Native status fault/latched пусты; odom→base_footprint от native bridge. Namespace TF endpoints — native bridge и AMCL, разных рёбер. До initialpose map→odom ещё не появился, Trust корректно NOT_READY/awaiting_initialpose_and_amcl/T1_tf_stale. Это не отказ I1.
+Проверено: свежие cloud_registered, scan, scan_obstacles, scan_clearing; по одному publisher. Оба новых PointCloud2 в base_footprint. Native status fault/latched пусты; odom→base_footprint от native bridge. Namespace TF endpoints — native bridge и AMCL, разных рёбер. Новая initialpose принята AMCL, map→odom появился; Go2 Trust достиг READY/TRUSTED/MOTION_OK. Seed-time future-TF warning 15.635 мс сохранился. **После seed 1356 статусов, 1301 допущенный и 55 блокированных**: T1_scan_stale 42, T1_tf_stale 8, T1_odom_message_stale 7, T1_odom_stale 7 (причины могут совпадать). Max input ages scan 1.207120 с, odom TF .650090 с, odom message .731287 с. T5=0; непрерывный READY на всю эпоху НЕ заявлять. Смена observer на облегчённый не убрала повторение scan stale.
 
-Пассивный Costmap /costmap/costmap configured/active, реальные источники scan_obstacles marking и scan_clearing clearing; 4×4 м, 0.05 м, radius .454 + padding .01, штатные 3/3.5 м, inflation .464. Это standalone ObstacleLayer, без controller/RPP action. Летальные клетки видны; полноценная проверка операторским препятствием ещё не выполнена.
+Пассивный Costmap /costmap/costmap configured/active, реальные источники scan_obstacles marking и scan_clearing clearing; 4×4 м, 0.05 м, radius .454 + padding .01, штатные 3/3.5 м, inflation .464. Это standalone ObstacleLayer, без controller/RPP action. Оператор поставил стульчик в 1 м от самой передней части ног/робота. В probe ROI x=.55…1.45, |y|<.3 м относительно base_footprint количество lethal выросло с 0 до 55 в последней записи (max99). Новые marking returns присутствуют. Это наблюдение согласуется с постановкой препятствия; классификация стул/оператор не выполнялась. Удаление/clearing после удаления НЕ проверено: агент остановил тест из-за freshness, пока оператор выполнял постановку. Оператор указал впредь обязательно ждать выполнения каждого запрошенного действия; не выдавать саму задержку ответа за отказ проверки.
 
 У QazBot namespace command publishers нет. Штатные /cmd_vel и MC velocity endpoints существуют, чужие процессы не останавливались; отсутствие полученных velocity samples не доказывает нулевые команды всех штатных publishers. MC state получен rc/STAND_DEFAULT. Никаких команд агент не отправлял.
 
@@ -70,11 +70,11 @@ Covariance/particles/scan score/no baseline/no anchor diagnostics Go2 не ск�
 
 ## Следующие действия и разрешения
 
-1. Не запускать второй стек. Проверить свежие PID/логи и passive_observer.jsonl в deployment docs directory.
-2. Оператор должен отправить **новую** RViz 2D Pose Estimate фактической позы в frame map на /qazbot_d1_map/initialpose. Запрос уже отправлен. Старые initialpose из t5live1 не заменяют новый seed.
-3. Измерить принятие seed, map→odom, READY/TRUSTED/MOTION_OK, T5 и свежесть. Попросить оператора поставить/убрать реальное препятствие перед неподвижным X2; проверить lethal сохраняется при наличии и очищается после подтверждённых лучей. При фактическом отказе остановить тест и rollback.
+1. Не запускать второй стек. Сначала прочитать новые freshness_events.json и freshness_same_stamp_analysis.json. В одном совпадающем header stamp cloud_registered уже пришёл observer с age .447639 с, scan с .474864 с; разница callback receipts .027405 с. В других примерах cloud тоже задержан. Это **не доказывает причину HAL/LIO/DDS**, но не позволяет приписать весь отказ bounded-clearing математике.
+2. Следующий узкий эксперимент: одной существующей age_probe.py измерить raw cloud/IMU → cloud_registered/odometry → scan → native odom/Trust при одинаковой конфигурации и минимуме observers; сравнить single-interface capture UDP profile с двухинтерфейсным navigation profile. Предыдущий capture имел cloud age p95 .066521/max .092492 с, но нагрузка/профиль отличались, поэтому это не контролируемый A/B. Не ослаблять T1 и не менять clearing по догадке. Новая production-правка требует review и разрешения; не переустанавливать откаченный кандидат автоматически.
+3. После устранения измеренной задержки повторить пассивную интеграцию: новая операторская initialpose, препятствие сохранить/убрать по отдельным последовательным запросам. **После каждого запроса дождаться подтверждения оператора**, затем измерить. Сейчас оператору ничего выполнять не нужно. При отказе — остановить испытание и rollback, объяснив причину отдельно от невыполненного операторского шага.
 4. После пассивной проверки подготовить путь без движения. **Отдельное разрешение** необходимо для запуска MC/Motion Adapter/Goal Coordinator и физического Goal. Перед ним оператор рядом, RC/физический останов проверены, свежая initialpose/AMCL/Trust, карта D1 v3, один владелец TF, реальные препятствия видны. Скорость — по существующим измерениям торможения, не наугад.
-5. После сессии остановить только owned процессы (Trust, launch, passive Costmap/observer), проверить освобождение. Известный Costmap teardown может быть не clean: сохранить exit/log, не затрагивать vendor HAL/camera. Новые данные сохранять только внутри control_backend/docs и публиковать в отдельной ветке.
+5. В этой сессии owned процессы уже остановлены. При следующей сессии остановить только owned процессы (Trust, launch, passive Costmap/observer), проверить освобождение. Известный Costmap teardown может быть не clean: сохранить exit/log, не затрагивать vendor HAL/camera. Новые данные сохранять только внутри control_backend/docs и публиковать в отдельной ветке.
 
 Rollback **после остановки owned ROS процессов**:
 
@@ -83,3 +83,5 @@ python3 /tmp/i1_stage_2d240dbd/tools/deploy_i1.py --backup /home/agi/control_bac
 ```
 
 Проверка воспроизводимости установки и процесса: tools/deploy_i1.py в Git 2d240dbd, deployment.json содержит before/after SHA; original/ws/src/ содержит проверенный backup на X2. Не переустанавливать T5.
+
+Новые итоговые архивы и SHA256: evidence/i1_deploy_2d240dbd/archive_manifest.json. SIGINT для nohup launch не завершил два Python child; после проверки собственных PID завершены через TERM. Standalone Costmap снова выдал terminate called without active exception; журнал сохранён. Ни один чужой/vendor процесс не остановлен. Записи сохранены в Git, а не только в dirty файлах.

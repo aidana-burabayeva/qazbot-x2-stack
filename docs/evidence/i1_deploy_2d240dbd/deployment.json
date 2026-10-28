@@ -1,5 +1,5 @@
 {
-  "status": "INSTALLED_NOT_STARTED",
+  "status": "ROLLED_BACK",
   "source_commit": "2d240dbd09ca69de87e9ac4b1acde735293ad6b2",
   "files": {
     "ws/src/lio/level_bridge.py": {

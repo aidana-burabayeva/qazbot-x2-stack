@@ -1,0 +1,1589 @@
+[
+  {
+    "wall": 1793184584.9783084,
+    "reasons": [
+      "T1_tf_stale"
+    ],
+    "trust_scan_age": 0.16219502517196815,
+    "summary_time_delta": 0.23229384422302246,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.20008325576782227,
+        "receipt_age": 0.0692598819732666
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.20008325576782227,
+        "receipt_age": 0.07074642181396484
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.20008325576782227,
+        "receipt_age": 0.07268309593200684
+      },
+      "native_odom": {
+        "age_at_summary": 0.016529560089111328,
+        "receipt_age": 0.009575366973876953
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.10009908676147461,
+        "receipt_age": 0.06461787223815918
+      }
+    }
+  },
+  {
+    "wall": 1793184599.0287647,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.5615102396986913,
+    "summary_time_delta": -0.3969545364379883,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.42077016830444336,
+        "receipt_age": 0.07743120193481445
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.42077016830444336,
+        "receipt_age": 0.07991170883178711
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.42077016830444336,
+        "receipt_age": 0.08298063278198242
+      },
+      "native_odom": {
+        "age_at_summary": 0.34842753410339355,
+        "receipt_age": 0.030872106552124023
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.42077016830444336,
+        "receipt_age": 0.0508122444152832
+      }
+    }
+  },
+  {
+    "wall": 1793184599.2359915,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.7655643936959677,
+    "summary_time_delta": 0.4053666591644287,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.5125460624694824,
+        "receipt_age": 0.47486448287963867
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.5125460624694824,
+        "receipt_age": 0.48082709312438965
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.5125460624694824,
+        "receipt_age": 0.48122215270996094
+      },
+      "native_odom": {
+        "age_at_summary": 0.08802437782287598,
+        "receipt_age": 0.05918383598327637
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.5125460624694824,
+        "receipt_age": 0.44763946533203125
+      }
+    }
+  },
+  {
+    "wall": 1793184599.3715181,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.7529678297905775,
+    "summary_time_delta": 0.2698400020599365,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.5125460624694824,
+        "receipt_age": 0.47486448287963867
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.5125460624694824,
+        "receipt_age": 0.48082709312438965
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.5125460624694824,
+        "receipt_age": 0.48122215270996094
+      },
+      "native_odom": {
+        "age_at_summary": 0.08802437782287598,
+        "receipt_age": 0.05918383598327637
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.5125460624694824,
+        "receipt_age": 0.44763946533203125
+      }
+    }
+  },
+  {
+    "wall": 1793184599.571994,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.5834798709038296,
+    "summary_time_delta": 0.06936407089233398,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.5125460624694824,
+        "receipt_age": 0.47486448287963867
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.5125460624694824,
+        "receipt_age": 0.48082709312438965
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.5125460624694824,
+        "receipt_age": 0.48122215270996094
+      },
+      "native_odom": {
+        "age_at_summary": 0.08802437782287598,
+        "receipt_age": 0.05918383598327637
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.5125460624694824,
+        "receipt_age": 0.44763946533203125
+      }
+    }
+  },
+  {
+    "wall": 1793184620.379653,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.6100106621415762,
+    "summary_time_delta": -0.16693973541259766,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.6758291721343994,
+        "receipt_age": 0.3964812755584717
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.6758291721343994,
+        "receipt_age": 0.40759849548339844
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.6758291721343994,
+        "receipt_age": 0.41837143898010254
+      },
+      "native_odom": {
+        "age_at_summary": 0.27642178535461426,
+        "receipt_age": 0.15334415435791016
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.4601171016693115,
+        "receipt_age": 0.3609464168548584
+      }
+    }
+  },
+  {
+    "wall": 1793184630.7893927,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.6658284895092947,
+    "summary_time_delta": -0.09837150573730469,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.780332088470459,
+        "receipt_age": 0.051073551177978516
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.780332088470459,
+        "receipt_age": 0.05206418037414551
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.780332088470459,
+        "receipt_age": 0.05414128303527832
+      },
+      "native_odom": {
+        "age_at_summary": 0.17330360412597656,
+        "receipt_age": 0.046065330505371094
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.5778043270111084,
+        "receipt_age": 0.4412722587585449
+      }
+    }
+  },
+  {
+    "wall": 1793184631.101144,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.6567884088726714,
+    "summary_time_delta": -0.4101228713989258,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.780332088470459,
+        "receipt_age": 0.051073551177978516
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.780332088470459,
+        "receipt_age": 0.05206418037414551
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.780332088470459,
+        "receipt_age": 0.05414128303527832
+      },
+      "native_odom": {
+        "age_at_summary": 0.17330360412597656,
+        "receipt_age": 0.046065330505371094
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.5778043270111084,
+        "receipt_age": 0.4412722587585449
+      }
+    }
+  },
+  {
+    "wall": 1793184631.1713848,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.6566582782797923,
+    "summary_time_delta": -0.4803636074066162,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.780332088470459,
+        "receipt_age": 0.051073551177978516
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.780332088470459,
+        "receipt_age": 0.05206418037414551
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.780332088470459,
+        "receipt_age": 0.05414128303527832
+      },
+      "native_odom": {
+        "age_at_summary": 0.17330360412597656,
+        "receipt_age": 0.046065330505371094
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.5778043270111084,
+        "receipt_age": 0.4412722587585449
+      }
+    }
+  },
+  {
+    "wall": 1793184631.3746612,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.8562876182804757,
+    "summary_time_delta": 0.340972900390625,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.3050522804260254,
+        "receipt_age": 0.21574711799621582
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.3050522804260254,
+        "receipt_age": 0.21740221977233887
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.3050522804260254,
+        "receipt_age": 0.2186136245727539
+      },
+      "native_odom": {
+        "age_at_summary": 0.06596946716308594,
+        "receipt_age": 0.015452861785888672
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.20353198051452637,
+        "receipt_age": 0.13869524002075195
+      }
+    }
+  },
+  {
+    "wall": 1793184657.39945,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.5508253583175247,
+    "summary_time_delta": 0.19357872009277344,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.45661377906799316,
+        "receipt_age": 0.3959805965423584
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.45661377906799316,
+        "receipt_age": 0.3968813419342041
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.45661377906799316,
+        "receipt_age": 0.3970823287963867
+      },
+      "native_odom": {
+        "age_at_summary": 0.09070014953613281,
+        "receipt_age": 0.056472063064575195
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.45661377906799316,
+        "receipt_age": 0.3965446949005127
+      }
+    }
+  },
+  {
+    "wall": 1793184658.0373535,
+    "reasons": [
+      "T1_tf_stale"
+    ],
+    "trust_scan_age": 0.4174782420122938,
+    "summary_time_delta": -0.4443247318267822,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.45661377906799316,
+        "receipt_age": 0.3959805965423584
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.45661377906799316,
+        "receipt_age": 0.3968813419342041
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.45661377906799316,
+        "receipt_age": 0.3970823287963867
+      },
+      "native_odom": {
+        "age_at_summary": 0.09070014953613281,
+        "receipt_age": 0.056472063064575195
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.45661377906799316,
+        "receipt_age": 0.3965446949005127
+      }
+    }
+  },
+  {
+    "wall": 1793184658.1757996,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.5933141930108832,
+    "summary_time_delta": 0.43391895294189453,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.39905571937561035,
+        "receipt_age": 0.30945420265197754
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.39905571937561035,
+        "receipt_age": 0.3131725788116455
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.39905571937561035,
+        "receipt_age": 0.3136599063873291
+      },
+      "native_odom": {
+        "age_at_summary": 0.05545949935913086,
+        "receipt_age": 0.041110992431640625
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.19883275032043457,
+        "receipt_age": 0.17269277572631836
+      }
+    }
+  },
+  {
+    "wall": 1793184660.4103913,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.564875752395892,
+    "summary_time_delta": 0.3749711513519287,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.49805641174316406,
+        "receipt_age": 0.0994577407836914
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.49805641174316406,
+        "receipt_age": 0.11828899383544922
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.49805641174316406,
+        "receipt_age": 0.11915898323059082
+      },
+      "native_odom": {
+        "age_at_summary": 0.3851954936981201,
+        "receipt_age": 0.11140298843383789
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.3736846446990967,
+        "receipt_age": 0.15947890281677246
+      }
+    }
+  },
+  {
+    "wall": 1793184661.3077886,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.5562545150896767,
+    "summary_time_delta": -0.5224261283874512,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.49805641174316406,
+        "receipt_age": 0.0994577407836914
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.49805641174316406,
+        "receipt_age": 0.11828899383544922
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.49805641174316406,
+        "receipt_age": 0.11915898323059082
+      },
+      "native_odom": {
+        "age_at_summary": 0.3851954936981201,
+        "receipt_age": 0.11140298843383789
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.3736846446990967,
+        "receipt_age": 0.15947890281677246
+      }
+    }
+  },
+  {
+    "wall": 1793184661.669942,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.5712192155842786,
+    "summary_time_delta": 0.5396435260772705,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 1.3977982997894287,
+        "receipt_age": 0.8773999214172363
+      },
+      "scan_obstacles": {
+        "age_at_summary": 1.3977982997894287,
+        "receipt_age": 0.8794324398040771
+      },
+      "scan_clearing": {
+        "age_at_summary": 1.3977982997894287,
+        "receipt_age": 0.8796806335449219
+      },
+      "native_odom": {
+        "age_at_summary": 0.869462251663208,
+        "receipt_age": 0.41357421875
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.4987823963165283,
+        "receipt_age": 0.0495905876159668
+      }
+    }
+  },
+  {
+    "wall": 1793184661.7039995,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.7707178455821122,
+    "summary_time_delta": 0.5055859088897705,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 1.3977982997894287,
+        "receipt_age": 0.8773999214172363
+      },
+      "scan_obstacles": {
+        "age_at_summary": 1.3977982997894287,
+        "receipt_age": 0.8794324398040771
+      },
+      "scan_clearing": {
+        "age_at_summary": 1.3977982997894287,
+        "receipt_age": 0.8796806335449219
+      },
+      "native_odom": {
+        "age_at_summary": 0.869462251663208,
+        "receipt_age": 0.41357421875
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.4987823963165283,
+        "receipt_age": 0.0495905876159668
+      }
+    }
+  },
+  {
+    "wall": 1793184662.2123923,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.9612869925840641,
+    "summary_time_delta": -0.0028069019317626953,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 1.3977982997894287,
+        "receipt_age": 0.8773999214172363
+      },
+      "scan_obstacles": {
+        "age_at_summary": 1.3977982997894287,
+        "receipt_age": 0.8794324398040771
+      },
+      "scan_clearing": {
+        "age_at_summary": 1.3977982997894287,
+        "receipt_age": 0.8796806335449219
+      },
+      "native_odom": {
+        "age_at_summary": 0.869462251663208,
+        "receipt_age": 0.41357421875
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.4987823963165283,
+        "receipt_age": 0.0495905876159668
+      }
+    }
+  },
+  {
+    "wall": 1793184662.217811,
+    "reasons": [
+      "T1_odom_message_stale"
+    ],
+    "trust_scan_age": 0.16197075054515153,
+    "summary_time_delta": -0.008225679397583008,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 1.3977982997894287,
+        "receipt_age": 0.8773999214172363
+      },
+      "scan_obstacles": {
+        "age_at_summary": 1.3977982997894287,
+        "receipt_age": 0.8794324398040771
+      },
+      "scan_clearing": {
+        "age_at_summary": 1.3977982997894287,
+        "receipt_age": 0.8796806335449219
+      },
+      "native_odom": {
+        "age_at_summary": 0.869462251663208,
+        "receipt_age": 0.41357421875
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.4987823963165283,
+        "receipt_age": 0.0495905876159668
+      }
+    }
+  },
+  {
+    "wall": 1793184662.4783237,
+    "reasons": [
+      "T1_tf_stale"
+    ],
+    "trust_scan_age": 0.3602460616020835,
+    "summary_time_delta": -0.2687382698059082,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 1.3977982997894287,
+        "receipt_age": 0.8773999214172363
+      },
+      "scan_obstacles": {
+        "age_at_summary": 1.3977982997894287,
+        "receipt_age": 0.8794324398040771
+      },
+      "scan_clearing": {
+        "age_at_summary": 1.3977982997894287,
+        "receipt_age": 0.8796806335449219
+      },
+      "native_odom": {
+        "age_at_summary": 0.869462251663208,
+        "receipt_age": 0.41357421875
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.4987823963165283,
+        "receipt_age": 0.0495905876159668
+      }
+    }
+  },
+  {
+    "wall": 1793184662.6767356,
+    "reasons": [
+      "T1_odom_stale",
+      "T1_tf_stale"
+    ],
+    "trust_scan_age": 0.22345535775093595,
+    "summary_time_delta": -0.4671502113342285,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 1.3977982997894287,
+        "receipt_age": 0.8773999214172363
+      },
+      "scan_obstacles": {
+        "age_at_summary": 1.3977982997894287,
+        "receipt_age": 0.8794324398040771
+      },
+      "scan_clearing": {
+        "age_at_summary": 1.3977982997894287,
+        "receipt_age": 0.8796806335449219
+      },
+      "native_odom": {
+        "age_at_summary": 0.869462251663208,
+        "receipt_age": 0.41357421875
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.4987823963165283,
+        "receipt_age": 0.0495905876159668
+      }
+    }
+  },
+  {
+    "wall": 1793184662.810403,
+    "reasons": [
+      "T1_odom_stale",
+      "T1_tf_stale"
+    ],
+    "trust_scan_age": 0.2294348805262416,
+    "summary_time_delta": 0.48306751251220703,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.4802565574645996,
+        "receipt_age": 0.08584928512573242
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.4802565574645996,
+        "receipt_age": 0.08641862869262695
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.4802565574645996,
+        "receipt_age": 0.08687376976013184
+      },
+      "native_odom": {
+        "age_at_summary": 0.12945294380187988,
+        "receipt_age": 0.015438318252563477
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.3820197582244873,
+        "receipt_age": 0.2879793643951416
+      }
+    }
+  },
+  {
+    "wall": 1793184663.0112777,
+    "reasons": [
+      "T1_odom_stale",
+      "T1_tf_stale"
+    ],
+    "trust_scan_age": 0.16708303774430533,
+    "summary_time_delta": 0.2821929454803467,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.4802565574645996,
+        "receipt_age": 0.08584928512573242
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.4802565574645996,
+        "receipt_age": 0.08641862869262695
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.4802565574645996,
+        "receipt_age": 0.08687376976013184
+      },
+      "native_odom": {
+        "age_at_summary": 0.12945294380187988,
+        "receipt_age": 0.015438318252563477
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.3820197582244873,
+        "receipt_age": 0.2879793643951416
+      }
+    }
+  },
+  {
+    "wall": 1793184671.373976,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.5564898679767794,
+    "summary_time_delta": 0.0836632251739502,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.36995625495910645,
+        "receipt_age": 0.34377241134643555
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.36995625495910645,
+        "receipt_age": 0.3459463119506836
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.36995625495910645,
+        "receipt_age": 0.3463447093963623
+      },
+      "native_odom": {
+        "age_at_summary": 0.06206679344177246,
+        "receipt_age": 0.009032249450683594
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.36995625495910645,
+        "receipt_age": 0.3476128578186035
+      }
+    }
+  },
+  {
+    "wall": 1793184679.213807,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.5574969661611249,
+    "summary_time_delta": 0.367506742477417,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.7705678939819336,
+        "receipt_age": 0.5590682029724121
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.7705678939819336,
+        "receipt_age": 0.5636119842529297
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.7705678939819336,
+        "receipt_age": 0.5643444061279297
+      },
+      "native_odom": {
+        "age_at_summary": 0.7201180458068848,
+        "receipt_age": 0.01613473892211914
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.7705678939819336,
+        "receipt_age": 0.5621793270111084
+      }
+    }
+  },
+  {
+    "wall": 1793184679.3908675,
+    "reasons": [
+      "T1_odom_stale",
+      "T1_odom_message_stale",
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.5575770830182591,
+    "summary_time_delta": 0.1904463768005371,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.7705678939819336,
+        "receipt_age": 0.5590682029724121
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.7705678939819336,
+        "receipt_age": 0.5636119842529297
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.7705678939819336,
+        "receipt_age": 0.5643444061279297
+      },
+      "native_odom": {
+        "age_at_summary": 0.7201180458068848,
+        "receipt_age": 0.01613473892211914
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.7705678939819336,
+        "receipt_age": 0.5621793270111084
+      }
+    }
+  },
+  {
+    "wall": 1793184679.5743773,
+    "reasons": [
+      "T1_odom_message_stale",
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.756981494017964,
+    "summary_time_delta": 0.006936550140380859,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.7705678939819336,
+        "receipt_age": 0.5590682029724121
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.7705678939819336,
+        "receipt_age": 0.5636119842529297
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.7705678939819336,
+        "receipt_age": 0.5643444061279297
+      },
+      "native_odom": {
+        "age_at_summary": 0.7201180458068848,
+        "receipt_age": 0.01613473892211914
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.7705678939819336,
+        "receipt_age": 0.5621793270111084
+      }
+    }
+  },
+  {
+    "wall": 1793184679.8304415,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.6068512955353071,
+    "summary_time_delta": -0.24912762641906738,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.7705678939819336,
+        "receipt_age": 0.5590682029724121
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.7705678939819336,
+        "receipt_age": 0.5636119842529297
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.7705678939819336,
+        "receipt_age": 0.5643444061279297
+      },
+      "native_odom": {
+        "age_at_summary": 0.7201180458068848,
+        "receipt_age": 0.01613473892211914
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.7705678939819336,
+        "receipt_age": 0.5621793270111084
+      }
+    }
+  },
+  {
+    "wall": 1793184679.970708,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.8068022425322852,
+    "summary_time_delta": -0.38939404487609863,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.7705678939819336,
+        "receipt_age": 0.5590682029724121
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.7705678939819336,
+        "receipt_age": 0.5636119842529297
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.7705678939819336,
+        "receipt_age": 0.5643444061279297
+      },
+      "native_odom": {
+        "age_at_summary": 0.7201180458068848,
+        "receipt_age": 0.01613473892211914
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.7705678939819336,
+        "receipt_age": 0.5621793270111084
+      }
+    }
+  },
+  {
+    "wall": 1793184680.289205,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 1.0124871445332246,
+    "summary_time_delta": 0.3146686553955078,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.7927725315093994,
+        "receipt_age": 0.767383337020874
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.7927725315093994,
+        "receipt_age": 0.7678418159484863
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.9566147327423096,
+        "receipt_age": 0.9270775318145752
+      },
+      "native_odom": {
+        "age_at_summary": 0.11674022674560547,
+        "receipt_age": 0.07362699508666992
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.2612497806549072,
+        "receipt_age": 0.2281966209411621
+      }
+    }
+  },
+  {
+    "wall": 1793184680.4954393,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 1.207120269533334,
+    "summary_time_delta": 0.10843443870544434,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.7927725315093994,
+        "receipt_age": 0.767383337020874
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.7927725315093994,
+        "receipt_age": 0.7678418159484863
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.9566147327423096,
+        "receipt_age": 0.9270775318145752
+      },
+      "native_odom": {
+        "age_at_summary": 0.11674022674560547,
+        "receipt_age": 0.07362699508666992
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.2612497806549072,
+        "receipt_age": 0.2281966209411621
+      }
+    }
+  },
+  {
+    "wall": 1793184680.6134024,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 1.1968448915831686,
+    "summary_time_delta": -0.009528636932373047,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.7927725315093994,
+        "receipt_age": 0.767383337020874
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.7927725315093994,
+        "receipt_age": 0.7678418159484863
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.9566147327423096,
+        "receipt_age": 0.9270775318145752
+      },
+      "native_odom": {
+        "age_at_summary": 0.11674022674560547,
+        "receipt_age": 0.07362699508666992
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.2612497806549072,
+        "receipt_age": 0.2281966209411621
+      }
+    }
+  },
+  {
+    "wall": 1793184699.6063356,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.568798623229668,
+    "summary_time_delta": 0.4938480854034424,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.8496646881103516,
+        "receipt_age": 0.717024564743042
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.8496646881103516,
+        "receipt_age": 0.720217227935791
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.8496646881103516,
+        "receipt_age": 0.7205307483673096
+      },
+      "native_odom": {
+        "age_at_summary": 0.20006823539733887,
+        "receipt_age": 0.0796670913696289
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.3889908790588379,
+        "receipt_age": 0.25718069076538086
+      }
+    }
+  },
+  {
+    "wall": 1793184699.8161104,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.7574876332291751,
+    "summary_time_delta": 0.2840733528137207,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.8496646881103516,
+        "receipt_age": 0.717024564743042
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.8496646881103516,
+        "receipt_age": 0.720217227935791
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.8496646881103516,
+        "receipt_age": 0.7205307483673096
+      },
+      "native_odom": {
+        "age_at_summary": 0.20006823539733887,
+        "receipt_age": 0.0796670913696289
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.3889908790588379,
+        "receipt_age": 0.25718069076538086
+      }
+    }
+  },
+  {
+    "wall": 1793184700.1406436,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.9755241922321147,
+    "summary_time_delta": -0.04045987129211426,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.8496646881103516,
+        "receipt_age": 0.717024564743042
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.8496646881103516,
+        "receipt_age": 0.720217227935791
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.8496646881103516,
+        "receipt_age": 0.7205307483673096
+      },
+      "native_odom": {
+        "age_at_summary": 0.20006823539733887,
+        "receipt_age": 0.0796670913696289
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.3889908790588379,
+        "receipt_age": 0.25718069076538086
+      }
+    }
+  },
+  {
+    "wall": 1793184700.2467842,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.7029287970544829,
+    "summary_time_delta": -0.14660048484802246,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.8496646881103516,
+        "receipt_age": 0.717024564743042
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.8496646881103516,
+        "receipt_age": 0.720217227935791
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.8496646881103516,
+        "receipt_age": 0.7205307483673096
+      },
+      "native_odom": {
+        "age_at_summary": 0.20006823539733887,
+        "receipt_age": 0.0796670913696289
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.3889908790588379,
+        "receipt_age": 0.25718069076538086
+      }
+    }
+  },
+  {
+    "wall": 1793184700.4379241,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.7538261688459897,
+    "summary_time_delta": -0.337740421295166,
+    "observer_inputs": {
+      "scan": {
+        "age_at_summary": 0.8496646881103516,
+        "receipt_age": 0.717024564743042
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.8496646881103516,
+        "receipt_age": 0.720217227935791
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.8496646881103516,
+        "receipt_age": 0.7205307483673096
+      },
+      "native_odom": {
+        "age_at_summary": 0.20006823539733887,
+        "receipt_age": 0.0796670913696289
+      },
+      "cloud_registered": {
+        "age_at_summary": 0.3889908790588379,
+        "receipt_age": 0.25718069076538086
+      }
+    }
+  },
+  {
+    "wall": 1793184758.4201334,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.5331281857434078,
+    "summary_time_delta": 1.0096735954284668,
+    "observer_inputs": {
+      "native_odom": {
+        "age_at_summary": 0.03879880905151367,
+        "receipt_age": 0.008993864059448242
+      },
+      "scan": {
+        "age_at_summary": 0.41931986808776855,
+        "receipt_age": 0.16690444946289062
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.41931986808776855,
+        "receipt_age": 0.18195009231567383
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.41931986808776855,
+        "receipt_age": 0.19716167449951172
+      }
+    }
+  },
+  {
+    "wall": 1793184765.3728287,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.5571381444315193,
+    "summary_time_delta": 0.24402523040771484,
+    "observer_inputs": {
+      "native_odom": {
+        "age_at_summary": 0.14217281341552734,
+        "receipt_age": 0.07901167869567871
+      },
+      "scan": {
+        "age_at_summary": 0.2852327823638916,
+        "receipt_age": 0.16201114654541016
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.2852327823638916,
+        "receipt_age": 0.22254514694213867
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.2852327823638916,
+        "receipt_age": 0.22278952598571777
+      }
+    }
+  },
+  {
+    "wall": 1793184773.6315553,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.6793977371853543,
+    "summary_time_delta": 0.16064929962158203,
+    "observer_inputs": {
+      "native_odom": {
+        "age_at_summary": 0.0999305248260498,
+        "receipt_age": 0.05655026435852051
+      },
+      "scan": {
+        "age_at_summary": 0.1268296241760254,
+        "receipt_age": 0.10684633255004883
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.32215356826782227,
+        "receipt_age": 0.23856067657470703
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.32215356826782227,
+        "receipt_age": 0.24408245086669922
+      }
+    }
+  },
+  {
+    "wall": 1793184782.5769958,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.6622157590136339,
+    "summary_time_delta": 0.4322688579559326,
+    "observer_inputs": {
+      "native_odom": {
+        "age_at_summary": 0.059499502182006836,
+        "receipt_age": 0.01251363754272461
+      },
+      "scan": {
+        "age_at_summary": 0.29872655868530273,
+        "receipt_age": 0.2543010711669922
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.29872655868530273,
+        "receipt_age": 0.26039862632751465
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.29872655868530273,
+        "receipt_age": 0.27346348762512207
+      }
+    }
+  },
+  {
+    "wall": 1793184803.8063002,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.6688847633813566,
+    "summary_time_delta": -0.44084596633911133,
+    "observer_inputs": {
+      "native_odom": {
+        "age_at_summary": 0.0486602783203125,
+        "receipt_age": 0.014629125595092773
+      },
+      "scan": {
+        "age_at_summary": 0.25478100776672363,
+        "receipt_age": 0.13472652435302734
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.25478100776672363,
+        "receipt_age": 0.1417996883392334
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.25478100776672363,
+        "receipt_age": 0.1679825782775879
+      }
+    }
+  },
+  {
+    "wall": 1793184803.978027,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.6612552149308613,
+    "summary_time_delta": 0.3977818489074707,
+    "observer_inputs": {
+      "native_odom": {
+        "age_at_summary": 0.038973331451416016,
+        "receipt_age": 0.008539915084838867
+      },
+      "scan": {
+        "age_at_summary": 0.22282910346984863,
+        "receipt_age": 0.19366145133972168
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.22282910346984863,
+        "receipt_age": 0.21960234642028809
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.2301769256591797,
+        "receipt_age": 0.15723323822021484
+      }
+    }
+  },
+  {
+    "wall": 1793184804.1768146,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.65697728374289,
+    "summary_time_delta": 0.19899439811706543,
+    "observer_inputs": {
+      "native_odom": {
+        "age_at_summary": 0.038973331451416016,
+        "receipt_age": 0.008539915084838867
+      },
+      "scan": {
+        "age_at_summary": 0.22282910346984863,
+        "receipt_age": 0.19366145133972168
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.22282910346984863,
+        "receipt_age": 0.21960234642028809
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.2301769256591797,
+        "receipt_age": 0.15723323822021484
+      }
+    }
+  },
+  {
+    "wall": 1793184811.9757943,
+    "reasons": [
+      "T1_odom_message_stale"
+    ],
+    "trust_scan_age": 0.1903387433703756,
+    "summary_time_delta": -0.4763453006744385,
+    "observer_inputs": {
+      "native_odom": {
+        "age_at_summary": 0.06312251091003418,
+        "receipt_age": 0.03861856460571289
+      },
+      "scan": {
+        "age_at_summary": 0.18902587890625,
+        "receipt_age": 0.0444791316986084
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.18902587890625,
+        "receipt_age": 0.04799342155456543
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.18902587890625,
+        "receipt_age": 0.05238151550292969
+      }
+    }
+  },
+  {
+    "wall": 1793184812.180596,
+    "reasons": [
+      "T1_odom_message_stale"
+    ],
+    "trust_scan_age": 0.25721919313946273,
+    "summary_time_delta": 0.3510305881500244,
+    "observer_inputs": {
+      "native_odom": {
+        "age_at_summary": 0.08922505378723145,
+        "receipt_age": 0.05831432342529297
+      },
+      "scan": {
+        "age_at_summary": 0.17219972610473633,
+        "receipt_age": 0.08117079734802246
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.17219972610473633,
+        "receipt_age": 0.0916147232055664
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.17219972610473633,
+        "receipt_age": 0.09203958511352539
+      }
+    }
+  },
+  {
+    "wall": 1793184820.2102396,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.6775536653694871,
+    "summary_time_delta": 0.4589207172393799,
+    "observer_inputs": {
+      "native_odom": {
+        "age_at_summary": 0.1193232536315918,
+        "receipt_age": 0.05399036407470703
+      },
+      "scan": {
+        "age_at_summary": 0.33237433433532715,
+        "receipt_age": 0.23894405364990234
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.3688232898712158,
+        "receipt_age": 0.19535326957702637
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.3688232898712158,
+        "receipt_age": 0.23181557655334473
+      }
+    }
+  },
+  {
+    "wall": 1793184820.3771753,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.85829689637103,
+    "summary_time_delta": 0.29198503494262695,
+    "observer_inputs": {
+      "native_odom": {
+        "age_at_summary": 0.1193232536315918,
+        "receipt_age": 0.05399036407470703
+      },
+      "scan": {
+        "age_at_summary": 0.33237433433532715,
+        "receipt_age": 0.23894405364990234
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.3688232898712158,
+        "receipt_age": 0.19535326957702637
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.3688232898712158,
+        "receipt_age": 0.23181557655334473
+      }
+    }
+  },
+  {
+    "wall": 1793184820.5990903,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 1.066362954370561,
+    "summary_time_delta": 0.07007002830505371,
+    "observer_inputs": {
+      "native_odom": {
+        "age_at_summary": 0.1193232536315918,
+        "receipt_age": 0.05399036407470703
+      },
+      "scan": {
+        "age_at_summary": 0.33237433433532715,
+        "receipt_age": 0.23894405364990234
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.3688232898712158,
+        "receipt_age": 0.19535326957702637
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.3688232898712158,
+        "receipt_age": 0.23181557655334473
+      }
+    }
+  },
+  {
+    "wall": 1793184820.783752,
+    "reasons": [
+      "T1_odom_stale",
+      "T1_tf_stale"
+    ],
+    "trust_scan_age": 0.3657117603288498,
+    "summary_time_delta": -0.11459159851074219,
+    "observer_inputs": {
+      "native_odom": {
+        "age_at_summary": 0.1193232536315918,
+        "receipt_age": 0.05399036407470703
+      },
+      "scan": {
+        "age_at_summary": 0.33237433433532715,
+        "receipt_age": 0.23894405364990234
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.3688232898712158,
+        "receipt_age": 0.19535326957702637
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.3688232898712158,
+        "receipt_age": 0.23181557655334473
+      }
+    }
+  },
+  {
+    "wall": 1793184836.2150424,
+    "reasons": [
+      "T1_odom_message_stale"
+    ],
+    "trust_scan_age": 0.2577536331191368,
+    "summary_time_delta": -0.058545827865600586,
+    "observer_inputs": {
+      "native_odom": {
+        "age_at_summary": 0.6354069709777832,
+        "receipt_age": 0.12257242202758789
+      },
+      "scan": {
+        "age_at_summary": 0.5456826686859131,
+        "receipt_age": 0.2582392692565918
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.5456826686859131,
+        "receipt_age": 0.26444268226623535
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.5456826686859131,
+        "receipt_age": 0.26648926734924316
+      }
+    }
+  },
+  {
+    "wall": 1793184844.9850821,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.5589955073155579,
+    "summary_time_delta": 0.3517451286315918,
+    "observer_inputs": {
+      "native_odom": {
+        "age_at_summary": 0.4722921848297119,
+        "receipt_age": 0.016908645629882812
+      },
+      "scan": {
+        "age_at_summary": 0.445385217666626,
+        "receipt_age": 0.2076122760772705
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.445385217666626,
+        "receipt_age": 0.21411585807800293
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.445385217666626,
+        "receipt_age": 0.21732831001281738
+      }
+    }
+  },
+  {
+    "wall": 1793184845.2240005,
+    "reasons": [
+      "T1_odom_stale"
+    ],
+    "trust_scan_age": 0.31361394305713475,
+    "summary_time_delta": 0.11282682418823242,
+    "observer_inputs": {
+      "native_odom": {
+        "age_at_summary": 0.4722921848297119,
+        "receipt_age": 0.016908645629882812
+      },
+      "scan": {
+        "age_at_summary": 0.445385217666626,
+        "receipt_age": 0.2076122760772705
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.445385217666626,
+        "receipt_age": 0.21411585807800293
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.445385217666626,
+        "receipt_age": 0.21732831001281738
+      }
+    }
+  },
+  {
+    "wall": 1793184845.3822021,
+    "reasons": [
+      "T1_odom_stale",
+      "T1_odom_message_stale",
+      "T1_tf_stale"
+    ],
+    "trust_scan_age": 0.4804129160584125,
+    "summary_time_delta": -0.04537487030029297,
+    "observer_inputs": {
+      "native_odom": {
+        "age_at_summary": 0.4722921848297119,
+        "receipt_age": 0.016908645629882812
+      },
+      "scan": {
+        "age_at_summary": 0.445385217666626,
+        "receipt_age": 0.2076122760772705
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.445385217666626,
+        "receipt_age": 0.21411585807800293
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.445385217666626,
+        "receipt_age": 0.21732831001281738
+      }
+    }
+  },
+  {
+    "wall": 1793184845.6045673,
+    "reasons": [
+      "T1_scan_stale"
+    ],
+    "trust_scan_age": 0.6955530350569461,
+    "summary_time_delta": -0.26774001121520996,
+    "observer_inputs": {
+      "native_odom": {
+        "age_at_summary": 0.4722921848297119,
+        "receipt_age": 0.016908645629882812
+      },
+      "scan": {
+        "age_at_summary": 0.445385217666626,
+        "receipt_age": 0.2076122760772705
+      },
+      "scan_obstacles": {
+        "age_at_summary": 0.445385217666626,
+        "receipt_age": 0.21411585807800293
+      },
+      "scan_clearing": {
+        "age_at_summary": 0.445385217666626,
+        "receipt_age": 0.21732831001281738
+      }
+    }
+  }
+]
