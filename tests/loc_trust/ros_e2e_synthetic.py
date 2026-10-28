@@ -126,7 +126,7 @@ def main():
         print(('OK  ' if cond else 'BAD ') + name, detail if not cond else '')
 
     f.pump(3.0)
-    check('node alive, untrusted without anchor', f.status and not f.status['trusted'] and 'T6_no_anchor' in f.status['reasons'], f.status)
+    check('node alive, untrusted without anchor', f.status and not f.status['trusted'] and 'not_ready:no_anchor' in f.status['reasons'] and 'T6_no_anchor' in f.status['diagnostics'], f.status)
     r = f.call('baseline_start'); f.pump(6.0); r = f.call('baseline_finish')
     print('baseline:', r.message)
     check('baseline accepted', r.success, r.message)
@@ -139,12 +139,17 @@ def main():
     f.pump(1.0)
     check('B untrusted right after the snap', not f.status['trusted'], f.status['reasons'])
     f.pump(12.0)
-    check('B stays untrusted after the jump window', (not f.status['trusted']) and 'T6_anchor_disagreement' in f.status['reasons'], f.status['reasons'])
+    # current contract (step-latched T5): READY is revoked by the jump and returns ONLY through confirm_anchor
+    check('B stays untrusted after the jump window', (not f.status['trusted']) and 'not_ready:T5_map_odom_jump' in f.status['reasons'], f.status['reasons'])
     f.mo = f.believed = TRUE
     f.pump(2.0)
     check('C not trusted while settling', not f.status['trusted'], f.status['reasons'])
     f.pump(8.0)
-    check('C trusted again when AMCL agrees with the anchor', f.status['trusted'], f.status['reasons'])
+    check('C still untrusted without operator confirmation, although AMCL agrees', not f.status['trusted'], f.status['reasons'])
+    r = f.call('confirm_anchor')
+    check('anchor re-confirmed', r.success, r.message)
+    f.pump(7.0)
+    check('C trusted again after confirm_anchor', f.status['trusted'], f.status['reasons'])
     r = f.call('arm_check')
     print('arm_check:', r.success, r.message[:200])
     rclpy.shutdown()

@@ -296,18 +296,33 @@ class TrustEvaluator:
         self.ready, self.pending, self.ready_cause = False, False, 'no_anchor'
         self.last = dict(trusted=False, ready=False, motion_ok=False, reasons=['no_data'], diagnostics=[], metrics={})
 
-    def observe_map_odom(self, value):
+    @staticmethod
+    def correction_at(prev, new, odom):
+        """T5 metric: how far the ROBOT moves in the map when map->odom changes prev -> new, evaluated at the odom pose the
+        robot has now (xy: metres, yaw: rad). The translation of the transform alone is not a robot displacement: it depends
+        on where the odom origin happens to be, so a small yaw correction far from the origin looked like a large jump and a
+        large translation that a yaw correction cancels looked like one too. Without an odom pose the transform translation
+        is used (never weaker than before)."""
+        if odom is None:
+            return math.hypot(new[0] - prev[0], new[1] - prev[1]), abs(wrap(new[2] - prev[2]))
+        a, b = compose(prev, odom), compose(new, odom)
+        return math.hypot(b[0] - a[0], b[1] - a[1]), abs(wrap(b[2] - a[2]))
+
+    def observe_map_odom(self, value, odom=None):
         """Per-update T5: call for EVERY accepted map->odom value (TF callback; the node holds its lock). Compares with the
         previous accepted value; a step > jump_xy_max / jump_yaw_max is LATCHED until the next evaluate() consumes it, so a
         0 -> 0.5 -> 0 sequence between two ticks is not lost. Identical values (republish) = step 0. Non-finite values are
-        ignored here (evaluate() reports T0_invalid_pose from the tick input)."""
+        ignored here (evaluate() reports T0_invalid_pose from the tick input). `odom` = odom->base pose at the update
+        (default: the last one evaluate() saw); the step is the robot displacement it causes, see correction_at()."""
         if value is None or len(value) != 3 or not np.isfinite(value).all():
             return
         v = tuple(value)
         prev, self.mo_prev = self.mo_prev, v
         if prev is None:
             return
-        jx, jy = math.hypot(v[0] - prev[0], v[1] - prev[1]), abs(wrap(v[2] - prev[2]))
+        if odom is None or not np.isfinite(odom).all():
+            odom = self._last_odom
+        jx, jy = self.correction_at(prev, v, odom)
         self.step_max = (max(self.step_max[0], jx), max(self.step_max[1], jy))
         if jx > self.cfg.jump_xy_max or jy > self.cfg.jump_yaw_max:
             l = self.step_latch or (0.0, 0.0)
@@ -470,8 +485,7 @@ class TrustEvaluator:
             self.mo_gap = True
         else:
             if self.mo_gap and self.mo_ref is not None:
-                gx = math.hypot(inp.map_odom[0] - self.mo_ref[0], inp.map_odom[1] - self.mo_ref[1])
-                gy = abs(wrap(inp.map_odom[2] - self.mo_ref[2]))
+                gx, gy = self.correction_at(self.mo_ref, inp.map_odom, inp.odom_base)
                 m.update(gap_jump_xy=gx, gap_jump_yaw=gy)
                 if gx > c.jump_xy_max or gy > c.jump_yaw_max:
                     why.append('T5_map_odom_jump_across_gap')
@@ -484,7 +498,7 @@ class TrustEvaluator:
         # last fresh one, so the first fresh sample is compared with it (same rule; see gap block above).
         # The tick value is also fed to observe_map_odom (no-op when the node already saw it: same value = step 0).
         if inp.map_odom is not None:
-            self.observe_map_odom(inp.map_odom)
+            self.observe_map_odom(inp.map_odom, inp.odom_base)
         latch, (sx, sy) = self.step_latch, self.step_max
         self.step_latch, self.step_max = None, (0.0, 0.0)
         m.update(jump_xy=sx, jump_yaw=sy)

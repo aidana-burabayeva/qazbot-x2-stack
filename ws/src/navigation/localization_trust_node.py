@@ -165,7 +165,7 @@ class TrustNode(Node):
                 if mt != float('-inf'):        # accepted update: per-update T5 step check (latched in the evaluator)
                     # Never wait for diagnostic evaluation while receiving TF.
                     # Preserve every accepted correction for the next evaluation.
-                    self.pending_map_steps.append((tr.x,tr.y,yaw_of(q)))
+                    self.pending_map_steps.append(((tr.x,tr.y,yaw_of(q)),self.odom))   # + odom->base at receipt: T5 is a robot displacement
                 self.mo, self.mo_t = (tr.x, tr.y, yaw_of(q)), mt
             elif pair == ('odom', 'base_footprint'):
                 self.odom_t = self._stamp('odom', t.header.stamp)
@@ -341,7 +341,7 @@ class TrustNode(Node):
             steps=list(getattr(self,'pending_map_steps',()))
             if hasattr(self,'pending_map_steps'):self.pending_map_steps.clear()
         with self.lock:
-            for pose in steps:self.ev.observe_map_odom(pose)
+            for pose,odom in steps:self.ev.observe_map_odom(pose,odom)
             r = self.ev.evaluate(inp)
         self.saver.on_verdict(r, *self._pose_cov(inp))
         if self.baseline_scores is not None and 'scan_score' in r['metrics']:
