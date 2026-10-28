@@ -65,14 +65,19 @@ def setup(context, raw=False):
     }
     if scan:
         local.update({'obstacle_layer.plugin': 'nav2_costmap_2d::ObstacleLayer',
-                      'obstacle_layer.observation_sources': 'scan',
-                      'obstacle_layer.scan.topic': scan, 'obstacle_layer.scan.data_type': 'LaserScan',
-                      'obstacle_layer.scan.marking': True, 'obstacle_layer.scan.clearing': True,
-                      'obstacle_layer.scan.obstacle_max_range': 3.0, 'obstacle_layer.scan.raytrace_max_range': 3.5})
+                      'obstacle_layer.observation_sources': 'scan bounded_rays',
+                      'obstacle_layer.scan.topic': scan + '_obstacles', 'obstacle_layer.scan.data_type': 'PointCloud2',
+                      'obstacle_layer.scan.marking': True, 'obstacle_layer.scan.clearing': False,
+                      'obstacle_layer.scan.inf_is_valid': False,
+                      'obstacle_layer.scan.obstacle_max_range': 3.0, 'obstacle_layer.scan.raytrace_max_range': 3.5,
+                      'obstacle_layer.bounded_rays.topic': scan + '_clearing',
+                      'obstacle_layer.bounded_rays.data_type': 'PointCloud2',
+                      'obstacle_layer.bounded_rays.marking': False, 'obstacle_layer.bounded_rays.clearing': True,
+                      'obstacle_layer.bounded_rays.raytrace_max_range': 3.5})
     params = {
         f'/{ns}/controller_server': {'ros__parameters': {
             'use_sim_time': False, 'controller_frequency': controller_hz, 'min_x_velocity_threshold': 0.001,
-            'min_y_velocity_threshold': 0.0, 'min_theta_velocity_threshold': 0.001, 'failure_tolerance': 0.3,
+            'min_y_velocity_threshold': 0.0, 'min_theta_velocity_threshold': 0.001, 'failure_tolerance': 10.0,
             'progress_checker_plugin': 'progress_checker', 'goal_checker_plugins': ['goal_checker'],
             'controller_plugins': ['FollowPath'], 'odom_topic': odom,
             'progress_checker.plugin': 'nav2_controller::PoseProgressChecker',

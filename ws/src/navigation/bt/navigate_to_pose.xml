@@ -1,9 +1,15 @@
-<!-- No autonomous recovery motion: failure terminates the task. -->
+<!-- No motion recoveries (no spin/backup/wait): on FollowPath failure, replan immediately and retry (max 3). -->
+<!-- Replans at 1 Hz while following. -->
 <root main_tree_to_execute="MainTree">
   <BehaviorTree ID="MainTree">
-    <Sequence>
+    <RecoveryNode number_of_retries="3" name="NavigateRecovery">
+      <PipelineSequence name="NavigateWithReplanning">
+        <RateController hz="1.0">
+          <ComputePathToPose goal="{goal}" path="{path}" planner_id="GridBased"/>
+        </RateController>
+        <FollowPath path="{path}" controller_id="FollowPath" goal_checker_id="goal_checker"/>
+      </PipelineSequence>
       <ComputePathToPose goal="{goal}" path="{path}" planner_id="GridBased"/>
-      <FollowPath path="{path}" controller_id="FollowPath" goal_checker_id="goal_checker"/>
-    </Sequence>
+    </RecoveryNode>
   </BehaviorTree>
 </root>

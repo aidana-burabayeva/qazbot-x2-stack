@@ -10,7 +10,8 @@ Namespace /qazbot_d1_map, node `localization_trust`:
        never silently carried across odometry sources
        initialpose (strict: confirm_anchor; Go2: valid post-seed AMCL required)
   out: ~/trusted (Bool, 5 Hz) = MOTION_OK (READY and fresh critical inputs),
-       ~/status (String JSON: trusted, ready, motion_ok, ready_cause, reasons (motion-blocking / not-ready),
+       ~/status (String JSON: trusted, ready, motion_ok, t1_transient (READY kept, only T1 freshness blocks: consumers
+                 pause and continue the goal), ready_cause, reasons (motion-blocking / not-ready),
        diagnostics (T2/T3/T4/T6/T7 after READY, never blocking), metrics)
   srv: ~/confirm_anchor   operator verified the pose (floor mark / known start); fixes the T6 anchor and gates READY
        ~/arm_check        called by the coordinator for every NEW goal request: input loss still present now clears

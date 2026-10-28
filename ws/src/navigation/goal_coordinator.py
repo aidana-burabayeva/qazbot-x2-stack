@@ -4,6 +4,9 @@
 Public NavigateToPose forwards to the private Nav2 action. A fault closes the
 command gate before cancellation. Resume requires terminal acknowledgement and
 a final zero observed from the sole smoother publisher. No cached goal replay.
+Exception (operator decision 2026-10-28): T1-only freshness loss (trust status t1_transient, READY kept) while
+busy PAUSES: gate closed + zero, the Nav2 goal is NOT cancelled, and the gate reopens when trust returns. Loss
+longer than t1_pause_max_s (default 3.0 s), or any other untrusted state, trips (cancel + latch) as before.
 This node is coordination, not a second planner/controller/navigator.
 """
 import json
@@ -25,6 +28,8 @@ from std_msgs.msg import Bool, String
 from std_srvs.srv import Trigger
 from goal_alignment_watch import GoalAlignmentWatch
 
+T1_PAUSE_MAX_S=3.0   # operator decision 2026-10-28: T1-only loss longer than this cancels the goal (param t1_pause_max_s)
+
 class GoalCoordinator(Node):
     def __init__(self):
         super().__init__('goal_coordinator')
@@ -37,6 +42,8 @@ class GoalCoordinator(Node):
         # only when this is set. It never grants MC access; the adapter itself has no MC output in dry run.
         self.allow_dry_run_driver=bool(self.declare_parameter('allow_dry_run_driver',False).value)
         self.trust_max_age=float(self.declare_parameter('trust_max_age_s',0.6).value)
+        self.t1_pause_max=float(self.declare_parameter('t1_pause_max_s',T1_PAUSE_MAX_S).value)
+        self.pause_since=None;self.trust_t1=False;self.trust_status_at=float('-inf');self.trust_reasons=[]
         self.alignment_watch=GoalAlignmentWatch(timeout=float(self.declare_parameter('alignment_stagnation_s',30.0).value))
         self.execution_failure=''
         self.pub=self.create_publisher(Twist,'cmd_vel_authorized',1)
@@ -55,6 +62,7 @@ class GoalCoordinator(Node):
             goal_callback=self.goal,cancel_callback=self.cancel,callback_group=self.group)
         self.create_subscription(Twist,'cmd_vel',self.command,1)
         self.create_subscription(Bool,'localization_trust/trusted',self.trust,1)
+        self.create_subscription(String,'localization_trust/status',self.trust_status,1)
         self.create_subscription(String,'motion_adapter/status',self.adapter,1)
         self.create_service(Trigger,'~/stop',self.stop)
         self.create_service(Trigger,'~/resume',self.resume)
@@ -76,7 +84,22 @@ class GoalCoordinator(Node):
     def trust(self,m):
         self.trusted=bool(m.data);self.trust_at=time.monotonic()
         if self.trust_waiter is not None and not self.trust_waiter.done():self.trust_waiter.set_result(bool(m.data))
-        if not m.data and self.busy:self.trip('localization_untrusted')
+        if not m.data and self.busy and not self.latched:self.pause()   # classified (pause vs trip) by trust_status()/check()
+    def trust_status(self,m):
+        d=json.loads(m.data);self.trust_t1=bool(d.get('t1_transient')) and not d.get('trusted');self.trust_status_at=time.monotonic()
+        self.trust_reasons=list(d.get('reasons') or [])   # diagnostics only (trip log)
+        if self.busy and not d.get('trusted') and not self.trust_t1:self.trip('localization_untrusted')
+    def pause(self):
+        # T1-only loss: stop forwarding (zero now) but keep the Nav2 goal; check() reopens or trips.
+        if self.pause_since is None:
+            self.pause_since=time.monotonic();self.gate=False;self.pub.publish(Twist())
+            self.get_logger().warn('trust lost while busy: gate paused (goal kept pending T1 classification)')
+    def hold(self):
+        # busy and not good(): pause; trip unless a FRESH trust status says T1-only, and trip if it lasts too long.
+        self.pause();now=time.monotonic()
+        if self.trust_t1 and now-self.trust_status_at<=self.trust_max_age:
+            if now-self.pause_since>self.t1_pause_max:self.trip('localization_untrusted_t1_prolonged')
+        elif now-self.trust_status_at>self.trust_max_age or now-self.pause_since>self.trust_max_age:self.trip('localization_untrusted')
     def adapter(self,m):
         d=json.loads(m.data)
         live_ok=bool(d.get('live') is True and d.get('registration')=='registered' and d.get('ready'))
@@ -86,7 +109,7 @@ class GoalCoordinator(Node):
         self.driver_mode='live' if d.get('live') is True else str(d.get('mode','unknown'))
         self.driver_status={k:d.get(k) for k in ('state','reason','latch','ready','registration','motion_armed')}
         self.driver_status_at=time.monotonic()
-        if self.busy and (not self.driver_ready or d.get('reason')=='driver_not_armed'):
+        if self.busy and not d.get('t1_pause') and (not self.driver_ready or d.get('reason')=='driver_not_armed'):
             self.trip('driver_not_ready')
         hard={'operator_takeover','control_not_acquired','robot_not_standing','mc_fsm_not_stable',
               'mc_state_stale','foreign_sdk_source_active','foreign_velocity_publisher','vendor_autonomy_active',
@@ -94,6 +117,9 @@ class GoalCoordinator(Node):
         if self.busy and (d.get('state')=='latched' or d.get('reason') in hard):
             self.trip(d.get('latch') or d.get('reason') or 'adapter_latched')
     def trip(self,reason):
+        if not self.latched:   # P10: log WHY (was silent; only the pause warning showed, which looked like a lost T1 pause)
+            self.get_logger().error(f'TRIP {reason}: busy={self.busy} trust_t1={self.trust_t1} '
+                f'trust_reasons={getattr(self,"trust_reasons",[])} -> gate closed, zero, cancel requested, latched')
         self.gate=False;self.latched=True;self.fault=reason
         self.pub.publish(Twist())
         self.request_cancel()
@@ -153,7 +179,7 @@ class GoalCoordinator(Node):
             self.trust_waiter=Future()
             clean=await self.trust_waiter
             if not clean or self.latched or not self.good() or not self.driver_ready:return self.reject(f'post_arm clean={clean}')
-            self.busy=True;self.gate=False;self.cancel_sent=False;self.child=None
+            self.busy=True;self.gate=False;self.cancel_sent=False;self.child=None;self.pause_since=None
             self.execution_failure='';self.fault='';self.alignment_watch.reset()
             return GoalResponse.ACCEPT
         finally:
@@ -168,8 +194,8 @@ class GoalCoordinator(Node):
                 feedback_callback=lambda f:self.navigation_feedback(h,f.feedback))
             if not self.child.accepted:
                 h.abort();return NavigateToPose.Result()
-            self.gate=not self.latched and self.good() and self.driver_ready
-            if not self.gate:self.trip(self.fault or 'localization_untrusted')
+            self.gate=not self.latched and self.good() and self.driver_ready and self.pause_since is None
+            if not self.gate and (self.latched or self.pause_since is None):self.trip(self.fault or 'localization_untrusted')
             result=await self.child.get_result_async()
             self.gate=False;self.pub.publish(Twist())
             if h.is_cancel_requested:h.canceled()
@@ -182,9 +208,13 @@ class GoalCoordinator(Node):
             if h.is_active:h.abort()
             return NavigateToPose.Result()
         finally:
-            self.gate=False;self.busy=False;self.child=None;self.public=None
+            self.gate=False;self.busy=False;self.child=None;self.public=None;self.pause_since=None
     def check(self):
-        if self.busy and not self.good():self.trip('localization_untrusted')
+        if self.busy and not self.good() and not self.latched:self.hold()
+        elif self.busy and self.pause_since is not None and self.good() and not self.latched and self.driver_ready:
+            # Fresh trust is back within t1_pause_max_s: continue the SAME goal (controller never stopped computing).
+            self.get_logger().info(f'trust back after {time.monotonic()-self.pause_since:.2f} s: gate reopened, same goal')
+            self.pause_since=None;self.gate=self.child is not None
         if self.busy and self.alignment_watch.expired(time.monotonic()) and not self.latched:
             # Execution failure, not a localization/admission latch. A NEW goal is
             # allowed after the old action is terminal, zero and readiness checks.
@@ -213,7 +243,7 @@ class GoalCoordinator(Node):
             self.nav_state_future=self.life.call_async(GetState.Request())
             self.nav_state_future.add_done_callback(self.state_observed)
         self.status.publish(String(data=json.dumps(dict(busy=self.busy,latched=self.latched,gate=self.gate,
-            fault=self.fault,source_zero=self.zero_seen,trusted=self.good(),
+            fault=self.fault,source_zero=self.zero_seen,trusted=self.good(),paused=self.pause_since is not None,
             driver_ready=self.driver_ready,driver_mode=self.driver_mode,
             ready=bool(self.driver_ready and self.driver_arm.service_is_ready() and self.nav_active and not self.busy and not self.reserving and not self.latched and self.good() and self.zero_seen and self.client.server_is_ready() and self.arm.service_is_ready() and self.life.service_is_ready()),
             child_uuid=[int(x) for x in self.child.goal_id.uuid] if self.child else None))))

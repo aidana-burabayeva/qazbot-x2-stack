@@ -61,6 +61,7 @@ class Config:
     require_localization: bool = True
     trust_max_age_s: float = 0.6       # localization_trust verdict older than this counts as untrusted
     require_trust: bool = True         # fresh map->odom alone does not prove the pose is right (docs/X2_LOCALIZATION_TRUST.md)
+    t1_pause_max_s: float = 3.0        # operator decision 2026-10-28: T1-only loss pauses (no latch) up to this long
 
     @property
     def cmd_timeout_s(self):
@@ -98,6 +99,7 @@ class AdapterCore:
         self.active_since = None
         self.burst_left = 0
         self.resume_after = float('-inf')
+        self.pause_since = None            # T1-only localization loss: paused (zero, not latched) since
         self.counters = {'saturated': 0, 'rejected': 0, 'latched': 0, 'published': 0}
 
     # -- operator / service inputs ---------------------------------------------------
@@ -119,11 +121,13 @@ class AdapterCore:
         if self.state != LATCHED:
             self.counters['latched'] += 1
             self.burst_left = self.cfg.zero_burst if self.state == ACTIVE else 0
-        self.state, self.latch_reason, self.active_since = LATCHED, reason, None
+        self.state, self.latch_reason, self.active_since, self.pause_since = LATCHED, reason, None, None
 
     # -- one control tick --------------------------------------------------------------
-    def step(self, now, cmd, cmd_stamp, mc: McState, localized=True, loc_reason='', foreign_pub=''):
-        """cmd = (vx, vy, wz) from Nav2 or None; returns a Decision. Call at publish_hz."""
+    def step(self, now, cmd, cmd_stamp, mc: McState, localized=True, loc_reason='', foreign_pub='', t1_ok=False):
+        """cmd = (vx, vy, wz) from Nav2 or None; returns a Decision. Call at publish_hz.
+        t1_ok: the trust status reports T1-only (freshness) loss with READY kept (or has not yet classified a new
+        loss): a localization-only fault then PAUSES (zero, IDLE) for up to t1_pause_max_s instead of latching."""
         cfg, notes = self.cfg, []
         was_active = self.state == ACTIVE
         # 1. a latch persists, but flushes a zero burst once if we were driving
@@ -138,7 +142,16 @@ class AdapterCore:
         if cmd is not None and not all(math.isfinite(v) for v in cmd):
             fault, have_cmd = fault or 'non_finite_command', False
         wants_motion = have_cmd and any(abs(v) >= cfg.eps for v in (vx, vy, wz))
-        if fault and (wants_motion or was_active):
+        if not fault:
+            self.pause_since = None
+        elif (t1_ok and fault != 'non_finite_command' and not self._fault(now, mc, True, '', foreign_pub)
+              and (wants_motion or was_active or self.pause_since is not None)):
+            self.pause_since = now if self.pause_since is None else self.pause_since
+            if now - self.pause_since <= cfg.t1_pause_max_s:
+                if was_active:
+                    self.state, self.active_since, self.burst_left = IDLE, None, cfg.zero_burst
+                return self._drain(Decision(IDLE, reason='t1_pause:' + fault))
+        if fault and (wants_motion or was_active or self.pause_since is not None):
             self.counters['rejected'] += 1
             self._latch(fault)
             return self._drain(Decision(LATCHED, reason=fault))
@@ -276,7 +289,8 @@ def main():
                 allow_lateral=bool(p('allow_lateral', False).value),
                 tf_max_age_s=float(p('tf_max_age_s', Config.tf_max_age_s).value),
                 require_localization=bool(p('require_localization', True).value),
-                require_trust=bool(p('require_trust', True).value))
+                require_trust=bool(p('require_trust', True).value),
+                t1_pause_max_s=float(p('t1_pause_max_s', Config.t1_pause_max_s).value))
             self.priority = int(p('priority', 30).value)       # AimDK range for SDK sources: 20-39
             if not 20 <= self.priority <= 39:
                 raise ValueError('SDK source priority must be in the documented range 20..39')
@@ -305,6 +319,9 @@ def main():
             self.create_subscription(TFMessage, tf_topic, self._on_tf, QoSProfile(depth=50))
             self.create_subscription(Bool, p('trust_topic', '/qazbot_d1_map/localization_trust/trusted').value,
                                      self._on_trust, 10)
+            self.trust_status, self.trust_status_stamp = {}, float('-inf')
+            self.create_subscription(String, p('trust_status_topic', '/qazbot_d1_map/localization_trust/status').value,
+                                     self._on_trust_status, 10)
             self.create_timer(1.0, self._scan_publishers)
             self.status = self.create_publisher(String, '~/status', 10)
             self.dry = self.create_publisher(Twist, '~/dry_run_cmd', 10)
@@ -331,6 +348,17 @@ def main():
 
         def _on_trust(self, m):
             self.trust, self.trust_stamp = bool(m.data), self._now()
+
+        def _on_trust_status(self, m):
+            try:
+                self.trust_status, self.trust_status_stamp = json.loads(m.data), self._now()
+            except ValueError:
+                self.trust_status = {}
+
+        def _t1_ok(self, now):
+            # Fresh status: T1-only loss with READY kept, or (Bool/status ordering) not yet classified as a fault.
+            s = self.trust_status
+            return now - self.trust_status_stamp <= self.cfg.trust_max_age_s and bool(s.get('t1_transient') or s.get('trusted'))
 
         def _scan_publishers(self):
             """Graph-based ownership check: works even if the other process never heard of our flock."""
@@ -465,7 +493,8 @@ def main():
             trust_ok = (now - self.trust_stamp) <= self.cfg.trust_max_age_s and self.trust
             localized = tf_ok and (trust_ok or not self.cfg.require_trust)
             loc_reason = '' if not tf_ok else 'localization_untrusted'
-            d = self.core.step(now, self.cmd, self.cmd_stamp, self.mc, localized, loc_reason, ','.join(self.foreign))
+            d = self.core.step(now, self.cmd, self.cmd_stamp, self.mc, localized, loc_reason, ','.join(self.foreign),
+                               self._t1_ok(now))
             if d.state == LATCHED:
                 self.motion_armed = False
             elif not self.motion_armed:
@@ -493,6 +522,8 @@ def main():
                 'registration': self.registration_state, 'registration_error': self.registration_error,
                 'sdk_service_ready': bool(self.cfg.live and self.registration_client.service_is_ready()),
                 'motion_armed': self.motion_armed,
+                't1_pause': bool(self.core.pause_since is not None or (self._health_fault(self._now()) and self._t1_ok(self._now())
+                                 and not self.core._fault(self._now(), self.mc, True, '', ','.join(self.foreign)))),
                 'ready': bool(self._driver_path_ok()
                               and self.core.state in (IDLE, ACTIVE) and not self._health_fault(self._now())),
                 'foreign_publishers': self.foreign, 'counters': self.core.counters})))

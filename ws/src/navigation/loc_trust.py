@@ -46,9 +46,12 @@ Two outputs (user architecture decision 2026-10-22, .orchestrator/DECISIONS.md "
              requested (goal_request(); transient loss alone does not clear READY).
   MOTION_OK  continuous = READY and no T0/T1 reason (odom, odom message, map->odom TF, scan, frozen TF, AMCL
              freshness via the per-axis "AMCL due" rule only). Published as ~/trusted.
+  T1_TRANSIENT READY and every motion-blocking reason is T1 (freshness only). Status field t1_transient: the
+             coordinator/adapter PAUSE (zero velocity, goal kept) and resume when MOTION_OK returns; they cancel only
+             if it persists > t1_pause_max_s (operator decision 2026-10-28). Any T0/T5/T8/not-ready reason -> False.
 After READY, T2/T3/T4/T6/T7 are DIAGNOSTICS (status 'diagnostics'); they never clear READY or MOTION_OK.
-No settling hysteresis: MOTION_OK returns with fresh data, but the coordinator/adapter latch the aborted goal and
-the old goal is never resumed; motion again needs operator resume + a NEW goal (arm check on current inputs).
+No settling hysteresis: MOTION_OK returns with fresh data. Non-T1 loss (or T1 loss > t1_pause_max_s): the
+coordinator/adapter latch the aborted goal, never resumed; motion again needs operator resume + a NEW goal.
 """
 import math
 from dataclasses import dataclass, field
@@ -294,7 +297,7 @@ class TrustEvaluator:
         self.frz = []                    # (t, odom_base TF, odom message pose)
         self._due = {}                   # 'pose'/'cloud' -> (output stamp, time AMCL became due or None)
         self.ready, self.pending, self.ready_cause = False, False, 'no_anchor'
-        self.last = dict(trusted=False, ready=False, motion_ok=False, reasons=['no_data'], diagnostics=[], metrics={})
+        self.last = dict(trusted=False, ready=False, motion_ok=False, t1_transient=False, reasons=['no_data'], diagnostics=[], metrics={})
 
     @staticmethod
     def correction_at(prev, new, odom):
@@ -366,7 +369,7 @@ class TrustEvaluator:
             return loss
         if self.ready and loss:
             self.ready, self.ready_cause = False, 'input_loss_at_goal_request:' + ','.join(loss)
-            self.last = dict(self.last, trusted=False, ready=False, motion_ok=False,
+            self.last = dict(self.last, trusted=False, ready=False, motion_ok=False, t1_transient=False,
                              reasons=loss + ['not_ready:' + self.ready_cause])
         return loss
 
@@ -534,6 +537,10 @@ class TrustEvaluator:
     # -- READY / MOTION_OK from the raw check results (see module docstring)
     GATE_SKIP = ('T4_no_baseline', 'T6_no_anchor', 'T7_')    # not part of the READY gate
 
+    def _t1_transient(self, blocking):
+        """READY kept and the only motion blockers are T1 freshness: pause-and-continue, not a localization fault."""
+        return bool(self.ready and blocking and all(r.startswith('T1') for r in blocking))
+
     def _verdict(self, why, m):
         if self.cfg.admission_policy == 'go2':
             # X2 adaptation retains valid/fresh odom, TF, scan and map identity.
@@ -547,7 +554,7 @@ class TrustEvaluator:
             reasons = blocking + ([] if self.ready else ['not_ready:' + self.ready_cause])
             motion_ok = self.ready and not blocking
             self.last = dict(trusted=motion_ok, ready=self.ready, motion_ok=motion_ok,
-                             reasons=reasons, diagnostics=[r for r in why if r not in blocking], metrics=m)
+                             t1_transient=self._t1_transient(blocking), reasons=reasons, diagnostics=[r for r in why if r not in blocking], metrics=m)
             return self.last
         motion = [r for r in why if r.startswith(('T0', 'T1'))]
         diag = [r for r in why if r.startswith(('T2', 'T3', 'T4', 'T6', 'T7'))]
@@ -562,5 +569,5 @@ class TrustEvaluator:
         motion_ok = self.ready and not motion
         reasons = motion + ([] if self.ready else ['not_ready:' + self.ready_cause] + [r for r in gate if r not in motion])
         self.last = dict(trusted=motion_ok, ready=self.ready, motion_ok=motion_ok, reasons=reasons,
-                         diagnostics=diag, metrics=m)
+                         t1_transient=self._t1_transient(motion), diagnostics=diag, metrics=m)
         return self.last

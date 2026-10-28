@@ -54,14 +54,28 @@ def setup(context):
             'planner_plugins': ['GridBased'],
             'GridBased.plugin': 'nav2_smac_planner/SmacPlanner2D',
             'GridBased.allow_unknown': False,
-            'GridBased.tolerance': 0.0,
+            # 0.3 m: a goal in/near inflated cells still plans to the nearest reachable
+            # cell instead of failing (operator request 20261028 P11).
+            'GridBased.tolerance': 0.3,
         }},
         f'/{NS}/global_costmap/global_costmap': {'ros__parameters': {
             'use_sim_time': False,
             'global_frame': 'map', 'robot_base_frame': 'base_footprint',
             'robot_radius': inscribed, 'footprint_padding': 0.01,
             'track_unknown_space': True,
-            'plugins': ['static_layer', 'inflation_layer'],
+            'plugins': ['static_layer', 'obstacle_layer', 'inflation_layer'],
+            # Live obstacles: same sources/params as the local costmap (nav_control.launch.py).
+            'obstacle_layer.plugin': 'nav2_costmap_2d::ObstacleLayer',
+            'obstacle_layer.observation_sources': 'scan bounded_rays',
+            'obstacle_layer.scan.topic': LaunchConfiguration('scan_topic').perform(context) + '_obstacles',
+            'obstacle_layer.scan.data_type': 'PointCloud2',
+            'obstacle_layer.scan.marking': True, 'obstacle_layer.scan.clearing': False,
+            'obstacle_layer.scan.inf_is_valid': False,
+            'obstacle_layer.scan.obstacle_max_range': 3.0, 'obstacle_layer.scan.raytrace_max_range': 3.5,
+            'obstacle_layer.bounded_rays.topic': LaunchConfiguration('scan_topic').perform(context) + '_clearing',
+            'obstacle_layer.bounded_rays.data_type': 'PointCloud2',
+            'obstacle_layer.bounded_rays.marking': False, 'obstacle_layer.bounded_rays.clearing': True,
+            'obstacle_layer.bounded_rays.raytrace_max_range': 3.5,
             'static_layer.plugin': 'nav2_costmap_2d::StaticLayer',
             'static_layer.map_topic': f'/{outer}/map',
             'static_layer.map_subscribe_transient_local': True,
@@ -85,7 +99,8 @@ def setup(context):
             'default_nav_through_poses_bt_xml': os.path.join(HERE, 'bt', 'unsupported_through_poses.xml'),
             'plugin_lib_names': ['nav2_compute_path_to_pose_action_bt_node',
                                  'nav2_follow_path_action_bt_node',
-                                 'nav2_rate_controller_bt_node', 'nav2_pipeline_sequence_bt_node'],
+                                 'nav2_rate_controller_bt_node', 'nav2_pipeline_sequence_bt_node',
+                                 'nav2_recovery_node_bt_node'],
         }},
     }
     logdir = os.environ.get('ROS_LOG_DIR', os.path.expanduser('~/.ros/log'))
