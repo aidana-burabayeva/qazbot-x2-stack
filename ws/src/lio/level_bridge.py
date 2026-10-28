@@ -62,8 +62,9 @@ def clearing_endpoints(points, yaw, range_max=RANGE_MAX, fov_deg=(-46.0, 44.5)):
     therefore cannot authorize clearing a distant obstacle. No interpolation,
     azimuth dilation, infinity or remembered coverage is used.
 
-    Keep the shortest endpoint in each scan bin, retaining its actual bearing:
-    a higher/farther beam cannot extend clearing past a nearer return.
+    Keep the longest actually observed free ray in each bin, capped by the
+    nearest in-slice obstacle return. An independent distant measurement may
+    extend a short floor ray; the floor ray alone never extends observation.
     These points are for a marking=false source, never obstacle returns.
     Deskewed-cloud origin assumptions still require real cloud validation.
     """
@@ -84,11 +85,16 @@ def clearing_endpoints(points, yaw, range_max=RANGE_MAX, fov_deg=(-46.0, 44.5)):
     t[up] = np.minimum(t[up], Z_MAX / z[up])
     end = np.nextafter(r * t, 0.0)
     idx = ((a + math.pi) / (2 * math.pi) * N_BINS).astype(int) % N_BINS
-    order = np.lexsort((end, idx))
+    hit = (r > RANGE_MIN) & (r < range_max) & (z > Z_MIN + FLOOR_MARGIN_PER_M*r) & (z < Z_MAX)
+    obstacle = np.full(N_BINS, np.inf)
+    np.minimum.at(obstacle, idx[hit], r[hit])
+    order = np.lexsort((-end, idx))
     _, first = np.unique(idx[order], return_index=True)
     keep = order[first]
-    keep = keep[end[keep] > RANGE_MIN]
-    scale = end[keep] / r[keep]
+    bounded = np.nextafter(np.minimum(end[keep], obstacle[idx[keep]]), 0.0)
+    valid = bounded > RANGE_MIN
+    keep, bounded = keep[valid], bounded[valid]
+    scale = bounded / r[keep]
     return np.column_stack((bx[keep] * scale, by[keep] * scale, np.zeros(len(keep))))
 
 
@@ -129,6 +135,7 @@ class LevelBridge(Node):
         # Follow the resolved/remapped scan topic. Only Nav2's separate,
         # clearing-only source consumes this cloud; AMCL still uses /scan.
         self.pub_clearing = self.create_publisher(PointCloud2, self.pub_scan.topic_name + '_clearing', 20)
+        self.pub_obstacles = self.create_publisher(PointCloud2, self.pub_scan.topic_name + '_obstacles', 20)
         self.pub_odom = self.create_publisher(Odometry, '/odom_level', 50)
         global RANGE_MAX
         RANGE_MAX = float(self.declare_parameter('range_max', RANGE_MAX).value)
@@ -236,6 +243,14 @@ class LevelBridge(Node):
         ranges = np.full(N_BINS, np.inf, dtype=np.float32)
         idx = ((a + math.pi) / (2 * math.pi) * N_BINS).astype(int) % N_BINS
         np.minimum.at(ranges, idx, r.astype(np.float32))
+        # Mark and clear in the same actual point geometry. Reprojecting the
+        # marking LaserScan's float32 angles can put an axial return into the
+        # neighbouring costmap row while the actual clearing ray stays on-axis.
+        order = np.lexsort((r, idx))
+        _, first = np.unique(idx[order], return_index=True)
+        selected = order[first]
+        obstacles = np.column_stack((r[selected]*np.cos(a[selected]),
+                                     r[selected]*np.sin(a[selected]), np.zeros(len(selected))))
         scan = LaserScan()
         scan.header.stamp = m.header.stamp
         scan.header.frame_id = 'base_footprint'
@@ -244,6 +259,7 @@ class LevelBridge(Node):
         scan.range_min, scan.range_max = RANGE_MIN, RANGE_MAX
         scan.ranges = ranges.tolist()
         self.pub_scan.publish(scan)
+        self.pub_obstacles.publish(pc2.create_cloud_xyz32(scan.header, obstacles.tolist()))
         self.pub_clearing.publish(pc2.create_cloud_xyz32(scan.header, clear.tolist()))
 
 

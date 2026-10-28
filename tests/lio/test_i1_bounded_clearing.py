@@ -21,10 +21,10 @@ def test_near_floor_does_not_authorize_far_clearing():
     assert end[0, 0] < 1.0 < 3.0
 
 
-def test_nearer_floor_limits_farther_beam_in_same_bin():
+def test_independent_measured_far_beam_can_extend_short_floor_ray():
     end = bridge.clearing_endpoints([[1, 0, -1], [8, 0, 0]], 0)
     assert end.shape == (1, 3)
-    assert end[0, 0] < 1
+    assert end[0, 0] == pytest.approx(8)
 
 
 def test_far_observed_horizontal_ray_can_clear_observed_area():
@@ -58,8 +58,10 @@ def test_real_obstacle_limits_clearing_even_with_farther_return():
     assert end[0, 0] <= 0.8
 
 
-def test_near_blind_zone_return_cannot_be_overridden_by_far_beam():
-    assert len(bridge.clearing_endpoints([[0.1, 0, 0], [8, 0, 0]], 0)) == 0
+def test_blind_zone_return_alone_proves_nothing_outside_blind_zone():
+    assert len(bridge.clearing_endpoints([[0.1, 0, 0]], 0)) == 0
+    # A separate measured far ray, not the close return, supplies evidence.
+    assert bridge.clearing_endpoints([[0.1, 0, 0], [8, 0, 0]], 0)[0, 0] == pytest.approx(8)
 
 
 def test_ceiling_bounds_ray_at_slice_exit():
@@ -73,11 +75,12 @@ def test_yaw_rotates_into_scan_frame():
 
 
 def test_real_cloud_callback_preserves_obstacle_and_caps_floor_clearing():
-    scans, clearing = [], []
+    scans, clearing, obstacles = [], [], []
     node = SimpleNamespace(
         n_cloud=0, every=1, poses={0: (0, 0, 0, np.zeros(3))},
         R_lv=np.eye(3), pub_scan=SimpleNamespace(publish=scans.append),
-        pub_clearing=SimpleNamespace(publish=clearing.append))
+        pub_clearing=SimpleNamespace(publish=clearing.append),
+        pub_obstacles=SimpleNamespace(publish=obstacles.append))
     cloud = point_cloud2.create_cloud_xyz32(Header(), [[1, 0, -1], [0.8, 0, 0]])
     bridge.LevelBridge.on_cloud(node, cloud)
     assert scans[0].ranges[bridge.N_BINS//2] == pytest.approx(0.8)
@@ -86,3 +89,9 @@ def test_real_cloud_callback_preserves_obstacle_and_caps_floor_clearing():
     assert pts.shape == (1, 3)
     assert pts[0, 0] < 1
     assert clearing[0].header == scans[0].header
+    marked = point_cloud2.read_points_numpy(obstacles[0], field_names=('x', 'y', 'z'))
+    assert marked.shape == (1, 3)
+    assert marked[0] == pytest.approx([.8, 0, 0])
+    # Both actual rays stay on y=0; LaserScan angle float32 re-projection
+    # otherwise puts marking into the adjacent costmap row at grid boundaries.
+    assert marked[0, 1] == pts[0, 1] == 0

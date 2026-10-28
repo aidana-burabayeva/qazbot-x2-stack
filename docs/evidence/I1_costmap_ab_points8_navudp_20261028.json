@@ -1,0 +1,192 @@
+{
+  "results": [
+    {
+      "mode": "baseline",
+      "checks": [
+        {
+          "name": "far_mark",
+          "pass": true,
+          "maps": 3
+        },
+        {
+          "name": "near_mark_preserves_occluded_far",
+          "pass": true,
+          "maps": 3
+        },
+        {
+          "name": "sensor_missing_preserves",
+          "pass": true,
+          "maps": 3
+        },
+        {
+          "name": "empty_cloud_preserves",
+          "pass": true,
+          "maps": 3
+        },
+        {
+          "name": "partial_cloud_preserves_unseen_bearing",
+          "pass": true,
+          "maps": 3
+        },
+        {
+          "name": "near_floor_does_not_clear_far",
+          "pass": true,
+          "maps": 3
+        },
+        {
+          "name": "baseline_reproduces_stale",
+          "pass": true,
+          "maps": 3
+        },
+        {
+          "name": "real_obstacle_kept_with_far_beam",
+          "pass": true,
+          "maps": 3
+        },
+        {
+          "name": "outside_fov_mark",
+          "pass": true,
+          "maps": 3
+        },
+        {
+          "name": "outside_fov_removal_stays_unknown",
+          "pass": true,
+          "maps": 3
+        },
+        {
+          "name": "unobserved_area_stays_unknown",
+          "pass": true,
+          "maps": 3
+        }
+      ],
+      "params": {
+        "global_frame": "qazbot_i1_test_odom",
+        "robot_base_frame": "qazbot_i1_test_base",
+        "update_frequency": 5.0,
+        "publish_frequency": 5.0,
+        "always_send_full_costmap": true,
+        "rolling_window": true,
+        "width": 8,
+        "height": 8,
+        "resolution": 0.05,
+        "robot_radius": 0.454,
+        "footprint_padding": 0.01,
+        "track_unknown_space": true,
+        "plugins": [
+          "obstacle_layer",
+          "inflation_layer"
+        ],
+        "inflation_layer.plugin": "nav2_costmap_2d::InflationLayer",
+        "inflation_layer.inflation_radius": 0.464,
+        "inflation_layer.cost_scaling_factor": 3.0,
+        "obstacle_layer.plugin": "nav2_costmap_2d::ObstacleLayer",
+        "obstacle_layer.observation_sources": "scan",
+        "obstacle_layer.scan.topic": "/qazbot_i1_test/baseline/scan",
+        "obstacle_layer.scan.data_type": "LaserScan",
+        "obstacle_layer.scan.marking": true,
+        "obstacle_layer.scan.clearing": true,
+        "obstacle_layer.scan.inf_is_valid": false,
+        "obstacle_layer.scan.obstacle_max_range": 3.0,
+        "obstacle_layer.scan.raytrace_max_range": 3.5
+      },
+      "result": "PASS"
+    },
+    {
+      "mode": "candidate",
+      "checks": [
+        {
+          "name": "far_mark",
+          "pass": true,
+          "maps": 3
+        },
+        {
+          "name": "near_mark_preserves_occluded_far",
+          "pass": true,
+          "maps": 3
+        },
+        {
+          "name": "sensor_missing_preserves",
+          "pass": true,
+          "maps": 3
+        },
+        {
+          "name": "empty_cloud_preserves",
+          "pass": true,
+          "maps": 3
+        },
+        {
+          "name": "partial_cloud_preserves_unseen_bearing",
+          "pass": true,
+          "maps": 3
+        },
+        {
+          "name": "near_floor_does_not_clear_far",
+          "pass": true,
+          "maps": 3
+        },
+        {
+          "name": "confirmed_far_floor_clears",
+          "pass": true,
+          "maps": 3
+        },
+        {
+          "name": "real_obstacle_kept_with_far_beam",
+          "pass": true,
+          "maps": 3
+        },
+        {
+          "name": "outside_fov_mark",
+          "pass": true,
+          "maps": 3
+        },
+        {
+          "name": "outside_fov_removal_stays_unknown",
+          "pass": true,
+          "maps": 3
+        },
+        {
+          "name": "unobserved_area_stays_unknown",
+          "pass": true,
+          "maps": 3
+        }
+      ],
+      "params": {
+        "global_frame": "qazbot_i1_test_odom",
+        "robot_base_frame": "qazbot_i1_test_base",
+        "update_frequency": 5.0,
+        "publish_frequency": 5.0,
+        "always_send_full_costmap": true,
+        "rolling_window": true,
+        "width": 8,
+        "height": 8,
+        "resolution": 0.05,
+        "robot_radius": 0.454,
+        "footprint_padding": 0.01,
+        "track_unknown_space": true,
+        "plugins": [
+          "obstacle_layer",
+          "inflation_layer"
+        ],
+        "inflation_layer.plugin": "nav2_costmap_2d::InflationLayer",
+        "inflation_layer.inflation_radius": 0.464,
+        "inflation_layer.cost_scaling_factor": 3.0,
+        "obstacle_layer.plugin": "nav2_costmap_2d::ObstacleLayer",
+        "obstacle_layer.observation_sources": "scan bounded_rays",
+        "obstacle_layer.scan.topic": "/qazbot_i1_test/candidate/scan_obstacles",
+        "obstacle_layer.scan.data_type": "PointCloud2",
+        "obstacle_layer.scan.marking": true,
+        "obstacle_layer.scan.clearing": false,
+        "obstacle_layer.scan.inf_is_valid": false,
+        "obstacle_layer.scan.obstacle_max_range": 3.0,
+        "obstacle_layer.scan.raytrace_max_range": 3.5,
+        "obstacle_layer.bounded_rays.topic": "/qazbot_i1_test/candidate/scan_clearing",
+        "obstacle_layer.bounded_rays.data_type": "PointCloud2",
+        "obstacle_layer.bounded_rays.marking": false,
+        "obstacle_layer.bounded_rays.clearing": true,
+        "obstacle_layer.bounded_rays.raytrace_max_range": 3.5
+      },
+      "result": "PASS"
+    }
+  ],
+  "scope": "actual bridge conversion, DDS, TF, lifecycle, ObservationBuffer, ObstacleLayer and costmap; no RPP action, no goals, no cmd_vel, no MC"
+}

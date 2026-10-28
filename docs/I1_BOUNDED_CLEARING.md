@@ -1,78 +1,90 @@
-# I1: bounded observed rays — experimental candidate
+# I1 bounded clearing: candidate for passive physical integration
 
-Base: production c15dd6c. Not installed on X2. Not ready for deployment or final review.
+Production base: c15dd6c. I1 is not yet installed on X2. No movement is authorized.
 
-The old azimuth-coverage candidate turns a 1 m floor return into +inf. This
-authorizes Nav2 to clear to raytrace_max_range=3.5 m, beyond that return.
-Its 10 existing unit tests pass despite this counterexample.
+The old +inf proposal treated a nearby floor point as proof of free space to
+3.5 m. The first bounded prototype instead chose the shortest ray in each bin;
+on actual registered clouds it was too conservative (median 0.516 m).
 
-This candidate adds a separate clearing-only PointCloud2 source whose topic is
-the resolved scan topic plus `_clearing`. The ordinary LaserScan still marks
-real obstacles and feeds AMCL. It no longer clears the local ObstacleLayer;
-bounded_rays clears and never marks. Scan +inf is not enabled for clearing.
+The final candidate uses the longest **actually measured** in-slice free
+segment, capped by the nearest current in-slice obstacle in that bin. A floor
+point at (1,0,-1) alone still stops at 0.628019 m. A separate measured far beam
+may extend observation; absent returns never provide evidence. There is no
+angular dilation or invented coverage.
 
-Each endpoint follows an actual current-cloud bearing. Its distance is bounded
-by the return, range_max and the first exit from the existing height slice:
+Marking and clearing use two PointCloud2 sources in the same actual point
+geometry: resolved_scan_topic + `_obstacles` and `_clearing`. LaserScan remains
+unchanged for AMCL and Trust. This prevents a reproduced integration defect:
+float32 LaserScan angle at the nominal zero-bearing bin is -1.117587e-7 rad,
+which can put its marking into row 79 while an axial clearing point is in row
+80 of the same grid. Keeping actual point geometry for both sources fixes it.
 
-```
-ray(t): xy=t*xy_return, z=t*z_return, 0<=t<=1
-lower boundary: t*(z_return - FLOOR_MARGIN_PER_M*r_return) = Z_MIN
-upper boundary: t*z_return = Z_MAX
-```
+Only two production files change: level_bridge.py and nav_control.launch.py,
+69 insertions / 4 deletions against c15dd6c. Native odometry, TF ownership,
+on_odom/on_imu, level rotation, footprint, RPP collision detection, thresholds,
+and the D1/AMCL architecture remain unchanged.
 
-The shortest endpoint in each bin wins, including points inside range_min
-which suppress that bin. No angular dilation, interpolation, infinity,
-remembered coverage or absent-return inference is used. A floor point
-(1, 0, -1) bounds the endpoint at 0.65/1.035 = 0.628019 m. A real obstacle
-at 0.8 m stays in the marking scan. A measured horizontal 8 m ray can clear
-the observed local area up to the unchanged Nav2 3.5 m limit.
+## Measured validation, 2026-10-28
 
-Production native odometry and TF ownership code is preserved; the old
-candidate file was not copied. Collision detection, robot radius, obstacle
-range and controller behavior are unchanged. The new source must accompany
-the bridge change: a scan-only simulator will not supply bounded clearing.
+- Unit tests: 14 bounded-geometry/conversion tests + 5 deployment/rollback
+  filesystem tests passed. The latter include partial install failure and
+  refusal to overwrite changed baselines or corrupt backups.
+- Native odometry/clock-gap regression: 29 passed; 5 ROS Node cases deselected.
+  AST comparison confirms production odometry/TF callbacks are unchanged.
+- Actual Nav2 ObstacleLayer 1.1.20 on PC: 21 assertions / 1 CTest passed.
+- Actual X2 Nav2 1.1.18, isolated domain 88: two complete bridge→DDS→TF→lifecycle→
+  ObservationBuffer→ObstacleLayer→costmap A/B runs, width 4 m and 8 m. Each has
+  11 baseline + 11 candidate checks, all passed. Baseline reproduces stale marks;
+  candidate clears them with a confirmed far floor ray, keeps true obstacles,
+  near-floor/far-lethal, missing/empty/partial input and outside-FOV marks,
+  and leaves unobserved cells unknown. No goals, cmd_vel or MC were used.
+- Real bag: 100 same-stamp cloud/odometry pairs, cloud age p95 0.06652 s,
+  max 0.09249 s. After real bridge level initialization/order filtering, 71
+  clouds produced scans. All original finite scan returns and marking ranges
+  were preserved; 25702 clearing rays had independent actual-ray witnesses;
+  FOV/unsupported-clearing violations: zero. Existing IMU-origin/2D height-slice
+  assumptions apply; this does not prove an entire vertical column is empty.
+- Syntax and git diff --check passed.
 
-## New checks on PC, 2026-10-28
+The native A/B is source/costmap integration, not a MuJoCo motion run or a
+NavigateToPose result. RPP actions/physical motion remain to be measured after
+passive installation approval. The earlier failing prototype/harness runs are
+retained as diagnostic evidence, not counted as final PASS.
 
-After `source /opt/ros/humble/setup.bash`, from this worktree:
+Native standalone Costmap teardown is an outstanding baseline issue: plain
+SIGINT aborts after the functional checks in both baseline and candidate;
+explicit lifecycle deactivate/cleanup followed by SIGINT exits -11 in both.
+The final harness preserves that failure (it does not turn it into PASS).
+The 44 passing checks above refer to functional data/costmap assertions,
+not clean standalone-process shutdown or full navigation acceptance. This
+requires an explicit decision before promoting beyond passive integration.
+
+## Reproduce
 
 ```sh
-python3 -m pytest -q -p no:cacheprovider tests/lio/test_i1_bounded_clearing.py
-cmake -S tests/lio -B /tmp/qazbot_i1_observation_build
-cmake --build /tmp/qazbot_i1_observation_build -j2
-ctest --test-dir /tmp/qazbot_i1_observation_build --output-on-failure
+source /opt/ros/humble/setup.bash
+python3 -m pytest -q tests/lio/test_i1_bounded_clearing.py tests/lio/test_i1_deployment.py
+cmake -S tests/lio -B /tmp/i1_layer && cmake --build /tmp/i1_layer
+ctest --test-dir /tmp/i1_layer --output-on-failure
+python3 tools/analyze_i1_cloud.py BAG_PATH --baseline BASELINE_LEVEL_BRIDGE --output real_check.json
 ```
 
-- 14 Python tests passed: near floor/far lethal bound, competing beams,
-  true return, height-slice exit, exact FOV edge, missing/invalid/partial
-  cloud, near blind zone, yaw and the real on_cloud conversion callback.
-- Actual installed Nav2 Humble ObstacleLayer 1.1.20: 21 assertions passed.
-  Direct raytraceFreespace tests preserve a distant lethal for short/absent
-  observations, retain neighbouring unknown cells and cells past 3.5 m,
-  and reproduce the unsafe long-endpoint erase. Actual updateBounds with
-  separate static marking and clearing observations preserves a real obstacle.
-- py_compile and git diff --check passed.
+For the actual source/costmap A/B only: ROS_DOMAIN_ID=88, an explicit process-local
+UDP-only DDS profile and test-only topics/frames are mandatory. Run
+tools/i1_costmap_ab.py with --baseline, --candidate, --output and --width 4/8.
+Do not replay these inputs or run the bench on the hardware domain.
 
-The C++ harness uses the installed ObstacleLayer implementation. It does not
-initialize a ROS participant, lifecycle node, TF message filter or DDS input
-pipeline. It is a regression of raytracing and update ordering, not full
-launch/TF/LaserScan integration and not proof of geometry on the robot.
+## Next: separately approved passive deployment
 
-## Remaining acceptance work
+Review this exact diff and tests, then obtain explicit operator approval.
+tools/deploy_i1.py checks the two installed baseline SHA256 values, refuses a
+running QazBot stack, saves/verifies backups, atomically installs only the two
+files and writes a deployment manifest with exact source Git SHA. It starts no
+ROS or motion process. --restore verifies backup and current file provenance.
 
-1. Repeat A/B with the new bounded source and actual bridge conversion.
-   Docker socket access is currently denied on this PC. The old plant
-   generated the previous candidate's LaserScan semantics; it must not be
-   used to claim this implementation passed.
-2. Validate endpoints against real /qazbot_lio/cloud_registered, after a
-   separately authorized passive capture. Confirm the per-cloud IMU origin
-   and deskewing assumptions; raw lidar_pointcloud is not a substitute.
-3. Run full source/TF/lifecycle integration and, if versions differ, the
-   matching production Nav2 implementation. Measure preservation of true
-   obstacles and clearing of the original stale RPP cells.
-4. Promote to review only after those checks. No X2 installation is authorized.
-
-This is a conservative geometric projection within the existing 2D slice
-model. It does not prove an entire vertical column is empty. Nearest-beam
-selection can reduce clearing, so resolving the original RPP blockage remains
-unconfirmed until the repeated A/B and real-cloud checks.
+Use tools/i1_nav_udp_only.xml per process (vendor + RViz interfaces), preserving
+global/vendor DDS files. HAL was separately restored after a vendor SHM crash;
+do not start a duplicate. First validate live scan, both clouds, native TF,
+operator-seeded AMCL/Trust and obstacle insertion/removal without motion.
+Rollback on failure. Only then request permission for MC/adapter and one short
+RViz goal with RC/physical stop and operator present.

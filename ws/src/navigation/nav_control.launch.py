@@ -66,7 +66,7 @@ def setup(context, raw=False):
     if scan:
         local.update({'obstacle_layer.plugin': 'nav2_costmap_2d::ObstacleLayer',
                       'obstacle_layer.observation_sources': 'scan bounded_rays',
-                      'obstacle_layer.scan.topic': scan, 'obstacle_layer.scan.data_type': 'LaserScan',
+                      'obstacle_layer.scan.topic': scan + '_obstacles', 'obstacle_layer.scan.data_type': 'PointCloud2',
                       'obstacle_layer.scan.marking': True, 'obstacle_layer.scan.clearing': False,
                       'obstacle_layer.scan.inf_is_valid': False,
                       'obstacle_layer.scan.obstacle_max_range': 3.0, 'obstacle_layer.scan.raytrace_max_range': 3.5,
