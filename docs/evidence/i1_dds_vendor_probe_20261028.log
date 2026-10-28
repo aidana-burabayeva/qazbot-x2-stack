@@ -1,0 +1,1 @@
+{"observation_s": 20.095062555999903, "wall": 1793178030.189849, "raw_message_counts": {}, "publishers": {"/aima/hal/sensor/lidar_chest_front/lidar_pointcloud": [], "/aima/hal/sensor/lidar_chest_front/imu": []}, "error": null}

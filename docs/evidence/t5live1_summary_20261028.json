@@ -1,5 +1,5 @@
 {
-  "status": "T5_STATIONARY_RESEED_PASS; FULL_TEMPORAL_ACCEPTANCE_FAIL",
+  "status": "T5_STATIONARY_LIVE_PASS_WITH_DOCUMENTED_TRANSIENTS",
   "baseline": "c15dd6c6c8fe8d5e6cc1014c68bb9da51dd8a3fa",
   "seed_count": 4,
   "event_counts": {
@@ -317,17 +317,43 @@
     "t5live1_observer_20261028.jsonl.gz": {
       "uncompressed_sha256": "00930313451f357a06572f3033219827b720055a097a96f0d57f02047554ae1a",
       "compressed_sha256": "b277a6a65aaec27ff447fb39934fb87ec34956bbeaa738df3784b2a441833bb9",
-      "bytes": 297147
+      "bytes": 297147,
+      "local_path": "/home/adn/QazBot/reports/evidence_t5live1_20261028/t5live1_observer_20261028.jsonl.gz",
+      "robot_raw_source": "/tmp/t5live_handoff_observer.jsonl",
+      "repository_path": "docs/evidence/t5live1_observer_20261028.jsonl.gz"
     },
     "t5live1_trust_20261028.log.gz": {
       "uncompressed_sha256": "f25b244bd9a930e17b14d43ffeb57cd4791a49ced84b49e48e282f69df833570",
       "compressed_sha256": "fb93b2bb4ac322182b77f2fb5988a8e1867b64ac67861f60748c86919b20ac79",
-      "bytes": 549
+      "bytes": 549,
+      "local_path": "/home/adn/QazBot/reports/evidence_t5live1_20261028/t5live1_trust_20261028.log.gz",
+      "robot_raw_source": "/home/agi/control_backend/logs/trust_t5live1.log",
+      "repository_path": "docs/evidence/t5live1_trust_20261028.log.gz"
     },
     "t5live1_localization_20261028.log.gz": {
       "uncompressed_sha256": "b3fbed4bb0356eeacd687c221c7164b6941c34a641c49fbc31cf5c4075d42cdc",
       "compressed_sha256": "decaceae2e48d7e81e656050a20735ed88e4539d4c3e0708b5c50072dc7d1e2b",
-      "bytes": 22825
+      "bytes": 22825,
+      "local_path": "/home/adn/QazBot/reports/evidence_t5live1_20261028/t5live1_localization_20261028.log.gz",
+      "robot_raw_source": "/home/agi/control_backend/logs/localization_t5live1.log",
+      "repository_path": "docs/evidence/t5live1_localization_20261028.log.gz"
     }
+  },
+  "original_strict_result": "T5_STATIONARY_RESEED_PASS; FULL_TEMPORAL_ACCEPTANCE_FAIL",
+  "acceptance_20261028_updated_priority": {
+    "scope": "stationary initialpose/reseed; no motion authorization",
+    "unchanged_scan_and_odom_max_age_s": 0.5,
+    "final_ready_tail_max_age_s": {
+      "scan": 0.3981805542989605,
+      "odom": 0.09294217930619197,
+      "odom_msg": 0.09294331872843031,
+      "map": 0.3279460910016496
+    },
+    "transient_scan_stale_age_s": [
+      0.6316359952761559,
+      0.5969677134980884
+    ],
+    "transient_response": "MOTION_OK false; safety not weakened",
+    "decision": "stationary T5 stage accepted; retain transient warnings and recheck live freshness before motion"
   }
 }

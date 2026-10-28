@@ -27,18 +27,16 @@
 | Фактический ObstacleLayer | ПК / Nav2 Humble 1.1.20 | PASS: 21 assertions / 1 CTest | raytraceFreespace + updateBounds; distant lethal, missing observation, unknown, range cap, real obstacle |
 | Полная I1 source/TF/lifecycle интеграция | ПК | PENDING | C++ harness не покрывает DDS/TF/ObservationBuffer pipeline |
 | Новый I1 повтор A/B | Twin | PENDING / среда BLOCKED | Docker socket permission denied; старый plant не выдаёт новый bounded source |
-| Новый I1 реальный cloud_registered | X2 bag / ПК | PENDING | Actual bridge input не записан; пассивная запись требует отдельного разрешения |
+| Новый I1 реальный cloud_registered | X2 bag / ПК | FAIL capture / geometry PENDING | Две разрешённые попытки: 0 clouds; vendor HAL PID 2623 упал в SharedMemTransport publish path. [Manifest](evidence/I1_capture_manifest_20261028.json) |
 | I1 на физическом X2 | X2 | НЕ УСТАНАВЛИВАЛСЯ | Только PC worktree и отдельная GitHub-ветка |
 
-Итог T5: **stationary/reseed PASS, полный temporal acceptance FAIL**.
+Итог T5 по обновлённым критериям оператора: **стационарный LIVE/reseed закрыт, без разрешения движения**. Строгий прежний критерий «ни одного temporal warning во всём прогоне» не выполнен и остаётся историческим наблюдением. Финальный READY-интервал: scan age max 0.398181 с, odom age max 0.092942 с при неизменённых лимитах 0.5 с; два scan-stale случая 0.631636 / 0.596968 с сняли MOTION_OK. Перед физическим Goal обязателен новый live preflight.
 Итог I1: **экспериментальный кандидат; не допущен к установке и финальному review**. [Draft PR #1](https://github.com/aidana-burabayeva/qazbot-x2-stack/pull/1), отдельный commit c23ce83.
 
 ## Доказательства LIVE
 
 [Summary и SHA256 артефактов](evidence/t5live1_summary_20261028.json),
-[полный observer JSONL gzip](evidence/t5live1_observer_20261028.jsonl.gz),
-[Trust log gzip](evidence/t5live1_trust_20261028.log.gz),
-[localization log gzip](evidence/t5live1_localization_20261028.log.gz).
+Сырые данные и архивы находятся вне Git: `/home/adn/QazBot/reports/evidence_t5live1_20261028/`; на X2 исходная запись — `/tmp/t5live_handoff_observer.jsonl`, логи — `/home/agi/control_backend/logs/{trust,localization}_t5live1.log`. Проверенные пути и SHA256 записаны в summary. Позднее оператор явно разрешил коммитить сами bags и логи; lossless записи публикуются под docs/evidence с manifest и SHA256.
 [Первый graph snapshot](evidence/t5live1_graph_20261028.json) снят до seed и до полного DDS discovery: позднее найден штатный /controller_server_ros_node на /cmd_vel. Не использовать ранний пустой publisher list как вечное доказательство отсутствия команд.
 
 В финальном observer: 1492 Trust статуса, 723 map → odom сообщения, 4 initialpose, 6 AMCL poses, 0 error events. После последней initialpose полная эпоха содержит переходный reset verdict T1_tf_stale/not_ready; непрерывный допуск посчитан после него по событию READY, без изменения runtime thresholds.
@@ -90,8 +88,14 @@ ctest --test-dir /tmp/qazbot_i1_observation_build --output-on-failure
 
 ## Открытые критерии
 
-1. Разобрать переходные T1 и предупреждения времени; при необходимости отдельно согласовать повтор LIVE.
+1. Не повторять закрытый стационарный T5 без новых свидетельств. Известные переходные T1/предупреждения сохранить; новый freshness preflight обязателен непосредственно перед движением.
 2. Не считать Go2 READY доказательством точности AMCL или NavigateToPose.
 3. Повторить новый I1 A/B и полную интеграцию с bounded source.
-4. После полного закрытия T5 согласовать пассивную запись cloud_registered и необходимый запуск сенсорного стека; проверить actual geometry на ПК.
+4. Пассивная запись cloud_registered и один FAST-LIO разрешены оператором только внутри `/home/agi/control_backend/docs/`. Выполнить запись, остановить owned процессы и проверить actual geometry на ПК. Это не разрешение на I1 deployment или движение.
 5. Финальный review-ready PR только после этих результатов. I1 автоматически на X2 не устанавливать.
+
+## Новое препятствие перед I1 E2E
+
+На 16:50:58 +08:00 зафиксирован crash vendor hal_sensor_orin, PID 2623. Текст trace и HAL log сохранены; точная причина не доказана. В обеих capture попытках cloud_registered=0 и LIO odometry=0. В первой есть 437 LiDAR IMU и 6306 leg odometry, во второй 16487 leg odometry. SQLite quick_check, SHA256 и lossless gzip verification прошли. Это **не PASS I1**.
+
+20-секундная probe штатного DDS profile не получила raw cloud/IMU, publishers отсутствовали. Capture/FAST-LIO/probe остановлены. Отдельное разрешение на восстановление vendor HAL запрошено; production-файлы и MC не менялись. [Данные и инструкции](evidence/I1_DATA_README.md).

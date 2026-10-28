@@ -17,7 +17,8 @@ vendor_snapshots/
 candidates/
 .pytest_cache/
 fastdds.log
-# recorded evidence (bags, big tarballs) - kept off-repo
+# Raw/derived bags remain ignored; approved lossless .db3.gz evidence is tracked under docs/evidence.
+# Existing large historical evidence and runtime archives stay excluded.
 docs/roadmap_v13/evidence/
 tests/integration_results/
 *.db3

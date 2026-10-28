@@ -1,92 +1,74 @@
-# Передача состояния QazBot X2
+# QazBot X2: продолжение к первому RViz NavigateToPose
 
-Обновлено: 2026-10-28, после пассивного T5 LIVE и остановки t5live1.
-Правила: [AGENTS.md](../AGENTS.md). Результаты: [TEST_STATUS.md](TEST_STATUS.md).
+Обновлено 2026-10-28. Читать вместе с [AGENTS.md](../AGENTS.md), [CLAUDE.md](../CLAUDE.md) и [TEST_STATUS.md](TEST_STATUS.md). Первый успешный физический NavigateToPose после исправлений **не подтверждён**.
 
-## Краткий итог
+## Активная задача и точные версии
 
-- Установленное исправление T5 подтвердило стационарный reseed и измеренную живую коррекцию без ложного отказа. Полный критерий отсутствия T1/ошибок времени во всём прогоне НЕ выполнен.
-- t5live1 передана оператором этой сессии и остановлена после теста. Повторный старт не выполнен.
-- I1: минимальный экспериментальный diff на production baseline; unit и проверки фактического ObstacleLayer проходят. Полные A/B, интеграция источников и реальные cloud_registered ещё не проверены. На X2 не устанавливалось.
-- Запись облака не разрешалась и не выполнялась.
+Приоритет: T5 LIVE → I1 E2E → I1 REVIEW → разрешённый DEPLOYMENT → разрешённый короткий RViz Goal → фактическая причина ABORTED → SUCCEEDED. Небольшие безопасные ошибки движения допустимы; collision detection, реальный footprint и freshness/T5 не ослаблять.
 
-## Git и файлы
+- GitHub main: **6e70c0f90665c06dfc704162c9ddc84efce977c1**, документация и T5 evidence поверх production baseline.
+- Production/T5 baseline: **c15dd6c6c8fe8d5e6cc1014c68bb9da51dd8a3fa**.
+- GitHub fix/i1-rpp-collision: **a223c454f21ca85b4a1a4572a10d6d88fe2c9813**. Bounded-clearing production diff из c23ce839; последующие коммиты добавляют passive capture и подготовку scoped HAL recovery.
+- [Draft PR #1](https://github.com/aidana-burabayeva/qazbot-x2-stack/pull/1) не готов к финальному review: A/B и actual cloud validation не завершены.
+- Эта передача публикуется в отдельной ветке handoff/first-rviz-goal-20261028. Продолжать с её опубликованного HEAD, затем проверить актуальные refs; не восстанавливать код по памяти.
 
-Production baseline: c15dd6c6c8fe8d5e6cc1014c68bb9da51dd8a3fa. На старте он подтверждён через GitHub API как main и как HEAD обоих локальных worktree. Коммит передачи в main содержит документацию и доказательства, не production-код.
+На X2 **T5 установлен, I1 не установлен**. Production-файлы в этой сессии не изменялись.
 
-- /home/adn/QazBot не является Git-репозиторием.
-- /home/adn/QazBot/control_backend: локальный main на baseline; имел изменения docs/X2_QUICKSTART_BRINGUP_RU.md, tests/loc_trust/run_ros_synthetic.py, tests/nav_e2e/loc_model_fixture.py, tests/nav_e2e/run_suite_real.py. Они сохранены и не включены в публикацию.
-- /home/adn/QazBot/control_backend_i1: fix/i1-rpp-collision; локальная база c15dd6c, новый diff находится в рабочем дереве. Кандидат публикуется отдельно в одноимённой GitHub-ветке.
-- GitHub операции выполнялись подключённым GitHub API: shell git ls-remote был недоступен из sandbox. Публикация API не передвигает локальные HEAD; не делать reset поверх незакоммиченных изменений.
-- Digital Twin доступен в /home/adn/QazBot/digital_twin; это соседний каталог вне репозитория. Не восстанавливать его по догадкам в другой среде.
-- Существующие внешние отчёты: digital_twin/docs/T5_geometry_20261028.md и I1_rpp_collision_20261027.md. Старый вердикт I1 «готов к ревью» больше не является допуском.
+## Пути и Git на X2
 
-## T5 LIVE: результаты и границы
+Git checkout на ПК: /home/adn/QazBot/control_backend; I1 worktree: /home/adn/QazBot/control_backend_i1. Локальные HEAD остаются c15dd6c: GitHub API публикация не двигает их автоматически. Четыре ранее изменённых файла main сохранены: docs/X2_QUICKSTART_BRINGUP_RU.md, tests/loc_trust/run_ros_synthetic.py, tests/nav_e2e/{loc_model_fixture.py,run_suite_real.py}. Они не включены в новые коммиты.
 
-Полные измерения: [summary JSON](evidence/t5live1_summary_20261028.json),
-[observer JSONL gzip](evidence/t5live1_observer_20261028.jsonl.gz),
-[Trust log gzip](evidence/t5live1_trust_20261028.log.gz),
-[localization log gzip](evidence/t5live1_localization_20261028.log.gz).
-В summary сохранены SHA256 архивов и исходных данных.
-[Первый graph snapshot](evidence/t5live1_graph_20261028.json) относится к состоянию ДО seed.
+На X2 /home/agi/control_backend — deployed-каталог **без .git**. Поэтому git status там закономерно не работает. Не делать git init поверх production/runtime. Для Git нужен отдельный checkout; для установленной версии — проверенные SHA256. Доступ: agi@192.168.1.72, ROS 2 Humble.
 
-### Что подтверждено
+Digital Twin доступен локально: /home/adn/QazBot/digital_twin, вне основного checkout. Если каталог отсутствует в новой среде, сообщить и не восстанавливать по догадкам. Старые I1 A/B из digital_twin/docs/I1_rpp_collision_20261027.md относятся к прежней реализации.
 
-Оператор подтвердил присутствие у X2, знание фактической позы и передачу t5live1. Initialpose задавал оператор через RViz; координаты агент не выбирал. Получены 4 seed, 6 AMCL poses, 723 map → odom TF и 1492 статуса Trust. Принятие seed видно в логах и сообщениях.
-
-Максимальная измеренная T5-коррекция: 0.0327434893 м / 0.0193353509 рад, допуск сохранён. Ложных T5 в записанном прогоне: 0. Порог остаётся 0.10 м / 0.10 рад. После последнего reset непрерывный READY/TRUSTED/MOTION_OK: 124.9717 с, 523 статуса без причин блокировки. Этот интервал начинается по событию восстановления READY после reset; полный переходный поток сохранён.
-
-На namespace TF зарегистрированы только AMCL и native_odom_bridge; level_bridge с publish_tf:=false, FAST-LIO публикует TF отдельно в /qazbot_lio/tf. /qazbot_native/odom имеет одного publisher native_odom_bridge; /qazbot_lio/scan — одного level_bridge. Native bridge сообщает mode=native_imu, 30 Hz и отсутствие текущего fault. Humble rclpy callback не предоставляет sender GID: владельцы установлены по graph endpoints, процессам и их параметрам, не по атрибуции каждого TF-пакета.
-
-SHA256 повторно прочитаны с X2, совпали; переустановки не было:
+Проверенные production SHA256 X2:
+- level_bridge.py: 86c434ce0ee5a48de1a324f7a3eb5e2136f8d9d3f1b91b582f6fa522707be686.
+- nav_control.launch.py: ebea6637578530f0b30be6dd5d720ef1011270ce2a4df902d2bd1e1b5c266bec.
 - loc_trust.py: 4b81f0721b13e510f4da05b7494177ad8a2dbdd104d56bf12d3ce6cd786f59e8.
 - localization_trust_node.py: 6b36ea0efdba0ca16344e62771500527b2e2b580f53122535b0461564bb35a46.
 
-### Что не прошло / не доказано
+## T5 LIVE: стационарный этап выполнен
 
-- Во всём прогоне после первого seed есть 2 T1_scan_stale. На входах reseed есть переходные not_ready/T1_tf_stale; после последнего reset они исчезли.
-- Все 4 initialpose сопровождались предупреждением AMCL о future extrapolation: требуемое время опережало последний odom TF примерно на 8–34 мс. Это не замаскировано увеличением tolerance/таймаута.
-- Исторический счётчик rejected scan stamps=140 оставался постоянным во время seed-проверки; содержит старый source stamp около 0.095 с. Новых stamp rejection в проверенных seed-эпохах не замечено; происхождение прежних событий не установлено.
-- Go2 допускает READY при diagnostics T2_covariance, T3_particles, T4_no_baseline/T4_scan_score, T6_no_anchor. Последние sigma_xy≈0.478 м, sigma_yaw≈0.232 рад; READY не является доказательством точной локализации или успешной навигации.
-- Реальный глобальный скачок специально в живую систему не вводился. Его блокировку подтверждают прежние реальные TF replay и synthetic E2E, а не данный stationary LIVE.
-- Полный discovery показал штатный /controller_server_ros_node на /cmd_vel и четыре штатных publishers locomotion/velocity (RC, app_proxy, interaction slave, planning). QazBot Motion Adapter/Goal Coordinator и их command publishers отсутствовали. Velocity-сообщений в наблюдателе не получено; это не доказательство нулевых значений. MC state: input_source=rc, STAND_DEFAULT, Trust moving=false. Команды/цели агент не отправлял.
+Оператор подтвердил фактическую позу и передал t5live1. Четыре initialpose заданы оператором через RViz. AMCL принял seed, появился map → odom; native_imu odometry и единственность владельцев namespace TF подтверждены. Измеренная коррекция 0.0327435 м / 0.0193354 рад не создала T5; ложных T5=0.
 
-Итог: **T5 stationary/reseed PASS; полный temporal acceptance FAIL / остаётся открытым.** Не объявлять T5 LIVE полностью закрытым и не переходить автоматически к физической записи облака.
+Последний непрерывный READY/TRUSTED/MOTION_OK интервал после reseed reset: **124.9717 с / 523 статуса**. Max ages: scan 0.398181 с, odom 0.092942 с при неизменённых лимитах 0.5 с. Два переходных scan stale 0.631636/0.596968 с корректно сняли MOTION_OK. Seed-time AMCL warnings future extrapolation 8–34 мс сохранены; прежний строгий критерий полного отсутствия temporal warnings не выполнен. По новому приоритету это не повод повторять закрытую стационарную T5 проверку без новых свидетельств. Перед движением нужен новый live freshness preflight.
 
-### Остановка и текущее состояние робота
+Covariance/particles/scan score/no baseline/no anchor diagnostics Go2 не скрыты. READY не доказывает точность AMCL или готовность всего маршрута. Большой скачок в LIVE не вводился; блокировку подтверждают прежние real TF replay и synthetic E2E (125 passed/4 skipped на X2; BAD=0 OK=10). Потерянный хвост First_RViz_goal_1135 не восстанавливать.
 
-До теста существовали процессы agi: launch 76790; FAST-LIO 76841; level_bridge 76880; map_server 76886; AMCL 76904; lifecycle manager 76922; native bridge 76956; Trust 78593.
+[Summary, SHA256 и данные T5](evidence/t5live1_summary_20261028.json). t5live1 корректно остановлена: Trust, затем launch; launch children clean exit. Никакого MC/автономного движения агент не запускал.
 
-После передачи владения тест завершён: SIGINT Trust, затем SIGINT launch. Launch подтвердил clean exit дочерних процессов. Собственный observer остановлен отдельно; при зависшем DDS teardown потребовалось адресное завершение только своих наблюдателей. Ошибка первого варианта observer (callback с лишним аргументом, несовместимым с Humble) исправлена ДО seed; финальная запись не содержит error events.
+## Новый фактический блокер: падение vendor HAL LiDAR
 
-На 2026-10-28 16:25:05 +08:00 все перечисленные PID и финальный observer 135989 отсутствуют. Последний graph summary показывает отсутствие publishers /qazbot_d1_map/tf, /qazbot_native/odom, /qazbot_lio/scan. Штатные процессы робота не останавливались. В следующей сессии актуальность проверить заново; не считать этот snapshot вечным.
+Для I1 оператор разрешил один FAST-LIO и passive recorder, запись **только внутри /home/agi/control_backend/docs**. Затем отдельно потребовал коммитить сами bags и логи в GitHub. Выполнены две попытки, обе FAIL: **0 cloud_registered / 0 LIO odometry**. Первая содержит 437 LiDAR IMU и 6306 native leg odometry; вторая — 16487 leg odometry.
 
-## I1: экспериментальный bounded-clearing diff
+Установлено новое свидетельство: vendor hal_sensor_orin PID 2623 создал crash в **16:50:58 +08:00**, во время первого capture startup. Trace: LidarParser::publish → rcl_publish → Fast DDS 2.14.6 SharedMemTransport → interprocess_mutex::lock. HAL log перед падением: publish buffer is not released. Точная причинность/race не установлена; не выдавать это за доказанный баг I1 (I1 на роботе отсутствует).
 
-Ветка: fix/i1-rpp-collision; GitHub commit c23ce839d98ba7a83ee39ef8f3b5ec6dad5dc0d1. [Draft PR #1](https://github.com/aidana-burabayeva/qazbot-x2-stack/pull/1) не готов к финальному review. [Техническая записка кандидата](https://github.com/aidana-burabayeva/qazbot-x2-stack/blob/fix/i1-rpp-collision/docs/I1_BOUNDED_CLEARING.md).
+20-секундная passive probe штатного DDS profile также не увидела raw cloud/IMU publishers. Оператор подтвердил отсутствие выключения/перезапуска робота. На snapshot отсутствует /soc1_hal_sensor_orin2623; камера /soc1_hal_camera3361 продолжает работать. PTP s2, последние offset порядка десятков микросекунд, не секундный скачок.
 
-Старый candidate превращает floor return на 1 м в +inf своего и шести соседних бинов. Все 10 старых тестов проходят; реальный Nav2 ObstacleLayer стирает дальний lethal при дальнем endpoint.
+[Bags, логи, counts и восстановление](evidence/I1_DATA_README.md), [manifest / SHA256 / provenance](evidence/I1_capture_manifest_20261028.json), [crash text](evidence/hal_sensor_orin_20261028_165058.crash). Сами lossless .db3.gz + metadata.yaml сохраняются в Git; raw .db3 производные игнорируются. SQLite quick_check и побайтная проверка gzip пройдены. Core 1052823552 bytes остаётся на X2; путь/SHA256 в manifest, текст trace в Git.
 
-Новый diff добавлен к актуальному production level_bridge, без копирования старого файла:
-- /scan продолжает давать реальные obstacle returns и вход AMCL.
-- Отдельный PointCloud2 topic resolved_scan_topic + "_clearing" передаёт только измеренные лучи с конечным endpoint.
-- Endpoint ограничен фактическим возвратом и первым выходом луча из существующего высотного среза. Для точки (1,0,-1) это 0.628019 м, не 3.5 м.
-- Ближайший endpoint в бине ограничивает более дальний луч; dilation/interpolation/+inf для clearing нет.
-- В Nav2 scan только marks; bounded_rays только clears. Collision detection, footprint, радиус и range thresholds сохранены. TF/native odometry код не заменён.
+Последняя проверка 17:05:05 +08:00: FAST-LIO 168922, recorder 172036 и passive probe 178843 завершены; действующих QazBot localization/capture процессов нет. HAL sensor не восстановлен, камера не тронута. Перед любым новым действием проверить актуальные процессы.
 
-Проверено на ПК: 14 Python tests и 21 assertion реального установленного Nav2 ObstacleLayer 1.1.20. C++ harness вызывает raytraceFreespace и updateBounds без DDS; это не полная source/TF/lifecycle интеграция.
+### Следующий конкретный шаг
 
-Открыто:
-1. Полный regression pipeline и повтор A/B именно нового кода и источника; Docker socket сейчас permission denied.
-2. Реальные /qazbot_lio/cloud_registered отсутствуют. Проверить IMU origin/deskew и геометрию лучей на actual bridge input; raw lidar_pointcloud не заменяет его.
-3. Измерить, устраняет ли консервативный clearing исходный RPP blockage: ближайшая точка может уменьшить clearing.
-4. Сопоставить версию Nav2 ПК с production и повторить при необходимости.
-5. Финальный review-ready PR только после результатов. На физический X2 ничего из I1 не устанавливать.
+**Ожидается отдельное разрешение на восстановление HAL.** Запрос оператору уже отправлен. Прежнее согласие на FAST-LIO/recorder не подменяет его.
 
-## Следующее действие
+Подготовлено в fix/i1-rpp-collision:
+- tools/restore_hal_sensor.sh — refuse duplicate, восстановление штатного hal_sensor_orin через em_run.sh, исходный cfg/hal_sensor_orin_t2d5.yaml, owner run и исходные NET_RAW/SYS_NICE capabilities. Использует vendor environment действующей камеры, не печатает его и не трогает camera/MC. Запускается с sudo после разрешения.
+- tools/i1_capture_udp_only.xml — только process-local профиль новых FAST-LIO/recorder; глобальные DDS файлы не меняются.
+- tools/capture_i1_cloud.py — subscriber-only, quota 100 непустых clouds с same-stamp odometry, без runtime retries/магического таймаута.
 
-Сначала разобраться с измеренными временными предупреждениями/T1 и согласовать дополнительную физическую проверку, если она нужна. Не менять production-код или AMCL параметры без отдельного разрешения.
+После разрешения: повторно проверить отсутствие HAL, сохранить SHA исходных vendor файлов, перенести проверенные helper/profile в /tmp, восстановить один HAL. Сначала подтвердить raw cloud/IMU data. Затем запустить один recorder и один FAST-LIO с process-local UDP-only profile. Данные — только control_backend/docs/evidence/<новый tag>. Не повторять blind restarts и не удалять чужие SHM files.
 
-Пока T5 полностью не принят, I1 продолжать только на ПК. После закрытия T5 и освобождения робота запросить отдельное разрешение на пассивную запись cloud_registered. Сенсорный стек сейчас остановлен: если для записи понадобится запуск, сначала проверить процессы и согласовать конкретный запуск. MC и движение для записи не нужны.
+При успешно набранной квоте остановить owned FAST-LIO/recorder, проверить SQLite/counts/SHA, коммитить данные и выполнить геометрическую проверку на ПК. При повторном HAL crash остановить тест и сохранить trace; не маскировать sensor loss. Восстановленный штатный HAL учитывать отдельно от тестовых процессов.
 
-Хвост First_RViz_goal_1135 физически потерян; не требовать восстановления. Использовать существующие реальные TF/reseed replay с явным ограничением исторического покрытия.
+## I1 и путь к Goal
+
+Кандидат сохраняет production TF/native code. Отдельные bounded PointCloud2 rays заканчиваются на фактическом возврате/выходе из height slice; floor (1,0,-1) даёт 0.628019 м, не 3.5 м. Scan только marks, bounded source только clears. **14 Python tests / 21 assertions фактического ObstacleLayer 1.1.20 проходят**. Это не full lifecycle/TF integration и не A/B.
+
+Docker socket в текущей среде недоступен; sudo ограничен no-new-privileges, автоматическое разрешение выхода из sandbox отклонено. Полный новый A/B пока не запускался; старый scan-only plant не валидирует новый bounded source. После actual cloud проверки адаптировать A/B к настоящему bridge conversion, подтвердить obstacle preservation, sensor-loss behavior и устранение исходного RPP false collision.
+
+После I1 E2E: review → отдельное разрешение deployment → baseline SHA/backup/minimal diff/hashes/config check → один стек → obstacle/clearing/TF/AMCL проверки. При неуспехе остановить тест и откатить изменённые файлы.
+
+Затем подготовить короткий свободный маршрут по D1 first_map_nav2_v3 без движения. Только после отдельного разрешения, присутствия оператора и проверки RC/останова — одна RViz Goal. Скорость выбрать по существующим измерениям торможения и реакции, не по догадке. Сохранить start/end pose, Nav2/actual velocity, AMCL/T5, Costmap, action result и фактическую остановку. Далее исправлять измеренную причину ABORTED до SUCCEEDED, не отключая защит.

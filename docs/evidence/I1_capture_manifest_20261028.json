@@ -1,0 +1,123 @@
+{
+  "status": "FAIL_NO_REGISTERED_CLOUDS",
+  "operator_authorization": "100 matched nonempty clouds; one FAST-LIO and one passive recorder; files only under control_backend/docs; bags/logs explicitly approved for GitHub",
+  "production_baseline": "c15dd6c6c8fe8d5e6cc1014c68bb9da51dd8a3fa",
+  "i1_code": "a223c454f21ca85b4a1a4572a10d6d88fe2c9813",
+  "attempts": [
+    {
+      "path": "docs/evidence/i1_cloud_registered_20261028_084925Z",
+      "robot_path": "/home/agi/control_backend/docs/evidence/i1_cloud_registered_20261028_084925Z",
+      "summary": {
+        "counts": {
+          "/aima/mc/leg_odometry": 6306,
+          "/aima/hal/sensor/lidar_chest_front/imu": 437
+        },
+        "matched_clouds": 0,
+        "quota": 100,
+        "interrupted": false,
+        "quota_met": false,
+        "cloud_receipt_age_s": {
+          "max": null,
+          "p95": null
+        },
+        "files_sha256": {
+          "metadata.yaml": "3daf045574b8c8cc9c9dd9a05d58249c191cd714e90c651b47089ca5e496f039",
+          "i1_cloud_registered_20261028_084925Z_0.db3": "d0d200d277c0dd93a38ec664b43f3a2ccb61552c335c7fb68558512946607414"
+        }
+      },
+      "sqlite_quick_check": "ok",
+      "files": {
+        "capture_summary.json": {
+          "bytes": 488,
+          "sha256": "b2d3aff47187807a8139d3da6af137fe29214317abb9e805a891d4c10450209a",
+          "in_git": true
+        },
+        "i1_cloud_registered_20261028_084925Z_0.db3": {
+          "bytes": 5554176,
+          "sha256": "d0d200d277c0dd93a38ec664b43f3a2ccb61552c335c7fb68558512946607414",
+          "in_git": false
+        },
+        "i1_cloud_registered_20261028_084925Z_0.db3.gz": {
+          "bytes": 811035,
+          "sha256": "a9ba65c96cc5daf90c98d23ce4edb64eb1ec254474cfd291b3ab650d987d5888",
+          "in_git": true
+        },
+        "metadata.yaml": {
+          "bytes": 1504,
+          "sha256": "3daf045574b8c8cc9c9dd9a05d58249c191cd714e90c651b47089ca5e496f039",
+          "in_git": true
+        }
+      }
+    },
+    {
+      "path": "docs/evidence/i1_cloud_registered_20261028_084925Z_r2",
+      "robot_path": "/home/agi/control_backend/docs/evidence/i1_cloud_registered_20261028_084925Z_r2",
+      "summary": {
+        "counts": {
+          "/aima/mc/leg_odometry": 16487
+        },
+        "matched_clouds": 0,
+        "quota": 100,
+        "interrupted": true,
+        "quota_met": false,
+        "error": null,
+        "cloud_receipt_age_s": {
+          "max": null,
+          "p95": null
+        },
+        "files_sha256": {
+          "i1_cloud_registered_20261028_084925Z_r2_0.db3": "5b0180622de708cb569ea00c432a1c61c3a8ebcbb341b4f48eeb803e238775b3",
+          "metadata.yaml": "b47f360410422b5762ff6a98fe475188def84c9894153b28cc31157e70538f38"
+        }
+      },
+      "sqlite_quick_check": "ok",
+      "files": {
+        "capture_summary.json": {
+          "bytes": 457,
+          "sha256": "ad0d7377e9729cc7333016093bd71aaf5d7e21ae55f6a70c2afde734fc44cde6",
+          "in_git": true
+        },
+        "i1_cloud_registered_20261028_084925Z_r2_0.db3": {
+          "bytes": 13860864,
+          "sha256": "5b0180622de708cb569ea00c432a1c61c3a8ebcbb341b4f48eeb803e238775b3",
+          "in_git": false
+        },
+        "i1_cloud_registered_20261028_084925Z_r2_0.db3.gz": {
+          "bytes": 2065725,
+          "sha256": "c306971b626ad2ab1132d088fd0ddb279eaf557e273281f250dd0acaaa894a2d",
+          "in_git": true
+        },
+        "metadata.yaml": {
+          "bytes": 1513,
+          "sha256": "b47f360410422b5762ff6a98fe475188def84c9894153b28cc31157e70538f38",
+          "in_git": true
+        }
+      }
+    }
+  ],
+  "new_blocker": {
+    "component": "vendor hal_sensor_orin PID 2623",
+    "crash_robot_local_time": "2026-10-28 16:50:58 +08:00",
+    "trace_path": "docs/evidence/hal_sensor_orin_20261028_165058.crash",
+    "observed_stack": "LidarParser::publish -> rcl_publish -> Fast DDS 2.14.6 SharedMemTransport -> interprocess_mutex::lock",
+    "root_cause": "not established; crash occurred during first capture startup; do not claim only discovery failure",
+    "vendor_profile_probe": "docs/evidence/i1_dds_vendor_probe_20261028.json",
+    "HAL_recovery": "prepared, operator permission pending; do not restart automatically"
+  },
+  "runtime_sha256": {
+    "fastlio_mapping": "63903a5c42e78438a97493d3a9cd3e8e26eb079932d4bf77746c342f093c17e8",
+    "x2.yaml": "520393e3b479ef20888a6d348892245044f5e1b2560ecffd488cca92f4e6b91a",
+    "stack_dds_xml": "70634db13e41f9b749c4310e9b67ca92625d0d2eac185de919d854f23e783788",
+    "vendor_dds_xml": "6bd06d226e4c7a5e72caf9cc44613ab26a469940f286dd887d5a2b1d81af2a0b",
+    "hal_sensor_binary": "834074532c6df0879fb5ca01ed863156f285fd54245a5284a80a210d0b53ff3e",
+    "hal_sensor_yaml": "4f0036e6111a4df7659d8604ca33c148cc015bcb77415caefd20c3ca8d3e592a",
+    "recorder_attempt2": "b547ad347b13a14be3efa2b055083f0b4a8828b6ec7bda36821f1f2d9755c479"
+  },
+  "core_dump": {
+    "robot_path": "/agibot/log/crash/hal_sensor_orin/hal_sens..tor.0_20261028_165059_2623.core",
+    "bytes": 1052823552,
+    "sha256": "d8f5d6aa46f37869167159aabd9c163682f200f6025200bb870f43c85054a304",
+    "stored_in_git": false,
+    "note": "Full process-memory core retained on X2; text stack trace is committed."
+  }
+}
