@@ -9,7 +9,7 @@
 set -u
 EV=/home/agi/control_backend/docs/evidence/nav_20261029_1425
 NAV=/home/agi/control_backend/ws/src/navigation
-MAP=/home/agi/control_backend/ws/src/maps/first_map_nav2_v3_despeckled/map.yaml
+MAP=/home/agi/control_backend/ws/src/maps/d1_qazbot_20261029/map.yaml
 PROF=$EV/dds_nav_two_iface_log.xml
 SRC=${QAZBOT_SOURCE_NAME:-sdk_qazbot_nav2_1029a}
 REGISTER=${REGISTER:-1}

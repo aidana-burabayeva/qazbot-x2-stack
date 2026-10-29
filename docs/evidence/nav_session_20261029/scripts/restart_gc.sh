@@ -15,7 +15,7 @@
 set -u
 EV=/home/agi/control_backend/docs/evidence/nav_20261029_1425
 NAV=/home/agi/control_backend/ws/src/navigation
-MAP=/home/agi/control_backend/ws/src/maps/first_map_nav2_v3_despeckled/map.yaml
+MAP=/home/agi/control_backend/ws/src/maps/d1_qazbot_20261029/map.yaml
 PROF=$EV/dds_nav_two_iface_log.xml
 log(){ echo "[$(date +%T.%N)] restart_gc: $*" | tee -a $EV/start_nav_run.txt; }
 [ "${CONFIRM:-0}" = 1 ] || { echo "Refusing: set CONFIRM=1 (restarts ALL of nav_full incl. GC; adapter/localization untouched)"; exit 2; }

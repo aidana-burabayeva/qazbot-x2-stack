@@ -1,5 +1,5 @@
 {
- "note": "status_log_150204.jsonl.gz captured while file was growing (snapshot ~21:38). *.gz = gzip -9 of the origin file (name without .gz). sha256 is of the published file.",
+ "note": "Updated 2026-10-29 ~22:3x (P22). status_log_150204.jsonl.gz = snapshot of a growing file (re-taken ~22:3x). *.gz = gzip of the origin file (name without .gz). sha256 is of the published file. orchestrator/ = copies of .orchestrator PLAN.md/DECISIONS.md at P22. reports/ p19/p20 unchanged since 9f7b819 (P20 live results are in PLAN.md 22:0x-22:1x and calib/p20_yaw_test_*).",
  "files": [
   {
    "path": "calib/p19_mc_direct_20261029_185327_pelvis.json",
@@ -62,6 +62,36 @@
    "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/p19_turn_calib_20261029_184054_summary.json"
   },
   {
+   "path": "calib/p20_yaw_test_20261029_215646_raw.jsonl.gz",
+   "sha256": "1bd041e4fb7ca17f784a94e1b241332a4b6ad799773475805a678673174bb57b",
+   "bytes": 22370,
+   "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/p20_yaw_test_20261029_215646_raw.jsonl"
+  },
+  {
+   "path": "calib/p20_yaw_test_20261029_215646_summary.json",
+   "sha256": "5af62f6e75298e8556927ad3d402e95518a5c42515747045a87e6a6054f600f8",
+   "bytes": 2381,
+   "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/p20_yaw_test_20261029_215646_summary.json"
+  },
+  {
+   "path": "calib/p20_yaw_test_20261029_215849_raw.jsonl.gz",
+   "sha256": "8b23373919fd09025dcb89290cce82f900687e9b9ca1e8d5ca239de8be012a3a",
+   "bytes": 2774,
+   "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/p20_yaw_test_20261029_215849_raw.jsonl"
+  },
+  {
+   "path": "calib/p20_yaw_test_20261029_215906_raw.jsonl.gz",
+   "sha256": "56102304607a3d0beef8b247ebaea05b64bb4f36504c448597203669fe2f16c2",
+   "bytes": 79379,
+   "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/p20_yaw_test_20261029_215906_raw.jsonl"
+  },
+  {
+   "path": "calib/p20_yaw_test_20261029_215906_summary.json",
+   "sha256": "b69ae83b0ae095bf95289f336afe4098447c0bccfdf8fc676c2469aef4387833",
+   "bytes": 3665,
+   "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/p20_yaw_test_20261029_215906_summary.json"
+  },
+  {
    "path": "calib/p20_yawloop_replay.json",
    "sha256": "205f8ce474b0706d4cb18cd1b1702aef7ddb37e3672e5a5e199a1c7e76a9b8ee",
    "bytes": 3052,
@@ -72,6 +102,12 @@
    "sha256": "e0f0a0479198d8d12c868e6d23543e1c5438f344b0469e54d260d158d175ec94",
    "bytes": 535,
    "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/adapter.log"
+  },
+  {
+   "path": "logs/adapter_p20.log",
+   "sha256": "37a52dd74fba34b8659af260ab20ecd9ce2d2188292deff13c0d8e3c70da291c",
+   "bytes": 3585,
+   "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/adapter_p20.log"
   },
   {
    "path": "logs/checks_1.txt",
@@ -111,8 +147,8 @@
   },
   {
    "path": "logs/goal_bag_mcap_143120.log",
-   "sha256": "de8f8e0dda2387eb9511768350ef0d2e159cff650208c89ccaa22e6390bbf67b",
-   "bytes": 8665,
+   "sha256": "6ff429278032ad49ae328bbd47c210ef55fc8d900dc0dfbef2ed850ec8cf9ba1",
+   "bytes": 8888,
    "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/goal_bag_mcap_143120.log"
   },
   {
@@ -123,8 +159,8 @@
   },
   {
    "path": "logs/localization.log",
-   "sha256": "4f3937269ccdf14f079e0b51e8de00cbd33a2ccd70f546270c7dfe2d3106ec6f",
-   "bytes": 30226,
+   "sha256": "f55a4cd3c10317b32ff1c7db16af72d8705f8a1d09e5d4986c321f1bac37c1dc",
+   "bytes": 36132,
    "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/localization.log"
   },
   {
@@ -141,8 +177,8 @@
   },
   {
    "path": "logs/nav_full.log",
-   "sha256": "38f2b3d28d3161d74cb6aaeedbfd1d9759a9c353473054bd27ccf0eaedcca16d",
-   "bytes": 100618,
+   "sha256": "0c35cf96152e64c72c82a5c8eae5b7f727986f6469b42b6fce7f414fa2176946",
+   "bytes": 100780,
    "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/nav_full.log"
   },
   {
@@ -183,8 +219,8 @@
   },
   {
    "path": "logs/operator_actions.txt",
-   "sha256": "6caa7e97228e790a963a017d79598a48ccfcb4adcde9f47142b083c35009ddfc",
-   "bytes": 4101,
+   "sha256": "4129f003e03b358eb3486997c58866702f46f8615b3803e19b18841e061c80d0",
+   "bytes": 4460,
    "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/operator_actions.txt"
   },
   {
@@ -230,6 +266,18 @@
    "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/p19_direct_bag_185322.log"
   },
   {
+   "path": "logs/p20_restart_run.txt",
+   "sha256": "0c05bd85e071ed79060cece33cb8b435a14961afbe5b03bde8742d8070520a5f",
+   "bytes": 1393,
+   "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/p20_restart_run.txt"
+  },
+  {
+   "path": "logs/p20_yaw_test_run2.out",
+   "sha256": "5eb6037ed34f4cc407d405de04f3192a3381ddea85656a795a0477ea095c5890",
+   "bytes": 2075,
+   "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/p20_yaw_test_run2.out"
+  },
+  {
    "path": "logs/preflight.txt",
    "sha256": "f2fd2c316f6820e1c2b27b4c34dabb351e126848ce61aec1107ba0d07dce4180",
    "bytes": 1286,
@@ -243,8 +291,8 @@
   },
   {
    "path": "logs/seed_loop2.log",
-   "sha256": "8fd853479b093c68036db76f1319624bfa0a9a8f5fb75e69c9be4f2bc26c7939",
-   "bytes": 194,
+   "sha256": "dcfa7c9d1d32004755531f8d3886091c1f91a93c70dda14b053984d0493e48ff",
+   "bytes": 372,
    "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/seed_loop2.log"
   },
   {
@@ -303,20 +351,20 @@
   },
   {
    "path": "logs/start_run.txt",
-   "sha256": "733fc538643fcbb115dbd96bffbd818ef8364f6219bae29dda1874cacbd53215",
-   "bytes": 1319,
+   "sha256": "64ff19fa246577893eacf41822e9ceeb095b7dd67f9371eea44dedf27e7a5156",
+   "bytes": 1873,
    "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/start_run.txt"
   },
   {
    "path": "logs/status_log_150204.jsonl.gz",
-   "sha256": "b7457edad08a064c581cfbc0d22fb79ee7b559da58ba996ad3cb36d91476d69d",
-   "bytes": 4221726,
+   "sha256": "c0fa72e6448279eb3f1bea9dc5a6036fe849ff5ff0422903cfc35263af3a71b5",
+   "bytes": 4767480,
    "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/status_log_150204.jsonl"
   },
   {
    "path": "logs/trust.log",
-   "sha256": "9674444f5807c74855fa46e8a1c665fcea5195df563832d2e05fd32d5b02d565",
-   "bytes": 711,
+   "sha256": "18d9246f923508f771a42aefef3c60447716e2fc32b17dcd035ee9dc172753cb",
+   "bytes": 955,
    "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/trust.log"
   },
   {
@@ -336,6 +384,30 @@
    "sha256": "6ce30ff42a7db9fc563f0a33c082b25884da4106a02b74e49c76b2dd609eda56",
    "bytes": 952,
    "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/trust_pre_p12_175825.log"
+  },
+  {
+   "path": "logs/trust_pre_p12_214706.log",
+   "sha256": "d15c10f27c89c79947963b15739424b5cb1377c69969ba53c5d5abc3257c1c32",
+   "bytes": 825,
+   "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/trust_pre_p12_214706.log"
+  },
+  {
+   "path": "logs/trust_pre_p12_214816.log",
+   "sha256": "e714d36597a655e4f7c6c8c51959eae69a9b2b74fb0da6e46ee730858fa64db5",
+   "bytes": 473,
+   "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/trust_pre_p12_214816.log"
+  },
+  {
+   "path": "orchestrator/DECISIONS.md",
+   "sha256": "69cc5386c54a3617d316431561bcb3c44e01018d45fa8b97cca3966f1dcc5827",
+   "bytes": 15638,
+   "origin": "/home/agi/.orchestrator/DECISIONS.md"
+  },
+  {
+   "path": "orchestrator/PLAN.md",
+   "sha256": "6e1c253789be3e9cb6d3398c4376813a47e4921bc214378761694067ecfa014a",
+   "bytes": 26178,
+   "origin": "/home/agi/.orchestrator/PLAN.md"
   },
   {
    "path": "raw_scan_ab/ab_eval.py",
@@ -387,8 +459,8 @@
   },
   {
    "path": "raw_scan_ab/raw_scan_bridge.log.gz",
-   "sha256": "7e40b2a604a131ac7b5256b3ff66df8ddc7a35ee35b517965b751dd6f04464f4",
-   "bytes": 17798,
+   "sha256": "a8d6f35bf653925c956ff9a225aa52b6793f6fe4784213308287872c01d18173",
+   "bytes": 21301,
    "origin": "/home/agi/control_backend/docs/evidence/raw_scan_ab_20261029/raw_scan_bridge.log"
   },
   {
@@ -483,9 +555,15 @@
   },
   {
    "path": "scripts/p20_yaw_test.py",
+   "sha256": "50a092ce4164473c403994e0add790b2774cb11d403375f9328a1e14609de42e",
+   "bytes": 8720,
+   "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/p20_yaw_test.py"
+  },
+  {
+   "path": "scripts/p20_yaw_test.py.v1",
    "sha256": "d756a9b3452c099c405fc32d3fa68c3d097aa7b098fc384c0bc5f73f2fdf9a7b",
    "bytes": 8679,
-   "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/p20_yaw_test.py"
+   "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/p20_yaw_test.py.v1"
   },
   {
    "path": "scripts/p20_yawloop_replay.py",
@@ -513,8 +591,8 @@
   },
   {
    "path": "scripts/restart_gc.sh",
-   "sha256": "2c6c9ed0301ff74d97fd3315bb45afe259f1ff4f04cf00eef1b8aec9dd41269e",
-   "bytes": 5472,
+   "sha256": "f103ed0bdbe57717b8c555d60e64b81f3b383944456b107f310d63ab0ea10135",
+   "bytes": 5462,
    "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/restart_gc.sh"
   },
   {
@@ -525,8 +603,8 @@
   },
   {
    "path": "scripts/restart_trust.sh",
-   "sha256": "c3ead8febf2d5f764095204aa467d2770a7f52024bef104dbafd3dafd038892f",
-   "bytes": 1905,
+   "sha256": "7fd43fbeedf1b05f48da7c2e63544802d9e25f76b54e03bc99e0503e78469a8e",
+   "bytes": 1895,
    "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/restart_trust.sh"
   },
   {
@@ -549,8 +627,8 @@
   },
   {
    "path": "scripts/start.sh",
-   "sha256": "40c4747104e44c719a4458d2afe94ad862d5b49905e083a3749726624d7e7eb6",
-   "bytes": 3362,
+   "sha256": "4c20a39344228c4dcdd807ae0e5561e241a6141bb08dca52797fa76b9c3782fb",
+   "bytes": 3352,
    "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/start.sh"
   },
   {
@@ -561,15 +639,27 @@
   },
   {
    "path": "scripts/start_loc.sh",
-   "sha256": "8964409bf15f05302f6568c44f109260d7591390b6bbd31c18c10a924c0d9d1f",
-   "bytes": 3174,
+   "sha256": "ae941d30d03c50984e6e1e7ffe3423f70dcdfab38d8c9d4b6b2a35c29d186f00",
+   "bytes": 3164,
    "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/start_loc.sh"
   },
   {
+   "path": "scripts/start_loc.sh.pre_d1map",
+   "sha256": "8964409bf15f05302f6568c44f109260d7591390b6bbd31c18c10a924c0d9d1f",
+   "bytes": 3174,
+   "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/start_loc.sh.pre_d1map"
+  },
+  {
    "path": "scripts/start_nav.sh",
+   "sha256": "9c7896835fa8970c245adc04fd45936b1cf0908c2a65380b4c005fe6543852a9",
+   "bytes": 4533,
+   "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/start_nav.sh"
+  },
+  {
+   "path": "scripts/start_nav.sh.pre_d1map",
    "sha256": "c38fc801cd416444f5d5b94edc0044c754c1fae6579f1d3900cd7aa2152c11cb",
    "bytes": 4543,
-   "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/start_nav.sh"
+   "origin": "/home/agi/control_backend/docs/evidence/nav_20261029_1425/start_nav.sh.pre_d1map"
   },
   {
    "path": "scripts/status_logger.py",

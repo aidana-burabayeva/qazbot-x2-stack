@@ -6,8 +6,8 @@ set -u
 EV=/home/agi/control_backend/docs/evidence/nav_20261029_1425
 NAV=/home/agi/control_backend/ws/src/navigation
 BIN=/home/agi/control_backend/candidates/fast_lio_portable/install/fast_lio/lib/fast_lio/fastlio_mapping
-MAP=/home/agi/control_backend/ws/src/maps/first_map_nav2_v3_despeckled/map.yaml
-MAP_SHA=6fc67526d5314447d3ffa25d4144310d78b5202a649e87d852735b87c9f320e5
+MAP=/home/agi/control_backend/ws/src/maps/d1_qazbot_20261029/map.yaml
+MAP_SHA=83d05bafb541b42315a0b03dbbfffa9fc2511025c552b3430da20d6935ae8644
 PROF=$EV/dds_nav_two_iface_log.xml
 PAT='fastlio_mapping|level_bridge|native_odom_bridge|nav2_amcl/amcl|lib/nav2_map_server/map_server|nav2_lifecycle_manager/lifecycle_manager|localization_trust|goal_coordinator|x2_motion_adapter|controller_server|planner_server|bt_navigator|velocity_smoother|costmap|age_probe|chain_probe|t1_probe|ros2 bag'
 log(){ echo "[$(date +%T.%N)] $*" | tee -a $EV/start_run.txt; }

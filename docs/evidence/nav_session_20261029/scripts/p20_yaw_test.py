@@ -67,7 +67,7 @@ class T(Node):
         if a.get('latch') or a.get('registration') != 'registered': return f'adapter {a.get("state")} latch={a.get("latch")}'
         if self.mc is None or self.mc[0] not in (SRC, 'rc'): return f'mc source {self.mc}'
         if self.mc[1] not in OK_ACTIONS: return f'mc action {self.mc}'
-        if math.hypot(self.od[-1][2] - x0, self.od[-1][3] - y0) > 0.3: return 'translated >0.3 m (step)'
+        if math.hypot(self.od[-1][2] - x0, self.od[-1][3] - y0) > float(os.environ.get('MAX_DRIFT','0.3')): return 'translated >MAX_DRIFT (step)'
         return None
 
     def send(self, w, x0, y0):

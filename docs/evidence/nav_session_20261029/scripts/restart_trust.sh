@@ -3,8 +3,8 @@
 set -u
 EV=/home/agi/control_backend/docs/evidence/nav_20261029_1425
 NAV=/home/agi/control_backend/ws/src/navigation
-MAP=/home/agi/control_backend/ws/src/maps/first_map_nav2_v3_despeckled/map.yaml
-MAP_SHA=6fc67526d5314447d3ffa25d4144310d78b5202a649e87d852735b87c9f320e5
+MAP=/home/agi/control_backend/ws/src/maps/d1_qazbot_20261029/map.yaml
+MAP_SHA=83d05bafb541b42315a0b03dbbfffa9fc2511025c552b3430da20d6935ae8644
 PROF=$EV/dds_nav_two_iface_log.xml
 log(){ echo "[$(date +%T.%N)] restart_trust: $*" | tee -a $EV/start_run.txt; }
 OLD=$(cat $EV/trust.pid)
