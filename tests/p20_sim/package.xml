@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>p20_sim_tools</name>
+  <version>0.0.1</version>
+  <description>Simulation-only P20 calibration helpers; not a robot runtime package.</description>
+  <maintainer email="maintainers@example.invalid">QazBot maintainers</maintainer>
+  <license>Proprietary</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rclcpp</depend>
+  <depend>nav_msgs</depend>
+  <depend>tf2_msgs</depend>
+  <depend>eigen</depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>qazbot_odom_recovery</name><version>0.0.1</version>
+  <description>Simulation-only C++ native odometry recovery candidate.</description>
+  <maintainer email="maintainers@example.invalid">QazBot maintainers</maintainer><license>Proprietary</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rclcpp</depend><depend>nav_msgs</depend><depend>diagnostic_msgs</depend>
+  <depend>aimdk_msgs</depend><depend>qazbot_odom_recovery_msgs</depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

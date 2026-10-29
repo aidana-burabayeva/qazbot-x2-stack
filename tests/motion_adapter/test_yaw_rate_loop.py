@@ -87,3 +87,51 @@ def test_localization_fault_latches_and_rejects_motion():
     result = drive(core, 1.1, localized=False, loc_reason='untrusted')
     assert result.state == LATCHED and result.publish == (0., 0., 0.)
     assert drive(core, 1.2).state == LATCHED
+
+
+@pytest.mark.parametrize('rate', [float('nan'), float('inf'), -float('inf')])
+def test_invalid_measurement_never_reaches_integrator(rate):
+    core = AdapterCore(Config())
+    result = drive(core, 1., rate=rate)
+    assert result.publish[2] == pytest.approx(.4)
+    assert not core.yaw.active and core.yaw.integ == 0
+
+
+@pytest.mark.parametrize('cmd', [(.02, 0., .5), (0., 0., .05), (0., 0., -.05)])
+def test_pure_rotation_thresholds_do_not_activate_loop(cmd):
+    core = AdapterCore(Config())
+    result = core.step(1., cmd, 1., mc(1.), yaw_rate=0.)
+    assert result.publish == cmd
+    assert not core.yaw.active
+
+
+def test_dead_time_then_rate_limit_and_antiwindup():
+    cfg = Config()
+    loop = YawRateLoop(cfg)
+    before = loop.update(0., .5, 0.)
+    for i in range(1, 30):
+        after = loop.update(i*.02, .5, 0.)
+        assert loop.integ == 0  # no integration during MC startup dead time
+        assert after == before
+    for i in range(30, 1000):
+        after = loop.update(i*.02, .5, 0.)
+        assert abs(after-before) <= cfg.yaw_du_max*.02 + 1e-12
+        assert cfg.yaw_u_min_ccw <= after <= cfg.yaw_u_max
+        before = after
+    saturated_integral = loop.integ
+    for i in range(1000, 1100):
+        assert loop.update(i*.02, .5, 0.) == pytest.approx(cfg.yaw_u_max)
+    assert loop.integ == pytest.approx(saturated_integral)
+
+
+def test_stale_command_and_takeover_reset_active_yaw_loop():
+    core = AdapterCore(Config())
+    drive(core, 1.)
+    result = core.step(2., (0., 0., .5), 1., mc(2.), yaw_rate=0.)
+    assert result.publish == (0., 0., 0.) and not core.yaw.active
+    drive(core, 2.1)
+    other = mc(2.2)
+    other.source = 'vr'  # accepted built-in source; a change while active is takeover
+    result = core.step(2.2, (0.,0.,.5), 2.2, other, yaw_rate=0.)
+    assert result.state == LATCHED and result.publish == (0.,0.,0.)
+    assert not core.yaw.active and core.yaw.integ == 0

@@ -1,0 +1,13 @@
+uint8 BEGIN=1
+uint8 CONFIRM=2
+uint8 RELEASE=3
+uint8 command
+uint64 epoch
+bool motion_inhibited
+bool source_reset_confirmed
+geometry_msgs/PoseStamped verified_pose
+bool newly_qualified_trust
+---
+bool success
+uint8 state
+string message

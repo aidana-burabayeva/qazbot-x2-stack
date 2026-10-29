@@ -1,0 +1,12 @@
+# Calibration follow-up only: actual nav-branch source + P20 torso surrogate; no production deployment.
+services:
+  stack:
+    volumes:
+      - ${P20_BACKEND:?set P20_BACKEND}/ws/src:/opt/x2twin/stack:ro
+      - /tmp/qazbot-p20-build:/tools:ro
+    command:
+      - bash
+      - -c
+      - |
+        /tools/torso_odom --ros-args -r /twin/p20_odom:=/qazbot_native/odom &
+        exec ros2 launch x2_twin_bringup twin.launch.py plant:=official max_angular:=0.5 map_yaml:=/opt/x2twin/stack/maps/main_office/map.yaml start_pose:=-7.885339914512176,12.96582446398428,0.0 localization:=truth
