@@ -14,7 +14,7 @@ GOAL_ARGS=${GOAL_ARGS:---only-ccw --record-phases}
 [ ! -e "$TWIN/results/$RUN" ] || { echo "results/$RUN exists: evidence is never overwritten"; exit 2; }
 
 export P20_BACKEND=$BACKEND TWIN_MAP=main_office TWIN_SIM_RES=320x180x24 LP_NUM_THREADS=1 SIM_CPUS=8 STACK_CPUS=4
-export TWIN_START=-7.885339914512176,12.96582446398428,0.0
+export TWIN_START=${TWIN_START:--7.885339914512176,12.96582446398428,0.0}
 C=(docker compose -p x2-twin -f "$TWIN/docker/compose.yaml" -f "$HERE/nav2.compose.yaml" --env-file "$TWIN/.env")
 cleanup() { "${C[@]}" down >/dev/null 2>&1 || true; }
 trap cleanup EXIT

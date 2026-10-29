@@ -13,7 +13,7 @@ from rcl_interfaces.srv import GetParameters, SetParameters
 from rclpy.parameter import parameter_value_to_python
 
 if os.environ.get('TWIN_SANDBOX')!='1' or os.environ.get('ROS_DOMAIN_ID')!='87':raise RuntimeError('SIM only')
-ap=argparse.ArgumentParser();ap.add_argument('--out',default='nav2_truth_p20');ap.add_argument('--reuse-registration',action='store_true');ap.add_argument('--only-cw',action='store_true');ap.add_argument('--only-ccw',action='store_true');ap.add_argument('--record-phases',action='store_true');ap.add_argument('--xy-tol',type=float);ap.add_argument('--yaw-tol',type=float);args=ap.parse_args()
+ap=argparse.ArgumentParser();ap.add_argument('--out',default='nav2_truth_p20');ap.add_argument('--reuse-registration',action='store_true');ap.add_argument('--only-cw',action='store_true');ap.add_argument('--only-ccw',action='store_true');ap.add_argument('--record-phases',action='store_true');ap.add_argument('--goals',help='absolute goals "x,y,yaw;x,y,yaw" (replaces the built-in relative ones)');ap.add_argument('--xy-tol',type=float);ap.add_argument('--yaw-tol',type=float);args=ap.parse_args()
 rclpy.init();h=Harness();result={'scope':__doc__,'goals':[]}
 out=Path('/results')/args.out;out.mkdir(exist_ok=False)
 recorder=None;recorder_log=None
@@ -46,6 +46,7 @@ try:
     start=tuple(h.pose)
     targets=[(start[0],start[1]+.5,0.)] if args.only_cw else [(start[0]+.5,start[1],math.pi/2),(start[0]+.5,start[1]+.5,0.)]
     if args.only_ccw:targets=targets[:1]
+    if args.goals:targets=[tuple(float(v) for v in g.split(',')) for g in args.goals.split(';')]
     for target in targets:
         h.wait(lambda:h.state['coord'].get('ready',False),30,'coordinator settled and ready for next goal')
         begin=h.now();begin_ros_ns=h.get_clock().now().nanoseconds;handle=h.send_goal(*target);assert handle.accepted
