@@ -1,5 +1,88 @@
 # QazBot X2: продолжение — первые физические RViz goals (2026-10-28, вечер)
 
+## 2026-10-29 (самая свежая запись; ниже сохранена история 2026-10-28)
+
+Обновлено 2026-10-29 ~21:45 CST (+08), X2 agi@192.168.1.72. Источники: `.orchestrator/PLAN.md` ("2026-10-29 session"), `DECISIONS.md`, отчёты P15/P16/P18/P19/P20 (копии в [evidence/nav_session_20261029](evidence/nav_session_20261029/reports/)), логи/скрипты в [evidence/nav_session_20261029](evidence/nav_session_20261029/) (manifest.json: sha256 + исходные пути; bags только перечислены). Ветка `nav/first-goals-20261028`, repo `ws/src` = deployed `ws/src` (sha256 сверены, кроме кандидата P20, см. ниже). Секреты/пароли роботов в репозиторий не пишутся.
+
+**Итог дня:** после перезагрузки робота (14:24) стек поднят заново (P15). Демо текущей навигации: 2 из 2 goals подряд SUCCEEDED (20:5x, A 9.2 с, B 11 с, конфиг ниже, старый adapter, карта v3 despeckled). Сегодня найдены и частично устранены причины отказов (footprint, BT, inflation); главный нерешённый блок: in-place разворот в вендорском MC нелинеен/залипает (P19), исправление P20 (yaw-rate loop) написано и проверено офлайн, но живьём НЕ проверено и НЕ развёрнуто.
+
+### Текущее состояние (что работает, конфиг)
+
+Проверять живые PID, а не этот список. Состояние на ~20:37-21:30, после последнего рестарта (идёт простой, goals не отправлялись 30+ мин).
+
+| Компонент | Состояние |
+| --- | --- |
+| localization (FAST-LIO, level_bridge, native_odom_bridge, map_server, AMCL OmniMotionModel) + Trust | перезапущены 20:33-20:37 (`start_loc.sh`), карта `first_map_nav2_v3_despeckled` (НЕ новая D1), Trust T5 jump_xy_max **1.0 м**, jump_yaw_max **0.5 рад** (оператор 17:58) |
+| Motion adapter, MC source `sdk_qazbot_nav2_1029a`, prio 30 | **старый код sha256 71db8ebd...** (pre-P19/P20), registered; PID 17061 (с 14:28). Новый yaw-loop НЕ запущен |
+| nav_full (controller/planner/smoother/bt_navigator + Goal Coordinator) | перезапущен 20:34, ждёт/имеет map->odom; конфиг ниже |
+| `seed_loop2` + monitor | следит за initialpose оператора, после каждого seed делает no-motion updates |
+| recorder | лёгкий (mcap, без глобального /tf, IMU, joints), `record_goal.sh`; старый recorder PID 18033 (107 % CPU) заменён |
+| `raw_scan_bridge` | работает параллельно на `/qazbot_raw/*` (не влияет на навигацию), 18 % ядра |
+| Vendor apps | perception/orbbec_camera/hal_camera/drp/lx_webrtc_app остановлены (разрешение оператора 2026-10-28, повторено после перезагрузки) |
+| HAL | em-запуск PID 2810, **nice 0** (см. блокер g) |
+
+### Изменения 2026-10-29 (значения, причина)
+
+| Изменение | Значения | Причина / результат |
+| --- | --- | --- |
+| Bring-up после перезагрузки (P15) | `start.sh`, `start_nav.sh` (источник `sdk_qazbot_nav2_1029a`), MC после reboot PASSIVE_DEFAULT: ADD только после ручного stand оператором (RC) | stale регистрации нет; ADD gated на `mc_source rc/STAND_DEFAULT` |
+| Recorder облегчён | без глобального /tf, IMU, joints (`record_goal.sh`, прежний `.pre_light`) | прежний recorder 107 % CPU |
+| restart_gc.sh | `ros2 topic echo` заменён rclpy `gc_status.py` | CLI нестабилен (см. 2026-10-28 блокер 7) |
+| BT keep-path (P17) | `Fallback{ComputePathToPose; AlwaysSuccess}` (оставляет последний путь) + `RecoveryNode` x**4** с `ClearEntireCostmap` GLOBAL; добавлен `clear_costmap_service_bt_node` | GOAL2 17:1x: 1 Гц replan «no valid path» -> PipelineSequence abort -> goal failed |
+| static_layer.footprint_clearing | global `static_layer.footprint_clearing_enabled: True` | GOAL3: «Starting point in lethal space» (устаревшая карта, статическое препятствие 0.35 м от центра при радиусе .454) |
+| Полигон footprint (P18) | вендорский 12-точечный полигон из `/agibot/software/nav/config/vectorflux_common/a2/app2.yaml` -> base_footprint с запасом; в base_footprint: `[[0.17,0.229],[0.008,0.34],[-0.182,0.34],[-0.305,0.229],[-0.305,-0.261],[-0.182,-0.372],[0.008,-0.372],[0.17,-0.261]]`; local padding 0.01, global padding 0.01+cell margin; вместо круга r=0.454 | RPP 1.1.18 `isCollisionImminent` растеризует контур круга и давал collision на 72/72 курсах при 37 см свободного места; с полигоном 0/72 (`p18_fpcheck_*.txt`). Размах рук при ходьбе не измерен (+5 см спереди) |
+| failure_tolerance | 10 с (с 28.10, сохранено) | время на replanning |
+| Smac2D / global inflation (18:3x-18:4x) | `cost_travel_multiplier` **4.0**; global inflation `cost_scaling_factor` 3.0 -> **1.5**, `inflation_radius` **0.60** (было 0.889); local inflation_radius **0.50** (было 0.464) | around-table GOAL2: путь прижимался к столу/стульям (~1 м), RPP проецирует footprint прямо к carrot (0.5-0.9 м) и упирается в метки. Оператор: радиус 0.5-0.6. Persist в launch (bak `pre_infl`) |
+| goal_checker.yaw_goal_tolerance | 0.17 -> 0.35 рад (временно 3.15 для диагностики, возвращено 0.35 в P19) | финальный разворот залипает в MC (блокер b) |
+| Trust T5 | jump_xy_max 0.25 -> **1.0 м**, jump_yaw_max 0.25 -> **0.5 рад** (`start.sh`, `restart_trust.sh`) | оператор 17:58: разрешить коррекции AMCL до 1 м (карта устарела). Ослабление правила T5 по решению оператора |
+| raw_scan_bridge A/B (P16) | сырое облако HAL + roll/pitch из leg_odometry + extrinsic x2.yaml на `/qazbot_raw/*`; оператор одобрил, влияния на живую nav нет | стоя: 18 % ядра против 44 % у FAST-LIO+level_bridge; медиана разницы дальности 2.8 см; map-match (0.1 м): raw .550 vs lio .519 (low slice .432); за 900 с стоя raw .337/.689 vs lio .324/.633, low .301/.539. A/B в движении не получился (робот не ехал в P16b); `ab_eval_motion.py` запускался 17:08 на 1200 с, результат `raw_scan_ab/ab_motion_1708.json`. Решение о переключении — после новой карты |
+| Карта D1 | загружена `ws/src/maps/d1_qazbot_20261029` (slam_toolbox, 673x903 @ 0.05, origin -30.01/-22.41, pgm sha 83d05baf...) | карта office стара (ящики переставлены) -> низкий scan_score. **Не включена** (оператор 20:3x: показать текущую nav) |
+| P20 yaw-rate loop | кандидат `ws/src/navigation/candidates/x2_motion_adapter_yawloop_p20.py` (sha256 9c05bb34...), **не развёрнут**; deployed `x2_motion_adapter.py` = 71db8ebd | см. блокер b |
+| P19 turn-stall kick | отвергнут и откачен (`x2_motion_adapter.py.p19_kick_rejected` на X2) | данные не поддерживают |
+| Процедура `seed_loop.py` | `scripts/seed_loop.py`: при КАЖДОМ `/qazbot_d1_map/initialpose` ждёт 0.3 с, делает 12 AMCL no-motion updates (сервис `request_nomotion_update`, 2 Гц; прерывается новым initialpose), через 2.5 с печатает метрики Trust (ready, motion_ok, sigma, second_mode, scan_score). Запускать после каждого рестарта localization/Trust (seed_loop2); resume GC/adapter делает Trust сам при READY | после рестарта localization нужен новый initialpose оператора (RViz) |
+
+### Результаты goals 2026-10-29
+
+| Время | Goal | Результат | Причина / комментарий |
+| --- | --- | --- | --- |
+| 17:1x | GOAL1 (~2.8 м) | **SUCCEEDED** 8.6 с | |
+| 17:1x | GOAL2 (-5.02,3.49)->(-5.94,-0.81) | FAILED | replan «no valid path» -> abort; исправлено BT keep-path (P17) |
+| 17:13 | GOAL3 (-4.54,0.11)->(-6.36,0.37) | FAILED | start in lethal space (static_layer); footprint_clearing |
+| 17:16 | GOAL4 (-4.50,0.12)->(-6.39,0.21) | FAILED | RPP collision ahead 10 с, локальные lethal ~0.5 м, затем T1 pause + TF extrapolation, patience exceeded; робот зажат у препятствия |
+| 18:0x | (-4.11,0.04)->(-6.42,0.22) | xy достигнут (0.02 м, 8 с), затем отмена | поворот на месте ~180 град работал (полигон), финальный yaw залип -2.16 -> progress checker -> GC `goal_alignment_not_converging` на 39 с |
+| 18:1x | (-6.61,0.58)->(-6.42,0.23) | **SUCCEEDED** 8.5 с | включая T1 pause с авто-resume (P8c работает живьём) |
+| 18:2x | around-table GOAL2 (-2.59,-3.45)->(-5.59,3.18) | FAILED | RPP collision ahead со старта (метки стола/стульев ~1 м), patience x4, T1 pause; после clear метки появились снова = реальные |
+| 18:5x | around-table GOAL2 retry | xy достигнут (0.02 м, 38 с), затем отмена | 16 с стоял (collision ahead; первый путь шёл назад), 7.2 м пройдено, финальный разворот залип yaw 2.25 30 с -> progress checker + GC alignment cancel |
+| 20:5x | demo A (-7.38,6.02)->(-5.20,2.82) | **SUCCEEDED** 9.2 с | текущая конфигурация, старый adapter |
+| 20:5x | demo B ->(-5.85,-2.27) | **SUCCEEDED** 11 с | 2/2 подряд |
+
+Итого сегодня: 5 SUCCEEDED (из них 2 подряд на демо), 2 по xy с отменой из-за финального разворота, остальные FAILED (причины выше).
+
+### ТЕКУЩИЕ БЛОКЕРЫ (обновлено 2026-10-29; заменяет таблицу ниже, пункты 2026-10-28 остаются в истории)
+
+| # | Блокер | Доказательства | Решение / нужно решение |
+| --- | --- | --- | --- |
+| a | **native_odom_bridge залипает при каждой смене режима MC** (stand/damping): origin leg odom сбрасывается (dp .467 м, gap 39.7 с в 14:41; dp 1.563 м в 20:3x) -> нужен рестарт localization+Trust | PLAN 14:45, 20:3x | Процедура: оператор поднимает робота -> `start_loc.sh` -> рестарт nav_full -> initialpose -> goals. Код: bridge должен пережить reset origin (не сделано) |
+| b | **MC: in-place разворот CCW нелинеен/залипает**, особенно после ходьбы; от adapter/Nav2 не зависит (прямой MC такой же или хуже) | P19: CCW с места 0.6 -> 0.35-0.53 рад/с, 0.8 -> 1.25, 1.0 -> 1.87 (перерегулирование 1.6-1.9x); CW 0.4 -> -0.27, 0.6 -> -0.54; после ходьбы 0.6 -> 0.2-0.37 рад/с, stall 23-38 %; в goals CCW 0.6 после ходьбы 0.00 рад/с 96 % времени. Прямой MC (`sdk_qazbot_calib_direct`): CCW <=0.5 нет устойчивого поворота. Таблицы: `reports/20261029-p19-rotation.md`, `calib/*.json`. Pelvis/chest расхождение <5 град | Кандидат **P20 yaw-rate loop** в adapter (замкнутый контур по yaw из native odom pose, не twist; u 0.6/0.45..1.0, I-term ki 0.4, overspeed cut); офлайн replay: 0.50-0.62 рад/с против 0.10-0.40, 90 град за 3-4.4 с, перерегулирование 0-8 град (26 град после stall). **Живой тест не выполнен** (MC был в DAMPING 19:35-19:44). Шаги: робот стоит -> `CONFIRM=1 p20_restart_adapter.sh` -> reseed -> `CONFIRM=1 p20_yaw_test.py`. Откат: `-p yaw_loop:=false` или `.bak_20261029_pre_p20` |
+| c | **Старая карта устарела; новая D1 скачана, но не переключена**; высота среза скана 0.26-1.71 м, а D1 LD14 строил карту на ~0.2-0.3 м | оператор: ящики переставлены; P16: низкий слой map-match .432 vs .550 | Решение оператора: переключить карту (`ws/src/maps/d1_qazbot_20261029`), тогда AMCL/Trust/costmap перепроверить, и пересмотреть slice (low slice или raw_scan_bridge). Потребует новый initialpose и тюнинг T5 |
+| d | Планировщик может выбрать путь **позади робота** (Smac2D игнорирует heading) | goal 18:5x: путь 136 град назад, 10 м, 16 с стоял (CCW stall); после global clear путь вперёд 7 м | Опции: SmacHybrid / SmacLattice (heading, штраф за разворот); очищать global marks при accept goal. Больше изменение, решение нужно |
+| e | **RPP проецирует footprint прямо к carrot**, а путь криволинейный -> ложные collision ahead у стола | P18/18:3x: collision со старта, метки ~1 м | Смягчено inflation/Smac cost. Опция: **MPPI** (см. [MPPI_MIGRATION.md](MPPI_MIGRATION.md), предложение, не реализовано) |
+| f | **Native odom twist невалиден** (angular.z 1.78 рад/с, linear.y 0.30 стоя) | P20 live-замер | Использовать только pose; P20 так и делает. Дрейф позы стоя .17 м/15 мин |
+| g | **HAL nice 0** (em-конфиг без приоритета; PID 2810 после reboot) против nice -19 на .89 | PLAN 14:24; ранее P8d | Нужен `sudo renice`/конфиг em; решение оператора (отложено). Ранее ~5-10 % T1_scan_stale |
+
+Блокеры 2026-10-28 без изменений: 3 (метки вне FOV, смягчено BT global clear), 5, 6 (adapter не делает DELETE при выходе: для рестарта нужен ручной DELETE), 7, 9 (RC takeover latch не доказан).
+
+### Продолжение (шаги)
+
+1. Проверить живые PID/состояние (adapter 71db8ebd, nav_full, localization, Trust, recorder, raw_scan_bridge); MC режим и источник.
+2. Если оператор перезапускал/опускал робота: оператор ставит робота на ноги (RC) -> `start_loc.sh` (localization+Trust) -> рестарт nav_full (`restart_gc.sh`) -> оператор initialpose -> `seed_loop` -> goals.
+3. По разрешению оператора: P20 live (restart adapter DELETE+ADD, `p20_yaw_test.py` 0.5 рад/с и 90 град), затем goals с финальным разворотом. При успехе: `cp candidates/x2_motion_adapter_yawloop_p20.py` -> `navigation/x2_motion_adapter.py`, перепроверить sha256, закоммитить.
+4. Решение по карте D1 + slice скана + raw_scan_bridge (A/B в движении `ab_eval_motion.py`).
+5. Решение по планировщику (SmacHybrid/Lattice) и MPPI (см. MPPI_MIGRATION.md).
+6. Не запускать unit-suites (правило оператора 28.10); не трогать работающие ROS-процессы без разрешения.
+
+---
+
 Обновлено 2026-10-28 ~23:00 CST (+08), X2 agi@192.168.1.72. Задача оркестратора `20261028-scan-latency-rviz-goal`. Начать с этой передачи, [X2_NAV_BRINGUP.md](X2_NAV_BRINGUP.md) и AGENTS.md, не с нового аудита.
 
 **Итог дня:** первый физический NavigateToPose **SUCCEEDED** (21:05, ~2.2 м, 12.5 с), затем ещё два SUCCEEDED (22:12 A 4.9 с, 22:42 #1 8.8 с). Цель оператора «3 goals подряд» **НЕ достигнута**: серии прерываются T5 (AMCL не сходится) и RPP collision abort. Стек на момент записи **работает** (оператор тестирует), recorder пишет.
