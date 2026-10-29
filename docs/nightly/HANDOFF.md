@@ -10,3 +10,10 @@ python3 tools/nightly/phase_analysis.py /home/adn/QazBot/digital_twin/results/<r
 ```
 Каждый прогон — свежие контейнеры (runner делает --force-recreate и down). Результаты не перезаписываются.
 Следующий шаг: фаза B (анализ main_office: помещения, граф связности, кандидаты дверей — пометить UNVALIDATED), затем C.
+
+## P0 Continuous Execution — состояние на 2026-10-30 ~01:40
+- Оркестратор: `systemctl --user status qazbot-nightly` (Restart=always, linger=yes). Очередь: `python3 tools/nightly/nq.py status`; checkpoint: `run/nightly/checkpoint.json` (локально, не в git). Один владелец: flock `run/nightly/orchestrator.lock`.
+- Агенты: Codex сессия 01a18872 держится открытыми TUI (`codex resume` pid 5123/5958) -> `exec resume` невозможен ("active writer"); канал = `codex queue --thread` (сообщение 01a1894e-… поставлено 01:16, ACK UNVERIFIED). Не создавать дублирующую сессию; не убивать TUI пользователя.
+- Фазы: A, B, C, D готовы (см. STATUS). E: `tools/nightly/run_l2.sh <id> <tsv>` — один сценарий через настоящий Nav2+P20+MC; первый запуск упал на парсинге `--goals` с минусом (исправлено `--goals=`), r2 в очереди.
+- Следующее: L2 doorway-серия (resource=sim, строго по одному), сравнение L1 vs L2, пересборка twin-образа (OPEN), fitness/Парето-оптимизатор, HTML-отчёт, GPU-замеры, пилот G.
+- Запрещено: команды на физический X2, ssh/deploy, ослабление допусков/safety ради PASS.
