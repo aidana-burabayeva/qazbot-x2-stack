@@ -1,0 +1,118 @@
+{
+  "scope": "Full Nav2/Coordinator/P20 integration, truth localisation; simulation-only and not AMCL qualification.",
+  "goals": [
+    {
+      "target": [
+        -7.384742999933633,
+        12.96584918402977,
+        1.5707963267948966
+      ],
+      "status": 4,
+      "duration": 31.76457428499998,
+      "pose": [
+        -7.288050835618952,
+        12.981327043734714,
+        1.5860602313892374
+      ],
+      "xy_error": 0.0979231268950456,
+      "yaw_error": 0.015263904594340794,
+      "coordinator": {
+        "busy": true,
+        "latched": false,
+        "gate": true,
+        "fault": "",
+        "source_zero": false,
+        "trusted": true,
+        "paused": false,
+        "driver_ready": true,
+        "driver_mode": "live",
+        "ready": false,
+        "child_uuid": [
+          7,
+          204,
+          217,
+          164,
+          200,
+          97,
+          72,
+          21,
+          146,
+          39,
+          23,
+          251,
+          139,
+          149,
+          140,
+          72
+        ]
+      }
+    }
+  ],
+  "result": "FAIL",
+  "error": "AssertionError()",
+  "states": {
+    "coord": {
+      "busy": true,
+      "latched": false,
+      "gate": true,
+      "fault": "",
+      "source_zero": false,
+      "trusted": true,
+      "paused": false,
+      "driver_ready": true,
+      "driver_mode": "live",
+      "ready": false,
+      "child_uuid": [
+        7,
+        204,
+        217,
+        164,
+        200,
+        97,
+        72,
+        21,
+        146,
+        39,
+        23,
+        251,
+        139,
+        149,
+        140,
+        72
+      ]
+    },
+    "adapter": {
+      "state": "active",
+      "reason": "driving",
+      "latch": "",
+      "live": true,
+      "mode": "live",
+      "dry_run": false,
+      "mc_source": "sdk_qazbot_nav2",
+      "trusted": true,
+      "registration": "registered",
+      "registration_error": "",
+      "sdk_service_ready": true,
+      "motion_armed": true,
+      "t1_pause": false,
+      "ready": true,
+      "foreign_publishers": [],
+      "counters": {
+        "saturated": 0,
+        "rejected": 0,
+        "latched": 0,
+        "published": 1561,
+        "yaw_loop": 1191,
+        "yaw_meas_stale": 0
+      }
+    },
+    "trust": {
+      "trusted": true,
+      "ready": true,
+      "reasons": [],
+      "metrics": {},
+      "source": "truth_localizer"
+    },
+    "mc": {}
+  }
+}

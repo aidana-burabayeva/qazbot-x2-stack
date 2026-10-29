@@ -1,0 +1,8 @@
+..............................................................           [100%]
+=============================== warnings summary ===============================
+tests/loc_trust/test_ready_motion.py::ReadyMotion::test_gap_without_jump_keeps_ready
+tests/loc_trust/test_ready_motion.py::ReadyMotion::test_jump_during_nan_tf_gap_clears_ready_at_first_fresh_tick
+  Warning: invalid value encountered in cast
+
+-- Docs: https://docs.pytest.org/en/stable/warnings.html
+62 passed, 2 warnings in 14.61s

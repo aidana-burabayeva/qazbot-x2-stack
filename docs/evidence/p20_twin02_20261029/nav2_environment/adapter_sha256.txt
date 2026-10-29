@@ -1,0 +1,1 @@
+9c05bb340c38aac23003dbce83cc5716c0705de41a80358cc82577b4b4813154  /opt/x2twin/stack/navigation/x2_motion_adapter.py

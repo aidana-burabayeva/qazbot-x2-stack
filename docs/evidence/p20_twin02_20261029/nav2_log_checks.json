@@ -1,0 +1,5 @@
+{
+  "goal_alignment_not_converging": 0,
+  "goal_succeeded_log_messages": 2,
+  "limitation": "two successes; first client had precondition reject before CW follow-up; final-alignment timing not isolated"
+}

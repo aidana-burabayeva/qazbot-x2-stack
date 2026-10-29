@@ -1,0 +1,30 @@
+[
+  {
+    "run": "official_ccw_p20_cpu8",
+    "rate": 0.5008764092238916,
+    "alignment_time_s": 3.470454342999801,
+    "final_error_rad": 0.12515560333297238,
+    "abort": null
+  },
+  {
+    "run": "official_baseline_ccw_cpu8",
+    "rate": 0.006069169299760799,
+    "alignment_time_s": 8.503037239999685,
+    "final_error_rad": 0.16276793894549257,
+    "abort": null
+  },
+  {
+    "run": "official_baseline_cw_cpu8",
+    "rate": -0.20161732576059577,
+    "alignment_time_s": null,
+    "final_error_rad": -1.6196656947416246,
+    "abort": null
+  },
+  {
+    "run": "official_p20_cw_cpu8",
+    "rate": -0.4507257013793019,
+    "alignment_time_s": 4.546677849999469,
+    "final_error_rad": -0.08026073676955114,
+    "abort": null
+  }
+]

@@ -1,0 +1,2 @@
+[INFO] [1793296442.916253679] [motion_adapter]: x2_motion_adapter started: live=True cmd_topic=/qazbot_d1_map/cmd_vel_authorized source=sdk_p20_sim_probe priority=30 yaw_loop=False u_min ccw/cw=0.6/0.45 u_max=1.0 ki=0.4
+[INFO] [1793296443.893582711] [motion_adapter]: SDK source registered; waiting for fresh authorized command

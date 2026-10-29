@@ -1,0 +1,10 @@
+{
+  "loop": "true",
+  "direction": 1,
+  "scope": "SIM ONLY: actual P20 ROS adapter -> official MC -> MuJoCo -> torso FK yaw surrogate (native leg stream is absent).\nCalibration scope: no AMCL/Nav2 goals; localisation is deliberately excluded to isolate P20.\n",
+  "source": "sdk_p20_sim_probe",
+  "sustained_rate": 0.3986409293793238,
+  "abort": "MC not standing {'body': 4, 'fsm': 4, 'source': 'sdk_p20_sim_probe', 'action': 'STAND_DEFAULT', 'received': 9513.413933436}",
+  "delete_code": null,
+  "duration_s": 22.593491589999758
+}

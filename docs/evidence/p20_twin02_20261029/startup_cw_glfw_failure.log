@@ -1,0 +1,786 @@
+Selected configuration directory: /tmp/twin-world
+Component [aimrte::hds::component::HdsComponent] Enabled Env Name: AGIBOT_ENABLE_HDS_COMPONENT
+Component [aimrte::event::component::EventComponent] Enabled Env Name: AGIBOT_ENABLE_EVENT_COMPONENT
+Component [aimrte::audit::component::AuditComponent] Enabled Env Name: AGIBOT_ENABLE_AUDIT_COMPONENT
+AimRT start.
+[2026-10-29 17:54:40.205371][Info][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/configurator/configurator_manager.cc:57 @Initialize]Cfg file path: /opt/sim/bin/cfg/tmp/tmp2.yaml
+[2026-10-29 17:54:40.208429][Info][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/configurator/configurator_manager.cc:87 @Initialize]Configurator manager init complete
+[2026-10-29 17:54:40.209957][Trace][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/plugin/plugin_manager.cc:121 @Initialize]Load plugin 'sm_plugin' succeeded.
+[2026-10-29 17:54:40.212642][Trace][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/plugin/plugin_manager.cc:121 @Initialize]Load plugin 'net_plugin' succeeded.
+[2026-10-29 17:54:40.232627][Trace][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/plugin/plugin_manager.cc:121 @Initialize]Load plugin 'ros2_plugin' succeeded.
+[2026-10-29 17:54:40.234897][Trace][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/plugin/plugin_manager.cc:121 @Initialize]Load plugin 'nsm_plugin' succeeded.
+[2026-10-29 17:54:40.237323][Trace][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/plugin/plugin_manager.cc:121 @Initialize]Load plugin 'monitor_plugin' succeeded.
+[2026-10-29 17:54:40.238023][Info][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/plugin/plugin_manager.cc:135 @Initialize]Plugin manager init complete
+[2026-10-29 17:54:40.238125][Info][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/executor/main_thread_executor.cc:63 @Initialize]Main thread executor init complete
+[2026-10-29 17:54:40.238245][Info][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/executor/guard_thread_executor.cc:117 @Initialize]Guard thread executor init complete
+[2026-10-29 17:54:40.238448][Trace][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/executor/executor_manager.cc:91 @Initialize]Gen executor 'sim_work_thread' success.
+[2026-10-29 17:54:40.238558][Trace][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/executor/executor_manager.cc:91 @Initialize]Gen executor 'gui_work_thread' success.
+[2026-10-29 17:54:40.238657][Trace][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/executor/executor_manager.cc:91 @Initialize]Gen executor 'arm_joint_state_publisher_thread' success.
+[2026-10-29 17:54:40.238799][Trace][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/executor/executor_manager.cc:91 @Initialize]Gen executor 'leg_joint_state_publisher_thread' success.
+[2026-10-29 17:54:40.238922][Trace][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/executor/executor_manager.cc:91 @Initialize]Gen executor 'data_state_publisher_thread' success.
+[2026-10-29 17:54:40.239020][Trace][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/executor/executor_manager.cc:91 @Initialize]Gen executor 'common_joint_state_publisher_thread' success.
+[2026-10-29 17:54:40.239431][Trace][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/executor/executor_manager.cc:91 @Initialize]Gen executor 'joint_command_subscriber_thread' success.
+[2026-10-29 17:54:40.239536][Trace][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/executor/executor_manager.cc:91 @Initialize]Gen executor 'sim_sm_thread' success.
+[2026-10-29 17:54:40.239640][Trace][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/executor/executor_manager.cc:91 @Initialize]Gen executor 'default_timeout_executor' success.
+[2026-10-29 17:54:40.239720][Trace][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/executor/executor_manager.cc:91 @Initialize]Gen executor 'default_timeout_time_wheel' success.
+[2026-10-29 17:54:40.239827][Trace][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/executor/executor_manager.cc:91 @Initialize]Gen executor 'nsm_state_reporting_executor' success.
+[2026-10-29 17:54:40.239936][Trace][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/executor/executor_manager.cc:91 @Initialize]Gen executor 'nsm_modules_processing_executor' success.
+[2026-10-29 17:54:40.240120][Trace][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/executor/executor_manager.cc:91 @Initialize]Gen executor 'monitor_thread' success.
+[2026-10-29 17:54:40.241286][Info][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/executor/executor_manager.cc:102 @Initialize]Executor manager init complete
+[2026-10-29 17:54:40.242100][Info][148][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/logger/logger_manager.cc:105 @Initialize]Logger manager init complete
+[0;32m[2026-10-29 17:54:40.242138][Info][148][core][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/aimrt_core.cc:47 @PrintStartupInfo]
+  ╔═══════════════════════════════════════════════════════════╗
+  ║                                                           ║
+  ║           █████╗ ██╗███╗   ███╗██████╗ ████████╗          ║
+  ║          ██╔══██╗██║████╗ ████║██╔══██╗╚══██╔══╝          ║
+  ║          ███████║██║██╔████╔██║██████╔╝   ██║             ║
+  ║          ██╔══██║██║██║╚██╔╝██║██╔══██╗   ██║             ║
+  ║          ██║  ██║██║██║ ╚═╝ ██║██║  ██║   ██║             ║
+  ║          ╚═╝  ╚═╝╚═╝╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝             ║
+  ║                                                           ║
+  ║        Modern High Performance Robotics Framework         ║
+  ║        Official Website: https://aimrt.org                ║
+  ║        Documentation:    https://docs.aimrt.org           ║
+  ║        Version:          v1.2.0                           ║
+  ╚═══════════════════════════════════════════════════════════╝
+  [0m
+[0;32m[2026-10-29 17:54:40.242296][Info][148][core][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/allocator/allocator_manager.cc:37 @Initialize]Allocator manager init complete[0m
+[0;32m[2026-10-29 17:54:40.242801][Info][148][core][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/rpc/rpc_manager.cc:175 @Initialize]Rpc manager init complete[0m
+[0;32m[2026-10-29 17:54:40.244282][Info][148][core][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/channel/channel_manager.cc:176 @Initialize]Channel manager init complete[0m
+[0;32m[2026-10-29 17:54:40.244405][Info][148][core][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/parameter/parameter_manager.cc:37 @Initialize]Parameter manager init complete[0m
+[0;32m[2026-10-29 17:54:40.245696][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/build/_deps/aimrte-src/src/sm/context.cpp:13 @aimrte::sm::Context::Context(const string_view&)]Init server func [pb:/_/aimrte/sm/rpc/module_state_switch/MujocoSimModule] succeeded.[0m
+[0;32m[2026-10-29 17:54:40.245741][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/build/_deps/aimrte-src/src/sm/context.cpp:14 @aimrte::sm::Context::Context(const string_view&)]Init server func [pb:/_/aimrte/sm/rpc/module_fallback/MujocoSimModule] succeeded.[0m
+[0;32m[2026-10-29 17:54:40.245753][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/build/_deps/aimrte-src/src/sm/context.cpp:16 @aimrte::sm::Context::Context(const string_view&)]Serve [pb:/_/aimrte/sm/rpc/module_state_switch/MujocoSimModule] inline succeeded.[0m
+[0;32m[2026-10-29 17:54:40.245758][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/build/_deps/aimrte-src/src/sm/context.cpp:34 @aimrte::sm::Context::Context(const string_view&)]Serve [pb:/_/aimrte/sm/rpc/module_fallback/MujocoSimModule] inline succeeded.[0m
+[0;32m[2026-10-29 17:54:40.246631][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/src/module/core/core.cc:30 @OnInitialize]MujocoSimModule Config:
+  gui_executor: "gui_work_thread"
+  sim_executor: "sim_work_thread"
+  simulation_model: "/tmp/twin-world/robot/lx2501_3_t2d5/model_info/scene.xml"
+  robot_model: "/tmp/twin-world/robot/lx2501_3_t2d5/model_info/default.yaml"
+[0m
+[0;32m[2026-10-29 17:54:40.247707][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/src/manager/publisher/publisher_manager.cc:46 @Init]PublisherManager Config:
+  publisher_cfg_list: 
+    publisher_cfg_list[0]:
+      name: "imu_state_ros"
+      topic: "/aima/hal/imu/torso/state"
+      enable: 1
+      frequency: 500.000000
+      executor: "data_state_publisher_thread"
+      print_interval: 0
+    publisher_cfg_list[1]:
+      name: "imu_chest_state_ros"
+      topic: "/aima/hal/imu/chest/state"
+      enable: 1
+      frequency: 500.000000
+      executor: "data_state_publisher_thread"
+      print_interval: 0
+    publisher_cfg_list[2]:
+      name: "arm_joint_state"
+      topic: "/aima/hal/joint/arm/state"
+      enable: 1
+      frequency: 1000.000000
+      executor: "arm_joint_state_publisher_thread"
+      print_interval: 0
+    publisher_cfg_list[3]:
+      name: "leg_joint_state"
+      topic: "/aima/hal/joint/leg/state"
+      enable: 1
+      frequency: 1000.000000
+      executor: "leg_joint_state_publisher_thread"
+      print_interval: 0
+    publisher_cfg_list[4]:
+      name: "waist_joint_state"
+      topic: "/aima/hal/joint/waist/state"
+      enable: 1
+      frequency: 1000.000000
+      executor: "common_joint_state_publisher_thread"
+      print_interval: 0
+    publisher_cfg_list[5]:
+      name: "head_joint_state"
+      topic: "/aima/hal/joint/head/state"
+      enable: 1
+      frequency: 1000.000000
+      executor: "common_joint_state_publisher_thread"
+      print_interval: 0
+    publisher_cfg_list[6]:
+      name: "odom_state_ros"
+      topic: "/aima/hal/odom/state"
+      enable: 1
+      frequency: 500.000000
+      executor: "data_state_publisher_thread"
+      print_interval: 0
+[0m
+[0;32m[2026-10-29 17:54:40.251379][Info][148][core][/builds/lingxi/modules/aimrte/plugin/ros2/ros2_channel_backend.cc:243 @RegisterPublishType]ros2 backend register publish type for topic '/aima/hal/imu/torso/state' success.[0m
+[0;32m[2026-10-29 17:54:40.251413][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/build/_aimrte/aima-sim/targets/aima-sim-manager-executor/include/aima/sim/manager/executor/manipulator_time_executor.h:28 @AddWorker]Add worker 'imu_state_ros' to executor 'data_state_publisher_thread', period: 2000 us[0m
+[0;32m[2026-10-29 17:54:40.251421][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/build/_aimrte/aima-sim/targets/aima-sim-manager-executor/include/aima/sim/manager/executor/manipulator_time_executor.h:29 @AddWorker]Executor 'data_state_publisher_thread' has 1 workers.[0m
+[0;32m[2026-10-29 17:54:40.251426][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/src/manager/publisher/publisher_manager.cc:101 @Init]Add publisher imu_state_ros to executor: data_state_publisher_thread[0m
+[0;32m[2026-10-29 17:54:40.251717][Info][148][core][/builds/lingxi/modules/aimrte/plugin/ros2/ros2_channel_backend.cc:243 @RegisterPublishType]ros2 backend register publish type for topic '/aima/hal/imu/chest/state' success.[0m
+[0;32m[2026-10-29 17:54:40.251733][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/build/_aimrte/aima-sim/targets/aima-sim-manager-executor/include/aima/sim/manager/executor/manipulator_time_executor.h:28 @AddWorker]Add worker 'imu_chest_state_ros' to executor 'data_state_publisher_thread', period: 2000 us[0m
+[0;32m[2026-10-29 17:54:40.251738][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/build/_aimrte/aima-sim/targets/aima-sim-manager-executor/include/aima/sim/manager/executor/manipulator_time_executor.h:29 @AddWorker]Executor 'data_state_publisher_thread' has 2 workers.[0m
+[0;32m[2026-10-29 17:54:40.251741][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/src/manager/publisher/publisher_manager.cc:101 @Init]Add publisher imu_chest_state_ros to executor: data_state_publisher_thread[0m
+[0;32m[2026-10-29 17:54:40.263863][Info][148][core][/builds/lingxi/modules/aimrte/plugin/ros2/ros2_channel_backend.cc:243 @RegisterPublishType]ros2 backend register publish type for topic '/aima/hal/joint/arm/state' success.[0m
+[0;32m[2026-10-29 17:54:40.263889][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/build/_aimrte/aima-sim/targets/aima-sim-manager-executor/include/aima/sim/manager/executor/manipulator_time_executor.h:28 @AddWorker]Add worker 'arm_joint_state' to executor 'arm_joint_state_publisher_thread', period: 1000 us[0m
+[0;32m[2026-10-29 17:54:40.263893][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/build/_aimrte/aima-sim/targets/aima-sim-manager-executor/include/aima/sim/manager/executor/manipulator_time_executor.h:29 @AddWorker]Executor 'arm_joint_state_publisher_thread' has 1 workers.[0m
+[0;32m[2026-10-29 17:54:40.263902][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/src/manager/publisher/publisher_manager.cc:101 @Init]Add publisher arm_joint_state to executor: arm_joint_state_publisher_thread[0m
+[0;32m[2026-10-29 17:54:40.264195][Info][148][core][/builds/lingxi/modules/aimrte/plugin/ros2/ros2_channel_backend.cc:243 @RegisterPublishType]ros2 backend register publish type for topic '/aima/hal/joint/leg/state' success.[0m
+[0;32m[2026-10-29 17:54:40.264210][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/build/_aimrte/aima-sim/targets/aima-sim-manager-executor/include/aima/sim/manager/executor/manipulator_time_executor.h:28 @AddWorker]Add worker 'leg_joint_state' to executor 'leg_joint_state_publisher_thread', period: 1000 us[0m
+[0;32m[2026-10-29 17:54:40.264222][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/build/_aimrte/aima-sim/targets/aima-sim-manager-executor/include/aima/sim/manager/executor/manipulator_time_executor.h:29 @AddWorker]Executor 'leg_joint_state_publisher_thread' has 1 workers.[0m
+[0;32m[2026-10-29 17:54:40.264230][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/src/manager/publisher/publisher_manager.cc:101 @Init]Add publisher leg_joint_state to executor: leg_joint_state_publisher_thread[0m
+[0;32m[2026-10-29 17:54:40.264497][Info][148][core][/builds/lingxi/modules/aimrte/plugin/ros2/ros2_channel_backend.cc:243 @RegisterPublishType]ros2 backend register publish type for topic '/aima/hal/joint/waist/state' success.[0m
+[0;32m[2026-10-29 17:54:40.264508][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/build/_aimrte/aima-sim/targets/aima-sim-manager-executor/include/aima/sim/manager/executor/manipulator_time_executor.h:28 @AddWorker]Add worker 'waist_joint_state' to executor 'common_joint_state_publisher_thread', period: 1000 us[0m
+[0;32m[2026-10-29 17:54:40.264515][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/build/_aimrte/aima-sim/targets/aima-sim-manager-executor/include/aima/sim/manager/executor/manipulator_time_executor.h:29 @AddWorker]Executor 'common_joint_state_publisher_thread' has 1 workers.[0m
+[0;32m[2026-10-29 17:54:40.264524][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/src/manager/publisher/publisher_manager.cc:101 @Init]Add publisher waist_joint_state to executor: common_joint_state_publisher_thread[0m
+[0;32m[2026-10-29 17:54:40.264806][Info][148][core][/builds/lingxi/modules/aimrte/plugin/ros2/ros2_channel_backend.cc:243 @RegisterPublishType]ros2 backend register publish type for topic '/aima/hal/joint/head/state' success.[0m
+[0;32m[2026-10-29 17:54:40.264818][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/build/_aimrte/aima-sim/targets/aima-sim-manager-executor/include/aima/sim/manager/executor/manipulator_time_executor.h:28 @AddWorker]Add worker 'head_joint_state' to executor 'common_joint_state_publisher_thread', period: 1000 us[0m
+[0;32m[2026-10-29 17:54:40.264824][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/build/_aimrte/aima-sim/targets/aima-sim-manager-executor/include/aima/sim/manager/executor/manipulator_time_executor.h:29 @AddWorker]Executor 'common_joint_state_publisher_thread' has 2 workers.[0m
+[0;32m[2026-10-29 17:54:40.264835][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/src/manager/publisher/publisher_manager.cc:101 @Init]Add publisher head_joint_state to executor: common_joint_state_publisher_thread[0m
+[0;32m[2026-10-29 17:54:40.265807][Info][148][core][/builds/lingxi/modules/aimrte/plugin/ros2/ros2_channel_backend.cc:243 @RegisterPublishType]ros2 backend register publish type for topic '/aima/hal/odom/state' success.[0m
+[0;32m[2026-10-29 17:54:40.265821][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/build/_aimrte/aima-sim/targets/aima-sim-manager-executor/include/aima/sim/manager/executor/manipulator_time_executor.h:28 @AddWorker]Add worker 'odom_state_ros' to executor 'data_state_publisher_thread', period: 2000 us[0m
+[0;32m[2026-10-29 17:54:40.265835][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/build/_aimrte/aima-sim/targets/aima-sim-manager-executor/include/aima/sim/manager/executor/manipulator_time_executor.h:29 @AddWorker]Executor 'data_state_publisher_thread' has 3 workers.[0m
+[0;32m[2026-10-29 17:54:40.265841][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/src/manager/publisher/publisher_manager.cc:101 @Init]Add publisher odom_state_ros to executor: data_state_publisher_thread[0m
+[0;32m[2026-10-29 17:54:40.266879][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/src/manager/subscriber/subscriber_manager.cc:16 @Init]SubscriberManager Config:
+  subscriber_cfg_list: 
+    subscriber_cfg_list[0]:
+      name: "arm_joint_command"
+      topic: "/aima/hal/joint/arm/command"
+      enable: 1
+      executor: "joint_command_subscriber_thread"
+      wait_ready: 0
+      print_interval: 1000
+    subscriber_cfg_list[1]:
+      name: "leg_joint_command"
+      topic: "/aima/hal/joint/leg/command"
+      enable: 1
+      executor: "joint_command_subscriber_thread"
+      wait_ready: 0
+      print_interval: 1000
+    subscriber_cfg_list[2]:
+      name: "waist_joint_command"
+      topic: "/aima/hal/joint/waist/command"
+      enable: 1
+      executor: "joint_command_subscriber_thread"
+      wait_ready: 0
+      print_interval: 1000
+    subscriber_cfg_list[3]:
+      name: "head_joint_command"
+      topic: "/aima/hal/joint/head/command"
+      enable: 1
+      executor: "joint_command_subscriber_thread"
+      wait_ready: 0
+      print_interval: 1000
+    subscriber_cfg_list[4]:
+      name: "option_command"
+      topic: "/aima/sim/option/command"
+      enable: 1
+      executor: "joint_command_subscriber_thread"
+      wait_ready: 0
+      print_interval: 1000
+[0m
+[0;32m[2026-10-29 17:54:40.267308][Info][148][core][/builds/lingxi/modules/aimrte/plugin/ros2/ros2_channel_backend.cc:351 @Subscribe]subscribe topic '/aima/hal/joint/arm/command' success.[0m
+[0;32m[2026-10-29 17:54:40.267325][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/src/manager/subscriber/subscriber_manager.cc:43 @Init]Create subscriber: arm_joint_command succeeded, topic: /aima/hal/joint/arm/command[0m
+[0;32m[2026-10-29 17:54:40.267551][Info][148][core][/builds/lingxi/modules/aimrte/plugin/ros2/ros2_channel_backend.cc:351 @Subscribe]subscribe topic '/aima/hal/joint/leg/command' success.[0m
+[0;32m[2026-10-29 17:54:40.267562][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/src/manager/subscriber/subscriber_manager.cc:43 @Init]Create subscriber: leg_joint_command succeeded, topic: /aima/hal/joint/leg/command[0m
+[0;32m[2026-10-29 17:54:40.267802][Info][148][core][/builds/lingxi/modules/aimrte/plugin/ros2/ros2_channel_backend.cc:351 @Subscribe]subscribe topic '/aima/hal/joint/waist/command' success.[0m
+[0;32m[2026-10-29 17:54:40.267813][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/src/manager/subscriber/subscriber_manager.cc:43 @Init]Create subscriber: waist_joint_command succeeded, topic: /aima/hal/joint/waist/command[0m
+[0;32m[2026-10-29 17:54:40.268037][Info][148][core][/builds/lingxi/modules/aimrte/plugin/ros2/ros2_channel_backend.cc:351 @Subscribe]subscribe topic '/aima/hal/joint/head/command' success.[0m
+[0;32m[2026-10-29 17:54:40.268048][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/src/manager/subscriber/subscriber_manager.cc:43 @Init]Create subscriber: head_joint_command succeeded, topic: /aima/hal/joint/head/command[0m
+[0;32m[2026-10-29 17:54:40.268544][Info][148][core][/builds/lingxi/modules/aimrte/plugin/ros2/ros2_channel_backend.cc:351 @Subscribe]subscribe topic '/aima/sim/option/command' success.[0m
+[0;32m[2026-10-29 17:54:40.268560][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/src/manager/subscriber/subscriber_manager.cc:43 @Init]Create subscriber: option_command succeeded, topic: /aima/sim/option/command[0m
+[0;32m[2026-10-29 17:54:40.268579][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/src/module/core/core.cc:56 @OnInitialize]Init MujocoSimModule Succeeded ...[0m
+[0;32m[2026-10-29 17:54:40.268585][Info][148][MujocoSimModule][/builds/lingxi/modules/sim_mujoco/src/module/core/core.cc:63 @OnInitialize]Init succeeded.[0m
+[0;32m[2026-10-29 17:54:40.268625][Info][148][core][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/module/module_manager.cc:217 @Initialize]Module manager init complete[0m
+[0;32m[2026-10-29 17:54:40.269461][Info][148][core][/builds/lingxi/modules/aimrte/plugin/ros2/ros2_channel_backend.cc:258 @RegisterPublishType]ros2 backend register publish type for topic '/aimrte/sm/node_state' success, real ros2 topic name is '/aimrte/sm/node_state/pb_3Aaimdk_2Eprotocol_2ESmNodeStateChannel'.[0m
+[0;32m[2026-10-29 17:54:40.269487][Info][148][core][/builds/lingxi/modules/sim_mujoco/build/_deps/aimrte-src/src/sm/node.cpp:19 @void aimrte::sm::Node::Init(aimrte::sm::Node::Option, std::set<std::__cxx11::basic_string<char> >)]Init publisher for topic [/aimrte/sm/node_state] succeeded.[0m
+[0;32m[2026-10-29 17:54:40.269524][Info][148][core][/builds/lingxi/modules/sim_mujoco/build/_deps/aimrte-src/src/sm/node.cpp:22 @void aimrte::sm::Node::Init(aimrte::sm::Node::Option, std::set<std::__cxx11::basic_string<char> >)]Init executor [nsm_state_reporting_executor] succeeded.[0m
+[0;32m[2026-10-29 17:54:40.269624][Info][148][core][/builds/lingxi/modules/sim_mujoco/build/_deps/aimrte-src/src/sm/node.cpp:33 @void aimrte::sm::Node::Init(aimrte::sm::Node::Option, std::set<std::__cxx11::basic_string<char> >)]Init client func [pb:/_/aimrte/sm/rpc/module_state_switch/MujocoSimModule] succeeded.[0m
+[0;32m[2026-10-29 17:54:40.269654][Info][148][core][/builds/lingxi/modules/sim_mujoco/build/_deps/aimrte-src/src/sm/node.cpp:36 @void aimrte::sm::Node::Init(aimrte::sm::Node::Option, std::set<std::__cxx11::basic_string<char> >)]Init client func [pb:/_/aimrte/sm/rpc/module_fallback/MujocoSimModule] succeeded.[0m
+[0;32m[2026-10-29 17:54:40.269663][Info][148][core][/builds/lingxi/modules/sim_mujoco/build/_deps/aimrte-src/src/sm/node.cpp:40 @void aimrte::sm::Node::Init(aimrte::sm::Node::Option, std::set<std::__cxx11::basic_string<char> >)]Init executor [nsm_modules_processing_executor] succeeded.[0m
+[0;32m[2026-10-29 17:54:40.269851][Info][148][core][/builds/lingxi/modules/sim_mujoco/build/_aimrte/aimrte/aimrt_protobuf_targets/aimdk-protocol-sm-PROTOBUF/cc/include/aimdk/protocol/sm/sm_service.cc:280 @void aimdk::protocol::res::SmNodeService::Init(const std::shared_ptr<aimrte::core::Context>&, std::string)]Init server for service [pb:/aimdk.protocol.SmNodeService/sim/ExecuteAction] succeeded.[0m
+[0;32m[2026-10-29 17:54:40.269861][Info][148][core][/builds/lingxi/modules/sim_mujoco/build/_aimrte/aimrte/aimrt_protobuf_targets/aimdk-protocol-sm-PROTOBUF/cc/include/aimdk/protocol/sm/sm_service.cc:284 @void aimdk::protocol::res::SmNodeService::Init(const std::shared_ptr<aimrte::core::Context>&, std::string)]Init server for service [pb:/aimdk.protocol.SmNodeService/sim/ExecuteFallback] succeeded.[0m
+[0;32m[2026-10-29 17:54:40.270263][Info][148][core][/builds/lingxi/modules/aimrte/plugin/ros2/ros2_rpc_backend.cc:404 @RegisterServiceFunc]Service 'pb:/aimdk.protocol.SmNodeService/sim/ExecuteAction' is registered to ros2 rpc backend, module 'core', ros2 func name is '/aimdk_2Eprotocol_2ESmNodeService/sim/ExecuteAction'[0m
+[0;32m[2026-10-29 17:54:40.270617][Info][148][core][/builds/lingxi/modules/aimrte/plugin/ros2/ros2_rpc_backend.cc:404 @RegisterServiceFunc]Service 'pb:/aimdk.protocol.SmNodeService/sim/ExecuteFallback' is registered to ros2 rpc backend, module 'core', ros2 func name is '/aimdk_2Eprotocol_2ESmNodeService/sim/ExecuteFallback'[0m
+[0;32m[2026-10-29 17:54:40.270636][Info][148][core][/builds/lingxi/modules/sim_mujoco/build/_deps/aimrte-src/src/sm/node.cpp:48 @void aimrte::sm::Node::Init(aimrte::sm::Node::Option, std::set<std::__cxx11::basic_string<char> >)]Serve [pb:/aimdk.protocol.SmNodeService/sim/ExecuteAction] inline succeeded.[0m
+[0;32m[2026-10-29 17:54:40.270649][Info][148][core][/builds/lingxi/modules/sim_mujoco/build/_deps/aimrte-src/src/sm/node.cpp:49 @void aimrte::sm::Node::Init(aimrte::sm::Node::Option, std::set<std::__cxx11::basic_string<char> >)]Serve [pb:/aimdk.protocol.SmNodeService/sim/ExecuteFallback] inline succeeded.[0m
+[1;33m[2026-10-29 17:54:40.271073][Warn][148][core][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/aimrt_core.cc:339 @CheckCfgFile]Configuration Name Warning in "/opt/sim/bin/cfg/tmp/tmp2.yaml":
+- Unused options: 'aimrt.module.pkgs'
+[0m
+[0;32m[2026-10-29 17:54:40.271406][Info][148][core][/builds/lingxi/modules/aimrte/plugin/monitor/core/monitor_plugin.cc:123 @void aimrte::plugin::monitor::MonitorPlugin::DoInitliaze()]Init executor [monitor_thread] succeeded.[0m
+[0;32m[2026-10-29 17:54:40.272283][Info][148][core][/builds/lingxi/modules/aimrte/plugin/ros2/ros2_channel_backend.cc:243 @RegisterPublishType]ros2 backend register publish type for topic '/aima/hds/process/info/soc0' success.[0m
+[0;32m[2026-10-29 17:54:40.272297][Info][148][core][/builds/lingxi/modules/aimrte/plugin/monitor/core/monitor_plugin.cc:133 @void aimrte::plugin::monitor::MonitorPlugin::DoInitliaze()]Init publisher for topic [/aima/hds/process/info/soc0] succeeded.[0m
+[0;32m[2026-10-29 17:54:40.275507][Info][148][core][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/aimrt_core.cc:141 @StartImpl]Gen initialization report:
+
+----------------------- AimRT Initialization Report Begin ----------------------
+
+[1]. Base Info
++-----------------+--------------------------------+
+| Version         | 1.2.0                          |
+| Cfg File Path   | /opt/sim/bin/cfg/tmp/tmp2.yaml |
+| Executable Path | /opt/sim/bin/aima-sim-app      |
+| Process PID     | 148                            |
++-----------------+--------------------------------+
+
+
+[2]. AimRT Core Option
+configurator:
+  temp_cfg_path: ./cfg/tmp
+plugin:
+  plugins:
+    - name: sm_plugin
+      path: /opt/sim/lib/libaimrt_sm_plugin.so
+      options: ~
+    - name: net_plugin
+      path: /opt/sim/lib/libaimrt_net_plugin.so
+      options:
+        thread_num: 4
+        http_options:
+          listen_ip: 0.0.0.0
+          listen_port: 51822
+    - name: ros2_plugin
+      path: /opt/sim/lib/libaimrt_ros2_plugin.so
+      options:
+        node_name: aimrt_sim_node
+        executor_type: MultiThreaded
+        executor_name: ros2_executor
+        executor_sched_policy: ""
+        executor_bind_cpus:
+          []
+        executor_thread_num: 4
+        auto_initialize_logging: false
+    - name: nsm_plugin
+      path: /opt/sim/lib/libaimrt_nsm_plugin.so
+      options:
+        node_name: soc_sim
+        state_reporting_executor: nsm_state_reporting_executor
+        state_reporting_period:
+          value: 1
+          unit: sec
+        modules_processing_executor: nsm_modules_processing_executor
+    - name: monitor_plugin
+      path: /opt/sim/lib/libaimrt_monitor_plugin.so
+      options:
+        executor: monitor_thread
+        node_name: soc_sim
+main_thread:
+  name: soc_sim
+  thread_sched_policy: ""
+  thread_bind_cpu:
+    []
+guard_thread:
+  name: aimrt_guard
+  thread_sched_policy: ""
+  thread_bind_cpu:
+    []
+  queue_threshold: 10000
+  threshold_alarm_interval_ms: 1000
+executor:
+  executors:
+    - name: sim_work_thread
+      type: asio_thread
+      options:
+        thread_num: 1
+        thread_sched_policy: ""
+        thread_bind_cpu:
+          []
+        timeout_alarm_threshold_us: 1000000
+        use_system_clock: false
+        timeout_alarm_interval_ms: 1000
+    - name: gui_work_thread
+      type: asio_thread
+      options:
+        thread_num: 1
+        thread_sched_policy: ""
+        thread_bind_cpu:
+          []
+        timeout_alarm_threshold_us: 1000000
+        use_system_clock: false
+        timeout_alarm_interval_ms: 1000
+    - name: arm_joint_state_publisher_thread
+      type: asio_thread
+      options:
+        thread_num: 1
+        thread_sched_policy: ""
+        thread_bind_cpu:
+          []
+        timeout_alarm_threshold_us: 1000000
+        use_system_clock: false
+        timeout_alarm_interval_ms: 1000
+    - name: leg_joint_state_publisher_thread
+      type: asio_thread
+      options:
+        thread_num: 1
+        thread_sched_policy: ""
+        thread_bind_cpu:
+          []
+        timeout_alarm_threshold_us: 1000000
+        use_system_clock: false
+        timeout_alarm_interval_ms: 1000
+    - name: data_state_publisher_thread
+      type: asio_thread
+      options:
+        thread_num: 1
+        thread_sched_policy: ""
+        thread_bind_cpu:
+          []
+        timeout_alarm_threshold_us: 1000000
+        use_system_clock: false
+        timeout_alarm_interval_ms: 1000
+    - name: common_joint_state_publisher_thread
+      type: asio_thread
+      options:
+        thread_num: 1
+        thread_sched_policy: ""
+        thread_bind_cpu:
+          []
+        timeout_alarm_threshold_us: 1000000
+        use_system_clock: false
+        timeout_alarm_interval_ms: 1000
+    - name: joint_command_subscriber_thread
+      type: asio_thread
+      options:
+        thread_num: 5
+        thread_sched_policy: ""
+        thread_bind_cpu:
+          []
+        timeout_alarm_threshold_us: 1000000
+        use_system_clock: false
+        timeout_alarm_interval_ms: 1000
+    - name: sim_sm_thread
+      type: asio_thread
+      options:
+        thread_num: 1
+        thread_sched_policy: ""
+        thread_bind_cpu:
+          []
+        timeout_alarm_threshold_us: 1000000
+        use_system_clock: false
+        timeout_alarm_interval_ms: 1000
+    - name: default_timeout_executor
+      type: asio_thread
+      options:
+        thread_num: 1
+        thread_sched_policy: ""
+        thread_bind_cpu:
+          []
+        timeout_alarm_threshold_us: 1000000
+        use_system_clock: false
+        timeout_alarm_interval_ms: 1000
+    - name: default_timeout_time_wheel
+      type: time_wheel
+      options:
+        bind_executor: default_timeout_executor
+        dt_us: 50000
+        wheel_size:
+          - 100
+          - 360
+        thread_sched_policy: ""
+        thread_bind_cpu:
+          []
+        use_system_clock: false
+    - name: nsm_state_reporting_executor
+      type: asio_thread
+      options:
+        thread_num: 1
+        thread_sched_policy: ""
+        thread_bind_cpu:
+          []
+        timeout_alarm_threshold_us: 1000000
+        use_system_clock: false
+        timeout_alarm_interval_ms: 1000
+    - name: nsm_modules_processing_executor
+      type: asio_thread
+      options:
+        thread_num: 1
+        thread_sched_policy: ""
+        thread_bind_cpu:
+          []
+        timeout_alarm_threshold_us: 1000000
+        use_system_clock: false
+        timeout_alarm_interval_ms: 1000
+    - name: monitor_thread
+      type: asio_thread
+      options:
+        thread_num: 2
+        thread_sched_policy: ""
+        thread_bind_cpu:
+          []
+        timeout_alarm_threshold_us: 1000000
+        use_system_clock: false
+        timeout_alarm_interval_ms: 1000
+log:
+  core_lvl: Info
+  default_module_lvl: Info
+  backends:
+    - type: console
+      options:
+        color: true
+        module_filter: (.*)
+        pattern: ""
+    - type: rotate_file
+      options:
+        path: ./log
+        filename: aimrt_mujoco_sim.log
+        max_file_size_m: 4
+        max_file_num: 10
+        module_filter: (.*)
+        pattern: ""
+        enable_sync: false
+        sync_interval_ms: 30000
+        sync_executor_name: ""
+allocator: ~
+rpc:
+  backends:
+    - type: ros2
+      options:
+        timeout_executor: default_timeout_time_wheel
+        clients_options: ~
+        servers_options: ~
+    - type: local
+      options:
+        timeout_executor: ""
+    - type: monitor
+      options: ~
+  clients_options:
+    - func_name: (pb:/_/aimrte/sm/rpc/module_fallback/.*)
+      enable_backends:
+        - local
+      enable_filters:
+        []
+    - func_name: (pb:/_/aimrte/sm/rpc/module_state_switch/.*)
+      enable_backends:
+        - local
+      enable_filters:
+        []
+  servers_options:
+    - func_name: (pb:/_/aimrte/sm/rpc/module_fallback/.*)
+      enable_backends:
+        - local
+      enable_filters:
+        []
+    - func_name: (pb:/_/aimrte/sm/rpc/module_state_switch/.*)
+      enable_backends:
+        - local
+      enable_filters:
+        []
+    - func_name: (pb:/aimdk\.protocol\.SmNodeService/.*)
+      enable_backends:
+        - ros2
+      enable_filters:
+        []
+channel:
+  backends:
+    - type: sm
+      options:
+        sub_default_executor: sim_sm_thread
+        sub_topic_options:
+          - topic_name: (.*)
+            executor: ""
+            priority: 2147483647
+    - type: ros2
+      options:
+        pub_topics_options:
+          - topic_name: /aima/internal/event/probe/soc0/sim
+            use_serialized: false
+            qos:
+              history: keep_last
+              depth: 100
+              reliability: reliable
+              durability: default
+              lifespan: -1
+              deadline: -1
+              liveliness: default
+              liveliness_lease_duration: -1
+          - topic_name: /aima/internal/hds/diagnostics/soc0
+            use_serialized: false
+            qos:
+              history: keep_last
+              depth: 100
+              reliability: reliable
+              durability: default
+              lifespan: -1
+              deadline: -1
+              liveliness: default
+              liveliness_lease_duration: -1
+          - topic_name: (.*)
+            use_serialized: false
+            qos:
+              history: default
+              depth: 10
+              reliability: best_effort
+              durability: default
+              lifespan: -1
+              deadline: -1
+              liveliness: default
+              liveliness_lease_duration: -1
+          - topic_name: (.*)
+            use_serialized: false
+            qos:
+              history: keep_last
+              depth: 10
+              reliability: best_effort
+              durability: default
+              lifespan: -1
+              deadline: -1
+              liveliness: default
+              liveliness_lease_duration: -1
+        sub_topics_options:
+          - topic_name: (.*)
+            use_serialized: false
+            qos:
+              history: default
+              depth: 10
+              reliability: best_effort
+              durability: default
+              lifespan: -1
+              deadline: -1
+              liveliness: default
+              liveliness_lease_duration: -1
+          - topic_name: (.*)
+            use_serialized: false
+            qos:
+              history: keep_last
+              depth: 10
+              reliability: best_effort
+              durability: default
+              lifespan: -1
+              deadline: -1
+              liveliness: default
+              liveliness_lease_duration: -1
+    - type: local
+      options:
+        subscriber_use_inline_executor: true
+    - type: monitor
+      options: ~
+  pub_topics_options:
+    - topic_name: /aima/hds/process/info/soc0
+      enable_backends:
+        - ros2
+      enable_filters:
+        - monitor
+    - topic_name: /aimrte/sm/node_state
+      enable_backends:
+        - ros2
+      enable_filters:
+        - monitor
+    - topic_name: /aima/hal/imu/torso/state
+      enable_backends:
+        - ros2
+      enable_filters:
+        - monitor
+    - topic_name: /aima/hal/joint/arm/state
+      enable_backends:
+        - ros2
+      enable_filters:
+        - monitor
+    - topic_name: /aima/hal/joint/leg/state
+      enable_backends:
+        - ros2
+      enable_filters:
+        - monitor
+    - topic_name: /aima/hal/joint/waist/state
+      enable_backends:
+        - ros2
+      enable_filters:
+        - monitor
+    - topic_name: /aima/hal/imu/chest/state
+      enable_backends:
+        - ros2
+      enable_filters:
+        - monitor
+    - topic_name: /aima/hal/joint/head/state
+      enable_backends:
+        - ros2
+      enable_filters:
+        - monitor
+    - topic_name: /aima/hal/odom/state
+      enable_backends:
+        - ros2
+      enable_filters:
+        - monitor
+  sub_topics_options:
+    - topic_name: /aima/hal/joint/arm/command
+      enable_backends:
+        - ros2
+      enable_filters:
+        - monitor
+    - topic_name: /aima/hal/joint/leg/command
+      enable_backends:
+        - ros2
+      enable_filters:
+        - monitor
+    - topic_name: /aima/hal/joint/waist/command
+      enable_backends:
+        - ros2
+      enable_filters:
+        - monitor
+    - topic_name: /aima/hal/joint/head/command
+      enable_backends:
+        - ros2
+      enable_filters:
+        - monitor
+    - topic_name: /aima/sim/option/command
+      enable_backends:
+        - ros2
+      enable_filters:
+        - monitor
+parameter: ~
+module:
+  pkgs: ~
+  modules:
+    - name: MujocoSimModule
+      enable: true
+      log_lvl: Info
+
+[3]. Configuration Warning
+- Unused options: 'aimrt.module.pkgs'
+
+
+[4]. Plugin List
++----------------+-----------------------------------------+
+| name           | path                                    |
++----------------+-----------------------------------------+
+| sm_plugin      | /opt/sim/lib/libaimrt_sm_plugin.so      |
+| net_plugin     | /opt/sim/lib/libaimrt_net_plugin.so     |
+| ros2_plugin    | /opt/sim/lib/libaimrt_ros2_plugin.so    |
+| nsm_plugin     | /opt/sim/lib/libaimrt_nsm_plugin.so     |
+| monitor_plugin | /opt/sim/lib/libaimrt_monitor_plugin.so |
++----------------+-----------------------------------------+
+
+
+[5]. Executor Type List
+[ time_wheel , simple_thread , tbb_thread , asio_strand , asio_thread ]
+
+[6]. Executor List
++-------------------------------------+-------------+-------------+-----------------------+
+| name                                | type        | thread safe | support time schedule |
++-------------------------------------+-------------+-------------+-----------------------+
+| sim_work_thread                     | asio_thread | Y           | Y                     |
+| gui_work_thread                     | asio_thread | Y           | Y                     |
+| arm_joint_state_publisher_thread    | asio_thread | Y           | Y                     |
+| leg_joint_state_publisher_thread    | asio_thread | Y           | Y                     |
+| data_state_publisher_thread         | asio_thread | Y           | Y                     |
+| common_joint_state_publisher_thread | asio_thread | Y           | Y                     |
+| joint_command_subscriber_thread     | asio_thread | N           | Y                     |
+| sim_sm_thread                       | asio_thread | Y           | Y                     |
+| default_timeout_executor            | asio_thread | Y           | Y                     |
+| default_timeout_time_wheel          | time_wheel  | Y           | Y                     |
+| nsm_state_reporting_executor        | asio_thread | Y           | Y                     |
+| nsm_modules_processing_executor     | asio_thread | Y           | Y                     |
+| monitor_thread                      | asio_thread | N           | Y                     |
++-------------------------------------+-------------+-------------+-----------------------+
+
+
+[7]. Log Backend List
+[ console , rotate_file ]
+
+[8]. Rpc Backend List
+[ http , ros2 , monitor , local ]
+
+[9]. Rpc Client Filter List
+[ debug_log ]
+
+[10]. Rpc Server Filter List
+[ debug_log , monitor ]
+
+[11]. Rpc Client Info
++---------------------------------------------------------+--------+----------+---------+
+| func                                                    | module | backends | filters |
++---------------------------------------------------------+--------+----------+---------+
+| pb:/_/aimrte/sm/rpc/module_fallback/MujocoSimModule     | core   | local    |         |
+| pb:/_/aimrte/sm/rpc/module_state_switch/MujocoSimModule | core   | local    |         |
++---------------------------------------------------------+--------+----------+---------+
+
+
+[12]. Rpc Server Info
++---------------------------------------------------------+-----------------+----------+---------+
+| func                                                    | module          | backends | filters |
++---------------------------------------------------------+-----------------+----------+---------+
+| pb:/aimdk.protocol.SmNodeService/sim/ExecuteFallback    | core            | ros2     |         |
+| pb:/aimdk.protocol.SmNodeService/sim/ExecuteAction      | core            | ros2     |         |
+| pb:/_/aimrte/sm/rpc/module_fallback/MujocoSimModule     | MujocoSimModule | local    |         |
+| pb:/_/aimrte/sm/rpc/module_state_switch/MujocoSimModule | MujocoSimModule | local    |         |
++---------------------------------------------------------+-----------------+----------+---------+
+
+
+[13]. Ros2 Rpc Backend Server Info
++-----------------------------------------------------------+-------------------------------------------------------+
+| func name                                                 | ros2 func name                                        |
++-----------------------------------------------------------+-------------------------------------------------------+
+| core:pb:/aimdk.protocol.SmNodeService/sim/ExecuteFallback | /aimdk_2Eprotocol_2ESmNodeService/sim/ExecuteFallback |
+| core:pb:/aimdk.protocol.SmNodeService/sim/ExecuteAction   | /aimdk_2Eprotocol_2ESmNodeService/sim/ExecuteAction   |
++-----------------------------------------------------------+-------------------------------------------------------+
+
+
+[14]. Ros2 Rpc Backend Client Info
++-----------+----------------+
+| func name | ros2 func name |
++-----------+----------------+
++-----------+----------------+
+
+
+[15]. Channel Backend List
+[ sm , http , tcp , udp , ros2 , monitor , local ]
+
+[16]. Channel Pub Filter List
+[ debug_log , monitor ]
+
+[17]. Channel Sub Filter List
+[ debug_log , monitor ]
+
+[18]. Channel Pub Topic Info
++-----------------------------+--------------------------------------+-----------------+----------+---------+
+| topic                       | msg type                             | module          | backends | filters |
++-----------------------------+--------------------------------------+-----------------+----------+---------+
+| /aima/hds/process/info/soc0 | ros2:aimdk_msgs/msg/ProcessInfo      | core            | ros2     | monitor |
+| /aima/hal/odom/state        | ros2:nav_msgs/msg/Odometry           | MujocoSimModule | ros2     | monitor |
+| /aima/hal/joint/head/state  | ros2:aimdk_msgs/msg/JointStateArray  | MujocoSimModule | ros2     | monitor |
+| /aima/hal/joint/waist/state | ros2:aimdk_msgs/msg/JointStateArray  | MujocoSimModule | ros2     | monitor |
+| /aima/hal/joint/arm/state   | ros2:aimdk_msgs/msg/JointStateArray  | MujocoSimModule | ros2     | monitor |
+| /aima/hal/joint/leg/state   | ros2:aimdk_msgs/msg/JointStateArray  | MujocoSimModule | ros2     | monitor |
+| /aima/hal/imu/chest/state   | ros2:sensor_msgs/msg/Imu             | MujocoSimModule | ros2     | monitor |
+| /aimrte/sm/node_state       | pb:aimdk.protocol.SmNodeStateChannel | core            | ros2     | monitor |
+| /aima/hal/imu/torso/state   | ros2:sensor_msgs/msg/Imu             | MujocoSimModule | ros2     | monitor |
++-----------------------------+--------------------------------------+-----------------+----------+---------+
+
+
+[19]. Channel Sub Topic Info
++-------------------------------+---------------------------------------+-----------------+----------+---------+
+| topic                         | msg type                              | module          | backends | filters |
++-------------------------------+---------------------------------------+-----------------+----------+---------+
+| /aima/sim/option/command      | ros2:std_msgs/msg/String              | MujocoSimModule | ros2     | monitor |
+| /aima/hal/joint/head/command  | ros2:aimdk_msgs/msg/JointCommandArray | MujocoSimModule | ros2     | monitor |
+| /aima/hal/joint/waist/command | ros2:aimdk_msgs/msg/JointCommandArray | MujocoSimModule | ros2     | monitor |
+| /aima/hal/joint/leg/command   | ros2:aimdk_msgs/msg/JointCommandArray | MujocoSimModule | ros2     | monitor |
+| /aima/hal/joint/arm/command   | ros2:aimdk_msgs/msg/JointCommandArray | MujocoSimModule | ros2     | monitor |
++-------------------------------+---------------------------------------+-----------------+----------+---------+
+
+
+[20]. Module Info List
++-----------------+------+---------+
+| name            | pkg  | version |
++-----------------+------+---------+
+| MujocoSimModule | core | 0.0.0.0 |
++-----------------+------+---------+
+
+
+
+----------------------- AimRT Initialization Report End ------------------------
+
+[0m
+[0;32m[2026-10-29 17:54:40.275619][Info][148][core][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/configurator/configurator_manager.cc:95 @Start]Configurator manager start completed.[0m
+[0;32m[2026-10-29 17:54:40.275627][Info][148][core][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/plugin/plugin_manager.cc:143 @Start]Plugin manager start completed.[0m
+[0;32m[2026-10-29 17:54:40.275843][Info][148][core][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/executor/executor_manager.cc:114 @Start]Executor manager start completed.[0m
+[0;32m[2026-10-29 17:54:40.275853][Info][148][core][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/logger/logger_manager.cc:117 @Start]Logger manager start completed.[0m
+[0;32m[2026-10-29 17:54:40.275857][Info][148][core][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/allocator/allocator_manager.cc:45 @Start]Allocator manager start completed.[0m
+[0;32m[2026-10-29 17:54:40.275958][Info][148][core][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/rpc/rpc_manager.cc:185 @Start]Rpc manager start completed.[0m
+[0;32m[2026-10-29 17:54:40.276204][Info][148][core][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/channel/channel_manager.cc:187 @Start]Channel manager start completed.[0m
+[0;32m[2026-10-29 17:54:40.276211][Info][148][core][/builds/lingxi/modules/aimrte/build/_deps/aimrt-src/src/runtime/core/parameter/parameter_manager.cc:45 @Start]Parameter manager start completed.[0m
+error: XDG_RUNTIME_DIR not set in the environment.
+Plugins from 'libsensor_ray.so':
+    mujoco.sensor.ray_caster
+    mujoco.sensor.ray_caster_camera
+    mujoco.sensor.ray_caster_lidar
+ERROR: could not initialize GLFW
+
+gdb run command:
+export LD_LIBRARY_PATH=/opt/sim/bin:/opt/sim/bin/..//bin:/opt/sim/bin/..//lib:$LD_LIBRARY_PATH
+gdb -ex run --args ./aima-sim-app --cfg_file_path=/tmp/twin-world/robot/lx2501_3_t2d5/simulator/default.yaml

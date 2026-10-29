@@ -1,0 +1,9 @@
+{
+  "loop": "true",
+  "direction": 1,
+  "scope": "SIM ONLY: actual P20 ROS adapter -> official MC -> MuJoCo -> native bridge.\nCalibration scope: no AMCL/Nav2 goals; localisation is deliberately excluded to isolate P20.\n",
+  "source": "sdk_p20_sim_probe",
+  "abort": "condition timeout {'state': 'idle', 'reason': 'registration_not_requested', 'latch': '', 'live': True, 'mode': 'live', 'dry_run': False, 'mc_source': '', 'trusted': False, 'registration': 'not_requested', 'registration_error': '', 'sdk_service_ready': True, 'motion_armed': False, 't1_pause': False, 'ready': False, 'foreign_publishers': [], 'counters': {'saturated': 0, 'rejected': 0, 'latched': 0, 'published': 0, 'yaw_loop': 0, 'yaw_meas_stale': 0}}{'body': 1, 'fsm': 4, 'source': '', 'action': 'STAND_DEFAULT', 'received': 9319.813721354}",
+  "delete_code": 0,
+  "duration_s": 15.360563001000628
+}

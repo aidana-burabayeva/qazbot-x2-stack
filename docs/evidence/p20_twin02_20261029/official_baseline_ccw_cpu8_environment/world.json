@@ -1,0 +1,29 @@
+{
+  "map_yaml": "/maps/main_office/map.yaml",
+  "image": "/maps/main_office/map.pgm",
+  "image_sha256": "72ee4094b394241e7b2761878774efbdd99e93731d7cb52709b2231c3975b354",
+  "yaml_sha256": "c86aa2aaefbefcaa2ddee994572cf6d13dd777b37b8e070de947f7685be43c1b",
+  "start_map": [
+    -7.885339914512176,
+    12.96582446398428,
+    0.0
+  ],
+  "shape": [
+    903,
+    673
+  ],
+  "resolution": 0.05000000074505806,
+  "origin": [
+    -30.010340244200368,
+    -22.409176063144297,
+    0.0
+  ],
+  "rectangles": 2867,
+  "blocked_cells": 13712,
+  "spawn_clearance_m": 1.5,
+  "coverage_exact": true,
+  "unknown_is_solid": false,
+  "wall_height_m": 1.6,
+  "robot": "/opt/sim/configuration/robot/lx2501_3_t2d5",
+  "transform": "map_xy = R(start_yaw) @ sim_xy + start_xy; sim initial pelvis XY = (0, 0)"
+}

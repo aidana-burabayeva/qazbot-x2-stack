@@ -1,3 +1,11 @@
+# Текущая передача Claude: P20 / TWIN-02, simulation only
+
+Активная ветка `test/p20-twin02-sim-20261029`; начать с [docs/P20_TWIN02_HANDOFF.md](docs/P20_TWIN02_HANDOFF.md), затем [docs/HANDOFF.md](docs/HANDOFF.md) и [docs/TEST_STATUS.md](docs/TEST_STATUS.md). Сохранить чужие dirty worktree. Карта называется `main_office`, не `t2_nav2`.
+
+Калибровка P20 и DDS recovery regressions прошли. Следующий открытый gate — отдельное время финального выравнивания полной CCW Nav2-цели (общая длительность 31.8 с, повторные XY-подходы). Recovery — экспериментальный C++ кандидат; реальный evidence provider и production wiring не готовы. Не устанавливать на X2, не ослаблять T1/T5/footprint/collision detection и не менять одновременно P20, localisation и costmap. Simulation processes этой сессии остановлены.
+
+---
+
 # Claude Code: QazBot X2
 
 Прочитайте [AGENTS.md](AGENTS.md), затем [docs/HANDOFF.md](docs/HANDOFF.md).

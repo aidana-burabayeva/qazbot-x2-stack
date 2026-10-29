@@ -1,0 +1,12 @@
+[INFO] [1793296339.375387940] [motion_adapter]: x2_motion_adapter started: live=True cmd_topic=/qazbot_d1_map/cmd_vel_authorized source=sdk_p20_sim_probe priority=30 yaw_loop=True u_min ccw/cw=0.6/0.45 u_max=1.0 ki=0.4
+[INFO] [1793296340.299438584] [motion_adapter]: SDK source registered; waiting for fresh authorized command
+[INFO] [1793296342.609142814] [motion_adapter]: yaw_loop target=+0.50 meas=-0.15 u=+0.61 I=+0.00
+[INFO] [1793296343.628046621] [motion_adapter]: yaw_loop target=+0.50 meas=+0.28 u=+0.64 I=+0.03
+[INFO] [1793296344.629266731] [motion_adapter]: yaw_loop target=+0.50 meas=+0.66 u=+0.60 I=-0.01
+[INFO] [1793296345.649604880] [motion_adapter]: yaw_loop target=+0.50 meas=+0.36 u=+0.63 I=+0.02
+[INFO] [1793296346.649324805] [motion_adapter]: yaw_loop target=+0.50 meas=+0.42 u=+0.66 I=+0.05
+[INFO] [1793296347.649570607] [motion_adapter]: yaw_loop target=+0.50 meas=+0.65 u=+0.65 I=+0.04
+[INFO] [1793296352.409654698] [motion_adapter]: yaw_loop target=+0.50 meas=-0.52 u=+0.61 I=+0.00
+[INFO] [1793296353.409667320] [motion_adapter]: yaw_loop target=+0.50 meas=+0.08 u=+0.69 I=+0.08
+[INFO] [1793296354.429715459] [motion_adapter]: yaw_loop target=+0.50 meas=+0.92 u=+0.60 I=-0.01
+[INFO] [1793296355.429469841] [motion_adapter]: yaw_loop target=+0.41 meas=+0.47 u=+0.60 I=+0.00

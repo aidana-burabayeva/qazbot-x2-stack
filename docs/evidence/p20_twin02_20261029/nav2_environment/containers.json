@@ -1,0 +1,688 @@
+[
+    {
+        "Id": "42216ab877476caa00de80a8eaddb279373d8ba9365b12996fc604d465c6f2cc",
+        "Created": "2026-10-29T18:04:25.598660184Z",
+        "Path": "/usr/local/bin/ros_entrypoint.sh",
+        "Args": [
+            "bash",
+            "-c",
+            "/tools/torso_odom --ros-args -r /twin/p20_odom:=/qazbot_native/odom &\nexec ros2 launch x2_twin_bringup twin.launch.py plant:=official max_angular:=0.5 map_yaml:=/opt/x2twin/stack/maps/main_office/map.yaml start_pose:=-7.885339914512176,12.96582446398428,0.0 localization:=truth\n"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 104920,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-29T18:05:08.346288331Z",
+            "FinishedAt": "0001-01-01T00:00:00Z",
+            "Health": {
+                "Status": "unhealthy",
+                "FailingStreak": 12,
+                "Log": [
+                    {
+                        "Start": "2026-10-29T23:09:13.687076822+05:00",
+                        "End": "2026-10-29T23:09:16.604545244+05:00",
+                        "ExitCode": 1,
+                        "Output": "missing node /qazbot_d1_map/amcl\n"
+                    },
+                    {
+                        "Start": "2026-10-29T23:09:31.606069754+05:00",
+                        "End": "2026-10-29T23:09:34.519069793+05:00",
+                        "ExitCode": 1,
+                        "Output": "missing node /qazbot_d1_map/amcl\n"
+                    },
+                    {
+                        "Start": "2026-10-29T23:09:49.520816667+05:00",
+                        "End": "2026-10-29T23:09:52.397754086+05:00",
+                        "ExitCode": 1,
+                        "Output": "missing node /qazbot_d1_map/amcl\n"
+                    },
+                    {
+                        "Start": "2026-10-29T23:10:07.398812442+05:00",
+                        "End": "2026-10-29T23:10:10.234540367+05:00",
+                        "ExitCode": 1,
+                        "Output": "missing node /qazbot_d1_map/amcl\n"
+                    },
+                    {
+                        "Start": "2026-10-29T23:10:25.236209624+05:00",
+                        "End": "2026-10-29T23:10:28.069272894+05:00",
+                        "ExitCode": 1,
+                        "Output": "missing node /qazbot_d1_map/amcl\n"
+                    }
+                ]
+            }
+        },
+        "Image": "sha256:b49aff3d6a540550163923d24ede817a0c491ec8cfa41d182f55d1aa43a401d8",
+        "ResolvConfPath": "/var/lib/docker/containers/42216ab877476caa00de80a8eaddb279373d8ba9365b12996fc604d465c6f2cc/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/42216ab877476caa00de80a8eaddb279373d8ba9365b12996fc604d465c6f2cc/hostname",
+        "HostsPath": "/var/lib/docker/containers/42216ab877476caa00de80a8eaddb279373d8ba9365b12996fc604d465c6f2cc/hosts",
+        "LogPath": "/var/lib/docker/containers/42216ab877476caa00de80a8eaddb279373d8ba9365b12996fc604d465c6f2cc/42216ab877476caa00de80a8eaddb279373d8ba9365b12996fc604d465c6f2cc-json.log",
+        "Name": "/x2-twin-stack-1",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "docker-default",
+        "ExecIDs": [
+            "b272663d7af7ea2fa0ecc937da5f48eb2c412b35010e54c51acbc13259654998"
+        ],
+        "HostConfig": {
+            "Binds": [
+                "/home/adn/QazBot/control_backend/ws/src/maps/main_office:/opt/x2twin/stack/maps/main_office:ro",
+                "/home/adn/QazBot/control_backend_p20_twin02/ws/src:/opt/x2twin/stack:ro",
+                "/tmp/qazbot-p20-build:/tools:ro"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "x2-twin_twin",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": [
+                "ALL"
+            ],
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": [
+                "no-new-privileges:true"
+            ],
+            "Tmpfs": {
+                "/home/twin/.ros": "",
+                "/tmp": ""
+            },
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 6442450944,
+            "NanoCpus": 4000000000,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 12884901888,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/acpi",
+                "/proc/asound",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/sys/devices/virtual/powercap",
+                "/sys/firmware",
+                "/sys/devices/system/cpu/cpu0/thermal_throttle",
+                "/sys/devices/system/cpu/cpu1/thermal_throttle",
+                "/sys/devices/system/cpu/cpu2/thermal_throttle",
+                "/sys/devices/system/cpu/cpu3/thermal_throttle",
+                "/sys/devices/system/cpu/cpu4/thermal_throttle",
+                "/sys/devices/system/cpu/cpu5/thermal_throttle",
+                "/sys/devices/system/cpu/cpu6/thermal_throttle",
+                "/sys/devices/system/cpu/cpu7/thermal_throttle",
+                "/sys/devices/system/cpu/cpu8/thermal_throttle",
+                "/sys/devices/system/cpu/cpu9/thermal_throttle",
+                "/sys/devices/system/cpu/cpu10/thermal_throttle",
+                "/sys/devices/system/cpu/cpu11/thermal_throttle"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ],
+            "Init": true
+        },
+        "GraphDriver": {
+            "Data": {
+                "ID": "42216ab877476caa00de80a8eaddb279373d8ba9365b12996fc604d465c6f2cc",
+                "LowerDir": "/var/lib/docker/overlay2/3c9490cdbca7131ab903aad02981d85ff2f194eb1ede5955c0da79164b2411e7-init/diff:/var/lib/docker/overlay2/stmzjisent8sv2en6p5pmbck1/diff:/var/lib/docker/overlay2/cusf95ybdllbcg4h0b871hxhv/diff:/var/lib/docker/overlay2/uso7kmfbpu09dmwjxowcbs5bk/diff:/var/lib/docker/overlay2/6kquuokcydfz0pgn7mk6p4c9o/diff:/var/lib/docker/overlay2/xxuqkquvtee8cpwhvlg52t5hi/diff:/var/lib/docker/overlay2/eax5p1orimwc5bzssz6873d4r/diff:/var/lib/docker/overlay2/ebrcpbfiowwdrsfgzqd6f72ca/diff:/var/lib/docker/overlay2/kv1j72vsz5ppltjsh0kfyq89q/diff:/var/lib/docker/overlay2/zegzcrtx3kowm13e9fs0n9x4r/diff:/var/lib/docker/overlay2/vb1j775qxx0fmps4mynufnn9h/diff:/var/lib/docker/overlay2/tvsump9xdgl0de8446mufq68g/diff:/var/lib/docker/overlay2/o4sfjsi5qqfs0yrpohohcm9mu/diff:/var/lib/docker/overlay2/5fcceced5165a9cb551aa5316b5201577bd799eeac680b1051001ff9e4c35290/diff:/var/lib/docker/overlay2/f3238273c9d4f2de841669c77cc727d3ab40783e74489c193f8fed0aeeb274e3/diff:/var/lib/docker/overlay2/ee368dd8c94c42f6f1e6bd56e6f3c171aa3c29c8a80fe83685f42398ca20b7bc/diff:/var/lib/docker/overlay2/ffb8de61fac5faf7d1489bb833139f074d94855ba494224d8ae7bedae62ce197/diff:/var/lib/docker/overlay2/07ca72bb497ca74aeeb97fd124ddf4c5bc6f321e0b5a4caec3798a7a07ef8f4c/diff:/var/lib/docker/overlay2/3847be7ae1a232c85285711ea879efd3f3f49f400fbdaf5cd8e96996f95997e2/diff:/var/lib/docker/overlay2/a3453e55f3f9f2d370911cc48f4cc054ac0c875f6d4ceac2fc0300eecbaf23a8/diff:/var/lib/docker/overlay2/26d3cfa2d8cbf8381ddc3ed6975730c10c03d342259bb14e7be5b4e3a2ac9320/diff:/var/lib/docker/overlay2/6ec799adbe72dfd1ce5b732b292b1b83a2dec56f7f606b5789f14ef2c44773a3/diff:/var/lib/docker/overlay2/b183448a5ee64e5850986baf41dea47873f3af82fb9cf3dfcbb2cb4da60522b1/diff",
+                "MergedDir": "/var/lib/docker/overlay2/3c9490cdbca7131ab903aad02981d85ff2f194eb1ede5955c0da79164b2411e7/merged",
+                "UpperDir": "/var/lib/docker/overlay2/3c9490cdbca7131ab903aad02981d85ff2f194eb1ede5955c0da79164b2411e7/diff",
+                "WorkDir": "/var/lib/docker/overlay2/3c9490cdbca7131ab903aad02981d85ff2f194eb1ede5955c0da79164b2411e7/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/tmp/qazbot-p20-build",
+                "Destination": "/tools",
+                "Mode": "ro",
+                "RW": false,
+                "Propagation": "rprivate"
+            },
+            {
+                "Type": "bind",
+                "Source": "/home/adn/QazBot/control_backend_p20_twin02/ws/src",
+                "Destination": "/opt/x2twin/stack",
+                "Mode": "ro",
+                "RW": false,
+                "Propagation": "rprivate"
+            },
+            {
+                "Type": "bind",
+                "Source": "/home/adn/QazBot/control_backend/ws/src/maps/main_office",
+                "Destination": "/opt/x2twin/stack/maps/main_office",
+                "Mode": "ro",
+                "RW": false,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "42216ab87747",
+            "Domainname": "",
+            "User": "twin",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "QAZBOT_I1_INF_VALID=0",
+                "QAZBOT_SIM_MC_TURN=0",
+                "TWIN_LOCALIZATION=amcl",
+                "QAZBOT_SIM=1",
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "LANG=C.UTF-8",
+                "LC_ALL=C.UTF-8",
+                "ROS_DISTRO=humble",
+                "RMW_IMPLEMENTATION=rmw_fastrtps_cpp",
+                "TWIN_SANDBOX=1",
+                "ROS_DOMAIN_ID=87",
+                "TWIN_STACK_DIR=/opt/x2twin/stack",
+                "QAZBOT_SMAC_PREFIX=/opt/x2twin/overlay",
+                "FASTRTPS_DEFAULT_PROFILES_FILE=/etc/qazbot/dds.xml",
+                "TWIN_RESULTS_DIR=/results",
+                "PYTHONDONTWRITEBYTECODE=1",
+                "OPENBLAS_NUM_THREADS=1",
+                "OMP_NUM_THREADS=1"
+            ],
+            "Cmd": [
+                "bash",
+                "-c",
+                "/tools/torso_odom --ros-args -r /twin/p20_odom:=/qazbot_native/odom &\nexec ros2 launch x2_twin_bringup twin.launch.py plant:=official max_angular:=0.5 map_yaml:=/opt/x2twin/stack/maps/main_office/map.yaml start_pose:=-7.885339914512176,12.96582446398428,0.0 localization:=truth\n"
+            ],
+            "Healthcheck": {
+                "Test": [
+                    "CMD",
+                    "twin-stack-health"
+                ],
+                "Interval": 15000000000,
+                "Timeout": 20000000000,
+                "StartPeriod": 120000000000,
+                "Retries": 6
+            },
+            "Image": "x2-twin-stack:dev",
+            "Volumes": null,
+            "WorkingDir": "/home/twin",
+            "Entrypoint": [
+                "/usr/local/bin/ros_entrypoint.sh"
+            ],
+            "Labels": {
+                "com.docker.compose.config-hash": "c473c73ceab1db0b5c19705c70f492a27ccc051c68675afb6354d39918512655",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "sim:service_healthy:false",
+                "com.docker.compose.image": "sha256:b49aff3d6a540550163923d24ede817a0c491ec8cfa41d182f55d1aa43a401d8",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "x2-twin",
+                "com.docker.compose.project.config_files": "/home/adn/QazBot/digital_twin/docker/compose.yaml,/home/adn/QazBot/control_backend_p20_twin02/tests/p20_sim/nav2.compose.yaml",
+                "com.docker.compose.project.environment_file": "/home/adn/QazBot/digital_twin/.env",
+                "com.docker.compose.project.working_dir": "/home/adn/QazBot/digital_twin/docker",
+                "com.docker.compose.service": "stack",
+                "com.docker.compose.version": "5.5.1",
+                "org.opencontainers.image.description": "X2 navigation stack running against the digital twin",
+                "org.opencontainers.image.licenses": "Proprietary",
+                "org.opencontainers.image.title": "x2-twin-stack",
+                "org.opencontainers.image.version": "22.04"
+            }
+        },
+        "NetworkSettings": {
+            "SandboxID": "bb08f1493cd7269ef2304423a6fb8374baafdb8c2e2147e7e2f8abca8f466dea",
+            "SandboxKey": "/var/run/docker/netns/bb08f1493cd7",
+            "Ports": {},
+            "Networks": {
+                "x2-twin_twin": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "x2-twin-stack-1",
+                        "stack"
+                    ],
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "efb8f7e24a3f74fdd579b0401d8c0b815bcf8b949f4fc354a015afb4fb7fc791",
+                    "EndpointID": "53417de194c6da45fa24c678494f5b7de80c0d0d4f01cc8638e41ca452411cf9",
+                    "Gateway": "",
+                    "IPAddress": "172.25.0.3",
+                    "MacAddress": "96:00:16:12:b7:28",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "x2-twin-stack-1",
+                        "stack",
+                        "42216ab87747"
+                    ]
+                }
+            }
+        }
+    },
+    {
+        "Id": "66f32732b22bcc696c70f77ced02153501437c4deb42a138cfcbe67770578899",
+        "Created": "2026-10-29T18:04:25.527307192Z",
+        "Path": "/usr/local/bin/twin-sim-up",
+        "Args": [],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 104198,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-29T18:04:27.003027552Z",
+            "FinishedAt": "0001-01-01T00:00:00Z",
+            "Health": {
+                "Status": "healthy",
+                "FailingStreak": 0,
+                "Log": [
+                    {
+                        "Start": "2026-10-29T23:09:14.688085119+05:00",
+                        "End": "2026-10-29T23:09:17.752049082+05:00",
+                        "ExitCode": 0,
+                        "Output": "{'z': 0.6530466863370704, 'body': 1, 'fsm': 4} healthy\n"
+                    },
+                    {
+                        "Start": "2026-10-29T23:09:32.753976527+05:00",
+                        "End": "2026-10-29T23:09:35.775682872+05:00",
+                        "ExitCode": 0,
+                        "Output": "{'z': 0.6530476369242035, 'body': 1, 'fsm': 4} healthy\n"
+                    },
+                    {
+                        "Start": "2026-10-29T23:09:50.777219528+05:00",
+                        "End": "2026-10-29T23:09:53.073824465+05:00",
+                        "ExitCode": 0,
+                        "Output": "{'z': 0.653047849262032, 'body': 1, 'fsm': 4} healthy\n"
+                    },
+                    {
+                        "Start": "2026-10-29T23:10:08.07577937+05:00",
+                        "End": "2026-10-29T23:10:12.655989047+05:00",
+                        "ExitCode": 0,
+                        "Output": "{'z': 0.6530477476268385, 'body': 1, 'fsm': 4} healthy\n"
+                    },
+                    {
+                        "Start": "2026-10-29T23:10:27.658550153+05:00",
+                        "End": "2026-10-29T23:10:31.429181089+05:00",
+                        "ExitCode": 0,
+                        "Output": "{'body': 1, 'fsm': 4, 'z': 0.6530475535586384} healthy\n"
+                    }
+                ]
+            }
+        },
+        "Image": "sha256:aaa75e1c1598af4f95f33cf8194acc35281a5299d027ed62e3af84b29b64ff1d",
+        "ResolvConfPath": "/var/lib/docker/containers/66f32732b22bcc696c70f77ced02153501437c4deb42a138cfcbe67770578899/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/66f32732b22bcc696c70f77ced02153501437c4deb42a138cfcbe67770578899/hostname",
+        "HostsPath": "/var/lib/docker/containers/66f32732b22bcc696c70f77ced02153501437c4deb42a138cfcbe67770578899/hosts",
+        "LogPath": "/var/lib/docker/containers/66f32732b22bcc696c70f77ced02153501437c4deb42a138cfcbe67770578899/66f32732b22bcc696c70f77ced02153501437c4deb42a138cfcbe67770578899-json.log",
+        "Name": "/x2-twin-sim-1",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "docker-default",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "x2-twin_mc_runtime:/opt/mc:rw",
+                "x2-twin_sim_runtime:/opt/sim:rw",
+                "x2-twin_mc_r9_runtime:/opt/mc-r9:rw",
+                "/home/adn/QazBot/digital_twin/vendor/pc1_mc:/vendor/pc1:ro",
+                "x2-twin_agibot_data:/agibot/data:rw",
+                "x2-twin_sim_logs:/var/log/twin:rw",
+                "/home/adn/QazBot/control_backend/ws/src/maps/main_office:/maps/main_office:ro"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "x2-twin_twin",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": [
+                "ALL"
+            ],
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": [
+                "no-new-privileges:true"
+            ],
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 8589934592,
+            "NanoCpus": 8000000000,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 17179869184,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/acpi",
+                "/proc/asound",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/sys/devices/virtual/powercap",
+                "/sys/firmware",
+                "/sys/devices/system/cpu/cpu0/thermal_throttle",
+                "/sys/devices/system/cpu/cpu1/thermal_throttle",
+                "/sys/devices/system/cpu/cpu2/thermal_throttle",
+                "/sys/devices/system/cpu/cpu3/thermal_throttle",
+                "/sys/devices/system/cpu/cpu4/thermal_throttle",
+                "/sys/devices/system/cpu/cpu5/thermal_throttle",
+                "/sys/devices/system/cpu/cpu6/thermal_throttle",
+                "/sys/devices/system/cpu/cpu7/thermal_throttle",
+                "/sys/devices/system/cpu/cpu8/thermal_throttle",
+                "/sys/devices/system/cpu/cpu9/thermal_throttle",
+                "/sys/devices/system/cpu/cpu10/thermal_throttle",
+                "/sys/devices/system/cpu/cpu11/thermal_throttle"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ],
+            "Init": true
+        },
+        "GraphDriver": {
+            "Data": {
+                "ID": "66f32732b22bcc696c70f77ced02153501437c4deb42a138cfcbe67770578899",
+                "LowerDir": "/var/lib/docker/overlay2/bc6219fd07581ff823dcfa0bd06732d5feb23f6588425f39e98b106a39ad5f49-init/diff:/var/lib/docker/overlay2/wcx7bb2hdfny649or6nvmhrki/diff:/var/lib/docker/overlay2/rwegg4di1ux700ck7zefkatkz/diff:/var/lib/docker/overlay2/wvp5fu0obitsl34gehjqplyit/diff:/var/lib/docker/overlay2/it67rg9enpp2zoslcn4gurafm/diff:/var/lib/docker/overlay2/ad0zi0n63arjqw79i70876wmy/diff:/var/lib/docker/overlay2/k0xzs02pctvaf25id1woyk7o0/diff:/var/lib/docker/overlay2/9mbrlwv6xsv018p3tyahfstip/diff:/var/lib/docker/overlay2/5fcceced5165a9cb551aa5316b5201577bd799eeac680b1051001ff9e4c35290/diff:/var/lib/docker/overlay2/f3238273c9d4f2de841669c77cc727d3ab40783e74489c193f8fed0aeeb274e3/diff:/var/lib/docker/overlay2/ee368dd8c94c42f6f1e6bd56e6f3c171aa3c29c8a80fe83685f42398ca20b7bc/diff:/var/lib/docker/overlay2/ffb8de61fac5faf7d1489bb833139f074d94855ba494224d8ae7bedae62ce197/diff:/var/lib/docker/overlay2/07ca72bb497ca74aeeb97fd124ddf4c5bc6f321e0b5a4caec3798a7a07ef8f4c/diff:/var/lib/docker/overlay2/3847be7ae1a232c85285711ea879efd3f3f49f400fbdaf5cd8e96996f95997e2/diff:/var/lib/docker/overlay2/a3453e55f3f9f2d370911cc48f4cc054ac0c875f6d4ceac2fc0300eecbaf23a8/diff:/var/lib/docker/overlay2/26d3cfa2d8cbf8381ddc3ed6975730c10c03d342259bb14e7be5b4e3a2ac9320/diff:/var/lib/docker/overlay2/6ec799adbe72dfd1ce5b732b292b1b83a2dec56f7f606b5789f14ef2c44773a3/diff:/var/lib/docker/overlay2/b183448a5ee64e5850986baf41dea47873f3af82fb9cf3dfcbb2cb4da60522b1/diff",
+                "MergedDir": "/var/lib/docker/overlay2/bc6219fd07581ff823dcfa0bd06732d5feb23f6588425f39e98b106a39ad5f49/merged",
+                "UpperDir": "/var/lib/docker/overlay2/bc6219fd07581ff823dcfa0bd06732d5feb23f6588425f39e98b106a39ad5f49/diff",
+                "WorkDir": "/var/lib/docker/overlay2/bc6219fd07581ff823dcfa0bd06732d5feb23f6588425f39e98b106a39ad5f49/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [
+            {
+                "Type": "volume",
+                "Name": "x2-twin_agibot_data",
+                "Source": "/var/lib/docker/volumes/x2-twin_agibot_data/_data",
+                "Destination": "/agibot/data",
+                "Driver": "local",
+                "Mode": "rw",
+                "RW": true,
+                "Propagation": ""
+            },
+            {
+                "Type": "bind",
+                "Source": "/home/adn/QazBot/control_backend/ws/src/maps/main_office",
+                "Destination": "/maps/main_office",
+                "Mode": "ro",
+                "RW": false,
+                "Propagation": "rprivate"
+            },
+            {
+                "Type": "volume",
+                "Name": "x2-twin_mc_runtime",
+                "Source": "/var/lib/docker/volumes/x2-twin_mc_runtime/_data",
+                "Destination": "/opt/mc",
+                "Driver": "local",
+                "Mode": "rw",
+                "RW": true,
+                "Propagation": ""
+            },
+            {
+                "Type": "volume",
+                "Name": "x2-twin_mc_r9_runtime",
+                "Source": "/var/lib/docker/volumes/x2-twin_mc_r9_runtime/_data",
+                "Destination": "/opt/mc-r9",
+                "Driver": "local",
+                "Mode": "rw",
+                "RW": true,
+                "Propagation": ""
+            },
+            {
+                "Type": "volume",
+                "Name": "x2-twin_sim_runtime",
+                "Source": "/var/lib/docker/volumes/x2-twin_sim_runtime/_data",
+                "Destination": "/opt/sim",
+                "Driver": "local",
+                "Mode": "rw",
+                "RW": true,
+                "Propagation": ""
+            },
+            {
+                "Type": "bind",
+                "Source": "/home/adn/QazBot/digital_twin/vendor/pc1_mc",
+                "Destination": "/vendor/pc1",
+                "Mode": "ro",
+                "RW": false,
+                "Propagation": "rprivate"
+            },
+            {
+                "Type": "volume",
+                "Name": "x2-twin_sim_logs",
+                "Source": "/var/lib/docker/volumes/x2-twin_sim_logs/_data",
+                "Destination": "/var/log/twin",
+                "Driver": "local",
+                "Mode": "rw",
+                "RW": true,
+                "Propagation": ""
+            }
+        ],
+        "Config": {
+            "Hostname": "66f32732b22b",
+            "Domainname": "",
+            "User": "twin",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "TWIN_SIM_RES=320x180x24",
+                "TWIN_START=-7.885339914512176,12.96582446398428,0.0",
+                "TWIN_GUI=0",
+                "TWIN_MAP=main_office",
+                "DISPLAY=:1",
+                "TWIN_MC=official",
+                "LP_NUM_THREADS=1",
+                "TWIN_WORLD=map",
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "LANG=C.UTF-8",
+                "LC_ALL=C.UTF-8",
+                "ROS_DISTRO=humble",
+                "TWIN_SANDBOX=1",
+                "ROS_DOMAIN_ID=87",
+                "RMW_IMPLEMENTATION=rmw_fastrtps_cpp",
+                "PYTHONDONTWRITEBYTECODE=1"
+            ],
+            "Cmd": null,
+            "Healthcheck": {
+                "Test": [
+                    "CMD",
+                    "twin-sim-health"
+                ],
+                "Interval": 15000000000,
+                "Timeout": 25000000000,
+                "StartPeriod": 150000000000,
+                "Retries": 6
+            },
+            "Image": "x2-twin-sim:dev",
+            "Volumes": null,
+            "WorkingDir": "/home/twin",
+            "Entrypoint": [
+                "/usr/local/bin/twin-sim-up"
+            ],
+            "Labels": {
+                "com.docker.compose.config-hash": "a18ec85101e38409f0eabda2d64d7dcebdfc040dba109ca2fa9c88e4463951ce",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "sim-init:service_completed_successfully:false",
+                "com.docker.compose.image": "sha256:aaa75e1c1598af4f95f33cf8194acc35281a5299d027ed62e3af84b29b64ff1d",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "x2-twin",
+                "com.docker.compose.project.config_files": "/home/adn/QazBot/digital_twin/docker/compose.yaml,/home/adn/QazBot/control_backend_p20_twin02/tests/p20_sim/nav2.compose.yaml",
+                "com.docker.compose.project.environment_file": "/home/adn/QazBot/digital_twin/.env",
+                "com.docker.compose.project.working_dir": "/home/adn/QazBot/digital_twin/docker",
+                "com.docker.compose.replace": "sim-1",
+                "com.docker.compose.service": "sim",
+                "com.docker.compose.version": "5.5.1",
+                "org.opencontainers.image.description": "Runtime for the official AgiBot mc + MuJoCo simulator (binaries mounted, not baked)",
+                "org.opencontainers.image.title": "x2-twin-sim",
+                "org.opencontainers.image.version": "22.04"
+            }
+        },
+        "NetworkSettings": {
+            "SandboxID": "805320a60ee2bda45d98b9de15bdf60cc9201586e48d13bb39f00046c16d221a",
+            "SandboxKey": "/var/run/docker/netns/805320a60ee2",
+            "Ports": {},
+            "Networks": {
+                "x2-twin_twin": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "x2-twin-sim-1",
+                        "sim"
+                    ],
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "efb8f7e24a3f74fdd579b0401d8c0b815bcf8b949f4fc354a015afb4fb7fc791",
+                    "EndpointID": "dc65312448d782b464ef8a05064bae48ef33e2940f2093b7a3869230238ce8c6",
+                    "Gateway": "",
+                    "IPAddress": "172.25.0.2",
+                    "MacAddress": "a2:25:fa:7a:58:c9",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "x2-twin-sim-1",
+                        "sim",
+                        "66f32732b22b"
+                    ]
+                }
+            }
+        }
+    }
+]

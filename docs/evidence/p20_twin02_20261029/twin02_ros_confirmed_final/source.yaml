@@ -1,0 +1,6 @@
+twin02_replay_source:
+  ros__parameters:
+    announced_reset: true
+    gap_s: 1.0
+    invalid_after_reset: false
+    jump_m: 0.467

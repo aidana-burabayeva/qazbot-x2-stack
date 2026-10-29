@@ -1,3 +1,25 @@
+# 2026-10-29 — P20 / TWIN-02: новые результаты симуляции
+
+| Проверка | Результат / границы |
+|---|---|
+| P20 специальные регрессии | 18 PASS; wrap, gap/backstep, stale/non-finite feedback, MC limits, overspeed, direction, translation, zero/T1, anti-windup, dead-time, takeover |
+| Adapter + native + deterministic TWIN-02 | 122 PASS, 0 skip, включая существующие ROS native node tests |
+| T5 / READY / Trust gaps | 62 PASS, 2 существующих `invalid value encountered in cast` warnings |
+| C++ recovery core + UBSan | 16 reset scenarios + дополнительные safety/increment checks PASS |
+| Actual DDS recovery/source + TrustEvaluator/AdapterCore | 8 PASS, confirmed/unexplained, 0.467–1.6 м, реальные паузы до 40 с, NaN |
+| Official MC/MuJoCo after-walk baseline | CCW 0.006 рад/с; CW -0.202 рад/с, CW 90° не достигнуты за 10 с |
+| Official MC/MuJoCo after-walk P20 | CCW 0.501 рад/с, 3.47 с, error +0.125 рад; CW -0.451, 4.55 с, error -0.080 рад |
+| Full Nav2/GC/P20 truth-localisation | CCW и CW SUCCEEDED; XY 0.098/0.094 м, yaw 0.015/0.069 рад |
+| S2/S3 full final-alignment time | OPEN: CCW goal целиком 31.8 с с повторными XY-подходами; отдельное время final rotate не инструментировано |
+| Native leg stream в official MC sim | Не наблюдался; первый native-bridge probe TIMEOUT. P20 sim uses explicitly labelled torso FK surrogate |
+| Initial 4-CPU / GLFW runs | FAIL, сохранены; CPU throttling и stale X startup. A/B использует одинаковые 8 CPU/320×180, fresh containers |
+| main_office trinary map / world | 413052 unknown, 13712 occupied, 180955 free; actual map_server 0 unknown→free; world coverage exact |
+| Physical robot deployment / AMCL navigation acceptance | NOT RUN; simulation evidence их не заменяет |
+
+Материалы, ограничения и воспроизведение: [P20_TWIN02_HANDOFF.md](P20_TWIN02_HANDOFF.md), [evidence](evidence/p20_twin02_20261029/). Production source guard/adapter/Trust, T1/T5 thresholds, I1 и main не менялись. Recovery работает только в экспериментальном стенде и не имеет квалифицированного физического evidence provider. Предыдущие записи ниже — история, а не новые прогоны.
+
+---
+
 # Статус проверок QazBot X2
 
 Обновлено 2026-10-28 ~23:00 CST (вечерняя сессия nav, X2). Полные ограничения и текущие процессы: [HANDOFF.md](HANDOFF.md).

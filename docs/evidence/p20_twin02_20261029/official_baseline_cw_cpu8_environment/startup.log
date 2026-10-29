@@ -1,0 +1,5 @@
+[twin-sim] starting mc
+[twin-sim] starting sim (first pass, world=map)
+[twin-sim] restarting sim with mc holding the stand
+{'z': 0.6231361263830985, 'body': 1, 'fsm': 4} healthy
+[twin-sim] READY: standing, locomotion mode

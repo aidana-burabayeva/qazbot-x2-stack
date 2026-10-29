@@ -1,0 +1,11 @@
+{
+  "result": "PASS",
+  "width": 673,
+  "height": 903,
+  "occupancy_counts": {
+    "-1": 413052,
+    "100": 13712,
+    "0": 180955
+  },
+  "unknown_became_free": 0
+}

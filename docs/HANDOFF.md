@@ -1,3 +1,19 @@
+# 2026-10-29 — P20 / TWIN-02, simulation handoff (самая свежая запись)
+
+Ветка `test/p20-twin02-sim-20261029`, worktree `/home/adn/QazBot/control_backend_p20_twin02`. Подробная передача Claude: [P20_TWIN02_HANDOFF.md](P20_TWIN02_HANDOFF.md). Начать с неё, без нового полного аудита.
+
+P20 regressions: 122 выбранных adapter/native/recovery tests PASS, без skip; 62 дополнительных Trust/T5 tests PASS (2 существующих warning). P20 после ходьбы через настоящий adapter/официальный MC/MuJoCo: CCW 0.501 рад/с, 90° за 3.47 с, ошибка +0.125 рад; CW -0.451 рад/с, 4.55 с, ошибка -0.080 рад. Baseline stall воспроизведён. Измерение yaw — C++ torso FK surrogate, поскольку native leg stream в этой версии sim не наблюдался.
+
+TWIN-02: C++ candidate + semantic ROS service + C++ source; 16 deterministic core/Trust cases и 8 DDS scenarios PASS, включая 40-секундный разрыв, подтверждённый/необъяснимый reset и NaN. Публикуемая поза непрерывна после подтверждённого reset; gate закрыт до свежего Trust, adapter требует resume/новую команду. Это экспериментальный кандидат, не установленный production bridge. Физический reset-evidence provider, admission wiring и TF transport ещё не квалифицированы.
+
+Карта пользователя теперь `ws/src/maps/main_office/` (PGM/YAML/manifest). Unknown восстановлен по исходной D1-маске; 0 unknown→free в настоящем Nav2 map_server. Twin на ПК использует эту папку. Ветка содержит snapshot существующих исходников twin для передачи; vendor/runtime/build не публикуются.
+
+Nav2/RPP/Coordinator/P20/MC с truth-localization: две фактически выполненные цели SUCCEEDED, XY 0.098/0.094 м, yaw 0.015/0.069 рад. **Полный S2/S3 timing gate НЕ закрыт:** CCW заняла 31.8 с и делала повторные XY-подходы, отдельный final alignment timing не измерен. Первый harness получил precondition reject второй цели из-за отсутствия ожидания `source_zero`/ready; исправление harness и успешный CW follow-up сохранены. Не выдавать это за 3 goals подряд или AMCL/T5 LIVE acceptance.
+
+Следующий шаг: инструментировать последний XY-подход/final rotate CCW через authorized/MC command trace, выяснить роль XY goal checker/линейного coast. P20, localisation и costmap одновременно не менять. `main` и physical X2 не менялись. Simulation services этой сессии остановлены. Свежие результаты и failures: [evidence/p20_twin02_20261029](evidence/p20_twin02_20261029/).
+
+---
+
 # QazBot X2: продолжение — первые физические RViz goals (2026-10-28, вечер)
 
 ## 2026-10-29 (самая свежая запись; ниже сохранена история 2026-10-28)

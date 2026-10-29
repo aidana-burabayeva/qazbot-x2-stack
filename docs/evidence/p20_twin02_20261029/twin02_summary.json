@@ -1,0 +1,100 @@
+[
+  {
+    "case": "twin02_ros_confirmed_05",
+    "jump": 0.5,
+    "gap": 1.0,
+    "announced": "true",
+    "scope": "Isolated DDS TWIN-02 replay: compiled source/recovery nodes, real TrustEvaluator/AdapterCore.\nNo AMCL, Nav2 action or physical robot. All poses belong to the simulated test fixture.\n",
+    "result": "PASS",
+    "recovered": true,
+    "max_output_step_m": 5.551115123125783e-17,
+    "raw_samples": 481,
+    "odom_samples": 90
+  },
+  {
+    "case": "twin02_ros_confirmed_final",
+    "jump": 0.467,
+    "gap": 1.0,
+    "announced": "true",
+    "invalid_reset": false,
+    "scope": "Isolated DDS TWIN-02 replay: compiled source/recovery nodes, real TrustEvaluator/AdapterCore.\nNo AMCL, Nav2 action or physical robot. All poses belong to the simulated test fixture.\n",
+    "result": "PASS",
+    "recovered": true,
+    "max_output_step_m": 7.850462293418876e-17,
+    "raw_samples": 484,
+    "odom_samples": 91
+  },
+  {
+    "case": "twin02_ros_confirmed_long",
+    "jump": 1.563,
+    "gap": 40.0,
+    "announced": "true",
+    "scope": "Isolated DDS TWIN-02 replay: compiled source/recovery nodes, real TrustEvaluator/AdapterCore.\nNo AMCL, Nav2 action or physical robot. All poses belong to the simulated test fixture.\n",
+    "result": "PASS",
+    "recovered": true,
+    "max_output_step_m": 2.220446049250313e-16,
+    "raw_samples": 490,
+    "odom_samples": 90
+  },
+  {
+    "case": "twin02_ros_confirmed_short",
+    "jump": 0.467,
+    "gap": 1.0,
+    "announced": "true",
+    "scope": "Isolated DDS TWIN-02 replay: compiled source/recovery nodes, real TrustEvaluator/AdapterCore.\nNo AMCL, Nav2 action or physical robot. All poses belong to the simulated test fixture.\n",
+    "result": "PASS",
+    "recovered": true,
+    "max_output_step_m": 7.850462293418876e-17,
+    "raw_samples": 470,
+    "odom_samples": 91
+  },
+  {
+    "case": "twin02_ros_invalid_source",
+    "jump": 1.563,
+    "gap": 1.0,
+    "announced": "false",
+    "invalid_reset": true,
+    "scope": "Isolated DDS TWIN-02 replay: compiled source/recovery nodes, real TrustEvaluator/AdapterCore.\nNo AMCL, Nav2 action or physical robot. All poses belong to the simulated test fixture.\n",
+    "result": "PASS",
+    "recovered": false,
+    "max_output_step_m": 0.0,
+    "raw_samples": 490,
+    "odom_samples": 84
+  },
+  {
+    "case": "twin02_ros_unexplained_1563",
+    "jump": 1.563,
+    "gap": 1.0,
+    "announced": "false",
+    "scope": "Isolated DDS TWIN-02 replay: compiled source/recovery nodes, real TrustEvaluator/AdapterCore.\nNo AMCL, Nav2 action or physical robot. All poses belong to the simulated test fixture.\n",
+    "result": "PASS",
+    "recovered": false,
+    "max_output_step_m": 0.0,
+    "raw_samples": 473,
+    "odom_samples": 82
+  },
+  {
+    "case": "twin02_ros_unexplained_16",
+    "jump": 1.6,
+    "gap": 1.0,
+    "announced": "false",
+    "scope": "Isolated DDS TWIN-02 replay: compiled source/recovery nodes, real TrustEvaluator/AdapterCore.\nNo AMCL, Nav2 action or physical robot. All poses belong to the simulated test fixture.\n",
+    "result": "PASS",
+    "recovered": false,
+    "max_output_step_m": 0.0,
+    "raw_samples": 478,
+    "odom_samples": 83
+  },
+  {
+    "case": "twin02_ros_unexplained_long",
+    "jump": 0.467,
+    "gap": 40.0,
+    "announced": "false",
+    "scope": "Isolated DDS TWIN-02 replay: compiled source/recovery nodes, real TrustEvaluator/AdapterCore.\nNo AMCL, Nav2 action or physical robot. All poses belong to the simulated test fixture.\n",
+    "result": "PASS",
+    "recovered": false,
+    "max_output_step_m": 0.0,
+    "raw_samples": 487,
+    "odom_samples": 83
+  }
+]

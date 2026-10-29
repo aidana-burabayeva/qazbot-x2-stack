@@ -1,0 +1,52 @@
+{
+  "scope": "Full Nav2/Coordinator/P20 integration, truth localisation; simulation-only and not AMCL qualification.",
+  "goals": [
+    {
+      "target": [
+        -7.266856508610618,
+        13.463539956158163,
+        0.0
+      ],
+      "status": 4,
+      "duration": 6.733876072999919,
+      "pose": [
+        -7.271239303768885,
+        13.557506542426106,
+        0.06890982172295462
+      ],
+      "xy_error": 0.09406874203607717,
+      "yaw_error": 0.06890982172295462,
+      "coordinator": {
+        "busy": true,
+        "latched": false,
+        "gate": true,
+        "fault": "",
+        "source_zero": false,
+        "trusted": true,
+        "paused": false,
+        "driver_ready": true,
+        "driver_mode": "live",
+        "ready": false,
+        "child_uuid": [
+          124,
+          120,
+          199,
+          173,
+          199,
+          135,
+          69,
+          183,
+          178,
+          49,
+          84,
+          253,
+          48,
+          82,
+          15,
+          69
+        ]
+      }
+    }
+  ],
+  "result": "PASS"
+}

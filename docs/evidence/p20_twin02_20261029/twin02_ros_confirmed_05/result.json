@@ -1,0 +1,11 @@
+{
+  "jump": 0.5,
+  "gap": 1.0,
+  "announced": "true",
+  "scope": "Isolated DDS TWIN-02 replay: compiled source/recovery nodes, real TrustEvaluator/AdapterCore.\nNo AMCL, Nav2 action or physical robot. All poses belong to the simulated test fixture.\n",
+  "result": "PASS",
+  "recovered": true,
+  "max_output_step_m": 5.551115123125783e-17,
+  "raw_samples": 481,
+  "odom_samples": 90
+}

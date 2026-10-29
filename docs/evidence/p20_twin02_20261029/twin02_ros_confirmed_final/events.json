@@ -1,0 +1,47 @@
+[
+  {
+    "event": "MC",
+    "action": "STAND_DEFAULT",
+    "at": 10300.732150374
+  },
+  {
+    "event": "MC",
+    "action": "DAMPING_DEFAULT",
+    "at": 10303.731810367
+  },
+  {
+    "event": "service",
+    "command": 1,
+    "accepted": true,
+    "state": 1
+  },
+  {
+    "event": "MC",
+    "action": "STAND_DEFAULT",
+    "at": 10304.726394436
+  },
+  {
+    "event": "service",
+    "command": 2,
+    "accepted": false,
+    "state": 1
+  },
+  {
+    "event": "service",
+    "command": 2,
+    "accepted": true,
+    "state": 2
+  },
+  {
+    "event": "service",
+    "command": 3,
+    "accepted": false,
+    "state": 2
+  },
+  {
+    "event": "service",
+    "command": 3,
+    "accepted": true,
+    "state": 0
+  }
+]
