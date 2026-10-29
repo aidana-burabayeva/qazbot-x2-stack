@@ -1,0 +1,1 @@
+../../../control_backend/docs/X2_QUICKSTART_BRINGUP_RU.md

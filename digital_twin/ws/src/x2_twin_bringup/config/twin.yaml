@@ -1,0 +1,38 @@
+# Static parameters of the twin plant nodes. Dynamic ones (map_yaml) come from the launch arguments.
+# Topic names/rates mirror ws/src/lio/level_bridge.py (odom 10 Hz, scan 5 Hz = scan_every:=2).
+hal_plant:
+  ros__parameters:
+    hal_odom_topic: /aima/hal/odom/state
+    tf_topic: /qazbot_d1_map/tf
+    odom_topic: /qazbot_lio/odom_level
+    scan_topic: /qazbot_lio/scan
+    truth_topic: /x2_twin/model_truth
+    odom_hz: 10.0
+    scan_hz: 5.0
+    # forward wedge of the robot's chest LiDAR as seen after level_bridge (observed on .66; ws/src/lio/x2.yaml): ~103 deg, 0.45-8 m,
+    # 1440 bins over the full circle, unobserved bins = inf. Set scan_fov_deg: 360.0 for an idealised all-round scan.
+    scan_n_beams: 1440
+    scan_fov_deg: 103.0
+    scan_range_min: 0.45
+    scan_range_max: 8.0
+kinematic_plant:
+  ros__parameters:
+    cmd_topic: /x2_twin/plant_cmd
+    tf_topic: /qazbot_d1_map/tf
+    odom_topic: /qazbot_lio/odom_level
+    scan_topic: /qazbot_lio/scan
+    truth_topic: /x2_twin/model_truth
+    odom_hz: 10.0
+    scan_hz: 5.0
+    # forward wedge of the robot's chest LiDAR as seen after level_bridge (observed on .66; ws/src/lio/x2.yaml): ~103 deg, 0.45-8 m,
+    # 1440 bins over the full circle, unobserved bins = inf. Set scan_fov_deg: 360.0 for an idealised all-round scan.
+    scan_n_beams: 1440
+    scan_fov_deg: 103.0
+    scan_range_min: 0.45
+    scan_range_max: 8.0
+virtual_mc:
+  ros__parameters:
+    plant_cmd_topic: /x2_twin/plant_cmd
+    forward_bounds: [-1.0, 0.8]      # AimDK speed mode LOW
+    lateral_bounds: [-1.0, 1.0]
+    angular_bounds: [-1.0, 1.0]

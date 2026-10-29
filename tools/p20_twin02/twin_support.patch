@@ -1,0 +1,80 @@
+--- a/docker/compose.yaml
++++ b/docker/compose.yaml
+@@ -89,7 +89,7 @@
+       - ../vendor/pc1_mc:/vendor/pc1:ro
+       - agibot_data:/agibot/data
+       - sim_logs:/var/log/twin
+-      - ${TWIN_BACKEND:-../..}/ws/src/maps:/maps:ro      # the same maps the stack uses (read-only)
++      - ${TWIN_MAP_DIR:-${TWIN_BACKEND:-../..}/ws/src/maps/${TWIN_MAP:-first_map_nav2_v3}}:/maps/${TWIN_MAP:-first_map_nav2_v3}:ro
+     networks: [twin]
+     cpus: ${SIM_CPUS:-4}
+     mem_limit: ${SIM_MEM:-8g}
+@@ -106,6 +106,8 @@
+     build: *stack-build
+     depends_on:
+       sim: {condition: service_healthy}
++    volumes:
++      - ${TWIN_MAP_DIR:-${TWIN_BACKEND:-../..}/ws/src/maps/${TWIN_MAP:-first_map_nav2_v3}}:/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}:ro
+     command: ["ros2", "launch", "x2_twin_bringup", "twin.launch.py", "plant:=official", "max_angular:=${MAX_ANGULAR:-0.5}",
+               "map_yaml:=/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}/map.yaml", "start_pose:=${TWIN_START:--1.275,-4.825,0.0}", "localization:=${TWIN_LOCALIZATION:-amcl}", "scan_format:=${TWIN_SCAN_FORMAT:-legacy}", "scan_fov_deg:=${TWIN_SCAN_FOV_DEG:-0}"]
+     environment:
+@@ -141,6 +143,7 @@
+       - ${TWIN_BACKEND:-../..}/ws/src/lio:/backend_lio:ro               # level_bridge.py as on the robot (read-only reference)
+       - ../candidates:/work/candidates
+       - ../campaigns:/work/campaigns:ro
++      - ${TWIN_MAP_DIR:-${TWIN_BACKEND:-../..}/ws/src/maps/${TWIN_MAP:-first_map_nav2_v3}}:/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}:ro
+       - ${TWIN_BACKEND:-../..}/ws/src:/opt/x2twin/stack:ro              # the unmodified navigation stack source (read-only)
+       - ${TWIN_BACKEND:-../..}/logs:/backend_logs:ro                    # recorded bags of the physical X2 (read-only)
+       - ${TWIN_BACKEND:-../..}/tests:/backend_tests:ro                  # existing Trust safety tests of the physical X2 (read-only)
+@@ -157,7 +160,9 @@
+       stack: {condition: service_healthy}
+     command: ["ros2", "run", "x2_twin_scenarios", "live_chain", "--plant", "official", "--name", "${RUN_NAME:-run01}",
+               "--max-angular", "${MAX_ANGULAR:-0.5}", "--localization", "${TWIN_LOCALIZATION:-amcl}", "--start=${TWIN_START:--1.275,-4.825,0.0}"]
+-    volumes: ["../results:/results"]
++    volumes:
++      - ../results:/results
++      - ${TWIN_MAP_DIR:-${TWIN_BACKEND:-../..}/ws/src/maps/${TWIN_MAP:-first_map_nav2_v3}}:/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}:ro
+     networks: [twin]
+     tmpfs: ["/tmp", "/home/twin/.ros"]
+ 
+@@ -171,7 +176,9 @@
+     command: ["ros2", "run", "x2_twin_scenarios", "i1_collision", "--name", "${RUN_NAME:-i1}", "--mode", "${TWIN_I1_MODE:-baseline}",
+               "--start=${TWIN_START:--1.275,-4.825,0.0}", "--scan-fov-deg=${TWIN_SCAN_FOV_DEG:-0}",
+               "--map-yaml=/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}/map.yaml"]
+-    volumes: ["../results:/results"]
++    volumes:
++      - ../results:/results
++      - ${TWIN_MAP_DIR:-${TWIN_BACKEND:-../..}/ws/src/maps/${TWIN_MAP:-first_map_nav2_v3}}:/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}:ro
+     networks: [twin]
+     tmpfs: ["/tmp", "/home/twin/.ros"]
+ 
+@@ -180,6 +187,8 @@
+     profiles: ["lite"]
+     image: x2-twin-stack:${TWIN_VERSION:-dev}
+     build: *stack-build
++    volumes:
++      - ${TWIN_MAP_DIR:-${TWIN_BACKEND:-../..}/ws/src/maps/${TWIN_MAP:-first_map_nav2_v3}}:/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}:ro
+     command: ["ros2", "launch", "x2_twin_bringup", "twin.launch.py", "plant:=lite", "max_angular:=${MAX_ANGULAR:-0.5}",
+               "map_yaml:=/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}/map.yaml", "start_pose:=${TWIN_START:--1.275,-4.825,0.0}"]
+     networks: [twin]
+@@ -200,6 +209,8 @@
+       stack-lite: {condition: service_healthy}
+     command: ["ros2", "run", "x2_twin_scenarios", "live_chain", "--plant", "lite", "--name", "${RUN_NAME:-run01}",
+               "--max-angular", "${MAX_ANGULAR:-0.5}", "--start=${TWIN_START:--1.275,-4.825,0.0}"]
+-    volumes: ["../results:/results"]
+-    networks: [twin]
+-    tmpfs: ["/tmp", "/home/twin/.ros"]
++    volumes:
++      - ../results:/results
++      - ${TWIN_MAP_DIR:-${TWIN_BACKEND:-../..}/ws/src/maps/${TWIN_MAP:-first_map_nav2_v3}}:/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}:ro
++    networks: [twin]
++    tmpfs: ["/tmp", "/home/twin/.ros"]
+--- a/.env.example
++++ b/.env.example
+@@ -21,3 +21,6 @@
+ 
+ # Path of the navigation stack repo relative to docker/ (default ../.. = repo root). `make` sets it itself; set it here only for scripts run without make.
+ # TWIN_BACKEND=../../control_backend
++
++# Optional external map directory (map.yaml, map.pgm, manifest.json), relative to docker/.
++# TWIN_MAP_DIR=../../t2/nav2

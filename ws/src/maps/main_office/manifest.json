@@ -1,0 +1,19 @@
+{
+  "source": "Edited t2 with unknown mask restored from aligned D1 export",
+  "edited_image": "/home/adn/QazBot/t2/t2.pgm",
+  "edited_sha256": "bef396dc62668bd37b82146488779d2240763c1530814dab88e93444388e5019",
+  "reference_image": "/home/adn/QazBot/20261029-121810-f7e3bb98.pgm",
+  "reference_sha256": "de7591237aac879522d86a322f2ea8c8b88046d5c05eb1b86d60b2e837ebbb46",
+  "source_yaml_sha256": "5241bf24eb5166e237b1349e26c3c6b80d717afa3fd7ba138f533152b4bd8abc",
+  "reference_yaml_sha256": "9b01208ad7944260053b8864ffc9821ab39a952926d989c82eb5b2184641fdb3",
+  "pgm_sha256": "72ee4094b394241e7b2761878774efbdd99e93731d7cb52709b2231c3975b354",
+  "map_yaml_sha256": "c86aa2aaefbefcaa2ddee994572cf6d13dd777b37b8e070de947f7685be43c1b",
+  "restored_unknown_cells": 413052,
+  "pixel_histogram": {
+    "0": 13712,
+    "205": 413052,
+    "254": 180955
+  },
+  "rule": "Only edited white cells that were reference unknown become 205; all edited obstacles preserved",
+  "status": "Digital twin only; not a physical-robot qualification"
+}

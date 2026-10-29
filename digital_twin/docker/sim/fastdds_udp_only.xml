@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- FastDDS profile for the emulated (qemu-user) aarch64 mc: UDPv4 only. The boost shared-memory transport segfaults under qemu-user
+     (SharedMemManager::create); the native x86 sim still talks to mc over UDP on the container's loopback/network. -->
+<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+  <transport_descriptors>
+    <transport_descriptor>
+      <transport_id>udp_only</transport_id>
+      <type>UDPv4</type>
+    </transport_descriptor>
+  </transport_descriptors>
+  <participant profile_name="udp_only" is_default_profile="true">
+    <rtps>
+      <useBuiltinTransports>false</useBuiltinTransports>
+      <userTransports><transport_id>udp_only</transport_id></userTransports>
+    </rtps>
+  </participant>
+</profiles>

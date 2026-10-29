@@ -1,0 +1,10 @@
+<package format="3">
+  <name>qazbot_mc_turn</name><version>0.1.0</version>
+  <description>Experimental SIM-only MC angle regulation around stock RPP.</description>
+  <maintainer email="local@example.invalid">QazBot</maintainer><license>Apache-2.0</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>nav2_core</depend><depend>nav2_util</depend><depend>nav2_controller</depend><depend>nav2_regulated_pure_pursuit_controller</depend>
+  <depend>pluginlib</depend><depend>tf2_geometry_msgs</depend>
+  <export><build_type>ament_cmake</build_type></export>
+<depend>rclcpp_lifecycle</depend>
+</package>

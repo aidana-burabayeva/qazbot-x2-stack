@@ -1,0 +1,1 @@
+../../../control_backend/tools/record_motion.sh

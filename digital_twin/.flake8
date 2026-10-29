@@ -1,0 +1,4 @@
+[flake8]
+# Project style: PEP 8 with a 140-column limit (comments carry measurement provenance). ROS packages also set this in setup.cfg.
+max-line-length = 140
+exclude = build,install,log,.git,__pycache__

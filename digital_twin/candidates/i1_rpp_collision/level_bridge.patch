@@ -1,0 +1,101 @@
+--- ../../../control_backend/ws/src/lio/level_bridge.py	2026-10-26 18:35:36.361335432 +0500
++++ level_bridge.py	2026-10-28 08:21:18.017148904 +0500
+@@ -47,23 +47,48 @@
+ TWIST_BASELINE_S = 0.3
+ N_BINS = 1440
+ RANGE_MIN, RANGE_MAX = 0.45, 25.0
+-
+-
+-def quat_to_rot(q):
+-    x, y, z, w = q.x, q.y, q.z, q.w
+-    return np.array([
+-        [1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],
+-        [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
+-        [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)]])
+-
+-
+-def level_rotation(up):
+-    """Rotation taking `up` (unit, FAST-LIO world) onto +z."""
+-    z = up / np.linalg.norm(up)
+-    a = np.array([1.0, 0, 0]) if abs(z[0]) < 0.9 else np.array([0, 1.0, 0])
+-    x = a - (a @ z) * z
+-    x /= np.linalg.norm(x)
+-    return np.vstack([x, np.cross(z, x), z])
++#: Observed field of view of the chest LiDAR in the level scan (bearing from base_footprint forward, measured on the physical X2:
++#: first/last bin with returns in the recorded scans), the guard around a real return and the bridge of gaps between beams when a
++#: bearing is judged "covered". Bins outside FOV_DEG are UNKNOWN (NaN).
++FOV_DEG = (-46.0, 44.5)
++INF_GUARD_BINS = 2
++COVER_DILATE_BINS = 3
++
++
++def coverage_bins(a_all, n_bins=N_BINS):
++    """Bearings the sensor actually delivered ANY point for (floor, far wall, anything: before the height slice and the range limit).
++    A bearing with no point at all - dropout, blocked or absorbing sector - is not observed free space."""
++    covered = np.zeros(n_bins, dtype=bool)
++    covered[((a_all + math.pi) / (2 * math.pi / n_bins)).astype(int) % n_bins] = True
++    return covered
++
++
++def build_ranges(r, a, covered=None, n_bins=N_BINS, fov_deg=FOV_DEG, guard_bins=INF_GUARD_BINS, cover_dilate_bins=COVER_DILATE_BINS):
++    """Bin returns (range r, bearing a, radians) into a 360 deg scan with explicit semantics for the ObstacleLayer
++    (obstacle_layer.scan.inf_is_valid: true):
++      finite  - nearest return in the bin (marks, and raytrace-clears up to it);
++      +inf    - OBSERVED free: inside the FOV, covered (the sensor delivered some point at this bearing, gaps of up to
++                cover_dilate_bins bridged) and neither the bin nor its +-guard_bins neighbours has a return;
++      NaN     - unknown: outside the FOV, uncovered (no point at all), or next to a hit. Nav2 ignores NaN: nothing there is
++                marked or cleared.
++    Without ``covered`` nothing can be proven free, so no +inf is produced (the legacy behaviour of never clearing).
++    """
++    ranges = np.full(n_bins, np.nan, dtype=np.float32)
++    inc = 2 * math.pi / n_bins
++    idx = ((a + math.pi) / inc).astype(int) % n_bins
++    np.fmin.at(ranges, idx, r.astype(np.float32))      # fmin ignores the NaN fill
++    hit = np.isfinite(ranges)
++    near = hit.copy()
++    for k in range(1, guard_bins + 1):
++        near |= np.roll(hit, k) | np.roll(hit, -k)
++    centre = -math.pi + (np.arange(n_bins) + 0.5) * inc
++    in_fov = (centre >= math.radians(fov_deg[0])) & (centre <= math.radians(fov_deg[1]))
++    if covered is not None:
++        seen = covered.copy()
++        for k in range(1, cover_dilate_bins + 1):
++            seen |= np.roll(covered, k) | np.roll(covered, -k)
++        ranges[in_fov & seen & ~near] = np.inf
++    return ranges
+ 
+ 
+ class LevelBridge(Node):
+@@ -91,6 +116,9 @@
+         #: Slice every Nth cloud: 5 Hz is plenty for the map, and on the robot
+         #: the numpy slice of the dense cloud is ~30 % of a core at 10 Hz.
+         self.every = int(self.declare_parameter('scan_every', 1).value)
++        self.fov_deg = (float(self.declare_parameter('fov_min_deg', FOV_DEG[0]).value),
++                        float(self.declare_parameter('fov_max_deg', FOV_DEG[1]).value))
++        self.guard_bins = int(self.declare_parameter('inf_guard_bins', INF_GUARD_BINS).value)
+         self.n_cloud = 0
+ 
+     def on_imu(self, m):
+@@ -179,17 +207,18 @@
+             return
+         Q = P.astype(np.float64) @ self.R_lv.T - p_lv
+         flat = np.hypot(Q[:, 0], Q[:, 1])
+-        Q = Q[(Q[:, 2] > Z_MIN + FLOOR_MARGIN_PER_M * flat) & (Q[:, 2] < Z_MAX)]
+         c, s = math.cos(-yaw), math.sin(-yaw)
++        # coverage: every bearing for which the sensor delivered any point (before the height slice and the range limit)
++        far = flat > RANGE_MIN
++        covered = coverage_bins(np.arctan2(s * Q[far, 0] + c * Q[far, 1], c * Q[far, 0] - s * Q[far, 1]), N_BINS)
++        Q = Q[(Q[:, 2] > Z_MIN + FLOOR_MARGIN_PER_M * flat) & (Q[:, 2] < Z_MAX)]
+         bx = c * Q[:, 0] - s * Q[:, 1]
+         by = s * Q[:, 0] + c * Q[:, 1]
+         r = np.hypot(bx, by)
+         a = np.arctan2(by, bx)
+         ok = (r > RANGE_MIN) & (r < RANGE_MAX)
+         r, a = r[ok], a[ok]
+-        ranges = np.full(N_BINS, np.inf, dtype=np.float32)
+-        idx = ((a + math.pi) / (2 * math.pi) * N_BINS).astype(int) % N_BINS
+-        np.minimum.at(ranges, idx, r.astype(np.float32))
++        ranges = build_ranges(r, a, covered, N_BINS, self.fov_deg, self.guard_bins)
+         scan = LaserScan()
+         scan.header.stamp = m.header.stamp
+         scan.header.frame_id = 'base_footprint'

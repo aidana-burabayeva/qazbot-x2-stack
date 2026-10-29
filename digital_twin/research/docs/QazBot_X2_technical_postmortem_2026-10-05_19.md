@@ -1,0 +1,1 @@
+../../../control_backend/docs/QazBot_X2_technical_postmortem_2026-10-05_19.md

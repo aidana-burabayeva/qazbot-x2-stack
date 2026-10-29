@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fast DDS profile for the stack container: UDPv4 only.
+     Shared-memory transport cannot cross containers (separate IPC namespaces) and makes discovery noisy; UDP over the
+     internal compose network is the supported path. The network is `internal`: no route outside, so discovery stays local. -->
+<dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+  <profiles>
+    <transport_descriptors>
+      <transport_descriptor>
+        <transport_id>udp</transport_id>
+        <type>UDPv4</type>
+        <sendBufferSize>8388608</sendBufferSize>
+        <receiveBufferSize>8388608</receiveBufferSize>
+      </transport_descriptor>
+    </transport_descriptors>
+    <participant profile_name="twin_udp" is_default_profile="true">
+      <rtps>
+        <useBuiltinTransports>false</useBuiltinTransports>
+        <userTransports>
+          <transport_id>udp</transport_id>
+        </userTransports>
+      </rtps>
+    </participant>
+  </profiles>
+</dds>

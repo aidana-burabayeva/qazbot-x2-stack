@@ -1,0 +1,8 @@
+Request: matching X2 MC simulation build for robot .66
+
+Please provide a Linux x86_64 SIM build of MC v1.1.0-r9-rc9 (robot commit e3c738dc), for lx2501_3_t2d5, with mc_param v1.1.0-r9-rc3 (be6171a9), and the matching MuJoCo/HAL simulation package.
+The public AimDK download manifest currently provides mc-x86-v1.0.0-20260522 and sim_mujoco-x86-v1.0.0-20260522. We need to compare command-to-body response against the robot's current MC, including turn initiation, gait-state dependence and stopping distance.
+Please include SHA256 checksums, runtime dependencies, joint mapping, nominal physical model/calibration requirements, and documented differences between SIM and REAL command shaping, estimators and gait transitions.
+An ARM64 robot release or the SDK interface package alone does not replace this x86_64 SIM build.
+
+Draft only; not sent.

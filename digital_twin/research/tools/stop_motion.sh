@@ -1,0 +1,1 @@
+../../../control_backend/tools/stop_motion.sh

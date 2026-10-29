@@ -1,0 +1,8 @@
+# Whitelist: build context is digital_twin/ (vendor/ and results/ are separate or runtime-only and must not enter the daemon).
+*
+!ws/src
+!candidates/qazbot_mc_turn
+!docker/dds
+!docker/entrypoints
+**/__pycache__
+**/*.pyc

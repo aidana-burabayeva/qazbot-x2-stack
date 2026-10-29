@@ -1,0 +1,3 @@
+*
+!docker/sim
+!ws/src/x2_twin_sim/x2_twin_sim/world.py

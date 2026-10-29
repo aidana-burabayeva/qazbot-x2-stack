@@ -1,0 +1,3 @@
+# Named build context `vendor`: only what the images need at build time. The mc/sim binaries are mounted at run time, never baked.
+*
+!aimdk_sdk/src

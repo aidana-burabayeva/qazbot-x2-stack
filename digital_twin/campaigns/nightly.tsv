@@ -1,0 +1,9 @@
+# name	tier	env (KEY=VAL ... or -)	expected_soft_failures (comma list or -)
+# i1 is pinned to map v2: it was built and validated there; on v3 (the robot map) it passed 3 of 6 runs (cause not found, see docs). lite runs on the default map.
+# tier i1: serial, MuJoCo twin, I1 A/B baseline vs candidate (same series as scripts/i1/run_series.sh).
+# tier lite: parallel-safe (own compose project, no MuJoCo). Same config twice on purpose: shows nondeterminism and proves worker isolation.
+lite_a	lite	-	goal_back_pose,goal_back_succeeded
+lite_b	lite	-	goal_back_pose,goal_back_succeeded
+i1_r1	i1	TWIN_MAP=first_map_nav2_v2 TWIN_SCAN_FOV_DEG=130	-
+i1_r2	i1	TWIN_MAP=first_map_nav2_v2 TWIN_SCAN_FOV_DEG=130	-
+i1_f92	i1	TWIN_MAP=first_map_nav2_v2 TWIN_SCAN_FOV_DEG=92	-

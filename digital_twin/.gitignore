@@ -1,0 +1,12 @@
+vendor/*
+!vendor/README.md
+!vendor/manifest.sha256
+!vendor/.dockerignore
+results/*
+!results/.gitkeep
+.env
+research/runtime_x86/
+research/vendor/
+research/logs/
+research/tests/integration_results/
+research/ws

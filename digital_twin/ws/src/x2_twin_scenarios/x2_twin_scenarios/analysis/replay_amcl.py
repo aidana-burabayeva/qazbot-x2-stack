@@ -1,0 +1,252 @@
+#!/usr/bin/env python3
+"""Replay level 2: recorded scan + odom->base_footprint  ->  REAL map_server + REAL AMCL (production parameters).
+
+Authoritative publisher per level (no double publishing):
+  * replayer publishes ONLY the inputs of AMCL: /qazbot_lio/scan and the odom->base_footprint TF edge,
+  * the recorded map->odom (the robot's AMCL output), amcl_pose and Trust topics are NEVER published;
+    they are read from the bag only as the reference to compare the re-run against.
+Header stamps are shifted by one constant (so AMCL runs on the normal wall clock, use_sim_time=false, exactly as in
+production); order, spacing, frame_id and values are untouched. Pacing follows the bag's receive times (1x).
+The replayed AMCL is seeded with the pose the robot's AMCL had at the first recorded map->odom, with the RViz default
+covariance, i.e. what the operator did. Randomness: AMCL's particle filter; run-to-run spread is reported by --repeat.
+
+Usage: replay_amcl.py BAG_DIR RESULT_NAME [--max-seconds N]
+Compares: step statistics (T5 semantics, loc_trust.TrustConfig thresholds) and pose disagreement against the recording.
+"""
+import argparse
+import bisect
+import json
+import math
+import os
+import signal
+import sqlite3
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+import rclpy
+from builtin_interfaces.msg import Time
+from geometry_msgs.msg import PoseWithCovarianceStamped
+from lifecycle_msgs.srv import GetState
+from rclpy.node import Node
+from rclpy.qos import qos_profile_sensor_data, QoSProfile
+from rclpy.serialization import deserialize_message
+from sensor_msgs.msg import LaserScan
+from std_msgs.msg import String
+from tf2_msgs.msg import TFMessage
+
+from x2_twin_sim.guards import require_sim_environment  # noqa: E402
+
+STACK = Path(os.environ.get('TWIN_STACK_DIR', '/opt/x2twin/stack'))
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('bag')
+    ap.add_argument('name')
+    ap.add_argument('--max-seconds', type=float, default=0.0)
+    ap.add_argument('--results-dir', default=os.environ.get('TWIN_RESULTS_DIR', '/results'))
+    args = ap.parse_args()
+    require_sim_environment()
+    sys.path.insert(0, str(STACK / 'navigation'))
+    from loc_trust import TrustConfig  # noqa: E402  (thresholds come from the stack itself)
+    bag = Path(args.bag)
+    out = Path(args.results_dir) / args.name
+    if out.exists():
+        raise RuntimeError('result directory exists')
+    out.mkdir()
+    ns = 'qazbot_d1_map'
+
+    def wrap(a):
+        return math.atan2(math.sin(a), math.cos(a))
+
+    def yaw_of(q):
+        return math.atan2(2 * (q.w * q.z + q.x * q.y), 1 - 2 * (q.y * q.y + q.z * q.z))
+
+    def compose(a, b):                                      # a (+) b, poses (x, y, yaw)
+        c, s = math.cos(a[2]), math.sin(a[2])
+        return (a[0] + c * b[0] - s * b[1], a[1] + s * b[0] + c * b[1], wrap(a[2] + b[2]))
+
+    # ---------------------------------------------------------------- read the recording (read-only)
+    db = sqlite3.connect(next(bag.glob('*.db3')).resolve().as_uri() + '?mode=ro', uri=True)
+    tid = {name: i for i, name in db.execute('select id, name from topics')}
+    tf_topic, scan_topic = '/qazbot_d1_map/tf', '/qazbot_lio/scan'
+    status_topic = '/qazbot_d1_map/localization_trust/status'
+    last_status = json.loads(deserialize_message(bytes(db.execute(
+        'select data from messages where topic_id=? order by timestamp desc limit 1', (tid[status_topic],)).fetchone()[0]), String).data)
+    map_dir = next(d for d in (STACK / 'maps').iterdir()
+                   if (d / 'manifest.json').exists() and json.load(open(d / 'manifest.json'))['pgm_sha256'] == last_status['map_sha256'])
+    msgs = []          # (bag_ts_s, kind, msg)
+    odom_base, rec_map_odom = [], []
+    for kind, topic in (('tf', tf_topic), ('scan', scan_topic)):
+        cls = TFMessage if kind == 'tf' else LaserScan
+        for ts, data in db.execute('select timestamp, data from messages where topic_id=? order by timestamp', (tid[topic],)):
+            m = deserialize_message(bytes(data), cls)
+            if kind == 'tf':
+                keep = [t for t in m.transforms if (t.header.frame_id, t.child_frame_id) == ('odom', 'base_footprint')]
+                for t in m.transforms:
+                    if (t.header.frame_id, t.child_frame_id) == ('map', 'odom'):
+                        tr = t.transform.translation
+                        p = (tr.x, tr.y, yaw_of(t.transform.rotation))
+                        if not rec_map_odom or rec_map_odom[-1][1] != p:
+                            rec_map_odom.append((ts / 1e9, p))              # one sample per distinct recorded AMCL update
+                for t in keep:
+                    tr = t.transform.translation
+                    odom_base.append((ts / 1e9, (tr.x, tr.y, yaw_of(t.transform.rotation))))
+                if keep:
+                    m.transforms = keep                                     # the recorded map->odom is NOT replayed
+                    msgs.append((ts / 1e9, kind, m))
+            else:
+                msgs.append((ts / 1e9, kind, m))
+    msgs.sort(key=lambda x: x[0])
+    t0 = msgs[0][0]
+    if args.max_seconds:
+        msgs = [x for x in msgs if x[0] - t0 <= args.max_seconds]
+    t_end = msgs[-1][0]
+    ob_t = [t for t, _ in odom_base]
+
+    def odom_at(t):                                         # nearest recorded odom->base sample (<= 20 ms at the recorded rate)
+        i = min(range(max(bisect.bisect_left(ob_t, t) - 1, 0), min(bisect.bisect_left(ob_t, t) + 1, len(ob_t))),
+                key=lambda k: abs(ob_t[k] - t))
+        return odom_base[i][1]
+
+    # seed = the recorded robot pose at the first recorded map->odom
+    seed = compose(rec_map_odom[0][1], odom_at(rec_map_odom[0][0]))
+
+    # ---------------------------------------------------------------- run
+    procs, logs = [], []
+    rclpy.init()
+    n = Node('bag_replayer', namespace=ns)
+    tf_pub = n.create_publisher(TFMessage, f'/{ns}/tf', QoSProfile(depth=100))
+    scan_pub = n.create_publisher(LaserScan, '/qazbot_lio/scan', qos_profile_sensor_data)
+    init_pub = n.create_publisher(PoseWithCovarianceStamped, f'/{ns}/initialpose', 1)
+    amcl_state = n.create_client(GetState, f'/{ns}/amcl/get_state')
+    replay_map_odom = []                                    # (receive time s since play start, pose)
+
+    def on_tf(m):
+        for t in m.transforms:
+            if (t.header.frame_id, t.child_frame_id) == ('map', 'odom'):
+                tr = t.transform.translation
+                p = (tr.x, tr.y, yaw_of(t.transform.rotation))
+                if not replay_map_odom or replay_map_odom[-1][1] != p:
+                    replay_map_odom.append((time.monotonic(), p))
+
+    n.create_subscription(TFMessage, f'/{ns}/tf', on_tf, QoSProfile(depth=100))
+
+    def spin(s):
+        end = time.monotonic() + s
+        while time.monotonic() < end:
+            rclpy.spin_once(n, timeout_sec=.01)
+
+    def start(name, cmd):
+        f = (out / (name + '.log')).open('w')
+        logs.append(f)
+        procs.append((name, subprocess.Popen(cmd, stdout=f, stderr=subprocess.STDOUT, start_new_session=True)))
+
+    def shift(stamp, d):
+        ns_total = stamp.sec * 10**9 + stamp.nanosec + d
+        return Time(sec=ns_total // 10**9, nanosec=ns_total % 10**9)
+
+    result = {}
+    try:
+        start('amcl', ['ros2', 'launch', 'x2_twin_bringup', 'amcl.launch.py', f'map_yaml:={map_dir / "map.yaml"}'])
+        end = time.monotonic() + 60
+        while not amcl_state.service_is_ready():
+            if time.monotonic() > end:
+                raise RuntimeError('amcl service not discovered')
+            spin(.1)
+        while True:
+            f = amcl_state.call_async(GetState.Request())
+            while not f.done():
+                spin(.02)
+            if f.result().current_state.id == 3:
+                break
+            spin(.5)
+        spin(1.0)
+        ip = PoseWithCovarianceStamped()
+        ip.header.frame_id = 'map'
+        ip.header.stamp = n.get_clock().now().to_msg()
+        ip.pose.pose.position.x, ip.pose.pose.position.y = seed[0], seed[1]
+        ip.pose.pose.orientation.z, ip.pose.pose.orientation.w = math.sin(seed[2] / 2), math.cos(seed[2] / 2)
+        ip.pose.covariance[0] = ip.pose.covariance[7] = 0.25
+        ip.pose.covariance[35] = 0.06853891945200942
+        init_pub.publish(ip)
+        spin(1.0)
+        # constant stamp shift: first replayed header stamp -> now (+0.5 s)
+        first_hdr = (msgs[0][2].transforms[0].header.stamp if msgs[0][1] == 'tf' else msgs[0][2].header.stamp)
+        now = n.get_clock().now().nanoseconds
+        delta = now + 500_000_000 - (first_hdr.sec * 10**9 + first_hdr.nanosec)
+        play0 = time.monotonic() + 0.5
+        for ts, kind, m in msgs:
+            while time.monotonic() < play0 + (ts - t0):
+                rclpy.spin_once(n, timeout_sec=.002)
+            if kind == 'tf':
+                for t in m.transforms:
+                    t.header.stamp = shift(t.header.stamp, delta)
+                tf_pub.publish(m)
+            else:
+                m.header.stamp = shift(m.header.stamp, delta)
+                scan_pub.publish(m)
+        spin(3.0)
+        result['status'] = 'completed'
+    except BaseException as e:                              # noqa: BLE001 - recorded, then re-raised after cleanup
+        result['status'] = 'error: ' + repr(e)
+        raise
+    finally:
+        for _, p in procs:
+            if p.poll() is None:
+                p.send_signal(signal.SIGINT)
+        codes = {}
+        for name, p in procs:
+            try:
+                codes[name] = p.wait(timeout=25)
+            except subprocess.TimeoutExpired:
+                os.killpg(p.pid, signal.SIGTERM)
+                codes[name] = p.wait(timeout=5)
+        for f in logs:
+            f.close()
+        cfg = TrustConfig()
+
+        def steps(seq):
+            out_ = []
+            for (ta, a), (tb, b) in zip(seq, seq[1:]):
+                out_.append((tb, math.hypot(b[0] - a[0], b[1] - a[1]), abs(wrap(b[2] - a[2]))))
+            return out_
+
+        def summary(seq):
+            st = steps(seq)
+            trips = [s for s in st if s[1] > cfg.jump_xy_max or s[2] > cfg.jump_yaw_max]
+            xs = sorted(s[1] for s in st) or [0.0]
+            return dict(updates=len(seq), max_step_xy=max([s[1] for s in st], default=0.0),
+                        max_step_yaw=max([s[2] for s in st], default=0.0),
+                        p95_step_xy=xs[int(len(xs) * .95)], t5_trips=len(trips), first_trip_s=(round(trips[0][0], 2) if trips else None))
+
+        rec = [(t - t0, p) for t, p in rec_map_odom if t <= t_end]
+        rep = [(t - play0, p) for t, p in replay_map_odom if t >= play0]          # play-start-relative == bag-relative
+        # pose disagreement with the recording: map pose = map->odom (+) odom->base at the same bag time
+        diffs = []
+        for t, p in rep:
+            k = min(range(len(rec)), key=lambda k: abs(rec[k][0] - t)) if rec else None
+            ref = compose(rec[k][1], odom_at(rec[k][0] + t0)) if k is not None else None
+            # compare at the recorded sample's own bag time to avoid mixing motion between the two instants
+            mine_at = compose(p, odom_at(rec[k][0] + t0)) if k is not None else None
+            if ref is not None:
+                diffs.append((math.hypot(mine_at[0] - ref[0], mine_at[1] - ref[1]), abs(wrap(mine_at[2] - ref[2]))))
+        dd = sorted(d[0] for d in diffs) or [0.0]
+        dy = sorted(d[1] for d in diffs) or [0.0]
+        result.update(bag=str(bag.name), map=map_dir.name, seed=seed, duration_s=round(t_end - t0, 1),
+                      thresholds=dict(jump_xy_max=cfg.jump_xy_max, jump_yaw_max=cfg.jump_yaw_max),
+                      recorded=summary(rec), replay=summary(rep),
+                      pose_vs_recording=dict(n=len(diffs), xy_median=dd[len(dd) // 2], xy_p95=dd[int(len(dd) * .95)], xy_max=dd[-1],
+                                             yaw_median=dy[len(dy) // 2], yaw_p95=dy[int(len(dy) * .95)], yaw_max=dy[-1]),
+                      shutdown=codes, scope='recorded scan + odom->base_footprint -> REAL AMCL (production parameters); '
+                                            'recorded AMCL output used only as reference; domain 87')
+        (out / 'results.json').write_text(json.dumps(result, indent=2, default=str))
+        print(json.dumps(result, indent=1, default=str))
+        n.destroy_node()
+        rclpy.try_shutdown()
+
+
+if __name__ == '__main__':
+    main()

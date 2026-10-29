@@ -1,0 +1,216 @@
+# X2 digital twin.   docker compose -f docker/compose.yaml ...   (or use the Makefile in digital_twin/)
+#
+#   sim      official AgiBot mc + MuJoCo (binaries mounted from vendor/), brought to a stable stand; healthy when standing
+#   stack    the unmodified navigation stack against the sim (plant bridge, AMCL, Trust, Coordinator, Nav2, live adapter)
+#   scenario operator-session test (profile `test`)        stack-lite / scenario-lite: no MuJoCo (profile `lite`)
+#
+# Isolation: the only network is `twin` (internal: no route to the LAN or the internet, nothing published), ROS domain 87.
+name: x2-twin
+
+x-hardening: &hardening
+  init: true                       # reaps zombies (the official start_sim.sh mistakes them for a running instance)
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  restart: "no"
+
+x-stack-build: &stack-build
+  context: ..                      # digital_twin/
+  dockerfile: docker/Dockerfile
+  target: stack
+  additional_contexts:
+    vendor: ../vendor
+    backend: ${TWIN_BACKEND:-../..}   # navigation stack source (read-only use)
+
+networks:
+  twin:
+    internal: true
+
+volumes:
+  mc_runtime:                      # writable copies of the official binaries (they write caches/logs next to themselves)
+  sim_runtime:
+  mc_r9_runtime:
+  agibot_data:                     # /agibot/data (mc runtime directory required by AgiBot)
+  sim_logs:
+
+services:
+  sim-init:
+    <<: *hardening
+    image: x2-twin-sim:${TWIN_VERSION:-dev}
+    build: &sim-build
+      context: ..
+      dockerfile: docker/sim.Dockerfile
+      additional_contexts:
+        vendor: ../vendor
+    user: "0:0"
+    cap_add: [CHOWN, DAC_OVERRIDE, FOWNER]
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - |
+        seed() { src=$$1; dst=$$2; tag=$$(sha256sum "$$src/bin/"* 2>/dev/null | sha256sum | cut -c1-16)
+                 [ -f "$$dst/.seeded-$$tag" ] || { rm -rf "$$dst"/* "$$dst"/.seeded-*; cp -a "$$src"/. "$$dst"/; touch "$$dst/.seeded-$$tag"; }
+                 chown -R ${TWIN_UID:-1000}:${TWIN_GID:-1000} "$$dst"; }
+        seed /vendor/mc /opt/mc; seed /vendor/sim /opt/sim;
+        if [ "$${TWIN_MC:-official}" = r9 ]; then mkdir -p /opt/mc-r9/mc /opt/mc-r9/param
+          seed /vendor/pc1/mc_r9-rc9_aarch64/mc /opt/mc-r9/mc; seed /vendor/pc1/pc1_mc_param_r9-rc3 /opt/mc-r9/param
+          chown ${TWIN_UID:-1000}:${TWIN_GID:-1000} /opt/mc-r9; fi; chown ${TWIN_UID:-1000}:${TWIN_GID:-1000} /agibot/data
+    volumes:
+      - ../vendor/mc:/vendor/mc:ro
+      - ../vendor/sim:/vendor/sim:ro
+      - mc_runtime:/opt/mc
+      - sim_runtime:/opt/sim
+      - mc_r9_runtime:/opt/mc-r9
+      - ../vendor/pc1_mc:/vendor/pc1:ro
+      - agibot_data:/agibot/data
+    environment: {TWIN_MC: "${TWIN_MC:-official}"}
+    networks: [twin]
+
+  sim:
+    <<: *hardening
+    image: x2-twin-sim:${TWIN_VERSION:-dev}
+    build: *sim-build
+    depends_on:
+      sim-init: {condition: service_completed_successfully}
+    environment:
+      TWIN_MC: "${TWIN_MC:-official}"       # official = x86 mc v1.0.0; r9 = robot's v1.1.0-r9-rc9 (aarch64) under qemu-user
+      TWIN_GUI: "${TWIN_GUI:-0}"
+      DISPLAY: "${DISPLAY:-}"
+      # Headless MuJoCo renders in software (llvmpipe). Left alone it takes every core and starves mc's 500 Hz loops:
+      # measured 6274 -> 738 'missed wakeup' warnings per minute with one render thread and a small framebuffer.
+      # (SYS_NICE / rtprio were tried and made no difference: they do not apply to a non-root process.)
+      TWIN_SIM_RES: "${TWIN_SIM_RES:-640x360x24}"
+      TWIN_WORLD: "${TWIN_WORLD:-map}"
+      TWIN_MAP: "${TWIN_MAP:-first_map_nav2_v3}"
+      TWIN_START: "${TWIN_START:--1.275,-4.825,0.0}"
+      LP_NUM_THREADS: "${LP_NUM_THREADS:-1}"
+    volumes:
+      - mc_runtime:/opt/mc
+      - sim_runtime:/opt/sim
+      - mc_r9_runtime:/opt/mc-r9
+      - ../vendor/pc1_mc:/vendor/pc1:ro
+      - agibot_data:/agibot/data
+      - sim_logs:/var/log/twin
+      - ${TWIN_MAP_DIR:-${TWIN_BACKEND:-../..}/ws/src/maps/${TWIN_MAP:-first_map_nav2_v3}}:/maps/${TWIN_MAP:-first_map_nav2_v3}:ro
+    networks: [twin]
+    cpus: ${SIM_CPUS:-4}
+    mem_limit: ${SIM_MEM:-8g}
+    healthcheck:
+      test: ["CMD", "twin-sim-health"]
+      interval: 15s
+      timeout: 25s
+      retries: 6
+      start_period: 150s
+
+  stack:
+    <<: *hardening
+    image: x2-twin-stack:${TWIN_VERSION:-dev}
+    build: *stack-build
+    depends_on:
+      sim: {condition: service_healthy}
+    volumes:
+      - ${TWIN_MAP_DIR:-${TWIN_BACKEND:-../..}/ws/src/maps/${TWIN_MAP:-first_map_nav2_v3}}:/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}:ro
+    command: ["ros2", "launch", "x2_twin_bringup", "twin.launch.py", "plant:=official", "max_angular:=${MAX_ANGULAR:-0.5}",
+              "map_yaml:=/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}/map.yaml", "start_pose:=${TWIN_START:--1.275,-4.825,0.0}", "localization:=${TWIN_LOCALIZATION:-amcl}", "scan_format:=${TWIN_SCAN_FORMAT:-legacy}", "scan_fov_deg:=${TWIN_SCAN_FOV_DEG:-0}"]
+    environment:
+      TWIN_LOCALIZATION: "${TWIN_LOCALIZATION:-amcl}"
+      QAZBOT_SIM: "1"
+      QAZBOT_I1_INF_VALID: "${TWIN_I1_INF_VALID:-0}"      # I1: obstacle_layer treats +inf as observed free (with TWIN_SCAN_FORMAT=i1)
+      QAZBOT_SIM_MC_TURN: "${TWIN_MC_TURN:-0}"      # 1 = SIM-only MC turn regulator candidate (needs MAX_ANGULAR=0.8; make scenario-turn)
+    networks: [twin]
+    cpus: ${STACK_CPUS:-4}
+    mem_limit: ${STACK_MEM:-6g}
+    tmpfs: ["/tmp", "/home/twin/.ros"]
+    healthcheck:
+      test: ["CMD", "twin-stack-health"]
+      interval: 15s
+      timeout: 20s
+      retries: 6
+      start_period: 120s
+
+  dev:                             # all development and script runs happen here, never on the host (editing: bind-mounted source)
+    <<: *hardening
+    profiles: ["dev"]
+    image: x2-twin-test:${TWIN_VERSION:-dev}   # build target `test`: ROS + overlay + flake8 + pytest (make dev-image)
+    working_dir: /ws/src/twin
+    environment: {TWIN_STACK_DIR: /opt/x2twin/stack, PYTEST_DISABLE_PLUGIN_AUTOLOAD: "1"}
+    volumes:
+      - ../ws/src:/ws/src/twin
+      - ../scripts:/work/scripts
+      - ../docs:/work/docs
+      - ../results:/results
+      - ../vendor:/work/vendor
+      - ../.flake8:/ws/src/twin/.flake8:ro
+      - ${TWIN_BACKEND:-../..}/docs/roadmap_v13/evidence:/evidence:ro   # real recorded data of the physical X2 (read-only)
+      - ${TWIN_BACKEND:-../..}/ws/src/lio:/backend_lio:ro               # level_bridge.py as on the robot (read-only reference)
+      - ../candidates:/work/candidates
+      - ../campaigns:/work/campaigns:ro
+      - ${TWIN_MAP_DIR:-${TWIN_BACKEND:-../..}/ws/src/maps/${TWIN_MAP:-first_map_nav2_v3}}:/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}:ro
+      - ${TWIN_BACKEND:-../..}/ws/src:/opt/x2twin/stack:ro              # the unmodified navigation stack source (read-only)
+      - ${TWIN_BACKEND:-../..}/logs:/backend_logs:ro                    # recorded bags of the physical X2 (read-only)
+      - ${TWIN_BACKEND:-../..}/tests:/backend_tests:ro                  # existing Trust safety tests of the physical X2 (read-only)
+    networks: [twin]
+    tmpfs: ["/tmp", "/home/twin/.ros"]
+    command: ["sleep", "infinity"]
+
+  scenario:
+    <<: *hardening
+    profiles: ["test"]
+    image: x2-twin-stack:${TWIN_VERSION:-dev}
+    build: *stack-build
+    depends_on:
+      stack: {condition: service_healthy}
+    command: ["ros2", "run", "x2_twin_scenarios", "live_chain", "--plant", "official", "--name", "${RUN_NAME:-run01}",
+              "--max-angular", "${MAX_ANGULAR:-0.5}", "--localization", "${TWIN_LOCALIZATION:-amcl}", "--start=${TWIN_START:--1.275,-4.825,0.0}"]
+    volumes:
+      - ../results:/results
+      - ${TWIN_MAP_DIR:-${TWIN_BACKEND:-../..}/ws/src/maps/${TWIN_MAP:-first_map_nav2_v3}}:/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}:ro
+    networks: [twin]
+    tmpfs: ["/tmp", "/home/twin/.ros"]
+
+  scenario-i1:
+    <<: *hardening
+    profiles: ["test"]
+    image: x2-twin-stack:${TWIN_VERSION:-dev}
+    build: *stack-build
+    depends_on:
+      stack: {condition: service_healthy}
+    command: ["ros2", "run", "x2_twin_scenarios", "i1_collision", "--name", "${RUN_NAME:-i1}", "--mode", "${TWIN_I1_MODE:-baseline}",
+              "--start=${TWIN_START:--1.275,-4.825,0.0}", "--scan-fov-deg=${TWIN_SCAN_FOV_DEG:-0}",
+              "--map-yaml=/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}/map.yaml"]
+    volumes:
+      - ../results:/results
+      - ${TWIN_MAP_DIR:-${TWIN_BACKEND:-../..}/ws/src/maps/${TWIN_MAP:-first_map_nav2_v3}}:/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}:ro
+    networks: [twin]
+    tmpfs: ["/tmp", "/home/twin/.ros"]
+
+  stack-lite:
+    <<: *hardening
+    profiles: ["lite"]
+    image: x2-twin-stack:${TWIN_VERSION:-dev}
+    build: *stack-build
+    volumes:
+      - ${TWIN_MAP_DIR:-${TWIN_BACKEND:-../..}/ws/src/maps/${TWIN_MAP:-first_map_nav2_v3}}:/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}:ro
+    command: ["ros2", "launch", "x2_twin_bringup", "twin.launch.py", "plant:=lite", "max_angular:=${MAX_ANGULAR:-0.5}",
+              "map_yaml:=/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}/map.yaml", "start_pose:=${TWIN_START:--1.275,-4.825,0.0}"]
+    networks: [twin]
+    tmpfs: ["/tmp", "/home/twin/.ros"]
+    healthcheck:
+      test: ["CMD", "twin-stack-health"]
+      interval: 15s
+      timeout: 20s
+      retries: 6
+      start_period: 90s
+
+  scenario-lite:
+    <<: *hardening
+    profiles: ["lite"]
+    image: x2-twin-stack:${TWIN_VERSION:-dev}
+    build: *stack-build
+    depends_on:
+      stack-lite: {condition: service_healthy}
+    command: ["ros2", "run", "x2_twin_scenarios", "live_chain", "--plant", "lite", "--name", "${RUN_NAME:-run01}",
+              "--max-angular", "${MAX_ANGULAR:-0.5}", "--start=${TWIN_START:--1.275,-4.825,0.0}"]
+    volumes:
+      - ../results:/results
+      - ${TWIN_MAP_DIR:-${TWIN_BACKEND:-../..}/ws/src/maps/${TWIN_MAP:-first_map_nav2_v3}}:/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}:ro
+    networks: [twin]
+    tmpfs: ["/tmp", "/home/twin/.ros"]

@@ -1,0 +1,18 @@
+{
+  "ws/src/navigation/loc_trust.py": {
+    "sha256": "0f24d12ed4fc5225f65cef8c160321131da6eca2c100e522c5c444d1e04b4925",
+    "baseline_sha256": "9793de94ff11a61130f21f2e82e578aa0625d7236b5da017b197a92e68bc6310"
+  },
+  "ws/src/navigation/localization_trust_node.py": {
+    "sha256": "7b5d71231a0472dc9fb11000976a3aea5176d9713ed40377924f519d6c108952",
+    "baseline_sha256": "8bba8b36caad83a9b74dea020474af3605019a2f9cdfc22b252cd15ce55c1d94"
+  },
+  "tests/loc_trust/test_go2_policy.py": {
+    "sha256": "0f9b495fb15d5e18bc5f17df3bc9e99c69d40edd43013167afaf8eea2ceaa2ac",
+    "baseline_sha256": "d1b9fae5bde246e9193966cb543af9b264ad6dde72e391e256c78453b4c13110"
+  },
+  "tests/loc_trust/test_reseed_history.py": {
+    "sha256": "34846483eb760e0f5c1e3227581119fe2ba877c516c7b0ee98dd2cbc29961fbb",
+    "baseline_sha256": null
+  }
+}

@@ -1,0 +1,1 @@
+../../../control_backend/tools/capture_full_frames.py

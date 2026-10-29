@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Health probe entry point: sets up the ROS + AimDK environment (the docker healthcheck runs without it), then runs the check.
+set +u
+source "/opt/ros/${ROS_DISTRO}/setup.bash"; source /opt/aimdk/setup.bash
+exec python3 /opt/twin-sim/twin_sim_health.py "$@"

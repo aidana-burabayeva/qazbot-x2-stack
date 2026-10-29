@@ -1,0 +1,33 @@
+--- a/nav2_smac_planner/src/smac_planner_2d.cpp
++++ b/nav2_smac_planner/src/smac_planner_2d.cpp
+@@ -241,6 +241,8 @@
+       return plan;
+     }
+     pose.pose = start.pose;
++    pose.pose.position.x = goal.pose.position.x;
++    pose.pose.position.y = goal.pose.position.y;
+     // if we have a different start and goal orientation, set the unique path pose to the goal
+     // orientation, unless use_final_approach_orientation=true where we need it to be the start
+     // orientation to avoid movement from the local planner
+@@ -324,6 +326,21 @@
+     }
+   } else if (plan_size > 0) {
+     plan.poses.back().pose.orientation = goal.pose.orientation;
++  }
++
++  // Preserve the requested sub-cell endpoint. The extra segment stays entirely
++  // inside the already reached goal cell; do not append to tolerance fallbacks.
++  if (!plan.poses.empty()) {
++    const auto &last = plan.poses.back().pose.position;
++    unsigned int end_x, end_y;
++    if (costmap->worldToMap(last.x, last.y, end_x, end_y) &&
++        end_x == mx_goal && end_y == my_goal &&
++        std::hypot(last.x-goal.pose.position.x, last.y-goal.pose.position.y) > 1e-9) {
++      auto exact = plan.poses.back();
++      exact.pose.position.x = goal.pose.position.x;
++      exact.pose.position.y = goal.pose.position.y;
++      plan.poses.push_back(exact);
++    }
+   }
+ 
+   return plan;
