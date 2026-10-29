@@ -2,7 +2,76 @@
 
 ## 2026-10-29 (самая свежая запись; ниже сохранена история 2026-10-28)
 
-Обновлено 2026-10-29 ~21:45 CST (+08), X2 agi@192.168.1.72. Источники: `.orchestrator/PLAN.md` ("2026-10-29 session"), `DECISIONS.md`, отчёты P15/P16/P18/P19/P20 (копии в [evidence/nav_session_20261029](evidence/nav_session_20261029/reports/)), логи/скрипты в [evidence/nav_session_20261029](evidence/nav_session_20261029/) (manifest.json: sha256 + исходные пути; bags только перечислены). Ветка `nav/first-goals-20261028`, repo `ws/src` = deployed `ws/src` (sha256 сверены, кроме кандидата P20, см. ниже). Секреты/пароли роботов в репозиторий не пишутся.
+### 2026-10-29 вечер (21:45-22:20): карта D1 включена, P20 yaw-loop развёрнут живьём
+
+Обновлено 2026-10-29 ~22:30 CST (+08), задача P22. Источники: `.orchestrator/PLAN.md` (записи 20:2x-22:1x; копия [orchestrator/PLAN.md](evidence/nav_session_20261029/orchestrator/PLAN.md)), [DECISIONS.md](evidence/nav_session_20261029/orchestrator/DECISIONS.md), live-тест P20 ([calib/p20_yaw_test_*](evidence/nav_session_20261029/calib/), [logs/p20_yaw_test_run2.out](evidence/nav_session_20261029/logs/p20_yaw_test_run2.out), [logs/p20_restart_run.txt](evidence/nav_session_20261029/logs/p20_restart_run.txt)), [logs/operator_actions.txt](evidence/nav_session_20261029/logs/operator_actions.txt). Repo `ws/src` = deployed `ws/src` (sha256 сверены в P22: adapter, nav_full/nav_control/localization launch, bt xml, карта D1). Требования к цифровому двойнику по данным этого дня: [DIGITAL_TWIN_FINDINGS.md](DIGITAL_TWIN_FINDINGS.md).
+
+**Итог вечера:** (1) демо на старой карте 2/2 SUCCEEDED (20:5x, 9.2 с / 3.9 м и 11 с / 4.9 м); (2) переключились на карту D1 `Qazbot_29.10`, исправили ошибку порога free_thresh в её map.yaml, scan_score 0.47 (лучше, чем 0.35-0.40 на старой); (3) P20 yaw-rate loop развёрнут и проверен живьём: in-place поворот теперь устойчив в обе стороны, остаток: обратный доворот CCW ~10 град после остановки и недобор скорости CW. Goals на карте D1 с P20 ещё не отправлялись.
+
+#### Текущий рабочий конфиг (на ~22:20; проверять живые PID)
+
+| Компонент | Значение |
+| --- | --- |
+| Карта | `ws/src/maps/d1_qazbot_20261029` (D1 slam_toolbox `Qazbot_29.10`, 673x903 @ 0.05 м, origin -30.01/-22.41, pgm sha 83d05baf..., map.yaml sha f747664c... с `free_thresh: 0.196`; оригинал D1 `map.yaml.orig_from_d1` c8dc4169... с 0.25). Скрипты `start.sh`/`start_loc.sh`/`start_nav.sh`/`restart_gc.sh`/`restart_trust.sh` переключены (бэкапы `*.pre_d1map`) |
+| localization + Trust | load_map 21:47 (AMCL получил 673x903), Trust перезапущен после правки free_thresh (21:5x); T5 `jump_xy_max` **1.0 м**, `jump_yaw_max` **0.5 рад**. Последний initialpose: READY, sigma 0.41, second_mode 0.53, scan_score **0.47** (`seed_loop2.log`) |
+| Motion adapter | **P20 sha256 9c05bb34...** (PID 405674 с 21:56), `yaw_loop=True`, `yaw_u_min_ccw` 0.6, `yaw_u_min_cw` 0.45, `yaw_u_max` 1.0, `yaw_ki` 0.4; MC source `sdk_qazbot_nav2_1029a` prio 30, перерегистрирован через DELETE (code 0) + ADD. Откат: `-p yaw_loop:=false` или `x2_motion_adapter.py.bak_20261029_pre_p20` (71db8ebd) |
+| Goal checker | xy 0.20 м, **yaw 0.35 рад** (`yaw_tol:=0.35`) |
+| Costmaps | полигон footprint (P18, вендорский app2.yaml), global inflation `inflation_radius` **0.60**, `cost_scaling_factor` 1.5; local `inflation_radius` **0.50**; Smac2D `cost_travel_multiplier` 4.0; global `static_layer.footprint_clearing_enabled` True |
+| BT / replanning | keep-path Fallback + RecoveryNode x4 с ClearEntireCostmap GLOBAL; failure_tolerance 10 с |
+| RPP / smoother | без изменений с 10-28: linear 0.3 м/с, angular 0.6 рад/с |
+| Прочее | nav_full, recorder (лёгкий mcap), raw_scan_bridge (A/B, не в контуре), vendor apps остановлены, HAL nice 0 |
+
+#### Результаты вечера
+
+| Время | Что | Результат |
+| --- | --- | --- |
+| 20:5x | демо A (-7.38,6.02)->(-5.20,2.82), старая карта, старый adapter | **SUCCEEDED** 9.2 с, ~3.9 м |
+| 20:5x | демо B ->(-5.85,-2.27) | **SUCCEEDED** 11 с, ~4.9 м (2/2 подряд) |
+| 20:3x | MC ушёл в DAMPING -> leg odom origin reset dp 1.563 м | native_odom_bridge залип, рестарт localization+Trust (блокер a) |
+| 21:47-21:5x | переключение на карту D1 + исправление free_thresh | load_map 0; initialpose #2: READY, sigma 0.41, scan_score 0.47 |
+| 21:56 | P20 deploy (DELETE+ADD, adapter 405674) | registered, ready после arm |
+| 21:56 | P20 тест 1: CCW 0.5 | 0.563 рад/с устойчиво, 180 град; прерван по критерию drift 0.30 м (поворот на месте «шагает») |
+| 21:59 | P20 тест 2 (MAX_DRIFT 0.5 м, оператор OK) | см. таблицу ниже, abort нет |
+
+P20 live (`calib/p20_yaw_test_20261029_215906_summary.json`, от STAND_DEFAULT, источник `sdk_qazbot_nav2_1029a`):
+
+| Шаг | Цель | Факт | u (MC) | Дрейф xy |
+| --- | --- | --- | --- | --- |
+| CCW 0.5 рад/с, 6 с | 0.5 | 0-1.5 с 0.385, 1.5-6 с **0.534 рад/с**, 170 град | 0.60-0.77 (ср. 0.63) | 0.23 м |
+| CW 0.5 рад/с, 6 с | -0.5 | 0-1.5 с -0.398, 1.5-6 с **-0.354 рад/с**, -125 град | -0.45..-0.85 (ср. -0.58) | 0.19 м |
+| 90 град CCW | 90 | до 5 град за **3.3 с**, после 2 с settle ошибка **+11.5 град** (обратный доворот), пик 1.36 рад/с | 0..0.68 | 0.16 м |
+| 90 град CW | -90 | до 5 град за **4.1 с**, финал **-4.9 град**, пик 1.27 рад/с | -0.57..0 | 0.17 м |
+
+Для сравнения без P20 (P19): CCW 0.5-0.6 после ходьбы 0.00-0.37 рад/с, в goals 96 % времени стоял. Финальное 11.5 град укладывается в yaw tolerance 0.35 рад (20 град), но запас мал.
+
+#### ТЕКУЩИЕ БЛОКЕРЫ (вечер 2026-10-29; заменяет таблицу 21:45 ниже)
+
+| # | Блокер | Статус / доказательства | Что дальше |
+| --- | --- | --- | --- |
+| a | native_odom_bridge залипает при каждой смене режима MC (stand <-> damping): origin leg odom сбрасывается (dp 0.467 м в 14:41, **1.563 м в 20:3x**) | не исправлено; каждый раз рестарт localization+Trust + новый initialpose | исправить bridge: авто-переякорение при скачке origin (re-anchor), затем live-тест stand->damp->stand |
+| b | MC: in-place поворот нелинеен/залипает | **смягчено P20 (live)**: CCW 0.5 -> 0.534 рад/с, CW 0.5 -> 0.354 рад/с. Остаток: (1) обратный доворот CCW ~10 град после стопа (90 град CCW: финал +11.5 град); (2) CW недобор скорости (u до 0.85, 0.354 вместо 0.5); (3) дрейф 0.16-0.23 м за поворот; (4) после ходьбы (LOCOMOTION) P20 живьём не проверен, только офлайн | goals с финальным разворотом на карте D1; при необходимости поднять `yaw_u_min_cw`/ki, учесть coast/обратный доворот (ранний стоп по направлению) |
+| c | Карта | **переключено на D1** (scan_score 0.47 против 0.35-0.40); высота среза скана 0.26-1.71 м против LD14 D1 ~0.2-0.3 м остаётся | проверить AMCL/Trust/costmap в движении на D1; решение по low slice / raw_scan_bridge |
+| d | Smac2D игнорирует heading (путь позади робота) | без изменений | SmacHybrid/Lattice или очистка global marks при accept |
+| e | RPP проецирует footprint прямо к carrot на кривом пути | смягчено inflation 0.5/0.6 | MPPI ([MPPI_MIGRATION.md](MPPI_MIGRATION.md)) |
+| f | native odom twist невалиден (angular.z 1.78 рад/с стоя); дрейф позы стоя ~0.01 м/мин (0.17 м/15 мин) | P20 использует только pose | без изменений |
+| g | HAL nice 0 (против -19 на .89) | без изменений | решение оператора (sudo) |
+| h | **NEW: D1 map_saver пишет `free_thresh: 0.25`**: в trinary-режиме неизвестные клетки (pgm 205, p=(255-205)/255=0.196) < 0.25 -> загружаются как FREE (планирование через неизвестность, AMCL likelihood по пустоте) | исправлено в нашей копии (0.196, оригинал `map.yaml.orig_from_d1`) | при каждом новом экспорте карты с D1 проверять/править free_thresh (лучше <0.196, напр. 0.19); сообщить владельцу D1 |
+
+Блокеры 2026-10-28 без изменений: 3, 5, 6 (adapter не делает DELETE при выходе), 7, 9.
+
+#### Продолжение (шаги)
+
+1. Проверить живые PID (adapter 9c05bb34 / PID 405674, nav_full, localization, Trust 397013+, recorder) и режим MC.
+2. После любой смены режима MC: оператор ставит робота -> `start_loc.sh` -> `restart_gc.sh` -> initialpose в кадре **карты D1** -> `seed_loop`.
+3. Goals на D1 с P20: серия 3 подряд вокруг стола с финальным разворотом CCW и CW; записывать финальную ошибку yaw и обратный доворот.
+4. Исправление native_odom_bridge (re-anchor), затем решение по SmacHybrid/MPPI.
+5. Сценарии для цифрового двойника: [DIGITAL_TWIN_FINDINGS.md](DIGITAL_TWIN_FINDINGS.md) §g.
+
+---
+
+### 2026-10-29 день (до ~21:45)
+
+Обновлено 2026-10-29 ~21:45 CST (+08), X2 agi@192.168.1.72. Источники: `.orchestrator/PLAN.md` ("2026-10-29 session"), `DECISIONS.md`, отчёты P15/P16/P18/P19/P20 (копии в [evidence/nav_session_20261029](evidence/nav_session_20261029/reports/)), логи/скрипты в [evidence/nav_session_20261029](evidence/nav_session_20261029/) (manifest.json: sha256 + исходные пути; bags только перечислены). Ветка `nav/first-goals-20261028`, repo `ws/src` = deployed `ws/src` (sha256 сверены на 21:45, кроме кандидата P20; вечером P20 развёрнут и стал основным файлом, см. «вечер» выше). Секреты/пароли роботов в репозиторий не пишутся.
 
 **Итог дня:** после перезагрузки робота (14:24) стек поднят заново (P15). Демо текущей навигации: 2 из 2 goals подряд SUCCEEDED (20:5x, A 9.2 с, B 11 с, конфиг ниже, старый adapter, карта v3 despeckled). Сегодня найдены и частично устранены причины отказов (footprint, BT, inflation); главный нерешённый блок: in-place разворот в вендорском MC нелинеен/залипает (P19), исправление P20 (yaw-rate loop) написано и проверено офлайн, но живьём НЕ проверено и НЕ развёрнуто.
 
@@ -58,7 +127,7 @@
 
 Итого сегодня: 5 SUCCEEDED (из них 2 подряд на демо), 2 по xy с отменой из-за финального разворота, остальные FAILED (причины выше).
 
-### ТЕКУЩИЕ БЛОКЕРЫ (обновлено 2026-10-29; заменяет таблицу ниже, пункты 2026-10-28 остаются в истории)
+### БЛОКЕРЫ на 21:45 2026-10-29 (заменены вечерней таблицей выше; заменяли таблицу ниже, пункты 2026-10-28 остаются в истории)
 
 | # | Блокер | Доказательства | Решение / нужно решение |
 | --- | --- | --- | --- |
