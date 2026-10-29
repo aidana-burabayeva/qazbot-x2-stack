@@ -1,0 +1,56 @@
+{
+  "scope": "Full Nav2/Coordinator/P20 integration, truth localisation; simulation-only and not AMCL qualification.",
+  "goals": [
+    {
+      "target": [
+        -7.38740027085713,
+        12.96315941317024,
+        1.5707963267948966
+      ],
+      "status": 4,
+      "duration": 6.267664180999873,
+      "pose": [
+        -7.28247640467203,
+        12.976061434418785,
+        1.3709686221592037
+      ],
+      "xy_error": 0.10571414213588767,
+      "yaw_error": -0.19982770463569288,
+      "begin_ros_ns": 1793303849831836605,
+      "result_ros_ns": 1793303853755442575,
+      "zero_ros_ns": 1793303854098832383,
+      "settled_ros_ns": 1793303856099438414,
+      "at_result_pose": [
+        -7.293487118977573,
+        12.964275524053269,
+        1.2358358263232092
+      ],
+      "coordinator": {
+        "busy": false,
+        "latched": false,
+        "gate": false,
+        "fault": "",
+        "source_zero": true,
+        "trusted": true,
+        "paused": false,
+        "driver_ready": true,
+        "driver_mode": "live",
+        "ready": true,
+        "child_uuid": null
+      }
+    }
+  ],
+  "parameter_overrides": {
+    "goal_checker.xy_goal_tolerance": 0.2,
+    "goal_checker.yaw_goal_tolerance": 0.35
+  },
+  "controller_parameters": {
+    "goal_checker.xy_goal_tolerance": 0.2,
+    "goal_checker.yaw_goal_tolerance": 0.35,
+    "goal_checker.stateful": false,
+    "FollowPath.use_rotate_to_heading": true,
+    "FollowPath.rotate_to_heading_angular_vel": 0.5,
+    "FollowPath.use_collision_detection": true
+  },
+  "result": "PASS"
+}

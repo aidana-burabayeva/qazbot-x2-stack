@@ -75,6 +75,7 @@ def _setup(context):
                             '-p', 'live:=true', '-p', 'lock_path:=/tmp/x2_motion_owner.lock'], output='screen'),
         ExecuteProcess(cmd=['ros2', 'launch', os.path.join(nav, 'nav_full.launch.py'),
                             f'robot_radius:={L("robot_radius")}', f'max_angular:={L("max_angular")}',
+                            f'xy_tol:={L("xy_tol")}', f'yaw_tol:={L("yaw_tol")}',
                             'scan_topic:=/qazbot_lio/scan', 'odom_topic:=/qazbot_lio/odom_level',
                             'allow_dry_run_driver:=false', f'map_yaml:={map_yaml}'], output='screen'),
     ]
@@ -88,6 +89,8 @@ def generate_launch_description():
         DeclareLaunchArgument('start_pose', default_value='-1.275,-4.825,0.0', description='x,y,yaw of the robot at start (map frame)'),
         DeclareLaunchArgument('max_angular', default_value='0.5', description='rad/s; held at 0.5 until the operator approves a change'),
         DeclareLaunchArgument('robot_radius', default_value='0.454'),
+        DeclareLaunchArgument('xy_tol', default_value='0.10', description='goal checker XY, m; robot runs ROBOT_XY_TOL (scripts/contract/robot.env)'),
+        DeclareLaunchArgument('yaw_tol', default_value='0.10', description='goal checker yaw, rad; robot runs ROBOT_YAW_TOL'),
         DeclareLaunchArgument('trust_policy', default_value='',
                               description="strict | go2; empty = the stack's own default (currently go2)"),
         DeclareLaunchArgument('scan_format', default_value='legacy',

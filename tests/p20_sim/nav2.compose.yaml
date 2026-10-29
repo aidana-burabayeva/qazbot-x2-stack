@@ -1,6 +1,8 @@
 # Calibration follow-up only: actual nav-branch source + P20 torso surrogate; no production deployment.
 services:
   stack:
+    environment:
+      TWIN_LOCALIZATION: truth   # healthcheck reads this; the launch line below uses the same mode
     volumes:
       - ${P20_BACKEND:?set P20_BACKEND}/ws/src:/opt/x2twin/stack:ro
       - /tmp/qazbot-p20-build:/tools:ro
