@@ -17,6 +17,9 @@ Design rules (see docs/X2_MOTION_ADAPTER.md for the evidence behind each):
     source named sdk_*, and publishes only while a fresh, valid, non-zero command exists.
   * Values are passed through, never raised to a minimum. Out-of-bounds values are
     saturated to the MC bounds and counted; non-finite or lateral values stop the robot.
+    Exception (P20, 2026-10-29): a PURE in-place turn (|vx| < 0.02, |wz| > 0.05) is closed-loop on the measured
+    yaw rate (/qazbot_native/odom yaw), because MC has a sustained-turn deadband and overspeeds above it; the
+    output is sign(wz) * [u_min_dir, u_max]. Zero / stale input still gives zero output; see YawRateLoop.
   * Anything that is not the normal end of a goal (operator takeover, control not
     acquired, robot not standing, stale MC state, lost localization, stop request)
     LATCHES: no motion until resume() is called. MC otherwise lets an SDK source
@@ -62,6 +65,18 @@ class Config:
     trust_max_age_s: float = 0.6       # localization_trust verdict older than this counts as untrusted
     require_trust: bool = True         # fresh map->odom alone does not prove the pose is right (docs/X2_LOCALIZATION_TRUST.md)
     t1_pause_max_s: float = 3.0        # operator decision 2026-10-28: T1-only loss pauses (no latch) up to this long
+    # P20 2026-10-29 closed-loop yaw rate for PURE in-place turns (MC deadband/overspeed, reports p19/p20)
+    yaw_loop: bool = True
+    yaw_lin_eps: float = 0.02          # |vx| below this (and vy=0) counts as pure rotation
+    yaw_w_min: float = 0.05            # |wz| at or below this is passed through unchanged
+    yaw_u_min_ccw: float = 0.6         # just above the sustained-turn threshold (calibration 18:40/18:50)
+    yaw_u_min_cw: float = 0.45
+    yaw_u_max: float = 1.0             # MC angular bound
+    yaw_ki: float = 0.4                # integral gain [u per (rad/s * s)]
+    yaw_du_max: float = 1.5            # rate limit on u [1/s] (no limit on the first sample)
+    yaw_settle_s: float = 0.6          # MC dead time from stand ~0.5 s: no integration right after entry
+    yaw_overspeed: float = 1.3         # measured > this * target -> back off twice as fast
+    yaw_meas_max_age_s: float = 0.3    # older yaw-rate measurement -> pass-through
 
     @property
     def cmd_timeout_s(self):
@@ -89,6 +104,84 @@ class Decision:
     notes: list = field(default_factory=list)
 
 
+#: Static MC curve, sustained chest yaw rate [rad/s] -> command |u| (from stand; p19 calibration). Feedforward only:
+#: after walking the same u gives 0.2-0.37 rad/s, which the integral term has to make up.
+YAW_FF = {1: ((0.45, 0.6), (1.25, 0.8), (1.87, 1.0)),
+          -1: ((0.27, 0.4), (0.54, 0.6), (1.2, 0.8), (1.8, 1.0))}
+
+
+def _interp(table, x):
+    if x <= table[0][0]:
+        return table[0][1]
+    for (x0, y0), (x1, y1) in zip(table, table[1:]):
+        if x <= x1:
+            return y0 + (y1 - y0) * (x - x0) / (x1 - x0)
+    return table[-1][1]
+
+
+class YawRateEstimator:
+    """Yaw rate from successive yaw samples (stamp-based dt), first-order low-pass. The native-odom twist is not
+    used: live check 2026-10-29 showed angular.z 1.78 rad/s while standing still."""
+
+    def __init__(self, tau=0.25):
+        self.tau, self.last, self.rate, self.stamp = tau, None, None, float('-inf')
+
+    def update(self, t_msg, yaw, t_recv):
+        if self.last is not None:
+            dt = t_msg - self.last[0]
+            if 1e-3 < dt <= 0.5:
+                r = math.remainder(yaw - self.last[1], 2 * math.pi) / dt
+                a = dt / (self.tau + dt)
+                self.rate = r if self.rate is None else self.rate + a * (r - self.rate)
+                self.stamp = t_recv
+            elif dt > 0.5 or dt < 0:
+                self.rate = None                 # gap or time jump: restart the filter
+        self.last = (t_msg, yaw)
+
+    def get(self, now, max_age):
+        return self.rate if self.rate is not None and now - self.stamp <= max_age else None
+
+
+class YawRateLoop:
+    """Inner loop for pure in-place turns: u = sign(w) * clamp(u_ff(|w|) + I, u_min_dir, u_max), rate-limited.
+    Integrator: anti-windup (conditional + clamp), frozen during the MC dead time, reset on sign change / exit."""
+
+    def __init__(self, cfg):
+        self.cfg = cfg
+        self.reset()
+
+    def reset(self):
+        self.sign, self.integ, self.u, self.t_last, self.t_enter = 0, 0.0, None, None, None
+        self.active, self.target, self.meas = False, 0.0, None
+
+    def update(self, now, w_cmd, meas):
+        cfg = self.cfg
+        s = 1 if w_cmd > 0 else -1
+        if s != self.sign:
+            self.reset()
+            self.sign, self.t_enter = s, now
+        r = abs(w_cmd)
+        u_min = cfg.yaw_u_min_ccw if s > 0 else cfg.yaw_u_min_cw
+        u_max = max(cfg.yaw_u_max, u_min)
+        ff = min(max(_interp(YAW_FF[s], r), u_min), u_max)
+        dt = 0.0 if self.t_last is None else min(max(now - self.t_last, 0.0), 0.1)
+        self.t_last = now
+        m = s * meas
+        if now - self.t_enter >= cfg.yaw_settle_s:
+            e = r - m
+            u_raw = ff + self.integ
+            if m > max(cfg.yaw_overspeed * r, r + 0.25):     # +0.25: filtered gait ripple is ~+-0.2 rad/s
+                # overspeed (e.g. MC releases after a stall with a wound-up u): bleed u toward u_min at du_max
+                self.integ -= cfg.yaw_du_max * dt
+            elif not ((u_raw >= u_max and e > 0) or (u_raw <= u_min and e < 0)):
+                self.integ += cfg.yaw_ki * e * dt
+            self.integ = min(max(self.integ, u_min - ff), u_max - ff)
+        u_t = min(max(ff + self.integ, u_min), u_max)
+        self.u = u_t if self.u is None else self.u + min(max(u_t - self.u, -cfg.yaw_du_max * dt), cfg.yaw_du_max * dt)
+        self.active, self.target, self.meas = True, w_cmd, meas
+        return s * self.u
+
+
 class AdapterCore:
     def __init__(self, cfg: Config):
         self.cfg = cfg
@@ -100,7 +193,8 @@ class AdapterCore:
         self.burst_left = 0
         self.resume_after = float('-inf')
         self.pause_since = None            # T1-only localization loss: paused (zero, not latched) since
-        self.counters = {'saturated': 0, 'rejected': 0, 'latched': 0, 'published': 0}
+        self.counters = {'saturated': 0, 'rejected': 0, 'latched': 0, 'published': 0, 'yaw_loop': 0, 'yaw_meas_stale': 0}
+        self.yaw = YawRateLoop(cfg)
 
     # -- operator / service inputs ---------------------------------------------------
     def stop(self, reason='stop_requested'):
@@ -124,8 +218,10 @@ class AdapterCore:
         self.state, self.latch_reason, self.active_since, self.pause_since = LATCHED, reason, None, None
 
     # -- one control tick --------------------------------------------------------------
-    def step(self, now, cmd, cmd_stamp, mc: McState, localized=True, loc_reason='', foreign_pub='', t1_ok=False):
+    def step(self, now, cmd, cmd_stamp, mc: McState, localized=True, loc_reason='', foreign_pub='', t1_ok=False,
+             yaw_rate=None):
         """cmd = (vx, vy, wz) from Nav2 or None; returns a Decision. Call at publish_hz.
+        yaw_rate: fresh filtered measured yaw rate [rad/s] or None (stale) for the pure-rotation loop.
         t1_ok: the trust status reports T1-only (freshness) loss with READY kept (or has not yet classified a new
         loss): a localization-only fault then PAUSES (zero, IDLE) for up to t1_pause_max_s instead of latching."""
         cfg, notes = self.cfg, []
@@ -175,7 +271,7 @@ class AdapterCore:
                 notes.append(f'{name}_saturated')
                 v = min(max(v, lo), hi)
             out.append(v)
-        cmdout = tuple(out)
+        cmdout = self._yaw_loop(now, tuple(out), yaw_rate, mc, notes)
 
         if not cfg.live:
             # 5'. dry-run shadow: no registration exists, so acquisition cannot be observed.
@@ -221,8 +317,27 @@ class AdapterCore:
             return 'foreign_sdk_source_active'
         return ''
 
+    def _yaw_loop(self, now, cmdout, yaw_rate, mc, notes):
+        """Pure in-place rotation only (|vx| < yaw_lin_eps, vy = 0, |wz| > yaw_w_min, fresh measurement): replace wz
+        by the closed-loop command. Otherwise pass-through and reset (no lingering integral)."""
+        cfg = self.cfg
+        vx, vy, wz = cmdout
+        if not (cfg.yaw_loop and abs(vx) < cfg.yaw_lin_eps and vy == 0.0 and abs(wz) > cfg.yaw_w_min):
+            self.yaw.reset()
+            return cmdout
+        if yaw_rate is None or not math.isfinite(yaw_rate):
+            self.counters['yaw_meas_stale'] += 1
+            notes.append('yaw_meas_stale')
+            self.yaw.reset()
+            return cmdout
+        u = min(max(self.yaw.update(now, wz, yaw_rate), mc.ang[0]), mc.ang[1])
+        self.counters['yaw_loop'] += 1
+        notes.append('yaw_loop')
+        return (vx, vy, u)
+
     def _drain(self, d):
         """Attach one zero message while a burst is pending (live: MC topic; dry run: ~/dry_run_cmd)."""
+        self.yaw.reset()                 # every non-driving tick ends the loop: zero in -> zero out, no integral kept
         if self.burst_left > 0:
             self.burst_left -= 1
             d.publish = (0.0, 0.0, 0.0)
@@ -268,6 +383,7 @@ class OwnerLock:
 def main():
     import rclpy
     from geometry_msgs.msg import Twist
+    from nav_msgs.msg import Odometry
     from rclpy.node import Node
     from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
     from std_msgs.msg import Bool, String
@@ -290,7 +406,12 @@ def main():
                 tf_max_age_s=float(p('tf_max_age_s', Config.tf_max_age_s).value),
                 require_localization=bool(p('require_localization', True).value),
                 require_trust=bool(p('require_trust', True).value),
-                t1_pause_max_s=float(p('t1_pause_max_s', Config.t1_pause_max_s).value))
+                t1_pause_max_s=float(p('t1_pause_max_s', Config.t1_pause_max_s).value),
+                yaw_loop=bool(p('yaw_loop', Config.yaw_loop).value),
+                yaw_u_min_ccw=float(p('yaw_u_min_ccw', Config.yaw_u_min_ccw).value),
+                yaw_u_min_cw=float(p('yaw_u_min_cw', Config.yaw_u_min_cw).value),
+                yaw_u_max=float(p('yaw_u_max', Config.yaw_u_max).value),
+                yaw_ki=float(p('yaw_ki', Config.yaw_ki).value))
             self.priority = int(p('priority', 30).value)       # AimDK range for SDK sources: 20-39
             if not 20 <= self.priority <= 39:
                 raise ValueError('SDK source priority must be in the documented range 20..39')
@@ -322,6 +443,9 @@ def main():
             self.trust_status, self.trust_status_stamp = {}, float('-inf')
             self.create_subscription(String, p('trust_status_topic', '/qazbot_d1_map/localization_trust/status').value,
                                      self._on_trust_status, 10)
+            self.yaw_est, self.yaw_log_t = YawRateEstimator(), float('-inf')
+            self.create_subscription(Odometry, p('odom_topic', '/qazbot_native/odom').value, self._on_odom,
+                                     QoSProfile(depth=5, reliability=ReliabilityPolicy.BEST_EFFORT))
             self.create_timer(1.0, self._scan_publishers)
             self.status = self.create_publisher(String, '~/status', 10)
             self.dry = self.create_publisher(Twist, '~/dry_run_cmd', 10)
@@ -337,7 +461,9 @@ def main():
             self.create_timer(1.0 / self.cfg.publish_hz, self._tick)
             self.create_timer(0.5, self._report)
             self.get_logger().info(f'x2_motion_adapter started: live={self.cfg.live} cmd_topic={cmd_topic} '
-                                   f'source={self.cfg.source_name} priority={self.priority}')
+                                   f'source={self.cfg.source_name} priority={self.priority} yaw_loop={self.cfg.yaw_loop} '
+                                   f'u_min ccw/cw={self.cfg.yaw_u_min_ccw}/{self.cfg.yaw_u_min_cw} '
+                                   f'u_max={self.cfg.yaw_u_max} ki={self.cfg.yaw_ki}')
 
         # -- inputs
         def _now(self):
@@ -345,6 +471,11 @@ def main():
 
         def _on_cmd(self, m):
             self.cmd, self.cmd_stamp = (m.linear.x, m.linear.y, m.angular.z), self._now()
+
+        def _on_odom(self, m):
+            q = m.pose.pose.orientation
+            yaw = math.atan2(2 * (q.w * q.z + q.x * q.y), 1 - 2 * (q.y * q.y + q.z * q.z))
+            self.yaw_est.update(m.header.stamp.sec + 1e-9 * m.header.stamp.nanosec, yaw, self._now())
 
         def _on_trust(self, m):
             self.trust, self.trust_stamp = bool(m.data), self._now()
@@ -494,7 +625,12 @@ def main():
             localized = tf_ok and (trust_ok or not self.cfg.require_trust)
             loc_reason = '' if not tf_ok else 'localization_untrusted'
             d = self.core.step(now, self.cmd, self.cmd_stamp, self.mc, localized, loc_reason, ','.join(self.foreign),
-                               self._t1_ok(now))
+                               self._t1_ok(now), self.yaw_est.get(now, self.cfg.yaw_meas_max_age_s))
+            y = self.core.yaw
+            if y.active and 'yaw_loop' in d.notes and now - self.yaw_log_t >= 1.0:
+                self.yaw_log_t = now
+                self.get_logger().info(f'yaw_loop target={y.target:+.2f} meas={y.meas:+.2f} u={y.sign * y.u:+.2f} '
+                                       f'I={y.integ:+.2f}')
             if d.state == LATCHED:
                 self.motion_armed = False
             elif not self.motion_armed:
