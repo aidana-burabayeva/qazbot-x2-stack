@@ -1,0 +1,93 @@
+{
+ "duration_s": 120.0,
+ "cpu_pct_of_core": {
+  "fastlio": 33.6,
+  "level_bridge": 10.6,
+  "raw_scan_bridge": 18.4
+ },
+ "cloud_latency_ms": {
+  "p50": 104.3,
+  "p95": 107.7,
+  "n": 1190
+ },
+ "lio": {
+  "n": 599,
+  "rate_hz": 5.0,
+  "latency_ms": {
+   "p50": 48.3,
+   "p95": 58.2,
+   "max": 799.2
+  },
+  "finite_bins_median": 182,
+  "finite_pct": 12.6
+ },
+ "raw": {
+  "n": 601,
+  "rate_hz": 5.0,
+  "latency_ms": {
+   "p50": 115.9,
+   "p95": 127.9,
+   "max": 290.2
+  },
+  "finite_bins_median": 188,
+  "finite_pct": 13.1
+ },
+ "raw_low": {
+  "n": 601,
+  "rate_hz": 5.0,
+  "latency_ms": {
+   "p50": 128.7,
+   "p95": 147.2,
+   "max": 292.5
+  },
+  "finite_bins_median": 207,
+  "finite_pct": 14.4
+ },
+ "lio_vs_raw": {
+  "stamp_offset_ms_median": -4.8,
+  "pairs": 598,
+  "absdiff_m": {
+   "median": 0.028,
+   "p90": 0.243,
+   "frac_lt_5cm": 0.636
+  },
+  "bins_both": 174,
+  "bins_only_lio": 9,
+  "bins_only_raw": 15
+ },
+ "lio_vs_raw_low": {
+  "stamp_offset_ms_median": -4.8,
+  "pairs": 598,
+  "absdiff_m": {
+   "median": 0.147,
+   "p90": 0.799,
+   "frac_lt_5cm": 0.221
+  },
+  "bins_both": 132,
+  "bins_only_lio": 51,
+  "bins_only_raw": 76
+ },
+ "map_match": {
+  "lio": {
+   "n": 591,
+   "frac_within_0p1m": 0.519,
+   "frac_within_0p2m": 0.656
+  },
+  "raw": {
+   "n": 590,
+   "frac_within_0p1m": 0.55,
+   "frac_within_0p2m": 0.686
+  },
+  "raw_low": {
+   "n": 590,
+   "frac_within_0p1m": 0.432,
+   "frac_within_0p2m": 0.633
+  }
+ },
+ "amcl_pose_last": [
+  -6.593394362741248,
+  5.993811220150165,
+  -1.3850820018739718,
+  1793256979.711354
+ ]
+}

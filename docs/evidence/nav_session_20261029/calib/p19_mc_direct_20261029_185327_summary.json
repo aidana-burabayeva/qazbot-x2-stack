@@ -1,0 +1,222 @@
+{
+ "path": "P19 A/B: in-place yaw sent DIRECTLY to vendor MC, bypassing x2_motion_adapter, Nav2 and GC (operator-approved 2026-10-29).\nAIMDK path: SetMcInputSource ADD (/aimdk_5Fmsgs/srv/SetMcInputSource, source sdk_qazbot_calib_direct, priority 30 = adapter's,\ntimeout 1000 ms) -> McLocomotionVelocity on /aima/mc/locomotion/velocity at 50 Hz (BEST_EFFORT depth 1, same as the adapter)\n-> DELETE of the source at exit. Steps: CCW w=0.2..0.6 then CW 0.2..0.6, 10 s each, 3 s zero between.\nAbort: per-step translation >0.3 m, MC action not STAND/LOCOMOTION_DEFAULT, MC source != ours after 0.6 s, adapter publishing, SIGINT/error.\nZeros always sent on exit. Needs CONFIRM=1.",
+ "steps": [
+  {
+   "w_cmd": 0.2,
+   "dir": "CCW",
+   "t0": 1793271212.7801178,
+   "t1": 1793271222.7880564,
+   "rate_0_1.5": -0.1700687553880595,
+   "rate_1.5_end": -0.0005972159561174357,
+   "turn_deg": -14.64935175106165,
+   "reversal_deg": 15.646536516977775,
+   "mc_timeline": [
+    [
+     0.0,
+     "sdk_qazbot_calib_direct",
+     "STAND_DEFAULT",
+     4,
+     1
+    ],
+    [
+     0.3,
+     "sdk_qazbot_calib_direct",
+     "LOCOMOTION_DEFAULT",
+     4,
+     1
+    ],
+    [
+     0.41,
+     "sdk_qazbot_calib_direct",
+     "LOCOMOTION_DEFAULT",
+     5,
+     1
+    ]
+   ],
+   "abort": null
+  },
+  {
+   "w_cmd": 0.3,
+   "dir": "CCW",
+   "t0": 1793271225.7933328,
+   "t1": 1793271235.7940347,
+   "rate_0_1.5": 0.002104171432184019,
+   "rate_1.5_end": -2.348172403906269e-05,
+   "turn_deg": 0.16510597613869174,
+   "reversal_deg": 0.0,
+   "mc_timeline": [
+    [
+     11.59,
+     "sdk_qazbot_calib_direct",
+     "STAND_DEFAULT",
+     5,
+     1
+    ],
+    [
+     11.69,
+     "sdk_qazbot_calib_direct",
+     "STAND_DEFAULT",
+     4,
+     1
+    ]
+   ],
+   "abort": null
+  },
+  {
+   "w_cmd": 0.4,
+   "dir": "CCW",
+   "t0": 1793271238.8090436,
+   "t1": 1793271248.812389,
+   "rate_0_1.5": -0.07789773357461387,
+   "rate_1.5_end": 0.05482284308256831,
+   "turn_deg": 20.041483151558314,
+   "reversal_deg": 0.3263957335949369,
+   "mc_timeline": [
+    [
+     0.37,
+     "sdk_qazbot_calib_direct",
+     "LOCOMOTION_DEFAULT",
+     4,
+     1
+    ],
+    [
+     0.47,
+     "sdk_qazbot_calib_direct",
+     "LOCOMOTION_DEFAULT",
+     5,
+     1
+    ]
+   ],
+   "abort": null
+  },
+  {
+   "w_cmd": 0.5,
+   "dir": "CCW",
+   "t0": 1793271251.8336012,
+   "t1": 1793271261.8445492,
+   "rate_0_1.5": 0.09637517144657912,
+   "rate_1.5_end": 0.006513113665569592,
+   "turn_deg": 11.392382469264287,
+   "reversal_deg": 8.119063554282429,
+   "mc_timeline": [
+    [
+     11.55,
+     "sdk_qazbot_calib_direct",
+     "STAND_DEFAULT",
+     5,
+     1
+    ],
+    [
+     11.65,
+     "sdk_qazbot_calib_direct",
+     "STAND_DEFAULT",
+     4,
+     1
+    ]
+   ],
+   "abort": null
+  },
+  {
+   "w_cmd": 0.6,
+   "dir": "CCW",
+   "t0": 1793271264.8485584,
+   "t1": 1793271272.5619142,
+   "rate_0_1.5": 0.3155893223976483,
+   "rate_1.5_end": 0.3507023269451176,
+   "turn_deg": 152.1927634303953,
+   "reversal_deg": 0.0,
+   "mc_timeline": [
+    [
+     0.34,
+     "sdk_qazbot_calib_direct",
+     "LOCOMOTION_DEFAULT",
+     4,
+     1
+    ],
+    [
+     0.44,
+     "sdk_qazbot_calib_direct",
+     "LOCOMOTION_DEFAULT",
+     5,
+     1
+    ]
+   ],
+   "abort": "translated >0.3 m"
+  }
+ ],
+ "abort": "translated >0.3 m",
+ "preflight": {
+  "adapter": {
+   "state": "idle",
+   "reason": "no_command",
+   "latch": "",
+   "live": true,
+   "mode": "live",
+   "dry_run": false,
+   "mc_source": "sdk_qazbot_nav2_1029a",
+   "trusted": true,
+   "registration": "registered",
+   "registration_error": "",
+   "sdk_service_ready": true,
+   "motion_armed": true,
+   "t1_pause": false,
+   "ready": false,
+   "foreign_publishers": [
+    "p19_mc_direct"
+   ],
+   "counters": {
+    "saturated": 0,
+    "rejected": 0,
+    "latched": 0,
+    "published": 10627
+   }
+  },
+  "gc": {
+   "busy": false,
+   "latched": false,
+   "fault": "goal_alignment_not_converging"
+  },
+  "mc": [
+   "sdk_qazbot_nav2_1029a",
+   "STAND_DEFAULT",
+   4,
+   1
+  ],
+  "adapter_published": [
+   10627,
+   10627
+  ]
+ },
+ "delete_code": 0,
+ "mc_end": [
+  "sdk_qazbot_calib_direct",
+  "LOCOMOTION_DEFAULT",
+  5,
+  1
+ ],
+ "adapter_end": {
+  "state": "idle",
+  "reason": "no_command",
+  "latch": "",
+  "live": true,
+  "mode": "live",
+  "dry_run": false,
+  "mc_source": "sdk_qazbot_calib_direct",
+  "trusted": true,
+  "registration": "registered",
+  "registration_error": "",
+  "sdk_service_ready": true,
+  "motion_armed": true,
+  "t1_pause": false,
+  "ready": false,
+  "foreign_publishers": [
+   "p19_mc_direct"
+  ],
+  "counters": {
+   "saturated": 0,
+   "rejected": 0,
+   "latched": 0,
+   "published": 10627
+  }
+ }
+}
