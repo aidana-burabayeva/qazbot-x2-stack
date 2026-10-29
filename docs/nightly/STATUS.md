@@ -5,7 +5,7 @@
 | A. baseline, dirty-state, Henki | DONE: run/nightly/baseline (локально), Henki SHA256 1bc1cd6b…, путь /home/adn/henki_ros2_best_practices.md |
 | A. CCW trace gate | DONE (sim): корень найден, A/B 3/3 vs 2/4, см. DECISIONS D1. Робот: NEEDS_HARDWARE |
 | B. карта/мир, двери | DONE (static): `tools/nightly/map_analysis.py`, `docs/nightly/map/main_office_analysis.json` + overlay. 4 региона, 449 м² main free (unknown=obstacle). Дверные кандидаты UNVALIDATED: (-11.54,-4.48) w=1.6 м; (-6.49,-6.93) w=0.80 м — при ширине робота 0.712 м запас ≈0.04 м/сторона (NARROW). Мир симулятора ≠ карта Nav2: валидация в мире OPEN |
-| C. генератор сценариев | OPEN |
+| C. генератор сценариев | DONE: `tools/nightly/scenario_gen.py` (seed, 10 позитивных + 4 негативных категории, независимые yaw, геом. достижимость по диску half-width 0.356 м, детерминизм проверен), `tests/nightly/test_scenario_gen.py` 4 passed. Кинодинамика/doorway-безопасность: L2/L3 |
 | D. L1 C++ полигон | OPEN |
 | E. L2/L3 выборочно | OPEN (инструмент run_nav2_trace.sh готов) |
 | F. очередь SQLite, make nightly, Claude/Codex handoff | OPEN (существующий `make nightly` = lite-тир + I1 A/B, расширять, не заменять) |
