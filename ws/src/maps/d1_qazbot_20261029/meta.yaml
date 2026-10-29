@@ -1,0 +1,28 @@
+name: Qazbot_29.10
+created: '2026-10-29T17:18:04'
+source: slam_toolbox via qorgan_nav2 map_saver
+slam_frame: slam_map
+width_px: 673
+height_px: 903
+resolution: 0.05000000074505806
+origin:
+- -30.010340244200368
+- -22.409176063144297
+- 0.0
+size_m:
+- 33.65
+- 45.15
+has_tags: true
+has_zones: false
+notes: "\u041E\u0444\u0438\u0441 Qazbot, 29.10"
+initial_tag:
+  id: 14
+  relative_x: 1.152
+  relative_y: -0.086
+  relative_z: 0.421
+  relative_yaw_deg: -171.3
+home_position:
+  x: 0.574
+  y: -5.36
+  theta: -0.2845
+  frame_id: qorgan_map

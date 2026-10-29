@@ -1,0 +1,32 @@
+# AprilTag positions in the map frame. RECORDED, not hand-measured.
+# Written by qorgan_nav2 apriltag_recorder in frame 'slam_map'.
+#
+# Valid ONLY for the map recorded alongside it. Tag coordinates are
+# positions in one specific map; reusing this file with another map
+# seeds the robot somewhere it has never been.
+#
+# z is relative to base_link, not to the floor -- the localizer
+# composes the same chain from the same base_link, so the two
+# cancel. Do not "correct" it to a tape measurement.
+#
+# yaw_deg is the compass direction the PRINTED FACE looks along.
+
+tag_size_m: 0.14969
+
+home_position:
+  x: 0.574
+  y: -5.36
+  theta: -0.2845
+  frame_id: qorgan_map
+
+initial_tag:
+  id: 14
+  relative_x: 1.152
+  relative_y: -0.086
+  relative_z: 0.421
+  relative_yaw_deg: -171.3
+
+tags:
+  - {id: 0, x: -4.441, y: 1.620, z: 1.226, yaw_deg: -23.6}   # 3 sightings, nearest 2.09 m, spread 114.5 cm / 18.7 deg
+  - {id: 10, x: 3.597, y: 0.368, z: 0.715, yaw_deg: 178.1}   # 19 sightings, nearest 1.46 m, spread 288.1 cm / 61.8 deg
+  - {id: 14, x: 1.655, y: -5.766, z: 0.421, yaw_deg: 172.4}   # 1 sightings, nearest 0.95 m, spread 0.0 cm / 0.0 deg

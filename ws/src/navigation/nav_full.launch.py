@@ -21,6 +21,13 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 
 
+def _ctl_module():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('qazbot_control_launch', os.path.join(HERE, 'nav_control.launch.py'))
+    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+    return m
+
+
 def setup(context):
     prefix = os.environ.get('QAZBOT_SMAC_PREFIX')
     if not prefix:
@@ -56,12 +63,15 @@ def setup(context):
             'GridBased.allow_unknown': False,
             # 0.3 m: a goal in/near inflated cells still plans to the nearest reachable
             # cell instead of failing (operator request 20261028 P11).
-            'GridBased.tolerance': 0.3,
+            'GridBased.tolerance': 0.3, 'GridBased.cost_travel_multiplier': 4.0,  # keep paths centred in gaps (RPP projects straight to carrot) 2026-10-29
         }},
         f'/{NS}/global_costmap/global_costmap': {'ros__parameters': {
             'use_sim_time': False,
             'global_frame': 'map', 'robot_base_frame': 'base_footprint',
-            'robot_radius': inscribed, 'footprint_padding': 0.01,
+            # P18: real X2 polygon (from nav_control.launch.py) instead of circle; the cell margin moves
+            # into footprint_padding. Inscribed ~0.2 m -> start no longer 'lethal' beside walls;
+            # inflation_radius below is unchanged (>= circumscribed) so planning still prefers clearance.
+            'footprint': _ctl_module().X2_FOOTPRINT_STR, 'footprint_padding': 0.01 + margin,
             'track_unknown_space': True,
             'plugins': ['static_layer', 'obstacle_layer', 'inflation_layer'],
             # Live obstacles: same sources/params as the local costmap (nav_control.launch.py).
@@ -79,12 +89,12 @@ def setup(context):
             'static_layer.plugin': 'nav2_costmap_2d::StaticLayer',
             'static_layer.map_topic': f'/{outer}/map',
             'static_layer.map_subscribe_transient_local': True,
-            'static_layer.footprint_clearing_enabled': False,
+            'static_layer.footprint_clearing_enabled': True,  # robot physically occupies its footprint: stale map cells under it are free (operator 2026-10-29)
             'inflation_layer.plugin': 'nav2_costmap_2d::InflationLayer',
             # A one-cell band produced routes with almost no localization margin.
             # Soft costs prefer clearance without enlarging the hard body envelope.
-            'inflation_layer.inflation_radius': inscribed + 0.40,
-            'inflation_layer.cost_scaling_factor': 3.0,
+            'inflation_layer.inflation_radius': 0.60,  # operator 2026-10-29
+            'inflation_layer.cost_scaling_factor': 1.5,  # wider repulsion band for planner 2026-10-29
             'inflation_layer.inflate_around_unknown': True,
         }},
         f'/{NS}/bt_navigator': {'ros__parameters': {
@@ -100,7 +110,7 @@ def setup(context):
             'plugin_lib_names': ['nav2_compute_path_to_pose_action_bt_node',
                                  'nav2_follow_path_action_bt_node',
                                  'nav2_rate_controller_bt_node', 'nav2_pipeline_sequence_bt_node',
-                                 'nav2_recovery_node_bt_node'],
+                                 'nav2_recovery_node_bt_node', 'nav2_clear_costmap_service_bt_node'],
         }},
     }
     logdir = os.environ.get('ROS_LOG_DIR', os.path.expanduser('~/.ros/log'))

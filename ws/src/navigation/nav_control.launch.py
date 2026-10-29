@@ -21,6 +21,17 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from launch_stagger import staggered  # noqa: E402
 
 
+# P18 2026-10-29: real X2 body polygon about base_footprint (nav point = chest LIDAR IMU projection).
+# Source: vendor 12-pt footprint /agibot/software/nav/config/vectorflux_common/a2/app2.yaml (base_link,
+# +-0.20 x +-0.225 / +-0.075 x +-0.336, chamfered) shifted by base_link->base_footprint (+0.0866,+0.0161)
+# (qazbot-x2-stack/docs/X2_FOOTPRINT.md), +2 cm on sides/back, front +0.17 (rest-measured +0.119 plus
+# ~5 cm unmeasured walking arm swing). costmap footprint_padding adds 0.01 on top.
+# Circumscribed ~0.43 m (< old circle 0.464): in-place rotation is checked on this rotating polygon by RPP.
+X2_FOOTPRINT = [(0.17, 0.229), (0.008, 0.34), (-0.182, 0.34), (-0.305, 0.229),
+                (-0.305, -0.261), (-0.182, -0.372), (0.008, -0.372), (0.17, -0.261)]
+X2_FOOTPRINT_STR = '[' + ', '.join(f'[{x}, {y}]' for x, y in X2_FOOTPRINT) + ']'
+
+
 def setup(context, raw=False):
     L = lambda n: LaunchConfiguration(n).perform(context)
     ns = L('ns')
@@ -59,9 +70,10 @@ def setup(context, raw=False):
         'use_sim_time': False, 'update_frequency': 5.0, 'publish_frequency': 2.0,
         'global_frame': context.launch_configurations.get('local_frame','odom'), 'robot_base_frame': 'base_footprint',
         'rolling_window': True, 'width': 4, 'height': 4, 'resolution': 0.05,
-        'robot_radius': radius, 'footprint_padding': 0.01, 'plugins': local_plugins,
+        # P18: real polygon instead of circle robot_radius (circle 0.464 hit lethal at 0.47 m at every yaw)
+        'footprint': X2_FOOTPRINT_STR, 'footprint_padding': 0.01, 'plugins': local_plugins,
         'inflation_layer.plugin': 'nav2_costmap_2d::InflationLayer',
-        'inflation_layer.inflation_radius': radius + 0.01, 'inflation_layer.cost_scaling_factor': 3.0,
+        'inflation_layer.inflation_radius': 0.50, 'inflation_layer.cost_scaling_factor': 3.0,  # inflation_radius 0.50: operator 2026-10-29
     }
     if scan:
         local.update({'obstacle_layer.plugin': 'nav2_costmap_2d::ObstacleLayer',

@@ -1,15 +1,18 @@
-<!-- No motion recoveries (no spin/backup/wait): on FollowPath failure, replan immediately and retry (max 3). -->
-<!-- Replans at 1 Hz while following. -->
+<!-- No motion recoveries (no spin/backup/wait). Replans at 1 Hz; a failed replan keeps the last valid path. -->
+<!-- If following still fails: clear the GLOBAL costmap (stale out-of-FOV marks) and retry, max 4 (operator 2026-10-29). -->
 <root main_tree_to_execute="MainTree">
   <BehaviorTree ID="MainTree">
-    <RecoveryNode number_of_retries="3" name="NavigateRecovery">
+    <RecoveryNode number_of_retries="4" name="NavigateRecovery">
       <PipelineSequence name="NavigateWithReplanning">
         <RateController hz="1.0">
-          <ComputePathToPose goal="{goal}" path="{path}" planner_id="GridBased"/>
+          <Fallback name="ReplanOrKeepPath">
+            <ComputePathToPose goal="{goal}" path="{path}" planner_id="GridBased"/>
+            <AlwaysSuccess/>
+          </Fallback>
         </RateController>
         <FollowPath path="{path}" controller_id="FollowPath" goal_checker_id="goal_checker"/>
       </PipelineSequence>
-      <ComputePathToPose goal="{goal}" path="{path}" planner_id="GridBased"/>
+      <ClearEntireCostmap name="ClearGlobalCostmap" service_name="global_costmap/clear_entirely_global_costmap"/>
     </RecoveryNode>
   </BehaviorTree>
 </root>
