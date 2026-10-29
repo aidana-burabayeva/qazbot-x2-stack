@@ -148,6 +148,9 @@ def main():
     with open(p, 'w') as f:
         f.write(json.dumps({'meta': meta}) + '\n')
         for s in sc: f.write(json.dumps(s, sort_keys=True) + '\n')
+    with open(p.with_suffix('.tsv'), 'w') as f:  # flat form for the C++ L1 runner
+        for s in sc:
+            f.write('\t'.join(map(str, [s['id'], s['category'], *s['start'], *s['goal'], s['expected']])) + '\n')
     cnt = {}
     for s in sc: cnt[(s['category'], s['expected'])] = cnt.get((s['category'], s['expected']), 0) + 1
     print(len(sc), 'scenarios'); [print(' ', k, v) for k, v in sorted(cnt.items())]
