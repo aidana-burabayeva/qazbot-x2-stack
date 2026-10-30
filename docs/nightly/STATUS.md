@@ -48,3 +48,11 @@
 - GPU/RL: OPEN/не начато — по замерам Nav2 и MuJoCo physics не GPU-ускоряются; RL только после стабильного baseline на L2 (его нет: stall).
 
 - Итог L2 (7 прогонов, 4 сценария): PASS 2/4 сценариев стабильно (s1_0048,s1_0055), FAIL s1_0046/s1_0005/s1_0051 (stall/abort), s1_0004 SUCCEEDED с нарушением yaw и контактом по карте. Эти сигнатуры — основной вход для инженерной работы (Codex: ветка nightly/codex-stall-20261030).
+
+## Закрытие хвостов P0/E (2026-10-30)
+- **Реальный unit**: `systemctl --user start qazbot-nightly-enqueue.service` -> Result=success, в очередь встал `make_nightly_20261030` (его сейчас выполняет демон, resource=sim). Календарное срабатывание таймера 01:00 — всё ещё UNVERIFIED до 2026-10-31.
+- **Перезагрузка ПК**: задача `verify_reboot_recovery` = NEEDS_APPROVAL (нужен оператор; шаги в reason). Линжер=yes, unit enabled.
+- **Claude-limit handoff**: реального лимита Claude не было. DRILL: claude помечен usage_limited -> engineering-задача автоматически ушла в `codex queue` (msg 01a18b32-2d42). Это проверка маршрутизации, не реального лимита.
+- **Twin image**: `x2-twin-stack:p20` собран (TWIN_VERSION=p20, :dev не тронут), в образе есть `xy_tol` в twin.launch.py. Правки twin.launch.py/robot.env синхронизированы в /home/adn/QazBot/digital_twin (оригиналы: run/nightly/backup). Квалификационные прогоны на p20 — следующий шаг (L2 пока идут на :dev + harness override).
+- **L2 doorway (doorway_crossing_in, 6 сценариев)**: Nav2 SUCCEEDED 6/6, НО по swept footprint на карте: 2/6 контакт с unknown/obstacle (-0.025 м: 1 и 9 отсчётов; ≈ полклетки карты, вердикт на границе разрешения), 2/6 зазор <=0.075 м. По правилу ТЗ (SUCCEEDED не доказательство, контакт = hard fail) это 2 hard-fail; проверка контакта в MuJoCo-мире — OPEN. doorway_crossing_out не прогонялся.
+- **Codex stall**: результат ещё не получен (A/B в очереди/на ветке nightly/codex-stall-20261030).
