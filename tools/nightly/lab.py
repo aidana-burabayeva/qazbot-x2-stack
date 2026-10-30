@@ -461,8 +461,8 @@ def main():
         r.add_argument('--' + f, action='store_true')
     st = sp.add_parser('status'); st.add_argument('--json', action='store_true')
     a = ap.parse_args()
-    if a.c in ('stop', 'resume') and opskills.detect_role() == 'ROBOT':
-        sys.exit('refused: this checkout has role ROBOT; lab stop/resume are LAB-only (QAZBOT_ROLE / ~/.config/qazbot/role)')
+    if a.c in ('stop', 'resume') and opskills.detect_role() != 'LAB':
+        sys.exit(f'refused: role is {opskills.detect_role()}; lab stop/resume need role LAB (QAZBOT_ROLE=LAB or ~/.config/qazbot/role)')
     {'stop': cmd_stop, 'resume': cmd_resume, 'status': cmd_status}[a.c](a)
 
 

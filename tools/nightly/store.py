@@ -53,6 +53,20 @@ def fsync_dir(p):
         os.close(fd)
 
 
+def _pid_alive(txt):
+    try:
+        pid = int(txt)
+    except ValueError:
+        return False
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    return True
+
+
 def init(db):
     db.executescript(SCHEMA)
 
@@ -132,7 +146,8 @@ def publish(run, task, attempt, src_dir, meta):
     mp.write_text(json.dumps(man, indent=1, sort_keys=True))
     with open(mp, 'rb') as f:
         os.fsync(f.fileno())
-    fsync_dir(tmp)
+    for sub in sorted({p.parent for p in tmp.rglob('*') if p.is_file()} | {tmp}):
+        fsync_dir(sub)  # every directory whose entries we created, not only the top one
     os.rename(tmp, final)  # atomic: either the full evidence dir exists or nothing does
     fsync_dir(ev_root)
     fault('after_evidence_before_commit')
@@ -173,6 +188,8 @@ def adopt_orphans(db, run):
         if d.name == '_quarantine':
             continue
         if d.name.startswith('.tmp-'):
+            if _pid_alive(d.name.rsplit('-', 1)[-1]):
+                continue  # an in-flight publish of a live process (e.g. verify-evidence run next to the daemon)
             q.mkdir(exist_ok=True)
             dest = q / f'{d.name}.{int(time.time())}'
             os.rename(d, dest)

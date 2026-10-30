@@ -153,7 +153,7 @@ def test_robot_role_checkout_refuses_lab_stop_and_resume(lab):
     w, remote, e = lab
     for c in (STOP, ('resume', '--no-systemd')):
         r = labrun(dict(e, QAZBOT_ROLE='ROBOT'), *c)
-        assert r.returncode != 0 and 'role ROBOT' in (r.stdout + r.stderr)
+        assert r.returncode != 0 and 'role is ROBOT' in (r.stdout + r.stderr)
 
 
 def test_resume_reads_robot_feedback_checkpoints_and_prioritises_blocker(lab, tmp_path):
@@ -177,3 +177,29 @@ def test_no_physical_robot_commands_in_lab_or_lab_skills():
         for ln in p.read_text().splitlines():
             if bad.search(ln) and 'ssh|scp|rsync' not in ln and 'не ssh' not in ln.lower() and 'ssh' not in ln.lower().replace('не ssh', ''):
                 raise AssertionError(f'{p}: {ln}')
+
+
+def test_unknown_role_also_refuses_lab_stop(lab):
+    w, remote, e = lab
+    e = dict(e, QAZBOT_ROLE='', QAZBOT_ROLE_FILE=str(w.parent / 'norole'))
+    r = labrun(e, *STOP)
+    assert r.returncode != 0 and 'role is UNKNOWN' in (r.stdout + r.stderr)
+
+
+def test_role_subset_install_robot_has_only_robot_skill(pkg):
+    w, *_ = pkg
+    for n in ('nightly-stop', 'nightly-resume', 'nightly-status'):
+        shutil.rmtree(w / '.claude/skills' / n)
+    r = json.loads(ops(w, 'validate', '--role', 'robot', '--json').stdout)
+    assert r['errors'] == [] and r['active_for_role'] == ['robot-sync-validate'] and len(r['not_installed']) == 3
+    assert ops(w, 'validate', '--role', 'lab').returncode == 1  # a LAB checkout missing its own skills is an error
+
+
+def test_verify_evidence_does_not_quarantine_inflight_publish_of_live_process(tmp_path):
+    sys.path.insert(0, str(REPO / 'tools/nightly'))
+    import sqlite3, store
+    run = tmp_path / 'run'; tmpd = run / 'evidence' / f'.tmp-abc-{os.getpid()}'; tmpd.mkdir(parents=True)
+    dead = run / 'evidence' / '.tmp-def-999999999'; dead.mkdir()
+    db = sqlite3.connect(':memory:'); db.row_factory = sqlite3.Row; store.init(db)
+    rep = store.adopt_orphans(db, run)
+    assert tmpd.exists() and not dead.exists() and len(rep['quarantined']) == 1

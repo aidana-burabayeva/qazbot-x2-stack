@@ -52,7 +52,7 @@ def connect():
     db = sqlite3.connect(DB, timeout=30, isolation_level=None)
     db.row_factory = sqlite3.Row
     db.execute('PRAGMA journal_mode=WAL')
-    db.execute('PRAGMA synchronous=NORMAL')
+    db.execute('PRAGMA synchronous=FULL')
     db.executescript(SCHEMA)
     store.init(db)
     cols = [r[1] for r in db.execute('PRAGMA table_info(tasks)')]

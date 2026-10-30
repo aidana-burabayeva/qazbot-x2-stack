@@ -79,3 +79,8 @@ A воспроизвёл другой stall, а измеренная привя�
 - Не контролируется отсюда: открытые TUI Claude/Codex, session-only /loop cron и /goal hook открытых сессий.
 - Возобновление: `python3 tools/nightly/lab.py resume` (`/nightly-resume`).
 <!-- END LAB_STOP -->
+
+## P1 integration gate (2026-10-30)
+- Codex review of `5b64245`: **REVIEW_PENDING** (запрос в очереди `01a18ba5`, ответа и review-документа нет). Самопроверка выполнена, найдено и исправлено: (1) `verify-evidence` мог отправить в карантин чужую in-flight публикацию — теперь только если pid-владелец мёртв; (2) fsync вложенных каталогов перед rename; `synchronous=FULL`; (3) `lab stop/resume` теперь требуют роль LAB (UNKNOWN тоже отказ); (4) role-subset установка пакета (на роботе нужен только ROBOT skill).
+- Имитационные crash-тесты (`os._exit` в 4 точках) доказывают логику восстановления, **не** устойчивость к потере питания: UNVERIFIED (нужен тест с реальным отключением/`dm-flakey`).
+- Регресс: `tests/nightly tests/motion_adapter` 133 passed. Лаборатория остановлена, X2 не трогался.

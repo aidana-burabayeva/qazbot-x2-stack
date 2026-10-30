@@ -92,10 +92,17 @@ def validate(role='auto'):
     for name in sorted(dirs - set(managed) - unmanaged):
         errs.append(f'skill {name} is neither managed nor listed as unmanaged')
     ext = external_names()
+    r = detect_role() if role == 'auto' else role.upper()
     for name, spec in managed.items():
         p = SKILLS / name / 'SKILL.md'
         if not p.exists():
-            errs.append(f'{name}: SKILL.md missing'); continue
+            if spec.get('role') != r or r == 'UNKNOWN':  # role-subset install: the other role's skills need not be present
+                info.setdefault('not_installed', []).append(name)
+                if r == 'UNKNOWN':
+                    errs.append(f'{name}: SKILL.md missing (role unknown, full package expected)')
+            else:
+                errs.append(f'{name}: SKILL.md missing')
+            continue
         if spec.get('role') not in ROLES:
             errs.append(f'{name}: role must be LAB or ROBOT')
         fm = frontmatter(p)
@@ -111,9 +118,8 @@ def validate(role='auto'):
             errs.append(f'{name}: SKILL.md changed since pinned (bump version, then `opskills.py hashes --update`)')
         if name in ext:
             errs.append(f'{name}: name conflicts with a user-level skill/command in ~/.claude')
-    r = detect_role() if role == 'auto' else role.upper()
     info['role'] = r
-    info['active_for_role'] = sorted(n for n, s in managed.items() if s.get('role') == r)
+    info['active_for_role'] = sorted(n for n, s in managed.items() if s.get('role') == r and n not in info.get('not_installed', []))
     info['inactive_for_role'] = sorted(n for n, s in managed.items() if s.get('role') != r)
     if r == 'UNKNOWN':
         warns.append('role unknown: set QAZBOT_ROLE=LAB|ROBOT; control skills must refuse hardware actions')

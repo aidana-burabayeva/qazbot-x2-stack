@@ -26,7 +26,7 @@ def env(tmp_path):
     (w / 'docs' / 'nightly' / 'STATUS.md').write_text('# s\n')
     (w / '.gitignore').write_text('run/\n')
     g(w, 'checkout', '-q', '-b', 'work'); g(w, 'add', '-A'); g(w, 'commit', '-qm', 'init'); g(w, 'push', '-q', '-u', 'origin', 'work')
-    e = dict(os.environ, NIGHTLY_ROOT=str(w), NIGHTLY_RUN=str(w / 'run' / 'nightly'), NIGHTLY_UNIT_DIR=str(tmp_path / 'units'))
+    e = dict(os.environ, NIGHTLY_ROOT=str(w), NIGHTLY_RUN=str(w / 'run' / 'nightly'), NIGHTLY_UNIT_DIR=str(tmp_path / 'units'), QAZBOT_ROLE='LAB')
     return w, remote, e, tmp_path
 
 
