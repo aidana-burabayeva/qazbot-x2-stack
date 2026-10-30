@@ -1,0 +1,272 @@
+stack-1  | [INFO] [launch]: All log files can be found below /home/twin/.ros/log/2026-10-30-04-52-06-006432-5c25ea6a6155-7
+stack-1  | [INFO] [launch]: Default logging verbosity is set to INFO
+stack-1  | [INFO] [hal_plant-1]: process started with pid [32]
+stack-1  | [INFO] [ros2-2]: process started with pid [34]
+stack-1  | [ros2-2] [INFO] [launch]: All log files can be found below /home/twin/.ros/log/2026-10-30-04-52-07-119118-5c25ea6a6155-34
+stack-1  | [ros2-2] [INFO] [launch]: Default logging verbosity is set to INFO
+stack-1  | [ros2-2] [INFO] [map_server-1]: process started with pid [44]
+stack-1  | [ros2-2] [map_server-1] [INFO] [1793335927.250561049] [qazbot_d1_map.map_server]: 
+stack-1  | [ros2-2] [map_server-1] 	map_server lifecycle node launched. 
+stack-1  | [ros2-2] [map_server-1] 	Waiting on external lifecycle transitions to activate
+stack-1  | [ros2-2] [map_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+stack-1  | [ros2-2] [map_server-1] [INFO] [1793335927.250805685] [qazbot_d1_map.map_server]: Creating
+stack-1  | [INFO] [python3-3]: process started with pid [54]
+stack-1  | [ros2-2] [INFO] [lifecycle_manager-2]: process started with pid [56]
+stack-1  | [ros2-2] [lifecycle_manager-2] [INFO] [1793335927.849156141] [qazbot_d1_map.lifecycle_manager_localization]: Creating
+stack-1  | [ros2-2] [lifecycle_manager-2] [INFO] [1793335927.854327607] [qazbot_d1_map.lifecycle_manager_localization]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+stack-1  | [ros2-2] [lifecycle_manager-2] [INFO] [1793335927.857766688] [qazbot_d1_map.lifecycle_manager_localization]: [34m[1mStarting managed nodes bringup...[0m[0m
+stack-1  | [ros2-2] [lifecycle_manager-2] [INFO] [1793335927.857822604] [qazbot_d1_map.lifecycle_manager_localization]: [34m[1mConfiguring map_server[0m[0m
+stack-1  | [ros2-2] [map_server-1] [INFO] [1793335927.858173462] [qazbot_d1_map.map_server]: Configuring
+stack-1  | [ros2-2] [map_server-1] [INFO] [1793335927.858256139] [map_io]: Loading yaml file: /opt/x2twin/stack/maps/main_office/map.yaml
+stack-1  | [ros2-2] [map_server-1] [INFO] [1793335927.858670762] [map_io]: resolution: 0.05
+stack-1  | [ros2-2] [map_server-1] [INFO] [1793335927.858692744] [map_io]: origin[0]: -30.0103
+stack-1  | [ros2-2] [map_server-1] [INFO] [1793335927.858701806] [map_io]: origin[1]: -22.4092
+stack-1  | [ros2-2] [map_server-1] [INFO] [1793335927.858709598] [map_io]: origin[2]: 0
+stack-1  | [ros2-2] [map_server-1] [INFO] [1793335927.858717736] [map_io]: free_thresh: 0.196
+stack-1  | [ros2-2] [map_server-1] [INFO] [1793335927.858725301] [map_io]: occupied_thresh: 0.65
+stack-1  | [ros2-2] [map_server-1] [INFO] [1793335927.858734353] [map_io]: mode: trinary
+stack-1  | [ros2-2] [map_server-1] [INFO] [1793335927.858743117] [map_io]: negate: 0
+stack-1  | [ros2-2] [map_server-1] [INFO] [1793335927.859178990] [map_io]: Loading image_file: /opt/x2twin/stack/maps/main_office/map.pgm
+stack-1  | [INFO] [ros2-4]: process started with pid [75]
+stack-1  | [ros2-2] [map_server-1] [INFO] [1793335927.969301559] [map_io]: Read map /opt/x2twin/stack/maps/main_office/map.pgm: 673 X 903 map @ 0.05 m/cell
+stack-1  | [ros2-2] [lifecycle_manager-2] [INFO] [1793335927.977648747] [qazbot_d1_map.lifecycle_manager_localization]: [34m[1mActivating map_server[0m[0m
+stack-1  | [ros2-2] [map_server-1] [INFO] [1793335927.977877696] [qazbot_d1_map.map_server]: Activating
+stack-1  | [ros2-2] [map_server-1] [INFO] [1793335927.978816263] [qazbot_d1_map.map_server]: Creating bond (map_server) to lifecycle manager.
+stack-1  | [python3-3] [INFO] [1793335928.018094652] [qazbot_d1_map.motion_adapter]: x2_motion_adapter started: live=True cmd_topic=/qazbot_d1_map/cmd_vel_authorized source=sdk_qazbot_nav2 priority=30 yaw_loop=True u_min ccw/cw=0.6/0.45 u_max=1.0 ki=0.4
+stack-1  | [ros2-2] [lifecycle_manager-2] [INFO] [1793335928.084550992] [qazbot_d1_map.lifecycle_manager_localization]: Server map_server connected with bond.
+stack-1  | [ros2-2] [lifecycle_manager-2] [INFO] [1793335928.084600754] [qazbot_d1_map.lifecycle_manager_localization]: [34m[1mManaged nodes are active[0m[0m
+stack-1  | [ros2-2] [lifecycle_manager-2] [INFO] [1793335928.084611999] [qazbot_d1_map.lifecycle_manager_localization]: [34m[1mCreating bond timer...[0m[0m
+stack-1  | [ros2-4] [INFO] [launch]: All log files can be found below /home/twin/.ros/log/2026-10-30-04-52-08-327347-5c25ea6a6155-75
+stack-1  | [ros2-4] [INFO] [launch]: Default logging verbosity is set to INFO
+stack-1  | [ros2-2] [INFO] [truth_localizer-3]: process started with pid [77]
+stack-1  | [ros2-4] [INFO] [controller_server-1]: process started with pid [79]
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335928.481107481] [qazbot_d1_map.nav2.controller_server]: 
+stack-1  | [ros2-4] [controller_server-1] 	controller_server lifecycle node launched. 
+stack-1  | [ros2-4] [controller_server-1] 	Waiting on external lifecycle transitions to activate
+stack-1  | [ros2-4] [controller_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335928.484166479] [qazbot_d1_map.nav2.controller_server]: Creating controller server
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335928.492255497] [qazbot_d1_map.nav2.local_costmap.local_costmap]: 
+stack-1  | [ros2-4] [controller_server-1] 	local_costmap lifecycle node launched. 
+stack-1  | [ros2-4] [controller_server-1] 	Waiting on external lifecycle transitions to activate
+stack-1  | [ros2-4] [controller_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335928.493184560] [qazbot_d1_map.nav2.local_costmap.local_costmap]: Creating Costmap
+stack-1  | [ros2-4] [INFO] [velocity_smoother-2]: process started with pid [96]
+stack-1  | [ros2-4] [velocity_smoother-2] [INFO] [1793335929.120999229] [qazbot_d1_map.nav2.velocity_smoother]: 
+stack-1  | [ros2-4] [velocity_smoother-2] 	velocity_smoother lifecycle node launched. 
+stack-1  | [ros2-4] [velocity_smoother-2] 	Waiting on external lifecycle transitions to activate
+stack-1  | [ros2-4] [velocity_smoother-2] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+stack-1  | [ros2-4] [INFO] [planner_server-3]: process started with pid [107]
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335929.741657885] [qazbot_d1_map.nav2.planner_server]: 
+stack-1  | [ros2-4] [planner_server-3] 	planner_server lifecycle node launched. 
+stack-1  | [ros2-4] [planner_server-3] 	Waiting on external lifecycle transitions to activate
+stack-1  | [ros2-4] [planner_server-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335929.744304282] [qazbot_d1_map.nav2.planner_server]: Creating
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335929.766902272] [qazbot_d1_map.nav2.global_costmap.global_costmap]: 
+stack-1  | [ros2-4] [planner_server-3] 	global_costmap lifecycle node launched. 
+stack-1  | [ros2-4] [planner_server-3] 	Waiting on external lifecycle transitions to activate
+stack-1  | [ros2-4] [planner_server-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335929.768355715] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Creating Costmap
+stack-1  | [ros2-4] [INFO] [bt_navigator-4]: process started with pid [130]
+stack-1  | [ros2-4] [bt_navigator-4] [INFO] [1793335930.302257921] [qazbot_d1_map.nav2.bt_navigator]: 
+stack-1  | [ros2-4] [bt_navigator-4] 	bt_navigator lifecycle node launched. 
+stack-1  | [ros2-4] [bt_navigator-4] 	Waiting on external lifecycle transitions to activate
+stack-1  | [ros2-4] [bt_navigator-4] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+stack-1  | [ros2-4] [bt_navigator-4] [INFO] [1793335930.302522332] [qazbot_d1_map.nav2.bt_navigator]: Creating
+stack-1  | [ros2-4] [INFO] [lifecycle_manager-5]: process started with pid [151]
+stack-1  | [ros2-4] [lifecycle_manager-5] [INFO] [1793335930.888333627] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: Creating
+stack-1  | [ros2-4] [lifecycle_manager-5] [INFO] [1793335930.891647171] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+stack-1  | [ros2-4] [lifecycle_manager-5] [INFO] [1793335931.163932338] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mStarting managed nodes bringup...[0m[0m
+stack-1  | [ros2-4] [lifecycle_manager-5] [INFO] [1793335931.163997572] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mConfiguring controller_server[0m[0m
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335931.164359269] [qazbot_d1_map.nav2.controller_server]: Configuring controller interface
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335931.164700314] [qazbot_d1_map.nav2.controller_server]: getting goal checker plugins..
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335931.165083856] [qazbot_d1_map.nav2.controller_server]: Controller frequency set to 20.0000Hz
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335931.165144853] [qazbot_d1_map.nav2.local_costmap.local_costmap]: Configuring
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335931.174845942] [qazbot_d1_map.nav2.local_costmap.local_costmap]: Using plugin "obstacle_layer"
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335931.180437283] [qazbot_d1_map.nav2.local_costmap.local_costmap]: Subscribed to Topics: scan bounded_rays
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335931.192151568] [qazbot_d1_map.nav2.local_costmap.local_costmap]: Initialized plugin "obstacle_layer"
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335931.192202843] [qazbot_d1_map.nav2.local_costmap.local_costmap]: Using plugin "inflation_layer"
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335931.193445169] [qazbot_d1_map.nav2.local_costmap.local_costmap]: Initialized plugin "inflation_layer"
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335931.215390232] [qazbot_d1_map.nav2.controller_server]: Created progress_checker : progress_checker of type nav2_controller::PoseProgressChecker
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335931.216639807] [qazbot_d1_map.nav2.controller_server]: Created goal checker : goal_checker of type nav2_controller::SimpleGoalChecker
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335931.217413342] [qazbot_d1_map.nav2.controller_server]: Controller Server has goal_checker  goal checkers available.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335931.218441599] [qazbot_d1_map.nav2.controller_server]: Created controller : FollowPath of type nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335931.226231197] [qazbot_d1_map.nav2.controller_server]: Controller Server has FollowPath  controllers available.
+stack-1  | [ros2-4] [lifecycle_manager-5] [INFO] [1793335931.238563094] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mConfiguring velocity_smoother[0m[0m
+stack-1  | [ros2-4] [velocity_smoother-2] [INFO] [1793335931.238958945] [qazbot_d1_map.nav2.velocity_smoother]: Configuring velocity smoother
+stack-1  | [ros2-4] [lifecycle_manager-5] [INFO] [1793335931.244220604] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mConfiguring planner_server[0m[0m
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335931.244673320] [qazbot_d1_map.nav2.planner_server]: Configuring
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335931.244726965] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Configuring
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335931.253552165] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Using plugin "static_layer"
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335931.259450417] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Subscribing to the map topic (/qazbot_d1_map/map) with transient local durability
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335931.261651055] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Initialized plugin "static_layer"
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335931.261698496] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Using plugin "obstacle_layer"
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335931.262958631] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Subscribed to Topics: scan bounded_rays
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335931.274728275] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Initialized plugin "obstacle_layer"
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335931.274775508] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Using plugin "inflation_layer"
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335931.276265511] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Initialized plugin "inflation_layer"
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335931.292197972] [qazbot_d1_map.nav2.global_costmap.global_costmap]: StaticLayer: Resizing costmap to 673 X 903 at 0.050000 m/pix
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335931.299644154] [qazbot_d1_map.nav2.planner_server]: Created global planner plugin GridBased of type nav2_smac_planner/SmacPlanner2D
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335931.299727223] [qazbot_d1_map.nav2.planner_server]: Configuring GridBased of type SmacPlanner2D
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335931.313267129] [qazbot_d1_map.nav2.planner_server]: Configured plugin GridBased of type SmacPlanner2D with tolerance 0.30, maximum iterations 1000000, max on approach iterations 1000, and not allowing unknown traversal.
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335931.313339562] [qazbot_d1_map.nav2.planner_server]: Planner Server has GridBased  planners available.
+stack-1  | [ros2-4] [lifecycle_manager-5] [INFO] [1793335931.329719158] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mConfiguring bt_navigator[0m[0m
+stack-1  | [ros2-4] [bt_navigator-4] [INFO] [1793335931.330030079] [qazbot_d1_map.nav2.bt_navigator]: Configuring
+stack-1  | [ros2-4] [lifecycle_manager-5] [INFO] [1793335931.413372196] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mActivating controller_server[0m[0m
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335931.413743533] [qazbot_d1_map.nav2.controller_server]: Activating
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335931.413797420] [qazbot_d1_map.nav2.local_costmap.local_costmap]: Activating
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335931.413820415] [qazbot_d1_map.nav2.local_costmap.local_costmap]: Checking transform
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335931.413989540] [qazbot_d1_map.nav2.local_costmap.local_costmap]: start
+stack-1  | [ros2-4] [INFO] [python3-6]: process started with pid [181]
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335931.617147209] [qazbot_d1_map.nav2.controller_server]: Activating controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335931.617210841] [qazbot_d1_map.nav2.controller_server]: Creating bond (controller_server) to lifecycle manager.
+stack-1  | [ros2-4] [lifecycle_manager-5] [INFO] [1793335931.724241757] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: Server controller_server connected with bond.
+stack-1  | [ros2-4] [lifecycle_manager-5] [INFO] [1793335931.724297710] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mActivating velocity_smoother[0m[0m
+stack-1  | [ros2-4] [velocity_smoother-2] [INFO] [1793335931.724583913] [qazbot_d1_map.nav2.velocity_smoother]: Activating
+stack-1  | [ros2-4] [velocity_smoother-2] [INFO] [1793335931.724654314] [qazbot_d1_map.nav2.velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
+stack-1  | [ros2-4] [lifecycle_manager-5] [INFO] [1793335931.830452801] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: Server velocity_smoother connected with bond.
+stack-1  | [ros2-4] [lifecycle_manager-5] [INFO] [1793335931.830516309] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mActivating planner_server[0m[0m
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335931.830818048] [qazbot_d1_map.nav2.planner_server]: Activating
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335931.830865761] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Activating
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335931.830881121] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Checking transform
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335931.830979522] [qazbot_d1_map.nav2.global_costmap.global_costmap]: start
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335932.134508976] [qazbot_d1_map.nav2.planner_server]: Activating plugin GridBased of type SmacPlanner2D
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335932.136386171] [qazbot_d1_map.nav2.planner_server]: Creating bond (planner_server) to lifecycle manager.
+stack-1  | [ros2-4] [lifecycle_manager-5] [INFO] [1793335932.244085652] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: Server planner_server connected with bond.
+stack-1  | [ros2-4] [lifecycle_manager-5] [INFO] [1793335932.244154163] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mActivating bt_navigator[0m[0m
+stack-1  | [ros2-4] [bt_navigator-4] [INFO] [1793335932.245249833] [qazbot_d1_map.nav2.bt_navigator]: Activating
+stack-1  | [ros2-4] [bt_navigator-4] [INFO] [1793335932.281738645] [qazbot_d1_map.nav2.bt_navigator]: Creating bond (bt_navigator) to lifecycle manager.
+stack-1  | [ros2-4] [lifecycle_manager-5] [INFO] [1793335932.394888595] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: Server bt_navigator connected with bond.
+stack-1  | [ros2-4] [lifecycle_manager-5] [INFO] [1793335932.394953332] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mManaged nodes are active[0m[0m
+stack-1  | [ros2-4] [lifecycle_manager-5] [INFO] [1793335932.394967573] [qazbot_d1_map.nav2.lifecycle_manager_navigation]: [34m[1mCreating bond timer...[0m[0m
+stack-1  | [python3-3] [INFO] [1793335940.817748553] [qazbot_d1_map.motion_adapter]: SDK source registered; waiting for fresh authorized command
+stack-1  | [ros2-4] [bt_navigator-4] [INFO] [1793335942.338557147] [qazbot_d1_map.nav2.bt_navigator]: Begin navigating from current location (-8.53, -15.43) to (-13.38, -4.43)
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335942.380282611] [qazbot_d1_map.nav2.controller_server]: Received a goal, begin computing control effort.
+stack-1  | [python3-3] [INFO] [1793335942.492906614] [qazbot_d1_map.motion_adapter]: yaw_loop target=+0.10 meas=+0.00 u=+0.60 I=+0.00
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335943.430506410] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [python3-3] [INFO] [1793335943.492831792] [qazbot_d1_map.motion_adapter]: yaw_loop target=+0.50 meas=+0.85 u=+0.60 I=-0.01
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335944.480466389] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [python3-3] [INFO] [1793335944.493347017] [qazbot_d1_map.motion_adapter]: yaw_loop target=+0.50 meas=+0.25 u=+0.64 I=+0.03
+stack-1  | [python3-3] [INFO] [1793335945.512025968] [qazbot_d1_map.motion_adapter]: yaw_loop target=+0.50 meas=+0.67 u=+0.60 I=-0.01
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335945.530497859] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335946.580514240] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335947.630512372] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335948.680513098] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335949.730513094] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335950.780523469] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335951.830509038] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335952.880518296] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335953.880506393] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335954.930513750] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335955.980506157] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335957.033059586] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335958.030507767] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335959.080472372] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335960.130516823] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335961.130516882] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335962.180516089] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335963.180510059] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335964.230519728] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335965.280514991] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335966.280513717] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335967.330511794] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [python3-3] [INFO] [1793335967.493067121] [qazbot_d1_map.motion_adapter]: yaw_loop target=-0.21 meas=+0.72 u=-0.45 I=+0.00
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335968.330496609] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [python3-3] [INFO] [1793335968.511849187] [qazbot_d1_map.motion_adapter]: yaw_loop target=-0.30 meas=-0.42 u=-0.45 I=+0.00
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335969.380536829] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [python3-3] [INFO] [1793335969.512539158] [qazbot_d1_map.motion_adapter]: yaw_loop target=-0.50 meas=-0.09 u=-0.67 I=+0.10
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335970.430517998] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [python3-3] [INFO] [1793335970.692230922] [qazbot_d1_map.motion_adapter]: yaw_loop target=-0.48 meas=+0.09 u=-0.56 I=+0.00
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335971.430498983] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335972.480516509] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335973.480512925] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335974.530509461] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335975.580512276] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335976.580510636] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335977.630518818] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335978.630510448] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335979.680506273] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335980.730508759] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335981.730512889] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335982.780511819] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335983.780510861] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335984.830516494] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335985.880517027] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335986.880509815] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335987.930501199] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335988.930508045] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [ERROR] [1793335989.230687626] [qazbot_d1_map.nav2.controller_server]: Failed to make progress
+stack-1  | [ros2-4] [controller_server-1] [WARN] [1793335989.230892403] [qazbot_d1_map.nav2.controller_server]: [follow_path] [ActionServer] Aborting handle.
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793335989.249102796] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335989.529347817] [qazbot_d1_map.nav2.controller_server]: Received a goal, begin computing control effort.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335990.579516873] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335991.629505773] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335992.629506834] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335993.679509949] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335994.679512429] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335995.729516017] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335996.779516899] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335997.779512850] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335998.829517185] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793335999.829515541] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336000.879515956] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336001.929513987] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336002.929514574] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336003.979509173] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [ERROR] [1793336004.529574100] [qazbot_d1_map.nav2.controller_server]: Failed to make progress
+stack-1  | [ros2-4] [controller_server-1] [WARN] [1793336004.529714545] [qazbot_d1_map.nav2.controller_server]: [follow_path] [ActionServer] Aborting handle.
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793336004.548970591] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336004.689097619] [qazbot_d1_map.nav2.controller_server]: Received a goal, begin computing control effort.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336005.739325052] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336006.789242413] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336007.789243125] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336008.839248912] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336009.889213346] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336010.889251634] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336011.939247342] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336012.939248689] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336013.989245881] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336015.039242373] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336016.039240875] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336017.089245752] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336018.089240601] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336019.139245676] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [ERROR] [1793336019.689313634] [qazbot_d1_map.nav2.controller_server]: Failed to make progress
+stack-1  | [ros2-4] [controller_server-1] [WARN] [1793336019.689474427] [qazbot_d1_map.nav2.controller_server]: [follow_path] [ActionServer] Aborting handle.
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793336019.709097507] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336019.929416679] [qazbot_d1_map.nav2.controller_server]: Received a goal, begin computing control effort.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336020.979613648] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336022.029613369] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336023.029616718] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336024.079615628] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336025.079609632] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336026.129620282] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336027.179601754] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336028.179634872] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336029.229613097] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336030.229614320] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336031.279622480] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336032.329619908] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336033.329615003] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336034.379615582] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [ERROR] [1793336034.929726056] [qazbot_d1_map.nav2.controller_server]: Failed to make progress
+stack-1  | [ros2-4] [controller_server-1] [WARN] [1793336034.929939002] [qazbot_d1_map.nav2.controller_server]: [follow_path] [ActionServer] Aborting handle.
+stack-1  | [ros2-4] [planner_server-3] [INFO] [1793336034.949082975] [qazbot_d1_map.nav2.global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336035.129586105] [qazbot_d1_map.nav2.controller_server]: Received a goal, begin computing control effort.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336036.179793793] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336037.229793769] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336038.229784488] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336039.279792683] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336040.279796255] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336041.329793653] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336042.379757353] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336043.379792337] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336044.429778774] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336045.429759058] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336046.479798341] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336047.529795061] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336048.529791093] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [INFO] [1793336049.579797085] [qazbot_d1_map.nav2.controller_server]: Passing new path to controller.
+stack-1  | [ros2-4] [controller_server-1] [ERROR] [1793336050.129931562] [qazbot_d1_map.nav2.controller_server]: Failed to make progress
+stack-1  | [ros2-4] [controller_server-1] [WARN] [1793336050.130164565] [qazbot_d1_map.nav2.controller_server]: [follow_path] [ActionServer] Aborting handle.
+stack-1  | [ros2-4] [bt_navigator-4] [WARN] [1793336050.158774299] [qazbot_d1_map.nav2.bt_navigator]: [navigate_to_pose] [ActionServer] Aborting handle.
+stack-1  | [ros2-4] [bt_navigator-4] [ERROR] [1793336050.159140405] [qazbot_d1_map.nav2.bt_navigator]: Goal failed

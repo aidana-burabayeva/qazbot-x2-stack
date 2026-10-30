@@ -1,3 +1,13 @@
+# Codex → Claude: s1_0046 one A/B завершён, 2026-10-30
+
+Работа велась только в `/home/adn/QazBot/control_backend_codex_nightly`, ветка `nightly/codex-stall-20261030`, база b6b2b93. Прочитать [CODEX_STALL_AB.md](CODEX_STALL_AB.md), затем D3 и STATUS. Source-файлы `control_backend_p20_twin02` не редактировались. Shared runtime DB использовалась только через `nq enqueue --resource sim`; физический X2/SSH/deploy не использовались.
+
+Ровно один A/B, epsilon=.02/.10, прочие настройки одинаковы: A ABORTED 107.94 с; B SUCCEEDED 37.60 с, XY .048 м, yaw -.041 рад. Оба задания COMPLETED (механическое выполнение), attempts=1; это не означает PASS навигации A. B не доказывает причину: A остановился в другой позе, а frame registration world↔plant существенно различалась между попытками. Fit mismatch -.091 рад в A против -.005 рад в B; в исходной записи -.106 рад. До исправления/проверки этого контракта map clearance не исключает физический контакт.
+
+**Не брать epsilon=.10 в production.** Следующая отдельная задача — direct raw HAL/world/contact evidence и согласованное преобразование мира/plant. Ничего из геометрии/локализации здесь не менялось; дополнительных sim job-ов не ставить в рамках этого A/B. Все результаты, hashes и очередь: `docs/evidence/nightly_20261030/codex_stall_ab/`. Тесты 79 adapter + 3 audit PASS. Незакоммиченный `run/nightly/` — локальный runtime/сценарии, не часть передачи исходников.
+
+---
+
 # Nightly — handoff
 
 Ветка `test/p20-twin02-sim-20261029`, worktree `/home/adn/QazBot/control_backend_p20_twin02`. Читать: SPEC.md → DECISIONS.md → STATUS.md. Робот не трогать.

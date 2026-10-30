@@ -1,0 +1,26 @@
+[
+  {
+    "name": "codex_stall_s1_0046_A_20261030",
+    "cmd": "python3 tools/nightly/run_stall_ab_case.py --arm A --evidence docs/evidence/nightly_20261030/codex_stall_ab",
+    "cwd": "/home/adn/QazBot/control_backend_codex_nightly",
+    "state": "COMPLETED",
+    "resource": "sim",
+    "attempts": 1,
+    "pid": null,
+    "started": 1793335883.6645186,
+    "finished": 1793336055.8885033,
+    "exit_code": 0
+  },
+  {
+    "name": "codex_stall_s1_0046_B_20261030",
+    "cmd": "python3 tools/nightly/run_stall_ab_case.py --arm B --evidence docs/evidence/nightly_20261030/codex_stall_ab",
+    "cwd": "/home/adn/QazBot/control_backend_codex_nightly",
+    "state": "COMPLETED",
+    "resource": "sim",
+    "attempts": 1,
+    "pid": null,
+    "started": 1793336416.6557353,
+    "finished": 1793336544.8308072,
+    "exit_code": 0
+  }
+]

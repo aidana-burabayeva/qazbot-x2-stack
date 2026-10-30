@@ -40,3 +40,10 @@
 | 6 | usage limit не останавливает механику | VERIFIED на тест-очереди (PAUSED_AGENT, механические продолжились); реальный лимит Claude не наблюдался |
 | 7 | commit/handoff в Git | VERIFIED: ветка test/p20-twin02-sim-20261029 |
 | 8 | /loop зарегистрирован | VERIFIED: CronCreate a56ac490 (1h) и 8c5b8731 (2h), session-only, 7 дней |
+
+
+## Codex: единственный A/B s1_0046 (2026-10-30)
+
+DONE (experiment), root cause still NEEDS_ENGINEERING. Ветка `nightly/codex-stall-20261030`, база b6b2b93. A yaw_lin_eps=.02: ABORTED 107.94 с; B .10: SUCCEEDED 37.60 с, XY .048 м/yaw -.041 рад. Два job-а через общую очередь `resource=sim`, attempts=1, без overlap/retry. Никакие допуски/footprint/costmap/Trust/MC limits не менялись; vx сохранён.
+
+A воспроизвёл другой stall, а измеренная привязка plant/world различалась на .091 рад против .005 рад в B. В старом stall — .106 рад, ошибка точки .69 м. Поэтому causal PASS для threshold не заявляется; контакты MuJoCo не исключены. Приоритет следующей отдельной задачи — frame contract и raw HAL/contact evidence, а не retuning P20. См. [CODEX_STALL_AB.md](CODEX_STALL_AB.md), D3, evidence `codex_stall_ab`. 79 adapter + 3 offline audit tests PASS. Физический X2 не тронут; deployment нет.

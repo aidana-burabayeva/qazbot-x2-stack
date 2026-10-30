@@ -1,0 +1,24 @@
+{
+  "arm": "A",
+  "yaw_lin_eps": 0.02,
+  "scenario": "s1_0046\tcorridor_to_wing\t-8.535\t-15.434\t0.002\t-13.385\t-4.434\t-2.657\treach",
+  "started": 1793335883.898374,
+  "git_sha": "ca75321da0d85c0c31f6b04670fbe65e0842c73d",
+  "git_diff": "",
+  "source_sha256": {
+    "ws/src/navigation/x2_motion_adapter.py": "5b95e226b94d06fd9c9e4cc3970a8db545145ae1c7831c35b879391b442d7121",
+    "ws/src/navigation/nav_control.launch.py": "39b8a6ffb13547db39a2f66716e74ce406ea7340e96205cefbff4d486c350c23",
+    "tests/p20_sim/nav2.compose.yaml": "2e0867086f7c5958cf38f8154c9b85bf4a19de4aeefd6805f38e007a7e4d9c18",
+    "tests/p20_sim/run_nav2_trace.sh": "0653537ed869c23cac2a48292ea2c16358b97745b0beeec976500cb57abd45df",
+    "tools/nightly/run_l2.sh": "7251035a6dda6fa9074043e5419279f063a1f3b64c01deb39b4bb86d392b7e12",
+    "ws/src/maps/main_office/map.pgm": "72ee4094b394241e7b2761878774efbdd99e93731d7cb52709b2231c3975b354"
+  },
+  "finished": 1793336054.6843693,
+  "runner_returncode": 0,
+  "run_name": "l2_s1_0046_20261030_095123",
+  "runtime_dir": "/home/adn/QazBot/digital_twin/results/l2_s1_0046_20261030_095123",
+  "navigation_result": "FAIL",
+  "observed_yaw_lin_eps": [
+    0.02
+  ]
+}
