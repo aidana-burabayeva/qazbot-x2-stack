@@ -1,0 +1,32 @@
+{
+  "samples": 411,
+  "start_map": [
+    -8.535,
+    -15.434,
+    0.002
+  ],
+  "fitted_raw_torso_to_nav_pelvis_yaw_rad": -0.0032332180989736764,
+  "fitted_translation_m": [
+    -8.53181628367153,
+    -15.415674252700484
+  ],
+  "fit_rmse_m": 0.005424349393178825,
+  "world_generator_expected_yaw_rad": 0.002,
+  "rotation_contract_difference_rad": -0.005233218098973676,
+  "published_nav_pelvis_end": [
+    -13.43266664669389,
+    -4.425473056268604
+  ],
+  "raw_torso_in_generated_world_map_end": [
+    -13.50011047222786,
+    -4.475195893450451
+  ],
+  "point_discrepancy_end_m": 0.08379158752565131,
+  "published_nav_point_occupied_cell_distance_m": 1.600000023841858,
+  "physical_torso_point_occupied_cell_distance_m": 1.5500000230967999,
+  "limitations": [
+    "torso and pelvis are different body points; fit residual quantifies their relative positional motion",
+    "world map transform follows build_world manifest contract; contacts/forces are not recorded",
+    "no conclusion of contact-free motion can be drawn from nav-map clearance alone"
+  ]
+}

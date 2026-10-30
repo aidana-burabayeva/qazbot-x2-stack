@@ -1,0 +1,328 @@
+s12_0000	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	75.70	10.90	-0.025
+s12_0001	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	176.10	31.41	-0.025
+s12_0002	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	81.25	12.24	-0.025
+s12_0003	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	156.05	28.24	-0.025
+s12_0004	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	121.25	22.04	-0.025
+s12_0005	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	159.05	28.19	-0.025
+s12_0006	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	149.65	26.39	-0.025
+s12_0007	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	86.10	13.22	-0.025
+s12_0008	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	211.10	38.43	-0.025
+s12_0009	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	205.80	38.02	-0.025
+s12_0010	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	95.05	15.90	-0.025
+s12_0011	corridor_to_office	reach	REACHED	PASS	narrow_mode_passage	61.15	9.88	0.025
+s12_0012	corridor_to_office	reach	REACHED	PASS	narrow_mode_passage	70.40	10.28	0.025
+s12_0013	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	125.05	22.66	-0.025
+s12_0014	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	82.10	12.85	-0.025
+s12_0015	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	155.05	27.35	-0.025
+s12_0016	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	50.20	7.25	-0.025
+s12_0017	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	80.70	12.92	-0.025
+s12_0018	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	102.20	16.50	-0.025
+s12_0019	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	63.10	9.70	-0.025
+s12_0020	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	99.05	15.96	-0.025
+s12_0021	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	85.00	15.03	-0.025
+s12_0022	corridor_to_office	reach	REACHED	PASS	narrow_mode_passage	77.50	11.86	0.025
+s12_0023	corridor_to_office	reach	REACHED	PASS	narrow_mode_passage	116.95	21.05	0.025
+s12_0024	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	146.05	26.39	-0.025
+s12_0025	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	99.65	17.28	-0.025
+s12_0026	corridor_to_office	reach	REACHED	PASS	narrow_mode_passage	55.50	8.13	0.025
+s12_0027	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	118.85	20.74	-0.025
+s12_0028	corridor_to_office	reach	REACHED	PASS	narrow_mode_passage	69.85	11.14	0.025
+s12_0029	corridor_to_office	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	202.65	36.85	-0.025
+s12_0030	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	178.85	32.15	-0.025
+s12_0031	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	88.85	14.25	-0.025
+s12_0032	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	62.85	9.95	-0.025
+s12_0033	office_to_corridor	reach	REACHED	PASS	narrow_mode_passage	68.95	10.97	0.025
+s12_0034	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	48.25	7.37	-0.025
+s12_0035	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	160.85	28.70	-0.025
+s12_0036	office_to_corridor	reach	REACHED	PASS	narrow_mode_passage	53.30	9.12	0.025
+s12_0037	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	66.05	9.91	-0.025
+s12_0038	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	127.90	22.75	-0.025
+s12_0039	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	127.75	22.27	-0.025
+s12_0040	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	152.20	27.56	-0.025
+s12_0041	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	152.20	27.44	-0.025
+s12_0042	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	159.80	28.91	-0.025
+s12_0043	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	134.45	24.18	-0.025
+s12_0044	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	87.45	15.21	-0.025
+s12_0045	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	149.70	27.77	-0.025
+s12_0046	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	200.00	35.61	-0.025
+s12_0047	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	168.10	29.40	-0.025
+s12_0048	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	103.45	17.75	-0.025
+s12_0049	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	162.60	28.96	-0.025
+s12_0050	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	57.30	8.31	-0.025
+s12_0051	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	59.55	7.95	-0.025
+s12_0052	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	104.90	17.87	-0.025
+s12_0053	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	201.10	34.10	-0.025
+s12_0054	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	118.70	19.10	-0.025
+s12_0055	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	180.80	32.16	-0.025
+s12_0056	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	161.95	29.21	-0.025
+s12_0057	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	171.05	29.17	-0.025
+s12_0058	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	109.80	17.66	-0.025
+s12_0059	office_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	160.45	28.86	-0.025
+s12_0060	corridor_to_wing	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	72.25	11.40	-0.025
+s12_0061	corridor_to_wing	reach	REACHED	PASS		130.55	23.35	0.025
+s12_0062	corridor_to_wing	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	193.90	35.65	-0.025
+s12_0063	corridor_to_wing	reach	REACHED	PASS		102.55	18.26	0.025
+s12_0064	corridor_to_wing	reach	REACHED	PASS		65.65	11.52	0.025
+s12_0065	corridor_to_wing	reach	REACHED	PASS		50.65	8.03	0.025
+s12_0066	corridor_to_wing	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	87.35	14.84	-0.025
+s12_0067	corridor_to_wing	reach	REACHED	PASS		108.85	19.26	0.025
+s12_0068	corridor_to_wing	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	61.80	10.35	-0.025
+s12_0069	corridor_to_wing	reach	REACHED	PASS		132.00	24.47	0.025
+s12_0070	corridor_to_wing	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	202.95	36.50	-0.025
+s12_0071	corridor_to_wing	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	175.20	31.52	-0.025
+s12_0072	corridor_to_wing	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	119.80	21.67	-0.025
+s12_0073	corridor_to_wing	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	111.25	18.79	-0.025
+s12_0074	corridor_to_wing	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	125.75	22.34	-0.025
+s12_0075	corridor_to_wing	reach	REACHED	PASS		123.35	21.77	0.025
+s12_0076	corridor_to_wing	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	119.15	21.64	-0.025
+s12_0077	corridor_to_wing	reach	REACHED	PASS		136.70	24.95	0.025
+s12_0078	corridor_to_wing	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	77.10	11.62	-0.025
+s12_0079	corridor_to_wing	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	95.75	16.28	-0.025
+s12_0080	corridor_to_wing	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	162.95	28.84	-0.025
+s12_0081	corridor_to_wing	reach	REACHED	PASS		117.95	21.97	0.025
+s12_0082	corridor_to_wing	reach	REACHED	PASS		112.20	20.98	0.025
+s12_0083	corridor_to_wing	reach	REACHED	PASS		48.55	7.80	0.025
+s12_0084	corridor_to_wing	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	220.00	39.84	-0.025
+s12_0085	corridor_to_wing	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	117.10	20.90	-0.025
+s12_0086	corridor_to_wing	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	164.75	30.89	-0.025
+s12_0087	corridor_to_wing	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	170.90	30.82	-0.025
+s12_0088	corridor_to_wing	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	95.95	15.53	-0.025
+s12_0089	corridor_to_wing	reach	REACHED	PASS		55.40	8.93	0.025
+s12_0090	wing_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	88.50	14.85	-0.025
+s12_0091	wing_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	121.55	21.19	-0.025
+s12_0092	wing_to_corridor	reach	REACHED	PASS		96.40	16.64	0.025
+s12_0093	wing_to_corridor	reach	REACHED	PASS		19.30	2.99	0.175
+s12_0094	wing_to_corridor	reach	REACHED	PASS		112.75	20.21	0.025
+s12_0095	wing_to_corridor	reach	REACHED	PASS		74.65	13.49	0.025
+s12_0096	wing_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	112.85	19.50	-0.025
+s12_0097	wing_to_corridor	reach	REACHED	PASS		97.55	16.91	0.025
+s12_0098	wing_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	95.40	17.14	-0.025
+s12_0099	wing_to_corridor	reach	REACHED	PASS		202.40	36.45	0.025
+s12_0100	wing_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	70.30	11.97	-0.025
+s12_0101	wing_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	116.90	19.85	-0.025
+s12_0102	wing_to_corridor	reach	REACHED	PASS		66.65	11.63	0.025
+s12_0103	wing_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	113.40	19.81	-0.025
+s12_0104	wing_to_corridor	reach	REACHED	PASS		132.45	24.28	0.025
+s12_0105	wing_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	132.80	24.00	-0.025
+s12_0106	wing_to_corridor	reach	REACHED	PASS		190.80	33.97	0.025
+s12_0107	wing_to_corridor	reach	REACHED	PASS		51.75	8.12	0.025
+s12_0108	wing_to_corridor	reach	REACHED	PASS		192.40	35.48	0.025
+s12_0109	wing_to_corridor	reach	REACHED	PASS		207.35	37.80	0.025
+s12_0110	wing_to_corridor	reach	REACHED	PASS		133.60	23.31	0.025
+s12_0111	wing_to_corridor	reach	REACHED	PASS		42.50	6.81	0.025
+s12_0112	wing_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	188.35	35.41	-0.025
+s12_0113	wing_to_corridor	reach	REACHED	PASS		102.80	16.97	0.025
+s12_0114	wing_to_corridor	reach	REACHED	PASS		68.75	12.85	0.325
+s12_0115	wing_to_corridor	reach	REACHED	PASS		75.30	13.29	0.025
+s12_0116	wing_to_corridor	reach	REACHED	PASS		70.20	12.26	0.025
+s12_0117	wing_to_corridor	reach	REACHED	PASS		197.00	35.37	0.025
+s12_0118	wing_to_corridor	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	159.75	28.01	-0.025
+s12_0119	wing_to_corridor	reach	REACHED	PASS		153.80	27.28	0.025
+s12_0120	office_internal	reach	REACHED	PASS		17.60	2.48	0.275
+s12_0121	office_internal	reach	REACHED	PASS		37.20	5.45	0.125
+s12_0122	office_internal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	29.15	3.87	-0.025
+s12_0123	office_internal	reach	REACHED	PASS		15.80	1.47	0.275
+s12_0124	office_internal	reach	REACHED	PASS		29.00	4.38	1.005
+s12_0125	office_internal	reach	REACHED	PASS		22.05	3.28	0.378
+s12_0126	office_internal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	65.05	10.17	-0.025
+s12_0127	office_internal	reach	REACHED	PASS		9.80	0.35	0.225
+s12_0128	office_internal	reach	REACHED	PASS		66.40	10.51	0.025
+s12_0129	office_internal	reach	REACHED	PASS		54.15	9.75	0.025
+s12_0130	office_internal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	44.10	6.66	-0.025
+s12_0131	office_internal	reach	REACHED	PASS		27.10	2.91	0.310
+s12_0132	office_internal	reach	REACHED	PASS		71.15	11.73	0.025
+s12_0133	office_internal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	80.05	14.51	-0.025
+s12_0134	office_internal	reach	REACHED	PASS		20.30	2.06	0.225
+s12_0135	office_internal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	49.30	7.58	-0.025
+s12_0136	office_internal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	50.85	6.73	-0.025
+s12_0137	office_internal	reach	REACHED	PASS		23.00	3.25	0.125
+s12_0138	office_internal	reach	REACHED	PASS		38.65	6.55	0.025
+s12_0139	office_internal	reach	REACHED	PASS		48.80	6.90	0.025
+s12_0140	office_internal	reach	REACHED	PASS		56.05	9.61	0.025
+s12_0141	office_internal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	81.50	14.13	-0.025
+s12_0142	office_internal	reach	REACHED	PASS		39.65	6.22	0.025
+s12_0143	office_internal	reach	REACHED	PASS		79.45	13.75	0.025
+s12_0144	office_internal	reach	REACHED	PASS		46.50	7.85	0.025
+s12_0145	office_internal	reach	REACHED	PASS		59.95	9.48	0.025
+s12_0146	office_internal	reach	REACHED	PASS		23.25	3.29	0.545
+s12_0147	office_internal	reach	REACHED	PASS		7.45	0.80	0.625
+s12_0148	office_internal	reach	REACHED	PASS		40.40	6.48	0.025
+s12_0149	office_internal	reach	REACHED	PASS		38.65	6.18	0.025
+s12_0150	corridor_internal	reach	REACHED	PASS		22.95	3.54	0.325
+s12_0151	corridor_internal	reach	REACHED	PASS		22.05	2.17	0.775
+s12_0152	corridor_internal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	105.35	19.49	-0.025
+s12_0153	corridor_internal	reach	REACHED	PASS		22.50	2.62	0.187
+s12_0154	corridor_internal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	150.25	27.03	-0.025
+s12_0155	corridor_internal	reach	REACHED	PASS		65.55	12.10	0.675
+s12_0156	corridor_internal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	98.10	17.09	-0.025
+s12_0157	corridor_internal	reach	REACHED	PASS		79.45	13.54	0.046
+s12_0158	corridor_internal	reach	REACHED	PASS		87.70	16.46	0.181
+s12_0159	corridor_internal	reach	REACHED	PASS		39.40	7.21	0.475
+s12_0160	corridor_internal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	52.35	8.22	-0.025
+s12_0161	corridor_internal	reach	REACHED	PASS		81.15	13.38	0.075
+s12_0162	corridor_internal	reach	REACHED	PASS		43.45	7.15	0.925
+s12_0163	corridor_internal	reach	REACHED	PASS		13.15	0.85	1.299
+s12_0164	corridor_internal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	26.65	2.86	-0.025
+s12_0165	corridor_internal	reach	REACHED	PASS		45.45	7.15	0.025
+s12_0166	corridor_internal	reach	REACHED	PASS		70.65	13.17	0.775
+s12_0167	corridor_internal	reach	REACHED	PASS		160.20	29.13	0.025
+s12_0168	corridor_internal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	99.40	17.24	-0.025
+s12_0169	corridor_internal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	49.20	5.77	-0.025
+s12_0170	corridor_internal	reach	REACHED	PASS		73.15	12.55	0.225
+s12_0171	corridor_internal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	139.15	25.11	-0.025
+s12_0172	corridor_internal	reach	REACHED	PASS		116.40	22.23	0.155
+s12_0173	corridor_internal	reach	REACHED	PASS		44.05	7.35	0.525
+s12_0174	corridor_internal	reach	REACHED	PASS		46.35	6.70	0.046
+s12_0175	corridor_internal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	66.20	12.06	-0.025
+s12_0176	corridor_internal	reach	REACHED	PASS		91.40	16.00	0.025
+s12_0177	corridor_internal	reach	REACHED	PASS		104.40	19.97	0.133
+s12_0178	corridor_internal	reach	REACHED	PASS		37.35	5.65	0.425
+s12_0179	corridor_internal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	166.85	31.01	-0.025
+s12_0180	doorway_crossing_in	reach	REACHED	PASS		36.15	5.38	0.025
+s12_0181	doorway_crossing_in	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	39.35	5.34	-0.025
+s12_0182	doorway_crossing_in	reach	REACHED	PASS		34.65	4.31	0.025
+s12_0183	doorway_crossing_in	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	43.25	5.49	-0.025
+s12_0184	doorway_crossing_in	reach	REACHED	PASS		33.75	3.69	0.025
+s12_0185	doorway_crossing_in	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	39.20	4.95	-0.025
+s12_0186	doorway_crossing_in	reach	REACHED	PASS		24.95	4.11	0.075
+s12_0187	doorway_crossing_in	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	37.15	5.37	-0.025
+s12_0188	doorway_crossing_in	reach	REACHED	PASS		29.25	3.57	0.155
+s12_0189	doorway_crossing_in	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	42.05	4.75	-0.025
+s12_0190	doorway_crossing_in	reach	REACHED	PASS		26.15	4.85	0.075
+s12_0191	doorway_crossing_in	reach	REACHED	PASS	narrow_mode_passage	44.70	5.78	0.025
+s12_0192	doorway_crossing_in	reach	REACHED	PASS		30.40	4.23	0.125
+s12_0193	doorway_crossing_in	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	32.95	4.38	-0.025
+s12_0194	doorway_crossing_in	reach	REACHED	PASS		21.10	4.01	0.329
+s12_0195	doorway_crossing_in	reach	REACHED	PASS	narrow_mode_passage	37.05	4.06	0.025
+s12_0196	doorway_crossing_in	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	33.05	4.52	-0.025
+s12_0197	doorway_crossing_in	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	38.30	5.64	-0.025
+s12_0198	doorway_crossing_in	reach	REACHED	PASS		35.60	4.54	0.025
+s12_0199	doorway_crossing_in	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	41.95	5.02	-0.025
+s12_0200	doorway_crossing_in	reach	REACHED	PASS		32.25	5.19	0.025
+s12_0201	doorway_crossing_in	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	47.35	5.92	-0.025
+s12_0202	doorway_crossing_in	reach	REACHED	PASS		31.05	4.46	0.133
+s12_0203	doorway_crossing_in	reach	REACHED	PASS	narrow_mode_passage	43.40	5.92	0.025
+s12_0204	doorway_crossing_in	reach	REACHED	PASS		36.40	4.70	0.025
+s12_0205	doorway_crossing_in	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	35.10	4.77	-0.025
+s12_0206	doorway_crossing_in	reach	REACHED	PASS		30.40	4.43	0.025
+s12_0207	doorway_crossing_in	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	33.50	3.45	-0.025
+s12_0208	doorway_crossing_in	reach	REACHED	PASS		29.15	3.99	0.025
+s12_0209	doorway_crossing_in	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	31.50	4.52	-0.025
+s12_0210	doorway_crossing_out	reach	REACHED	PASS		32.75	5.06	0.075
+s12_0211	doorway_crossing_out	reach	REACHED	PASS	narrow_mode_passage	41.30	5.22	0.025
+s12_0212	doorway_crossing_out	reach	REACHED	PASS		32.00	3.94	0.116
+s12_0213	doorway_crossing_out	reach	REACHED	PASS	narrow_mode_passage	38.90	5.17	0.025
+s12_0214	doorway_crossing_out	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	35.70	5.33	-0.025
+s12_0215	doorway_crossing_out	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	42.10	5.89	-0.025
+s12_0216	doorway_crossing_out	reach	REACHED	PASS		41.70	5.78	0.025
+s12_0217	doorway_crossing_out	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	36.90	4.07	-0.025
+s12_0218	doorway_crossing_out	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	35.80	4.17	-0.025
+s12_0219	doorway_crossing_out	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	44.25	5.00	-0.025
+s12_0220	doorway_crossing_out	reach	REACHED	PASS		32.40	5.26	0.133
+s12_0221	doorway_crossing_out	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	31.00	4.12	-0.025
+s12_0222	doorway_crossing_out	reach	REACHED	PASS		30.95	5.00	0.025
+s12_0223	doorway_crossing_out	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	35.05	4.64	-0.025
+s12_0224	doorway_crossing_out	reach	REACHED	PASS		33.15	5.14	0.025
+s12_0225	doorway_crossing_out	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	38.00	5.22	-0.025
+s12_0226	doorway_crossing_out	reach	REACHED	PASS		35.90	5.26	0.025
+s12_0227	doorway_crossing_out	reach	REACHED	PASS	narrow_mode_passage	41.95	5.40	0.025
+s12_0228	doorway_crossing_out	reach	REACHED	PASS		27.00	4.00	0.087
+s12_0229	doorway_crossing_out	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	34.65	5.21	-0.025
+s12_0230	doorway_crossing_out	reach	REACHED	PASS		27.60	3.87	0.025
+s12_0231	doorway_crossing_out	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	32.85	4.29	-0.025
+s12_0232	doorway_crossing_out	reach	REACHED	PASS		37.60	5.85	0.025
+s12_0233	doorway_crossing_out	reach	REACHED	PASS	narrow_mode_passage	40.40	4.61	0.025
+s12_0234	doorway_crossing_out	reach	REACHED	PASS		33.75	5.49	0.025
+s12_0235	doorway_crossing_out	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	36.75	4.95	-0.025
+s12_0236	doorway_crossing_out	reach	REACHED	PASS		40.60	5.12	0.025
+s12_0237	doorway_crossing_out	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	26.15	3.82	-0.025
+s12_0238	doorway_crossing_out	reach	REACHED	PASS		29.30	4.27	0.025
+s12_0239	doorway_crossing_out	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	46.80	5.41	-0.025
+s12_0240	near_obstacle_goal	reach	REACHED	PASS		61.35	11.80	0.175
+s12_0241	near_obstacle_goal	reach	REACHED	PASS	narrow_mode_passage	100.35	16.96	0.025
+s12_0242	near_obstacle_goal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	153.85	26.19	-0.025
+s12_0243	near_obstacle_goal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	73.50	12.16	-0.025
+s12_0244	near_obstacle_goal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	97.75	15.32	-0.025
+s12_0245	near_obstacle_goal	reach	REACHED	PASS		34.30	5.50	0.087
+s12_0246	near_obstacle_goal	reach	REACHED	PASS		87.50	15.26	0.025
+s12_0247	near_obstacle_goal	reach	REACHED	PASS		15.05	1.82	0.175
+s12_0248	near_obstacle_goal	reach	REACHED	PASS		114.70	22.49	0.125
+s12_0249	near_obstacle_goal	reach	REACHED	PASS	narrow_mode_passage	164.70	29.40	0.025
+s12_0250	near_obstacle_goal	reach	REACHED	PASS		31.00	4.33	0.025
+s12_0251	near_obstacle_goal	reach	REACHED	PASS		60.15	9.43	0.155
+s12_0252	near_obstacle_goal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	146.60	26.05	-0.025
+s12_0253	near_obstacle_goal	reach	REACHED	PASS		78.30	14.23	0.025
+s12_0254	near_obstacle_goal	reach	REACHED	PASS		132.85	25.53	0.075
+s12_0255	near_obstacle_goal	reach	REACHED	PASS		85.65	15.19	0.025
+s12_0256	near_obstacle_goal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	71.30	10.97	-0.025
+s12_0257	near_obstacle_goal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	78.80	13.31	-0.025
+s12_0258	near_obstacle_goal	reach	REACHED	PASS		154.15	28.42	0.025
+s12_0259	near_obstacle_goal	reach	REACHED	PASS		20.75	2.78	0.329
+s12_0260	near_obstacle_goal	reach	REACHED	PASS		57.90	9.35	0.025
+s12_0261	near_obstacle_goal	reach	REACHED	PASS		119.55	20.20	0.025
+s12_0262	near_obstacle_goal	reach	REACHED	PASS		13.60	1.43	0.187
+s12_0263	near_obstacle_goal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	134.80	24.94	-0.025
+s12_0264	near_obstacle_goal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown	152.40	26.73	-0.025
+s12_0265	near_obstacle_goal	reach	REACHED	PASS		78.95	13.18	0.025
+s12_0266	near_obstacle_goal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	67.45	10.23	-0.025
+s12_0267	near_obstacle_goal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	69.00	11.49	-0.025
+s12_0268	near_obstacle_goal	reach	COLLISION	FAIL	footprint_touches_obstacle_or_unknown+narrow_mode	145.75	25.73	-0.025
+s12_0269	near_obstacle_goal	reach	REACHED	PASS		9.70	1.01	0.225
+s12_0270	yaw_only_far	reach	REACHED	PASS		2.45	0.00	0.971
+s12_0271	yaw_only_far	reach	REACHED	PASS		0.30	0.00	1.778
+s12_0272	yaw_only_far	reach	REACHED	PASS		1.20	0.00	1.862
+s12_0273	yaw_only_far	reach	REACHED	PASS		3.10	0.00	1.135
+s12_0274	yaw_only_far	reach	REACHED	PASS		1.10	0.00	2.167
+s12_0275	yaw_only_far	reach	REACHED	PASS		0.30	0.00	0.325
+s12_0276	yaw_only_far	reach	REACHED	PASS		2.55	0.00	0.914
+s12_0277	yaw_only_far	reach	REACHED	PASS		1.15	0.00	0.133
+s12_0278	yaw_only_far	reach	REACHED	PASS		2.10	0.00	1.225
+s12_0279	yaw_only_far	reach	REACHED	PASS		1.60	0.00	0.467
+s12_0280	yaw_only_far	reach	REACHED	PASS		3.15	0.00	1.115
+s12_0281	yaw_only_far	reach	REACHED	PASS		2.25	0.00	0.696
+s12_0282	yaw_only_far	reach	REACHED	PASS		2.00	0.00	0.725
+s12_0283	yaw_only_far	reach	REACHED	PASS		3.20	0.00	0.375
+s12_0284	yaw_only_far	reach	REACHED	PASS		0.80	0.00	0.436
+s12_0285	yaw_only_far	reach	REACHED	PASS		0.45	0.00	0.475
+s12_0286	yaw_only_far	reach	REACHED	PASS		1.85	0.00	0.402
+s12_0287	yaw_only_far	reach	REACHED	PASS		1.50	0.00	0.475
+s12_0288	yaw_only_far	reach	REACHED	PASS		1.85	0.00	0.615
+s12_0289	yaw_only_far	reach	REACHED	PASS		1.70	0.00	1.960
+s12_0290	yaw_only_far	reach	REACHED	PASS		2.40	0.00	0.691
+s12_0291	yaw_only_far	reach	REACHED	PASS		2.15	0.00	0.387
+s12_0292	yaw_only_far	reach	REACHED	PASS		2.95	0.00	1.179
+s12_0293	yaw_only_far	reach	REACHED	PASS		1.40	0.00	0.155
+s12_0294	yaw_only_far	reach	REACHED	PASS		2.60	0.00	0.125
+s12_0295	yaw_only_far	reach	REACHED	PASS		0.00	0.00	0.225
+s12_0296	yaw_only_far	reach	REACHED	PASS		2.85	0.00	1.284
+s12_0297	yaw_only_far	reach	REACHED	PASS		3.05	0.00	1.225
+s12_0298	yaw_only_far	reach	REACHED	PASS		1.30	0.00	0.525
+s12_0299	yaw_only_far	reach	REACHED	PASS		2.70	0.00	1.375
+s12_0300	NEG_goal_in_obstacle	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0301	NEG_goal_in_obstacle	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0302	NEG_goal_in_obstacle	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0303	NEG_goal_in_obstacle	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0304	NEG_goal_in_obstacle	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0305	NEG_goal_in_obstacle	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0306	NEG_goal_in_obstacle	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0307	NEG_goal_in_unknown	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0308	NEG_goal_in_unknown	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0309	NEG_goal_in_unknown	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0310	NEG_goal_in_unknown	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0311	NEG_goal_in_unknown	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0312	NEG_goal_in_unknown	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0313	NEG_goal_in_unknown	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0314	NEG_goal_too_close_to_wall	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0315	NEG_goal_too_close_to_wall	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0316	NEG_goal_too_close_to_wall	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0317	NEG_goal_too_close_to_wall	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0318	NEG_goal_too_close_to_wall	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0319	NEG_goal_too_close_to_wall	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0320	NEG_goal_too_close_to_wall	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0321	NEG_goal_in_isolated_island	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0322	NEG_goal_in_isolated_island	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0323	NEG_goal_in_isolated_island	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0324	NEG_goal_in_isolated_island	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0325	NEG_goal_in_isolated_island	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0326	NEG_goal_in_isolated_island	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000
+s12_0327	NEG_goal_in_isolated_island	safe_reject	REJECT	PASS	goal_not_free_with_margin	0.00	0.00	-1.000

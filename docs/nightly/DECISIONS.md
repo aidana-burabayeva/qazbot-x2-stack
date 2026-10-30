@@ -17,3 +17,10 @@ A/B (одинаковые карта, старт, P20, 8/4 CPU, свежие к�
 
 ## D2 (2026-10-30) L2 stall: H2 (P20 windup) refuted by code, plant-level stall remains
 `x2_motion_adapter.py` YawRateLoop: integrator is conditional + clamped to [u_min-ff, u_max-ff], u in [0.45..1.0], rate-limited, reset on sign change/exit. The monotone growth of MC wz -0.36 -> -0.59 in s1_0046 is the bounded loop reacting to a plant that does not turn (truth dyaw~0, dxy~0, map clearance >=0.378 m at every yaw), not unbounded windup. Remaining: H1 (MC does not execute a small-vx + wz mix / stalls) and H3 (RPP outputs vx 0.01-0.09 instead of pure rotate-to-heading, so the yaw loop is bypassed when |vx|>=yaw_lin_eps=0.02). One experiment at a time, assigned to Codex in a separate worktree (branch nightly/codex-stall-20261030).
+
+
+## D3 (2026-10-30, Codex) s1_0046 one A/B: threshold result confounded by map/world registration
+
+На ветке `nightly/codex-stall-20261030` выполнены ровно два queued sim job-а: epsilon 0.02 → ABORTED 107.94 с, epsilon 0.10 → SUCCEEDED 37.60 с (XY 0.048, yaw -0.041). Настройки controller/допусков/footprint/costmap/safety одинаковы; vx не обнулялся. A остановился в другой позе, при vx≈0.30, а не в исходном low-vx stall. Подробности: [CODEX_STALL_AB.md](CODEX_STALL_AB.md).
+
+Найден frame confound: world generator использует фиксированный start→sim transform, plant переякоривается по первой HAL-позе. Fit raw torso→nav pelvis отличается от world yaw на -0.106 рад в старом stall, -0.091 в A и -0.005 в B; end-point discrepancies 0.69/0.73/0.08 м при fit RMSE ~5 мм. Следовательно map clearance в nav-позе не исключает physical-world contact. Контакты напрямую не измерены. **Не считать B доказанным исправлением H1/H3 и не поднимать production default.** NEEDS_ENGINEERING: сначала отдельная проверка raw HAL/world/contact и единых transforms. Дополнительных sim runs в этом task нет.

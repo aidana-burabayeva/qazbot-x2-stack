@@ -1,0 +1,82 @@
+ Network x2-twin_twin Creating 
+ Network x2-twin_twin Creating 
+ Network x2-twin_twin Created 
+ Network x2-twin_twin Created 
+ Container x2-twin-sim-init-1 Creating 
+ Container x2-twin-sim-init-1 Created 
+ Container x2-twin-sim-1 Creating 
+ Container x2-twin-sim-1 Created 
+ Container x2-twin-stack-1 Creating 
+ Container x2-twin-stack-1 Created 
+ Container x2-twin-sim-init-1 Starting 
+ Container x2-twin-sim-init-1 Started 
+ Container x2-twin-sim-init-1 Waiting 
+ Container x2-twin-sim-init-1 Exited 
+ Container x2-twin-sim-1 Starting 
+ Container x2-twin-sim-1 Started 
+ Container x2-twin-sim-1 Waiting 
+ Container x2-twin-sim-1 Healthy 
+ Container x2-twin-stack-1 Starting 
+ Container x2-twin-stack-1 Started 
+ Container x2-twin-sim-init-1 Waiting 
+ Container x2-twin-stack-1 Waiting 
+ Container x2-twin-sim-1 Waiting 
+ Container x2-twin-sim-init-1 Exited 
+ Container x2-twin-sim-1 Healthy 
+ Container x2-twin-stack-1 Healthy 
+{
+  "scope": "Full Nav2/Coordinator/P20 integration, truth localisation; simulation-only and not AMCL qualification.",
+  "goals": [
+    {
+      "target": [
+        -13.385,
+        -4.434,
+        -2.657
+      ],
+      "status": 4,
+      "duration": 40.061499973002356,
+      "pose": [
+        -13.43266664669389,
+        -4.425473056268604,
+        -2.69818163882868
+      ],
+      "xy_error": 0.04842332058459653,
+      "yaw_error": -0.04118163882868009,
+      "begin_ros_ns": 1793336500906177425,
+      "result_ros_ns": 1793336538502800808,
+      "zero_ros_ns": 1793336538967140441,
+      "settled_ros_ns": 1793336540967611983,
+      "at_result_pose": [
+        -13.411342385732292,
+        -4.442154934302991,
+        -2.9388044125885115
+      ],
+      "coordinator": {
+        "busy": false,
+        "latched": false,
+        "gate": false,
+        "fault": "",
+        "source_zero": true,
+        "trusted": true,
+        "paused": false,
+        "driver_ready": true,
+        "driver_mode": "live",
+        "ready": true,
+        "child_uuid": null
+      }
+    }
+  ],
+  "parameter_overrides": {
+    "goal_checker.xy_goal_tolerance": 0.2,
+    "goal_checker.yaw_goal_tolerance": 0.35
+  },
+  "controller_parameters": {
+    "goal_checker.xy_goal_tolerance": 0.2,
+    "goal_checker.yaw_goal_tolerance": 0.35,
+    "goal_checker.stateful": false,
+    "FollowPath.use_rotate_to_heading": true,
+    "FollowPath.rotate_to_heading_angular_vel": 0.5,
+    "FollowPath.use_collision_detection": true
+  },
+  "result": "PASS"
+}

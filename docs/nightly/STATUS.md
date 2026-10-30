@@ -56,3 +56,14 @@
 - **Twin image**: `x2-twin-stack:p20` собран (TWIN_VERSION=p20, :dev не тронут), в образе есть `xy_tol` в twin.launch.py. Правки twin.launch.py/robot.env синхронизированы в /home/adn/QazBot/digital_twin (оригиналы: run/nightly/backup). Квалификационные прогоны на p20 — следующий шаг (L2 пока идут на :dev + harness override).
 - **L2 doorway (doorway_crossing_in, 6 сценариев)**: Nav2 SUCCEEDED 6/6, НО по swept footprint на карте: 2/6 контакт с unknown/obstacle (-0.025 м: 1 и 9 отсчётов; ≈ полклетки карты, вердикт на границе разрешения), 2/6 зазор <=0.075 м. По правилу ТЗ (SUCCEEDED не доказательство, контакт = hard fail) это 2 hard-fail; проверка контакта в MuJoCo-мире — OPEN. doorway_crossing_out не прогонялся.
 - **Codex stall**: результат ещё не получен (A/B в очереди/на ветке nightly/codex-stall-20261030).
+
+## Codex: единственный A/B s1_0046 (2026-10-30)
+
+DONE (experiment), root cause still NEEDS_ENGINEERING. Ветка `nightly/codex-stall-20261030`, база b6b2b93. A yaw_lin_eps=.02: ABORTED 107.94 с; B .10: SUCCEEDED 37.60 с, XY .048 м/yaw -.041 рад. Два job-а через общую очередь `resource=sim`, attempts=1, без overlap/retry. Никакие допуски/footprint/costmap/Trust/MC limits не менялись; vx сохранён.
+
+A воспроизвёл другой stall, а измеренная привязка plant/world различалась на .091 рад против .005 рад в B. В старом stall — .106 рад, ошибка точки .69 м. Поэтому causal PASS для threshold не заявляется; контакты MuJoCo не исключены. Приоритет следующей отдельной задачи — frame contract и raw HAL/contact evidence, а не retuning P20. См. [CODEX_STALL_AB.md](CODEX_STALL_AB.md), D3, evidence `codex_stall_ab`. 79 adapter + 3 offline audit tests PASS. Физический X2 не тронут; deployment нет.
+
+## Принят результат Codex (merge origin/nightly/codex-stall-20261030, 2026-10-30)
+- yaw_lin_eps 0.02 -> ABORTED 107.9 с, 0.10 -> SUCCEEDED 37.6 с (XY .048, yaw -.041): ровно один A/B, причинный вывод НЕ заявлен (A остановился в другой позе, привязка plant/world различалась на .091 против .005 рад).
+- **Следствие для ВСЕХ моих L2-выводов**: map-clearance по nav-позе не равен зазору в MuJoCo-мире (расхождение позы до 0.69-0.73 м). Метки «контакт/зазор» в L2 doorway и s1_0004 = UNVERIFIED относительно физического мира; нужен frame-contract + raw contact evidence. Приоритет выше ретюнинга P20.
+- Адаптерный фикстур `QAZBOT_SIM_YAW_LIN_EPS` защищён SIM-доменом 87, дефолт продакшна не меняется (ревью диффа выполнен; adapter+nightly тесты 87 passed).

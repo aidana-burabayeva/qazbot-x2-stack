@@ -1,3 +1,9 @@
+# Текущая передача Codex → Claude: bounded stall A/B
+
+Ветка `nightly/codex-stall-20261030`, worktree `/home/adn/QazBot/control_backend_codex_nightly`. Читать [docs/nightly/HANDOFF.md](docs/nightly/HANDOFF.md) и [docs/nightly/CODEX_STALL_AB.md](docs/nightly/CODEX_STALL_AB.md). Один A/B выполнен, дальнейшие sim runs по этой задаче не разрешены. B успешен, но causal attribution confounded world/plant registration; не менять production default и не трогать физический X2. Соседний worktree не редактировать.
+
+---
+
 # Текущая передача Claude: P20 / TWIN-02, simulation only
 
 Активная ветка `test/p20-twin02-sim-20261029`; начать с [docs/P20_TWIN02_HANDOFF.md](docs/P20_TWIN02_HANDOFF.md), затем [docs/HANDOFF.md](docs/HANDOFF.md) и [docs/TEST_STATUS.md](docs/TEST_STATUS.md). Сохранить чужие dirty worktree. Карта называется `main_office`, не `t2_nav2`.

@@ -1,0 +1,1 @@
+{"scenario":"s1_0120","category":"doorway_crossing_in","expected":"reach","nav2_rc":0,"clearance":{"min_clearance_m": 0.325, "min_left_m": 0.325, "min_right_m": 0.475, "samples_in_collision": 0, "poses": 114, "unknown_is_obstacle": true}}

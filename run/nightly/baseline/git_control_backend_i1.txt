@@ -1,0 +1,20 @@
+c15dd6c6c8fe8d5e6cc1014c68bb9da51dd8a3fa
+fix/i1-rpp-collision
+ M ws/src/lio/level_bridge.py
+ M ws/src/navigation/nav_control.launch.py
+?? docs/I1_BOUNDED_CLEARING.md
+?? docs/evidence/I1_costmap_ab_managed_shutdown_20261028.json
+?? docs/evidence/I1_costmap_ab_points4_20261028.json
+?? docs/evidence/I1_costmap_ab_points8_navudp_20261028.json
+?? docs/evidence/I1_real_cloud_final_20261028.json
+?? tests/lio/CMakeLists.txt
+?? tests/lio/obstacle_layer_observation_regression.cpp
+?? tests/lio/test_i1_bounded_clearing.py
+?? tests/lio/test_i1_deployment.py
+?? tools/analyze_i1_cloud.py
+?? tools/capture_i1_cloud.py
+?? tools/deploy_i1.py
+?? tools/i1_capture_udp_only.xml
+?? tools/i1_costmap_ab.py
+?? tools/i1_nav_udp_only.xml
+?? tools/restore_hal_sensor.sh

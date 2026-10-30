@@ -1,0 +1,40 @@
+c1880c38e68607279e6fb265f4a5d38ba53ef93c
+feat/digital-twin-nightly
+ M .gitignore
+ M docs/X2_QUICKSTART_BRINGUP_RU.md
+ M tests/loc_trust/run_ros_synthetic.py
+ M tests/nav_e2e/loc_model_fixture.py
+ M tests/nav_e2e/run_suite_real.py
+?? AGENTS.md
+?? CLAUDE.md
+?? docs/HANDOFF.md
+?? docs/TEST_STATUS.md
+?? docs/evidence/I1_DATA_README.md
+?? docs/evidence/I1_capture_manifest_20261028.json
+?? docs/evidence/I1_costmap_ab_managed_shutdown_20261028.json
+?? docs/evidence/I1_costmap_ab_points4_20261028.json
+?? docs/evidence/I1_costmap_ab_points8_navudp_20261028.json
+?? docs/evidence/I1_deployment_plan_2d240dbd.json
+?? docs/evidence/I1_real_cloud_check_20261028.json
+?? docs/evidence/I1_real_cloud_final_20261028.json
+?? docs/evidence/I1_real_cloud_max_ray_20261028.json
+?? docs/evidence/hal_sensor_orin_20261028_165058.crash
+?? docs/evidence/hal_sensor_orin_pre_restore_20261028.log
+?? docs/evidence/i1_capture_x2_20261028.yaml
+?? docs/evidence/i1_cloud_registered_20261028_084925Z.capture.log
+?? docs/evidence/i1_cloud_registered_20261028_084925Z.lio.log
+?? docs/evidence/i1_cloud_registered_20261028_084925Z/
+?? docs/evidence/i1_cloud_registered_20261028_084925Z_r2.capture.log
+?? docs/evidence/i1_cloud_registered_20261028_084925Z_r2/
+?? docs/evidence/i1_cloud_registered_udp_20261028_092700Z/
+?? docs/evidence/i1_costmap_ab_20261028_points4/
+?? docs/evidence/i1_costmap_ab_20261028_points8_navudp/
+?? docs/evidence/i1_dds_vendor_probe_20261028.json
+?? docs/evidence/i1_dds_vendor_probe_20261028.log
+?? docs/evidence/i1_deploy_2d240dbd/
+?? docs/evidence/t5live1_graph_20261028.json
+?? docs/evidence/t5live1_localization_20261028.log.gz
+?? docs/evidence/t5live1_observer_20261028.jsonl.gz
+?? docs/evidence/t5live1_summary_20261028.json
+?? docs/evidence/t5live1_trust_20261028.log.gz
+?? ws/src/maps/main_office/

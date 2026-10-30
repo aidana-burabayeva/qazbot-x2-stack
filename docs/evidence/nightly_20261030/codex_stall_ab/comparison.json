@@ -1,0 +1,166 @@
+{
+  "A": {
+    "nav_result": "FAIL",
+    "nav_status": 6,
+    "goal_duration_s": 107.9369261264801,
+    "xy_error_m": 4.411575296710162,
+    "yaw_error_rad": -1.848273651587581,
+    "controller_parameters": {
+      "goal_checker.xy_goal_tolerance": 0.2,
+      "goal_checker.yaw_goal_tolerance": 0.35,
+      "goal_checker.stateful": false,
+      "FollowPath.use_rotate_to_heading": true,
+      "FollowPath.rotate_to_heading_angular_vel": 0.5,
+      "FollowPath.use_collision_detection": true
+    },
+    "observed_yaw_lin_eps": [
+      0.02
+    ],
+    "final_adapter_counters": {
+      "saturated": 0,
+      "rejected": 0,
+      "latched": 0,
+      "published": 5387,
+      "yaw_loop": 312,
+      "yaw_meas_stale": 0
+    },
+    "yaw_loop_per_published": 0.05791720809355857,
+    "fixed_60_130s": {
+      "duration_s": 47.80002760887146,
+      "pose_first": [
+        -10.057832565296929,
+        -7.30114893833805,
+        1.6678647473343204
+      ],
+      "pose_last": [
+        -10.04077986205275,
+        -7.298037132415834,
+        1.6864241887265587
+      ],
+      "dxy_m": 0.01733430194820587,
+      "dyaw_rad": 0.018559441392238307,
+      "yaw_excursion_rad": 0.2882903861684667,
+      "pose_yaw_rate_rad_s": 0.0003882726082106648,
+      "nav_ns": {
+        "n": 950,
+        "vx_mean": 0.29873684210526313,
+        "wz_mean": -0.059023230361389886,
+        "wz_min": -0.1957469556609216,
+        "wz_max": 0.11628703421948712,
+        "negative_turn_fraction": 0.5410526315789473,
+        "vx_under_002_fraction": 0.004210526315789474,
+        "vx_under_010_fraction": 0.004210526315789474
+      },
+      "authorized": {
+        "n": 959,
+        "vx_mean": 0.29772679874869656,
+        "wz_mean": -0.05832850320972791,
+        "wz_min": -0.1957469556609216,
+        "wz_max": 0.11628703421948712,
+        "negative_turn_fraction": 0.5349322210636079,
+        "vx_under_002_fraction": 0.0010427528675703858,
+        "vx_under_010_fraction": 0.0010427528675703858
+      },
+      "mc": {
+        "n": 2397,
+        "vx_mean": 0.2980392156862745,
+        "wz_mean": -0.05851027861771551,
+        "wz_min": -0.1957469556609216,
+        "wz_max": 0.11628703421948712,
+        "negative_turn_fraction": 0.5356695869837297,
+        "vx_under_002_fraction": 0,
+        "vx_under_010_fraction": 0
+      }
+    },
+    "commanded_stall_10s_window_count": 18,
+    "first_commanded_stall": {
+      "from_goal_s": 35.07886862754822,
+      "to_goal_s": 45.07886862754822,
+      "duration_s": 9.999712705612183,
+      "pose_first": [
+        -10.058166821219162,
+        -7.304645166805196,
+        1.6449168371798626
+      ],
+      "pose_last": [
+        -10.055477800319181,
+        -7.302779368877854,
+        1.6936963762357313
+      ],
+      "dxy_m": 0.003272924579975476,
+      "dyaw_rad": 0.04877953905586874,
+      "yaw_excursion_rad": 0.04877953905586874,
+      "pose_yaw_rate_rad_s": 0.004878094050491269,
+      "nav_ns": {
+        "n": 200,
+        "vx_mean": 0.3,
+        "wz_mean": -0.202086177648318,
+        "wz_min": -0.21958975022064217,
+        "wz_max": -0.16787711369043137,
+        "negative_turn_fraction": 1,
+        "vx_under_002_fraction": 0,
+        "vx_under_010_fraction": 0
+      },
+      "authorized": {
+        "n": 200,
+        "vx_mean": 0.3,
+        "wz_mean": -0.20182249575889957,
+        "wz_min": -0.21958975022064217,
+        "wz_max": -0.1668533723369598,
+        "negative_turn_fraction": 1,
+        "vx_under_002_fraction": 0,
+        "vx_under_010_fraction": 0
+      },
+      "mc": {
+        "n": 500,
+        "vx_mean": 0.3,
+        "wz_mean": -0.20166428662524855,
+        "wz_min": -0.21958975022064217,
+        "wz_max": -0.1668533723369598,
+        "negative_turn_fraction": 1,
+        "vx_under_002_fraction": 0,
+        "vx_under_010_fraction": 0
+      }
+    },
+    "failed_progress_log_count": 5,
+    "limitation": "Pose-derived response. No MuJoCo contact forces are recorded; one A/B pair is not a repeatability estimate."
+  },
+  "B": {
+    "nav_result": "PASS",
+    "nav_status": 4,
+    "goal_duration_s": 37.59662342071533,
+    "xy_error_m": 0.04842332058459653,
+    "yaw_error_rad": -0.04118163882868009,
+    "controller_parameters": {
+      "goal_checker.xy_goal_tolerance": 0.2,
+      "goal_checker.yaw_goal_tolerance": 0.35,
+      "goal_checker.stateful": false,
+      "FollowPath.use_rotate_to_heading": true,
+      "FollowPath.rotate_to_heading_angular_vel": 0.5,
+      "FollowPath.use_collision_detection": true
+    },
+    "observed_yaw_lin_eps": [
+      0.1
+    ],
+    "final_adapter_counters": {
+      "saturated": 0,
+      "rejected": 0,
+      "latched": 0,
+      "published": 1872,
+      "yaw_loop": 237,
+      "yaw_meas_stale": 0
+    },
+    "yaw_loop_per_published": 0.1266025641025641,
+    "fixed_60_130s": {},
+    "commanded_stall_10s_window_count": 0,
+    "first_commanded_stall": null,
+    "failed_progress_log_count": 0,
+    "limitation": "Pose-derived response. No MuJoCo contact forces are recorded; one A/B pair is not a repeatability estimate."
+  },
+  "invariants": {
+    "scenario_equal": true,
+    "source_hashes_equal": true,
+    "controller_parameters_equal": true,
+    "only_experimental_setting": "yaw_lin_eps .02 -> .10; vx preserved"
+  }
+}

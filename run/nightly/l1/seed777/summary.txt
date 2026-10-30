@@ -1,0 +1,1 @@
+L1 MODEL: 1100 scenarios, 680 as expected, 420 not, 0.99s wall, 1107.5 scen/s, 12 threads

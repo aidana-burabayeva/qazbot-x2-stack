@@ -1,0 +1,5 @@
+184fa8b2e5787bc55664b5003c42995331d8a87d
+test/p20-twin02-sim-20261029
+ M tests/p20_sim/nav2_goals.py
+?? run/nightly/
+?? tests/p20_sim/recorder/
