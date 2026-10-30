@@ -1,0 +1,196 @@
+{
+ "tasks": [
+  {
+   "name": "s1_fix_add",
+   "state": "COMPLETED",
+   "phase": "VERIFIED",
+   "owner": "claude",
+   "model": "claude-haiku-5-5",
+   "effort": "low",
+   "attempts": 1,
+   "attempt_wt": "/tmp/qazbot_e2e_3m2zy353/repo/run/nightly/attempts/s1_fix_add.1.82ce98",
+   "branch": "attempt/s1_fix_add-1-82ce98",
+   "reason": null
+  },
+  {
+   "name": "s2_fix_mul",
+   "state": "COMPLETED",
+   "phase": "VERIFIED",
+   "owner": "codex",
+   "model": "gpt-6.1-sol",
+   "effort": "low",
+   "attempts": 1,
+   "attempt_wt": "/tmp/qazbot_e2e_3m2zy353/repo/run/nightly/attempts/s2_fix_mul.1.d70ca4",
+   "branch": "attempt/s2_fix_mul-1-d70ca4",
+   "reason": null
+  },
+  {
+   "name": "s3_integrate",
+   "state": "COMPLETED",
+   "phase": "VERIFIED",
+   "owner": "claude",
+   "model": "claude-haiku-5-5",
+   "effort": "low",
+   "attempts": 1,
+   "attempt_wt": "/tmp/qazbot_e2e_3m2zy353/repo/run/nightly/attempts/s3_integrate.1.525a8c",
+   "branch": "attempt/s3_integrate-1-525a8c",
+   "reason": null
+  }
+ ],
+ "results": [
+  {
+   "task": "s1_fix_add",
+   "attempt": 1,
+   "scenario_id": "engineering:s1_fix_add",
+   "verdict": "PASS",
+   "metrics": "{\"branch\": \"attempt/s1_fix_add-1-82ce98\", \"git_sha\": \"db94ccbaa80684ca133d313f4b79a78651c4f556\", \"rerun_ok\": true, \"tests_cmd\": \"python3 -m pytest -q tests/test_a.py\"}",
+   "evidence_path": "/tmp/qazbot_e2e_3m2zy353/repo/run/nightly/evidence/26b0512efdc48740",
+   "manifest_sha256": "c7862167a685a142b2ca645c558930dac320b16c45ebe8e87f8c17b6c445df91",
+   "status": "STORED"
+  },
+  {
+   "task": "s2_fix_mul",
+   "attempt": 1,
+   "scenario_id": "engineering:s2_fix_mul",
+   "verdict": "PASS",
+   "metrics": "{\"branch\": \"attempt/s2_fix_mul-1-d70ca4\", \"git_sha\": \"456a2d0828233418955035f52e7f0fc50b74a043\", \"rerun_ok\": true, \"tests_cmd\": \"python3 -m pytest -q tests/test_a.py tests/test_b.py\"}",
+   "evidence_path": "/tmp/qazbot_e2e_3m2zy353/repo/run/nightly/evidence/8adfc38bf9450929",
+   "manifest_sha256": "36752e635403be3983fb53d904891bb5fd57dafb47e676365e794f1e800cd6f8",
+   "status": "STORED"
+  },
+  {
+   "task": "s3_integrate",
+   "attempt": 1,
+   "scenario_id": "engineering:s3_integrate",
+   "verdict": "PASS",
+   "metrics": "{\"branch\": \"attempt/s3_integrate-1-525a8c\", \"git_sha\": \"1ab446e9b62c9dcd1eae0635affe8ec6af774232\", \"rerun_ok\": true, \"tests_cmd\": \"python3 -m pytest -q\"}",
+   "evidence_path": "/tmp/qazbot_e2e_3m2zy353/repo/run/nightly/evidence/b386af193f302078",
+   "manifest_sha256": "af220e4a148e1cccc50ee6128cde3a054ec02ab28ea3ffe30d7a63447f993b2d",
+   "status": "STORED"
+  }
+ ],
+ "events": [
+  {
+   "ts": "2026-10-30 15:24:42",
+   "task": "s1_fix_add",
+   "event": "ENQUEUED",
+   "detail": "Fix the bug in calc/a.py so that tests/test_a.py passes. Change only calc/a.py. Use tests.cmd \"python3 -m pytest -q tests/test_a.py\" and files=[{\"path\":\"calc/a.py\"}]. --agents=claude"
+  },
+  {
+   "ts": "2026-10-30 15:24:42",
+   "task": "s2_fix_mul",
+   "event": "ENQUEUED",
+   "detail": "The previous step (done by another agent, already committed in your worktree) fixed calc/a.py. Now fix the bug in calc/b.py so that tests/test_b.py passes, and keep tests/test_a.py passing. Change onl"
+  },
+  {
+   "ts": "2026-10-30 15:24:42",
+   "task": "s3_integrate",
+   "event": "ENQUEUED",
+   "detail": "Two previous steps by other agents are committed in your worktree (calc/a.py and calc/b.py fixed). Create tests/test_integration.py asserting add(2, 3) == 5 and mul(2, 3) == 6 (import from calc.a and "
+  },
+  {
+   "ts": "2026-10-30 15:24:43",
+   "task": "s1_fix_add",
+   "event": "OWNER",
+   "detail": "claude"
+  },
+  {
+   "ts": "2026-10-30 15:24:43",
+   "task": "s1_fix_add",
+   "event": "START",
+   "detail": "claude -p 'Fix the bug in calc/a.py so that tests/test_a.py passes. Change only calc/a.py. Use tests.cmd \"python3 -m pytest -q tests/test_a.py\" and files=[{\"path\":\"calc/a.py\"}]. --agents=claude\n\n[QAZB"
+  },
+  {
+   "ts": "2026-10-30 15:25:05",
+   "task": "s1_fix_add",
+   "event": "RESULT",
+   "detail": "structurally accepted; verification job starting"
+  },
+  {
+   "ts": "2026-10-30 15:25:07",
+   "task": "s1_fix_add",
+   "event": "VERIFIED",
+   "detail": "tests rc=0"
+  },
+  {
+   "ts": "2026-10-30 15:25:07",
+   "task": "s1_fix_add",
+   "event": "INTEGRATION_READY",
+   "detail": "branch=attempt/s1_fix_add-1-82ce98 sha=db94ccbaa80684ca133d313f4b79a78651c4f556 (not merged anywhere; merge is a separate gated step)"
+  },
+  {
+   "ts": "2026-10-30 15:25:07",
+   "task": "s2_fix_mul",
+   "event": "OWNER",
+   "detail": "codex"
+  },
+  {
+   "ts": "2026-10-30 15:25:08",
+   "task": "s2_fix_mul",
+   "event": "START",
+   "detail": "codex exec --json --skip-git-repo-check -s workspace-write -C /tmp/qazbot_e2e_3m2zy353/repo/run/nightly/attempts/s2_fix_mul.1.d70ca4 -m gpt-6.1-sol -c 'model_reasoning_effort=\"low\"' -o /tmp/qazbot_e2e"
+  },
+  {
+   "ts": "2026-10-30 15:25:38",
+   "task": "s2_fix_mul",
+   "event": "RESULT",
+   "detail": "structurally accepted; verification job starting"
+  },
+  {
+   "ts": "2026-10-30 15:25:40",
+   "task": "s2_fix_mul",
+   "event": "VERIFIED",
+   "detail": "tests rc=0"
+  },
+  {
+   "ts": "2026-10-30 15:25:40",
+   "task": "s2_fix_mul",
+   "event": "INTEGRATION_READY",
+   "detail": "branch=attempt/s2_fix_mul-1-d70ca4 sha=456a2d0828233418955035f52e7f0fc50b74a043 (not merged anywhere; merge is a separate gated step)"
+  },
+  {
+   "ts": "2026-10-30 15:25:40",
+   "task": "s3_integrate",
+   "event": "OWNER",
+   "detail": "claude"
+  },
+  {
+   "ts": "2026-10-30 15:25:40",
+   "task": "s3_integrate",
+   "event": "START",
+   "detail": "claude -p 'Two previous steps by other agents are committed in your worktree (calc/a.py and calc/b.py fixed). Create tests/test_integration.py asserting add(2, 3) == 5 and mul(2, 3) == 6 (import from "
+  },
+  {
+   "ts": "2026-10-30 15:26:14",
+   "task": "s3_integrate",
+   "event": "RESULT",
+   "detail": "structurally accepted; verification job starting"
+  },
+  {
+   "ts": "2026-10-30 15:26:16",
+   "task": "s3_integrate",
+   "event": "VERIFIED",
+   "detail": "tests rc=0"
+  },
+  {
+   "ts": "2026-10-30 15:26:16",
+   "task": "s3_integrate",
+   "event": "INTEGRATION_READY",
+   "detail": "branch=attempt/s3_integrate-1-525a8c sha=1ab446e9b62c9dcd1eae0635affe8ec6af774232 (not merged anywhere; merge is a separate gated step)"
+  }
+ ],
+ "independent_check": {
+  "branch": "attempt/s3_integrate-1-525a8c",
+  "rc": 0,
+  "out": "....                                                                     [100%]\n4 passed in 0.01s\n",
+  "tip": "1ab446e9b62c9dcd1eae0635affe8ec6af774232",
+  "log": [
+   "1ab446e qazbot-nightly nightly attempt s3_integrate#1 (committed by the orchestrator, not by the agent)",
+   "456a2d0 qazbot-nightly nightly attempt s2_fix_mul#1 (committed by the orchestrator, not by the agent)",
+   "db94ccb qazbot-nightly nightly attempt s1_fix_add#1 (committed by the orchestrator, not by the agent)",
+   "fed0771 e2e initial: two bugs"
+  ]
+ },
+ "repo": "/tmp/qazbot_e2e_3m2zy353/repo",
+ "seconds": 94
+}

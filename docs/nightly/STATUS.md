@@ -93,3 +93,10 @@ A воспроизвёл другой stall, а измеренная привя�
 - Контракт завершения Codex исправлен: `codex queue` = только доставка; `COMPLETED` лишь по проверенному результату. Подробности и ограничения: `docs/nightly/CODEX_COMPLETION_CONTRACT.md`.
 - Обнаружено: в реальной очереди Codex 12 неконсумированных сообщений (STOP/review/ретракция). Из них 1 мусорное (`01a18bb6`, тест до guard) и 3 лишних `OPERATOR STOP` из прогонов теста, где `lab.py` вызывал зашитый `codex` (исправлено: бинарник через адаптер; отозвано сообщением-ретракцией `01a18be4`). Очередь Codex чужая БД: не мутировалась.
 - Review Codex по-прежнему `REVIEW_PENDING`. Независимый review выполнил отдельный reviewer-агент: 15 находок, все существенные исправлены (`docs/nightly/REVIEW_P1_1.md`). Регресс: `tests/nightly tests/motion_adapter` — 175 passed.
+
+## P1.2 (2026-10-30)
+- Реальный E2E Claude→Codex→Claude: PASS ×2 (`docs/evidence/nightly_20261030/p1_2_real_e2e/`). Autonomous continuity больше не зависит от открытого Codex TUI (`codex exec`).
+- Новое: изоляция попыток (worktree+ветка), коммит/хеши оркестратором, неблокирующая верификация, usage-aware ожидание ≤60 мин по официальному `resetsAt`, Router, `PAUSED_LIMIT`.
+- Старая очередь Codex (12 сообщений): `docs/nightly/CODEX_QUEUE_AUDIT.md`. Не активировать вслепую (сообщение-мусор 01a18bb6 стоит раньше ретракции).
+- Регресс: `tests/nightly` 112 passed; `tests/motion_adapter` отдельно. Реальные агенты запускаются только `e2e_real.py` (conftest блокирует в unit tests).
+- UNVERIFIED: передача при настоящем лимите; пороги 95–99 % не включены; Claude quota UNKNOWN; sonnet/opus; merge queue (INTEGRATION_READY не сливается автоматически); реальный Codex review.

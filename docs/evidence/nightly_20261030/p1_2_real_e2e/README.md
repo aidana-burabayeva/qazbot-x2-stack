@@ -1,6 +1,6 @@
 # P1.2 real-agent E2E: Claude -> Codex -> Claude (2026-10-30)
 
-Run by `tools/nightly/e2e_real.py --i-understand-this-spends-quota` against orchestrator code at commit `4e06f3d` (before the router/usage-aware commit).
+Run by `tools/nightly/e2e_real.py --i-understand-this-spends-quota` against orchestrator code at commit `1f6a88c` (final P1.2 code: router, usage-aware, stdin isolation). The first run (commit before router, `run1_before_router/`) also passed in 94 s.
 Real binaries: `claude -p` (claude-haiku-5-5, effort low) and `codex exec` (gpt-6.1-sol, effort low; codex-cli 0.165). Throw-away repo in /tmp, no robot, no production, no Codex TUI.
 
 | step | agent | result |

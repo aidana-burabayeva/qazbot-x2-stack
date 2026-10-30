@@ -35,3 +35,10 @@
 - Контракт одинаков для Claude и Codex: код возврата агента 0 без проверенного результата ⇒ `NEEDS_ENGINEERING`.
 - Автоматического supersede нет; ручной: `nq.py supersede <task> --force-lease-release`.
 - Допустимые методы app-server: `initialize`, `account/rateLimits/read`, `thread/turns/list` (allowlist).
+
+## P1.2: Codex без TUI (default) — `codex exec`
+- Режим по умолчанию `NIGHTLY_CODEX_MODE=exec`: официальный неинтерактивный `codex exec --json -C <attempt worktree> -s workspace-write -m <model> -c model_reasoning_effort="<effort>" -o last_message.txt`. Свой процесс, своя сессия, явный жизненный цикл (pid, process group, код возврата). Открытый TUI не нужен. `queue` — legacy (человеко-видимые заметки).
+- Каждая попытка = отдельный git worktree + ветка от известного SHA (`run/nightly/attempts/<task>.<n>.<id>`). Коммит, SHA и sha256 файлов считает оркестратор; агенту shell не нужен. Worktree никогда не переиспользуется; освобождение lease не считается доказательством остановки процесса — после конца попытки процессы с cwd в worktree убиваются и фиксируются (`ATTEMPT_SURVIVORS_KILLED`).
+- Fencing: результат читается только из `.qazbot/results/<task>.<attempt>.json` текущей попытки, `attempt_id` обязателен; результат старой попытки лежит в старом worktree и не читается вообще.
+- Верификация тестов — отдельный процесс (`nice -n 10`, лимит времени `NIGHTLY_VERIFY_TIMEOUT_S`, `OMP_NUM_THREADS=1`), состояние `VERIFYING`; очередь не блокируется. Лимиты обоснованы типом: это pytest-регрессии (CPU-лёгкие, секунды); симуляционные испытания этим не проверяются и ограничения не получают. Никаких retry/watchdog для навигационных алгоритмов.
+- После `VERIFIED` ветка попытки — `INTEGRATION_READY`; **автослияния нет**, слияние — отдельный шаг за regression gates.
