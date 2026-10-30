@@ -21,6 +21,9 @@ import sys
 import time
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import store  # noqa: E402
+
 ROOT = Path(os.environ.get('NIGHTLY_ROOT', Path(__file__).resolve().parents[2]))
 RUN = Path(os.environ.get('NIGHTLY_RUN', ROOT / 'run' / 'nightly'))
 DB = RUN / 'queue.db'
@@ -51,7 +54,11 @@ def connect():
     db.execute('PRAGMA journal_mode=WAL')
     db.execute('PRAGMA synchronous=NORMAL')
     db.executescript(SCHEMA)
-    if 'klass' not in [r[1] for r in db.execute('PRAGMA table_info(tasks)')]:
+    store.init(db)
+    cols = [r[1] for r in db.execute('PRAGMA table_info(tasks)')]
+    if 'requires_result' not in cols:
+        db.execute('ALTER TABLE tasks ADD COLUMN requires_result INTEGER NOT NULL DEFAULT 0')  # 1: no result.json -> never COMPLETED
+    if 'klass' not in cols:
         db.execute('ALTER TABLE tasks ADD COLUMN klass TEXT')  # SIM_ONLY | SIM_THEN_HARDWARE | HARDWARE_ONLY | NEEDS_APPROVAL
     return db
 
@@ -82,6 +89,10 @@ def checkpoint(db, why):
     cp = {'ts': time.time(), 'why': why, 'git_sha': git('rev-parse', 'HEAD'), 'git_branch': git('rev-parse', '--abbrev-ref', 'HEAD'),
           'dirty': git('status', '--porcelain').count('\n') + (1 if git('status', '--porcelain') else 0),
           'queue': counts, 'agents': kv_get(db, 'agents', {}),
+          'results': {'total': db.execute('SELECT COUNT(*) FROM results').fetchone()[0],
+                      'by_verdict': {r['verdict']: r['n'] for r in db.execute('SELECT verdict, COUNT(*) n FROM results GROUP BY verdict')},
+                      'evidence_missing': db.execute("SELECT COUNT(*) FROM results WHERE status!='STORED'").fetchone()[0]},
+          'last_engineering_checkpoint': (lambda r: dict(r) if r else None)(db.execute('SELECT task,ts,source,verified,next_step FROM eng_checkpoints ORDER BY id DESC LIMIT 1').fetchone()),
           'running': [dict(name=r['name'], pid=r['pid'], started=r['started']) for r in db.execute("SELECT * FROM tasks WHERE state='RUNNING'")],
           'blocked': [dict(name=r['name'], state=r['state'], reason=r['reason'], repro=r['repro'])
                       for r in db.execute("SELECT * FROM tasks WHERE state IN ('NEEDS_APPROVAL','NEEDS_HARDWARE','NEEDS_ENGINEERING','PAUSED_AGENT','FAILED')")]}
@@ -117,7 +128,11 @@ def signature(task, log_tail):
 
 
 def recover(db):
-    """After any restart: RUNNING rows are orphans. Kill survivors of our process groups, then requeue or park."""
+    """After any restart: finish what a crash left half-done (evidence <-> index), then RUNNING rows are orphans:
+    kill survivors of our process groups, then requeue or park."""
+    rep = store.adopt_orphans(db, RUN)
+    if any(rep.values()):
+        ev(db, '*', 'STORE_RECOVER', json.dumps(rep)[:1500])
     for r in db.execute("SELECT * FROM tasks WHERE state='RUNNING'").fetchall():
         if r['pid']:
             try:
@@ -125,6 +140,8 @@ def recover(db):
             except (ProcessLookupError, PermissionError):
                 pass
         nxt = 'PENDING' if r['attempts'] < r['max_attempts'] else 'FAILED'
+        if r['kind'] == 'engineering':
+            eng_autocheckpoint(db, r, 'orchestrator-recover', 'agent/orchestrator died without a final message')
         db.execute('UPDATE tasks SET state=?, pid=NULL, reason=? WHERE id=?', (nxt, 'recovered after orchestrator restart (INTERRUPTED)', r['id']))
         ev(db, r['name'], 'INTERRUPTED', f'-> {nxt}')
     checkpoint(db, 'recover')
@@ -144,16 +161,77 @@ def ready(db):
         yield r
 
 
+def result_dir(name, attempt):
+    return RUN / 'work' / f'{name}.{attempt}'
+
+
 def run_mechanical(db, r):
     name = r['name']
-    log = LOGS / f"{name}.{r['attempts'] + 1}.log"
-    db.execute("UPDATE tasks SET state='RUNNING', attempts=attempts+1, started=?, log_path=?, finished=NULL, exit_code=NULL WHERE id=?", (time.time(), str(log), r['id']))
+    attempt = r['attempts'] + 1
+    log = LOGS / f"{name}.{attempt}.log"
+    rdir = result_dir(name, attempt)
+    rdir.mkdir(parents=True, exist_ok=True)
+    dirty = bool(git('status', '--porcelain', '--untracked-files=no'))
+    base = dict(task=name, attempt=attempt, git_sha=git('rev-parse', 'HEAD'), code_dirty=dirty,
+                config_sha=hashlib.sha256(r['cmd'].encode()).hexdigest()[:16])
+    db.execute("UPDATE tasks SET state='RUNNING', attempts=?, started=?, log_path=?, finished=NULL, exit_code=NULL WHERE id=?", (attempt, time.time(), str(log), r['id']))
+    kv_set(db, f'base:{name}:{attempt}', base)
     ev(db, name, 'START', r['cmd'])
     checkpoint(db, f'start {name}')
     with open(log, 'wb') as fh:
-        p = subprocess.Popen(['bash', '-lc', r['cmd']], cwd=r['cwd'], stdout=fh, stderr=subprocess.STDOUT, start_new_session=True)
+        p = subprocess.Popen(['bash', '-lc', r['cmd']], cwd=r['cwd'], stdout=fh, stderr=subprocess.STDOUT, start_new_session=True,
+                             env=dict(os.environ, NIGHTLY_RESULT_DIR=str(rdir), NIGHTLY_TASK=name, NIGHTLY_ATTEMPT=str(attempt)))
     db.execute('UPDATE tasks SET pid=? WHERE id=?', (p.pid, r['id']))
     return p, log
+
+
+def eng_autocheckpoint(db, r, source, why):
+    """Engineering checkpoint written by ordinary code when an agent ends without writing its own. Never 'verified'."""
+    cwd = r['cwd'] or str(ROOT)
+
+    def g(*a):
+        try:
+            return subprocess.run(['git', '-C', cwd, *a], capture_output=True, text=True, timeout=20).stdout.strip()
+        except Exception:
+            return ''
+    tail = ''
+    if r['log_path'] and Path(r['log_path']).exists():
+        tail = Path(r['log_path']).read_text(errors='replace')[-1500:]
+    store.save_engineering_checkpoint(db, r['name'], source, git_sha=g('rev-parse', 'HEAD'), worktree=cwd,
+                                      files_changed=g('diff', '--name-only', 'HEAD').splitlines(),
+                                      unfinished=g('status', '--porcelain').splitlines()[:50], verified=False,
+                                      next_step='new agent: re-check git state and evidence; treat uncommitted changes as UNVERIFIED', detail=f'{why}\n{tail}')
+
+
+def harvest(db, r, rc, log, state, sig, reason):
+    """Persist everything the task produced BEFORE the queue is allowed to say COMPLETED (failed attempts too).
+    Returns None when the task row was written inside the commit transaction, else (state, reason) for a plain update."""
+    attempt = r['attempts']
+    rdir = result_dir(r['name'], attempt)
+    rj = rdir / 'result.json'
+    has_files = rdir.exists() and any(rdir.rglob('*'))
+    req = bool(r['requires_result'])
+    if not has_files and not req:
+        return state, reason  # legacy task without a result contract
+    items, errs = [], []
+    if rj.exists():
+        try:
+            items, errs = store.validate(json.loads(rj.read_text()))
+        except json.JSONDecodeError as e:
+            errs = [f'result.json is not valid JSON: {e}']
+    elif req:
+        errs = ['result.json missing']
+    if errs:
+        state, reason = 'NEEDS_ENGINEERING', ('invalid/missing result: ' + '; '.join(errs))[:300]
+        items = []
+    rdir.mkdir(parents=True, exist_ok=True)
+    if log.exists():
+        (rdir / 'task.log').write_bytes(log.read_bytes())
+    base = kv_get(db, f"base:{r['name']}:{attempt}", None) or dict(task=r['name'], attempt=attempt, git_sha=git('rev-parse', 'HEAD'), code_dirty=False)
+    meta = dict(base=base, items=items, final_state=state, exit_code=rc, signature=sig)
+    ev_path, man_sha = store.publish(RUN, r['name'], attempt, rdir, meta)
+    store.commit(db, r['id'], items, ev_path, man_sha, base, state, rc, reason, sig)
+    return None
 
 
 def finish(db, r, p, log, verdict):
@@ -172,7 +250,14 @@ def finish(db, r, p, log, verdict):
         state = 'PENDING' if retry else ('NEEDS_ENGINEERING' if not seen else 'FAILED')
         db.execute('INSERT INTO failures VALUES(?,?,?,?,?,?) ON CONFLICT(signature) DO UPDATE SET count=count+1, last_ts=excluded.last_ts',
                    (sig, name, 1, time.time(), time.time(), tail[-500:]))
-    db.execute('UPDATE tasks SET state=?, exit_code=?, pid=NULL, finished=?, signature=?, reason=? WHERE id=?', (state, rc, time.time(), sig, reason, r['id']))
+    full = db.execute('SELECT * FROM tasks WHERE id=?', (r['id'],)).fetchone()
+    if full['kind'] == 'engineering':
+        eng_autocheckpoint(db, full, 'orchestrator-finish', f'agent command ended rc={rc} verdict={verdict}')
+    plain = harvest(db, full, rc, log, state, sig, reason)
+    if plain is not None:  # nothing to persist (legacy task)
+        db.execute('UPDATE tasks SET state=?, exit_code=?, pid=NULL, finished=?, signature=?, reason=? WHERE id=?', (state, rc, time.time(), sig, reason, r['id']))
+    else:
+        state = db.execute('SELECT state FROM tasks WHERE id=?', (r['id'],)).fetchone()['state']
     ev(db, name, state, f'rc={rc} {reason or ""} sig={sig}')
     checkpoint(db, f'finish {name} {state}')
 
@@ -241,8 +326,19 @@ def tick(db, cur):
     return None
 
 
+def agent_context(db_path_row):
+    """Established facts for a fresh agent, read from SQLite (not from a previous agent's last message)."""
+    db = connect()
+    parts = [store.known_causes_text(db)]
+    c = db.execute('SELECT * FROM eng_checkpoints WHERE task=? ORDER BY id DESC LIMIT 1', (db_path_row['name'],)).fetchone()
+    if c:
+        parts.append(f"Last checkpoint ({c['source']}, verified={bool(c['verified'])}, git {c['git_sha']}): next={c['next_step']}; unfinished={c['unfinished']}. "
+                     "Re-check git state first; uncommitted changes are UNVERIFIED.")
+    return '\n'.join(x for x in parts if x)
+
+
 def agent_command(agent, r):
-    prompt = f"{r['repro']}\nRules: simulation only; never contact the physical X2 (no ssh/deploy/ros2 pub); do not weaken safety limits or goal tolerances; "\
+    prompt = f"{r['repro']}\n{agent_context(r)}\nRules: simulation only; never contact the physical X2 (no ssh/deploy/ros2 pub); do not weaken safety limits or goal tolerances; "\
              "work only in your own git worktree; on usage limit stop, write docs/nightly/HANDOFF.md and exit."
     q = json.dumps(prompt)
     if agent == 'codex':
@@ -305,11 +401,17 @@ def main():
     d = sp.add_parser('daemon'); d.add_argument('--poll', type=float, default=2.0); d.add_argument('--keep-alive', action='store_true')
     e = sp.add_parser('enqueue'); e.add_argument('name'); e.add_argument('cmd'); e.add_argument('--kind', default='mechanical')
     e.add_argument('--priority', type=int); e.add_argument('--deps', default='[]'); e.add_argument('--resource'); e.add_argument('--timeout', type=int)
-    e.add_argument('--heartbeat', type=int); e.add_argument('--cwd'); e.add_argument('--state'); e.add_argument('--reason'); e.add_argument('--klass')
+    e.add_argument('--heartbeat', type=int); e.add_argument('--cwd'); e.add_argument('--state'); e.add_argument('--reason'); e.add_argument('--klass'); e.add_argument('--requires-result', action='store_true')
     sp.add_parser('status')
     m = sp.add_parser('mark'); m.add_argument('name'); m.add_argument('state'); m.add_argument('--reason', default='')
     ag = sp.add_parser('agent'); ag.add_argument('name'); ag.add_argument('status'); ag.add_argument('--retry-after-s', type=int, default=3600)
     sp.add_parser('checkpoint')
+    rl = sp.add_parser('results'); rl.add_argument('--task'); rl.add_argument('--json', action='store_true')
+    sp.add_parser('verify-evidence')
+    ec = sp.add_parser('eng-checkpoint'); ec.add_argument('task'); ec.add_argument('--agent'); ec.add_argument('--next'); ec.add_argument('--hypotheses', default='[]')
+    ec.add_argument('--decisions', default='[]'); ec.add_argument('--files', default='[]'); ec.add_argument('--unfinished', default='[]'); ec.add_argument('--verified', action='store_true')
+    rc_ = sp.add_parser('root-cause'); rc_.add_argument('key'); rc_.add_argument('summary'); rc_.add_argument('--status', default='HYPOTHESIS', choices=['VERIFIED', 'HYPOTHESIS', 'REFUTED'])
+    rc_.add_argument('--evidence'); rc_.add_argument('--task')
     a = ap.parse_args()
     if a.c == 'daemon':
         daemon(a)
@@ -321,6 +423,8 @@ def main():
                      timeout_s=a.timeout, heartbeat_s=a.heartbeat, cwd=a.cwd, state=a.state, reason=a.reason)
         if a.klass:
             db.execute('UPDATE tasks SET klass=? WHERE name=?', (a.klass, a.name))
+        if a.requires_result:
+            db.execute('UPDATE tasks SET requires_result=1 WHERE name=?', (a.name,))
         checkpoint(db, f'enqueue {a.name}')
         print('enqueued' if ok else 'exists (history kept)')
     elif a.c == 'mark':
@@ -333,6 +437,27 @@ def main():
         checkpoint(db, f'agent {a.name} {a.status}')
     elif a.c == 'checkpoint':
         checkpoint(connect(), 'manual')
+    elif a.c == 'results':
+        db = connect()
+        q = 'SELECT * FROM results' + (' WHERE task=?' if a.task else '') + ' ORDER BY id'
+        rows = [dict(r) for r in db.execute(q, (a.task,) if a.task else ())]
+        if a.json:
+            print(json.dumps(rows, indent=1))
+        for r in rows:
+            if not a.json:
+                print(f"{r['id']:4} {r['verdict']:10} {r['status']:16} sv={r['safety_violations']} {r['task']}#{r['attempt']} {r['scenario_id']} seed={r['seed']} sha={str(r['git_sha'])[:9]}{' DIRTY' if r['code_dirty'] else ''}")
+    elif a.c == 'verify-evidence':
+        db = connect(); rep = store.adopt_orphans(db, RUN); checkpoint(db, 'verify-evidence')
+        print(json.dumps(rep)); sys.exit(1 if rep['damaged'] else 0)
+    elif a.c == 'eng-checkpoint':
+        db = connect()
+        store.save_engineering_checkpoint(db, a.task, 'agent', agent=a.agent, git_sha=git('rev-parse', 'HEAD'), worktree=str(ROOT), hypotheses=json.loads(a.hypotheses),
+                                          decisions=json.loads(a.decisions), files_changed=json.loads(a.files), unfinished=json.loads(a.unfinished), next_step=a.next, verified=a.verified)
+        checkpoint(db, f'eng-checkpoint {a.task}')
+    elif a.c == 'root-cause':
+        db = connect()
+        print('stored' if store.add_root_cause(db, a.key, a.summary, a.status, a.evidence, a.task) else 'kept existing VERIFIED cause')
+        checkpoint(db, f'root-cause {a.key}')
 
 
 if __name__ == '__main__':

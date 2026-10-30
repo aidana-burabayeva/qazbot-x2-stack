@@ -1,16 +1,16 @@
 # Lab → Robot handoff
 
-Сгенерировано `tools/nightly/lab.py stop` 2026-10-30T11:53:47+0500. Ручные данные: `docs/hardware/lab_robot_state.json`. Сначала verify SHA ниже через `git ls-remote`.
+Сгенерировано `tools/nightly/lab.py stop` 2026-10-30T12:04:12+0500. Ручные данные: `docs/hardware/lab_robot_state.json`. Сначала verify SHA ниже через `git ls-remote`.
 
 ## Что доступно через Git
 
-- Ветка: `test/p20-twin02-sim-20261029`, SHA на момент остановки: `5a15b62863ea663a2f7c7de6b3276d212b67f517`
+- Ветка: `test/p20-twin02-sim-20261029`, SHA на момент остановки: `4c648e3e0ad1f83b54c94d55ec4511065a2d0694`
 - Интеграция с production snapshot (`origin/main`): `6e70c0f90665c06dfc704162c9ddc84efce977c1`
 - Тег остановки ставится после push: `lab-stop/<UTC>` (точный SHA в `docs/hardware/LAB_STATE.json` нельзя записать в тот же коммит; он в теге).
 
 ## Тесты на момент остановки
 
-- Regression: **PASS** — 96 passed in 41.90s
+- Regression: **PASS** — 117 passed in 69.66s (0:01:09)
 - PASS: P20 yaw-rate loop + motion adapter + nightly tooling (pytest) — см. строку Regression выше; симуляция, не железо
 - PASS (sim): L2 CCW-петля, допуски 0.20/0.35 (как на роботе) — 3/3 за 3.9–4.3 с; при 0.10/0.10 было 2/4. Truth-localization, AMCL не квалифицирован
 - FAIL (sim): L2 s1_0046 / s1_0005 stall — NavigateToPose ABORTED, 'Failed to make progress'; контроллер командует wz≈-0.42, vx≈0.03, робот не поворачивается. Причина НЕ установлена

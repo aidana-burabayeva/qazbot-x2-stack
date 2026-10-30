@@ -162,3 +162,54 @@ def test_resume_restores_parked_tasks_and_independent_tasks_survive_hardware_blo
     st = nqcmd(e, 'status').stdout
     assert any(ln.split()[1] == 'PENDING' and 'p1' in ln for ln in st.splitlines())
     assert any(ln.split()[1] == 'NEEDS_HARDWARE' for ln in st.splitlines())
+
+
+def test_stop_succeeds_without_any_agent_and_marks_codex_not_delivered(env):
+    w, remote, e, _ = env
+    e = dict(e, PATH='/usr/bin:/bin')  # no codex/claude on PATH (their dirs are under $HOME)
+    r = lab(e, 'stop', '--no-systemd', '--no-docker', '--no-tests')
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert kv(w, 'lab_state') == 'STOPPED_OK' and kv(w, 'codex_stop') == 'STOP_NOT_DELIVERED'
+    assert g(remote, 'rev-parse', 'work') == g(w, 'rev-parse', 'HEAD')
+
+
+def test_codex_ack_file_upgrades_unverified_to_acked(env):
+    w, _, e, _ = env
+    lab(e, *STOP)
+    assert kv(w, 'codex_stop') == 'STOP_UNVERIFIED'
+    ack = w / 'run' / 'nightly' / 'ack'
+    ack.mkdir(parents=True, exist_ok=True)
+    (ack / 'codex_stop.txt').write_text('STOPPED abc123\n')
+    assert 'STOP_ACKED' in lab(e, 'status').stdout or kv(w, 'codex_stop') == 'STOP_ACKED'
+    assert kv(w, 'codex_stop') == 'STOP_ACKED'
+
+
+def test_after_stop_late_enqueue_from_leftover_loop_never_runs_with_real_daemon(env):
+    w, _, e, _ = env
+    lab(e, *STOP)
+    nqcmd(e, 'enqueue', 'late', 'touch ' + str(w / 'ran_late'))  # what a surviving /loop would do
+    subprocess.run([sys.executable, str(NQ), 'daemon', '--poll', '0.2', '--keep-alive'], env=e, capture_output=True, timeout=3) if False else None
+    p = subprocess.Popen([sys.executable, str(NQ), 'daemon', '--poll', '0.2', '--keep-alive'], env=e, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    import time
+    time.sleep(3)
+    p.terminate(); p.wait(10)
+    assert not (w / 'ran_late').exists()
+    assert 'PENDING' in nqcmd(e, 'status').stdout
+
+
+def test_stop_kills_running_worker_and_parks_task(env):
+    w, _, e, _ = env
+    nqcmd(e, 'enqueue', 'long', 'sleep 300 & echo $! > ' + str(w / 'child.pid') + '; wait', '--timeout', '600')
+    p = subprocess.Popen([sys.executable, str(NQ), 'daemon', '--poll', '0.2', '--keep-alive'], env=e, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    import time
+    for _ in range(40):
+        if (w / 'child.pid').exists():
+            break
+        time.sleep(0.25)
+    pid = int((w / 'child.pid').read_text())
+    r = lab(e, *STOP)
+    p.terminate(); p.wait(10)
+    assert r.returncode == 0
+    time.sleep(0.5)
+    assert not os.path.exists(f'/proc/{pid}') or open(f'/proc/{pid}/stat').read().split()[2] == 'Z'
+    assert 'NEEDS_APPROVAL' in nqcmd(e, 'status').stdout and 'LAB_STOP' in nqcmd(e, 'status').stdout

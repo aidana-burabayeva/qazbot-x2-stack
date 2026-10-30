@@ -111,6 +111,7 @@ def git_view():
 
 def cmd_status(args):
     db = nq.connect()
+    codex_ack_status(db)
     st = state_get(db)
     g = git_view()
     out = dict(lab_state=st['lab_state'] or 'UNKNOWN', frozen=bool(st['frozen']), shas={k: st[k] for k in ('last_lab_stop_sha', 'last_robot_integrated_sha', 'current_integration_sha')},
@@ -139,16 +140,21 @@ def freeze(db):
 
 
 def stop_units(args):
+    """Timer first: removing a unit link while its timer still points at it makes the timer fail ('Unit to trigger vanished')."""
     res = {}
     if args.no_systemd:
         return {'skipped': 'no-systemd'}
-    for u in UNITS:
+    order = [UNITS[2], UNITS[1], UNITS[0]]
+    for u in order:
         sh(f'systemctl --user disable --now {u}')
+    for u in order:
         link = UNIT_DIR / u
         if link.is_symlink():
             link.unlink()
-        res[u] = unit_state(u)
     sh('systemctl --user daemon-reload')
+    sh('systemctl --user reset-failed ' + ' '.join(UNITS))
+    for u in UNITS:
+        res[u] = unit_state(u)
     return res
 
 
@@ -190,7 +196,10 @@ def notify_codex(db, args, sha):
     msg = (f'OPERATOR STOP {now_iso()}. Stop all work now: no new sim runs, no commits to shared branches, no contact with the physical X2. '
            f'Finish the atomic step, commit only in your own worktree, then acknowledge by writing "STOPPED <your HEAD sha>" to {ACK}. '
            f'Lab HEAD at stop: {sha}. Do not resume until the operator runs /nightly-resume.')
-    rc, o = sh(['codex', 'queue', '--thread', CODEX_THREAD, '--message', msg], timeout=45)
+    try:
+        rc, o = sh(['codex', 'queue', '--thread', CODEX_THREAD, '--message', msg], timeout=45)
+    except (OSError, subprocess.TimeoutExpired) as ex:  # agent missing/hung must never block the stop
+        rc, o = 127, f'codex unavailable: {ex}'
     nq.kv_set(db, 'codex_stop', 'STOP_UNVERIFIED' if rc == 0 else 'STOP_NOT_DELIVERED')
     return f'rc={rc} {o[:200]}'
 

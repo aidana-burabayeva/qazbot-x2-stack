@@ -8,7 +8,8 @@
 |---|---|
 | V2 P0: `lab.py stop/resume/status`, skills `/nightly-stop|resume|status`, STOP→GIT→RESUME | **VERIFIED** (реальный цикл 2026-10-30, stop `5a15b62`, tag `lab-stop/20261030T065218Z`; 9 тестов `tests/nightly/test_lab.py`) |
 | Остановка Codex | **STOP_UNVERIFIED** (сообщение доставлено, ack-файл не получен) |
-| V2.1 §4 Zero-loss: таблица results (run_id, seed, SHA, map/config sha, метрики, evidence hash), запись артефакта ДО COMPLETED, agent checkpoint | **OPEN** — следующий шаг (P1) |
+| P0 hardening: причина `timer=failed` (symlink удалялся раньше остановки таймера) исправлена; stop не зависит от наличия codex/claude; остаточные enqueue после STOP не запускаются | **VERIFIED** (тесты) |
+| V2.1 §4 Zero-loss (`tools/nightly/store.py`): evidence публикуется атомарно (tmp→fsync→rename) ДО транзакции SQLite (results + task state), adopt/quarantine после аварии, EVIDENCE_MISSING при порче, защита от ложного PASS, Execution vs Engineering checkpoint, root_causes (VERIFIED не понижается и попадает в промпт агента) | **VERIFIED** — 21 тест, аварии в 4 точках публикации + падение агента + оба агента недоступны (`tests/nightly/test_zero_loss.py`) |
 | V2 P1 / V2.1 §5: ClaudeAdapter/CodexAdapter, auto-handoff из SQLite+Git без последнего сообщения агента | OPEN |
 | V2.1 §1–2: usage-aware пороги (80/90/95/97/99), reset ≤60 мин ждать / >60 мин передавать, `PAUSED_LIMIT`; нужны реальные quota metrics — источник НЕ подтверждён, без данных квоту не предполагать | OPEN / UNVERIFIED |
 | V2.1 §3: Model Router (task_type, complexity, risk, estimated_cost; выбор model/effort; эскалация после провала), метрика «подтверждённые результаты на лимит» | OPEN |

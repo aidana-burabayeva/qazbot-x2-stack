@@ -53,10 +53,10 @@ python3 tools/nightly/nq.py status        # припаркованные зад�
 5. Обычный порядок из CLAUDE.md/HANDOFF.md: T5 установлен, I1 E2E и review отдельно, любой старт сенсорного стека/движение/установка — только с разрешением оператора.
 
 <!-- BEGIN LAB_STOP -->
-## LAB STOP 2026-10-30T11:53:47+0500
-- HEAD `5a15b62863ea` (test/p20-twin02-sim-20261029); очередь {'COMPLETED': 32, 'NEEDS_APPROVAL': 2, 'NEEDS_ENGINEERING': 4}; запаркованных задач 0.
-- Codex: STOP_UNVERIFIED. Units: {'qazbot-nightly.service': 'inactive/Failed to get unit file state for qazbot-nightly.service: No such file or directory', 'qazbot-nightly-enqueue.service': 'inactive/Failed to get unit file state for qazbot-nightly-enqueue.service: No such file or directory', 'qazbot-nightly-enqueue.timer': 'failed/Failed to get unit file state for qazbot-nightly-enqueue.timer: No such file or directory'}.
-- Regression: PASS (96 passed in 41.90s).
+## LAB STOP 2026-10-30T12:04:12+0500
+- HEAD `4c648e3e0ad1` (test/p20-twin02-sim-20261029); очередь {'COMPLETED': 32, 'NEEDS_APPROVAL': 2, 'NEEDS_ENGINEERING': 4}; запаркованных задач 0.
+- Codex: STOP_UNVERIFIED. Units: {'qazbot-nightly.service': 'inactive/Failed to get unit file state for qazbot-nightly.service: No such file or directory', 'qazbot-nightly-enqueue.service': 'inactive/Failed to get unit file state for qazbot-nightly-enqueue.service: No such file or directory', 'qazbot-nightly-enqueue.timer': 'inactive/Failed to get unit file state for qazbot-nightly-enqueue.timer: No such file or directory'}.
+- Regression: PASS (117 passed in 69.66s (0:01:09)).
 - Не контролируется отсюда: открытые TUI Claude/Codex, session-only /loop cron и /goal hook открытых сессий.
 - Возобновление: `python3 tools/nightly/lab.py resume` (`/nightly-resume`).
 <!-- END LAB_STOP -->
