@@ -1,0 +1,29 @@
+[16:24:43.976762518] profile /home/agi/control_backend/docs/evidence/nav_20261030_1623/dds_nav_two_iface_log.xml dc01fb2e4ee558c8 launch_sha=0807263e1c2e5a30
+[16:24:50.681965448] localization: managed_active=1 levelled=1 native=1
+[16:24:53.275325804] trust: started=1
+[16:24:56.406943538] owned: 207979 207992 208019 208044 208088 208107 208149 208237 
+[18:37:19.332475981] rollback_p26: restore 13 files from *.bak_20261030_pre_p26 (dry=1)
+[18:37:25.249110903] restart_loc: stop seed_loop [213994 ] trust 208237 localization 207979 owned [207979 207992 208019 208044 208088 208107 208149 208237]
+[18:37:25.292797153] restart_loc: done: localization 207979 trust 208237 seed_loop 213994  launch_sha=8aeddea897680fa6 -> operator initialpose needed
+[18:37:50.575466858] restart_loc: stop seed_loop [213994 ] trust 208237 localization 207979 owned [207979 207992 208019 208044 208088 208107 208149 208237]
+[18:38:24.240800418] restart_loc: INT leftovers: 207979 207992 208019 208044 208088 208107 208149 -> TERM
+[18:38:29.914887378] profile /home/agi/control_backend/docs/evidence/nav_20261030_1623/dds_nav_two_iface_log.xml dc01fb2e4ee558c8 launch_sha=8aeddea897680fa6
+[18:38:39.357514434] localization: managed_active=1 levelled=1 native=1
+[18:38:44.862085862] trust: started=1
+[18:38:49.070764630] owned: 379403 379428 379468 379483 379510 379552 379584 379692 
+[18:38:49.118084249] restart_loc: done: localization 379403 trust 379692 seed_loop 379970  launch_sha=8aeddea897680fa6 -> operator initialpose needed
+[19:02:02.709416106] rollback_p27: restore 7 files from *.bak_20261030_pre_p27 (dry=1)
+[19:02:08.642446899] restart_trust: SIGINT trust 379692
+[19:02:15.938947263] restart_trust: trust: pid 413218 started=1 env=FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/nav_20261030_1623/dds_nav_two_iface_log.xml ROS_DOMAIN_ID=0 ROS_LOCALHOST_ONLY=0 
+[19:04:36.835137943] restart_trust: ABORT: trust.pid 413218 is not localization_trust
+[19:05:04.714166950] restart_trust: trust: pid 417274 started=1 env=FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/nav_20261030_1623/dds_nav_two_iface_log.xml ROS_DOMAIN_ID=0 ROS_LOCALHOST_ONLY=0 
+[20:24:55.960708460] rollback_p26: restore 13 files from *.bak_20261030_pre_p26 (dry=0)
+[20:24:56.374710760] rollback_p26: files restored; no restarts (--files-only)
+[20:25:00.065373643] restart_loc: stop seed_loop [402108 ] trust 417274 localization 379403 owned [379403 379428 379468 379483 379510 379552 379584 379692]
+[20:25:33.281350166] restart_loc: INT leftovers: 379403 379428 379468 379483 379510 379552 379584 -> TERM
+[20:25:38.327706569] ABORT: stack component already running
+[20:25:38.363172623] restart_loc: done: localization 379403 trust 417274 seed_loop 506284  launch_sha=14ca420206984861 -> operator initialpose needed
+[20:25:53.415085421] profile /home/agi/control_backend/docs/evidence/nav_20261030_1623/dds_nav_two_iface_log.xml dc01fb2e4ee558c8 launch_sha=14ca420206984861
+[20:26:03.033003962] localization: managed_active=1 levelled=1 native=1
+[20:26:07.273988125] trust: started=1
+[20:26:10.525616309] owned: 506803 506817 506838 506855 506872 506900 506934 507051 

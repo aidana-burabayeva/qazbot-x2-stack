@@ -1,0 +1,429 @@
+{
+  "bag_count": 6,
+  "mcap_count": 14,
+  "mcap_bytes": 2835562294,
+  "core": {
+    "path": "/home/agi/control_backend/docs/evidence/twin_20261030/bags/twin_core_190402",
+    "start_epoch": 1793358245.7870445,
+    "duration_s": 5276.910099872,
+    "message_count": 2237829,
+    "files": [
+      {
+        "name": "twin_core_190402_6.mcap",
+        "bytes": 286462254,
+        "sha256": "cd1be8ea86f5ae3e835bb5944e62eb73fdbcc1e21a2fe0c538ca9b4c5cb45b6b"
+      },
+      {
+        "name": "twin_core_190402_3.mcap",
+        "bytes": 279657409,
+        "sha256": "6056494034c38a9df4951f31b199094be8b4326514e84f5714caa9b3cebe892a"
+      },
+      {
+        "name": "twin_core_190402_5.mcap",
+        "bytes": 285986876,
+        "sha256": "35296d18171b5e8d58f72e0ac7409b7cbc05b767922e1721b56f81c61b5c2102"
+      },
+      {
+        "name": "twin_core_190402_7.mcap",
+        "bytes": 285790487,
+        "sha256": "40d9c25c1faeb7703200fd5206aa542554162a29878b981498511e3ac1026353"
+      },
+      {
+        "name": "twin_core_190402_1.mcap",
+        "bytes": 276110819,
+        "sha256": "1786a8837958dd3d31a83a33a34cc5cb975398e0d18e8aaf09d4fd8230c9ed4d"
+      },
+      {
+        "name": "twin_core_190402_0.mcap",
+        "bytes": 274038160,
+        "sha256": "6e4527f817c035c38b2b74e6508f01a0bc9ba2dca057c2847840bddd95c58327"
+      },
+      {
+        "name": "twin_core_190402_4.mcap",
+        "bytes": 280627971,
+        "sha256": "1d31bf95f5170af7cb15fe008671701e70a06daf53189debdc401755e2cd5ec6"
+      },
+      {
+        "name": "twin_core_190402_8.mcap",
+        "bytes": 219044228,
+        "sha256": "2aad991f196c8eccd5dd9d6844c7079c651f5268250f266ca7a990e812c4aa06"
+      },
+      {
+        "name": "twin_core_190402_2.mcap",
+        "bytes": 277172758,
+        "sha256": "9ac2293934340967b7b80dccb90c3995f7251dd0718714a56c90825f43e434ac"
+      }
+    ],
+    "topics": [
+      {
+        "name": "/tf",
+        "type": "tf2_msgs/msg/TFMessage",
+        "count": 243168
+      },
+      {
+        "name": "/qazbot_d1_map/nav2/navigate_to_pose/_action/status",
+        "type": "action_msgs/msg/GoalStatusArray",
+        "count": 6
+      },
+      {
+        "name": "/aima/mc/rl/debug",
+        "type": "aimdk_msgs/msg/McRLDebug",
+        "count": 262028
+      },
+      {
+        "name": "/aima/mc/body_pose",
+        "type": "aimdk_msgs/msg/McBodyPose",
+        "count": 255662
+      },
+      {
+        "name": "/aima/mc/common/state",
+        "type": "aimdk_msgs/msg/McCommonState",
+        "count": 52711
+      },
+      {
+        "name": "/aima/mc/leg_odometry",
+        "type": "nav_msgs/msg/Odometry",
+        "count": 854990
+      },
+      {
+        "name": "/qazbot_d1_map/map",
+        "type": "nav_msgs/msg/OccupancyGrid",
+        "count": 2
+      },
+      {
+        "name": "/qazbot_d1_map/goal_coordinator/status",
+        "type": "std_msgs/msg/String",
+        "count": 26298
+      },
+      {
+        "name": "/qazbot_d1_map/localization_trust/trusted",
+        "type": "std_msgs/msg/Bool",
+        "count": 25752
+      },
+      {
+        "name": "/qazbot_d1_map/motion_adapter/status",
+        "type": "std_msgs/msg/String",
+        "count": 10542
+      },
+      {
+        "name": "/aima/mc/locomotion/velocity",
+        "type": "aimdk_msgs/msg/McLocomotionVelocity",
+        "count": 4133
+      },
+      {
+        "name": "/qazbot_d1_map/goal_pose",
+        "type": "geometry_msgs/msg/PoseStamped",
+        "count": 7
+      },
+      {
+        "name": "/qazbot_native/odom",
+        "type": "nav_msgs/msg/Odometry",
+        "count": 154763
+      },
+      {
+        "name": "/qazbot_raw/scan",
+        "type": "sensor_msgs/msg/LaserScan",
+        "count": 26197
+      },
+      {
+        "name": "/qazbot_lio/odometry",
+        "type": "nav_msgs/msg/Odometry",
+        "count": 52475
+      },
+      {
+        "name": "/qazbot_d1_map/nav2/plan",
+        "type": "nav_msgs/msg/Path",
+        "count": 75
+      },
+      {
+        "name": "/qazbot_d1_map/tf",
+        "type": "tf2_msgs/msg/TFMessage",
+        "count": 181151
+      },
+      {
+        "name": "/qazbot_d1_map/nav2/cmd_vel_nav",
+        "type": "geometry_msgs/msg/Twist",
+        "count": 1519
+      },
+      {
+        "name": "/qazbot_d1_map/cmd_vel_authorized",
+        "type": "geometry_msgs/msg/Twist",
+        "count": 1077
+      },
+      {
+        "name": "/tf_static",
+        "type": "tf2_msgs/msg/TFMessage",
+        "count": 3
+      },
+      {
+        "name": "/qazbot_d1_map/amcl_pose",
+        "type": "geometry_msgs/msg/PoseWithCovarianceStamped",
+        "count": 151
+      },
+      {
+        "name": "/qazbot_lio/scan",
+        "type": "sensor_msgs/msg/LaserScan",
+        "count": 26206
+      },
+      {
+        "name": "/qazbot_d1_map/localization_trust/status",
+        "type": "std_msgs/msg/String",
+        "count": 25752
+      },
+      {
+        "name": "/qazbot_d1_map/initialpose",
+        "type": "geometry_msgs/msg/PoseWithCovarianceStamped",
+        "count": 13
+      },
+      {
+        "name": "/qazbot_raw/scan_low",
+        "type": "sensor_msgs/msg/LaserScan",
+        "count": 26199
+      },
+      {
+        "name": "/qazbot_native/status",
+        "type": "std_msgs/msg/String",
+        "count": 5246
+      },
+      {
+        "name": "/qazbot_d1_map/cmd_vel",
+        "type": "geometry_msgs/msg/Twist",
+        "count": 1544
+      },
+      {
+        "name": "/qazbot_d1_map/navigate_to_pose/_action/status",
+        "type": "action_msgs/msg/GoalStatusArray",
+        "count": 7
+      },
+      {
+        "name": "/qazbot_d1_map/nav2/follow_path/_action/status",
+        "type": "action_msgs/msg/GoalStatusArray",
+        "count": 152
+      }
+    ]
+  },
+  "scan_samples": {
+    "/qazbot_lio/scan": {
+      "sample_count": 225,
+      "method": "first 25 messages per topic per core split, not full-session percentiles",
+      "lag_p50_s": 0.047889233436523404,
+      "lag_p95_s": 0.6708621980885009,
+      "lag_max_s": 1.1823501594355468,
+      "median_finite_bins": 246
+    },
+    "/qazbot_raw/scan": {
+      "sample_count": 225,
+      "method": "first 25 messages per topic per core split, not full-session percentiles",
+      "lag_p50_s": 0.11630434703063963,
+      "lag_p95_s": 0.2750152998809814,
+      "lag_max_s": 0.41648071359252925,
+      "median_finite_bins": 249
+    },
+    "/qazbot_raw/scan_low": {
+      "sample_count": 225,
+      "method": "first 25 messages per topic per core split, not full-session percentiles",
+      "lag_p50_s": 0.12763415455627442,
+      "lag_p95_s": 0.36654611622619626,
+      "lag_max_s": 0.4727507511596679,
+      "median_finite_bins": 235
+    }
+  },
+  "initialpose_episodes": [
+    {
+      "seed_epoch": 1793358324.421063,
+      "outputs_in_first_8s_before_next_seed": 2,
+      "first_xy_m": 0.022731951190872148,
+      "last_xy_m": 0.4452927062305074,
+      "last_yaw_deg": -14.777955783273296
+    },
+    {
+      "seed_epoch": 1793360106.862903,
+      "outputs_in_first_8s_before_next_seed": 3,
+      "first_xy_m": 0.014364005885878108,
+      "last_xy_m": 0.3075885512732695,
+      "last_yaw_deg": -21.638562062235355
+    },
+    {
+      "seed_epoch": 1793362581.8347218,
+      "outputs_in_first_8s_before_next_seed": 4,
+      "first_xy_m": 0.011004918692934278,
+      "last_xy_m": 1.1053713001739076,
+      "last_yaw_deg": -9.386496892107498
+    },
+    {
+      "seed_epoch": 1793362589.0341003,
+      "outputs_in_first_8s_before_next_seed": 4,
+      "first_xy_m": 0.017884594732837364,
+      "last_xy_m": 1.722727885212019,
+      "last_yaw_deg": 1.3255551301451935
+    },
+    {
+      "seed_epoch": 1793362599.738914,
+      "outputs_in_first_8s_before_next_seed": 4,
+      "first_xy_m": 0.011661538169122012,
+      "last_xy_m": 1.5134837051362415,
+      "last_yaw_deg": -2.403517816389805
+    },
+    {
+      "seed_epoch": 1793362605.4247177,
+      "outputs_in_first_8s_before_next_seed": 3,
+      "first_xy_m": 0.023369858942525475,
+      "last_xy_m": 1.4067491614536356,
+      "last_yaw_deg": -11.878936469979042
+    },
+    {
+      "seed_epoch": 1793362610.9325151,
+      "outputs_in_first_8s_before_next_seed": 3,
+      "first_xy_m": 0.018485420635074582,
+      "last_xy_m": 0.9588209919357791,
+      "last_yaw_deg": -35.72799849252678
+    },
+    {
+      "seed_epoch": 1793362641.4820528,
+      "outputs_in_first_8s_before_next_seed": 4,
+      "first_xy_m": 0.007031599184436118,
+      "last_xy_m": 1.417894393169968,
+      "last_yaw_deg": -20.186941383011956
+    },
+    {
+      "seed_epoch": 1793362802.149504,
+      "outputs_in_first_8s_before_next_seed": 4,
+      "first_xy_m": 0.019419530490985385,
+      "last_xy_m": 0.170843382595602,
+      "last_yaw_deg": -10.911875320851498
+    },
+    {
+      "seed_epoch": 1793362814.93047,
+      "outputs_in_first_8s_before_next_seed": 4,
+      "first_xy_m": 0.010261170388717355,
+      "last_xy_m": 0.1319412203539737,
+      "last_yaw_deg": -6.372082667126661
+    },
+    {
+      "seed_epoch": 1793362834.4165025,
+      "outputs_in_first_8s_before_next_seed": 4,
+      "first_xy_m": 0.016312210158723226,
+      "last_xy_m": 0.1107894558389373,
+      "last_yaw_deg": -7.627516153113005
+    },
+    {
+      "seed_epoch": 1793362842.4031703,
+      "outputs_in_first_8s_before_next_seed": 4,
+      "first_xy_m": 0.009725869974478971,
+      "last_xy_m": 0.12072155863402331,
+      "last_yaw_deg": -1.8598069347936792
+    },
+    {
+      "seed_epoch": 1793363192.7074308,
+      "outputs_in_first_8s_before_next_seed": 13,
+      "first_xy_m": 0.02955610142402298,
+      "last_xy_m": 0.358034261616652,
+      "last_yaw_deg": 2.2789891521235086
+    }
+  ],
+  "deployed_snapshot_checks": [
+    {
+      "file": "deployed/lio/level_bridge.py",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/lio/raw_scan_bridge.py",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/lio/native_odom_bridge.py",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/lio/native_odom.py",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/lio/x2.yaml",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/navigation/localization.launch.py",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/navigation/localization_trust_node.py",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/navigation/loc_trust.py",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/navigation/nav_control.launch.py",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/navigation/nav_full.launch.py",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/navigation/x2_motion_adapter.py",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/navigation/goal_coordinator.py",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/navigation/control_geometry.py",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/navigation/bt/navigate_to_pose.xml",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/maps/d1_qazbot_20261029/map.pgm",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/maps/d1_qazbot_20261029/map.yaml",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/backups/localization.launch.py.bak_20261030_pre_p26",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/backups/localization.launch.py.bak_20261030_pre_alpha",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/backups/localization_trust_node.py.bak_20261030_pre_p26",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/backups/localization_trust_node.py.bak_20261030_pre_p27",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/backups/loc_trust.py.bak_20261030_pre_p26",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/backups/loc_trust.py.bak_20261030_pre_p27",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/backups/x2_motion_adapter.py.bak_20261030_pre_p26",
+      "sha256_ok": true
+    },
+    {
+      "file": "deployed/backups/goal_coordinator.py.bak_20261030_pre_p26",
+      "sha256_ok": true
+    }
+  ],
+  "mcap_summary_read_checks": 14,
+  "limitations": [
+    "Original MCAPs remain on robot; local hashes do not imply an off-robot bag backup.",
+    "MCAP footer/summary readability and selected decoding checked; no full CRC validation performed.",
+    "Initialpose deltas are relative to operator seed, not independent ground-truth error.",
+    "Sequential, unmatched sessions cannot isolate a causal improvement."
+  ]
+}

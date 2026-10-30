@@ -1,0 +1,8 @@
+Nav2 footprint (base_footprint frame, live controller+planner params, local padding 0.01, global padding 0.04536):
+  [[0.17, 0.229], [0.008, 0.34], [-0.182, 0.34], [-0.305, 0.229], [-0.305, -0.261], [-0.182, -0.372], [0.008, -0.372], [0.17, -0.261]]
+  x [-0.305, 0.17] length 0.475 m; y [-0.372, 0.34] width 0.712 m; circumradius 0.414 m
+  nav_full launch robot_radius:=0.454 (vendor bounding rectangle 0.20 x 0.336 around base_link; base_footprint offset from base_link (+0.0867,+0.0173) m per X2_FOOTPRINT.md)
+  measured standing envelope (X2_FOOTPRINT.md, rest_standing_2026-10-21): r 0.340; fwd +0.119, back -0.262, left +0.286, right -0.330 (base_link)
+Motion limits (live): smoother max_velocity [0.3,0,0.6], min [0,0,-0.6], max_accel [0.4,0,1.0], max_decel [-0.6,0,-1.5], 20 Hz, OPEN_LOOP, timeout 0.5 s;
+  RPP desired_linear_vel 0.3, rotate_to_heading_angular_vel 0.6, max_angular_accel 12.0, lookahead 0.3-0.9 (0.5), controller 20 Hz;
+  goal checker SimpleGoalChecker stateful xy 0.35 yaw 0.17; progress checker 0.1 m / 0.25 rad in 15 s; launch max_linear:=0.3 max_angular:=0.6

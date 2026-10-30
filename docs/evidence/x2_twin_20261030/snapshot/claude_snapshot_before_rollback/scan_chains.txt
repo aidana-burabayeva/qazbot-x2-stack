@@ -1,0 +1,26 @@
+# Scan A / Scan B source chains (live 2026-10-30 ~19:05)
+Common sensor: chest LiDAR /aima/hal/sensor/lidar_chest_front/lidar_pointcloud (frame lidar_chest_front, 96 rings, ~103 deg wedge
+  (FAST-LIO fov_degree 110), 10 Hz, ~25.5k pts, ~0.8 MB/msg, per-point timestamp ns), publisher soc1_hal_sensor_orin (pid 2797).
+LiDAR IMU /aima/hal/sensor/lidar_chest_front/imu ~186-200 Hz BEST_EFFORT.
+
+SCAN A  (Nav2 + AMCL + Trust source, "FAST-LIO chain")
+  lidar_pointcloud + lidar IMU -> fastlio_mapping (pid 379428, candidates/fast_lio_portable, params ws/src/lio/x2.yaml:
+     point_filter_num 3, filter_size_surf/map 0.3, blind 0.5, det_range 30, dense_publish_en true, extrinsic_est_en false)
+  -> /qazbot_lio/cloud_registered (deskewed, world) + /qazbot_lio/odometry (10 Hz)
+  -> level_bridge.py (pid 379468, node qazbot_level_bridge, -p range_max:=8.0 scan_every:=2 publish_tf:=false)
+     slice Z_MIN..Z_MAX = -0.65..+0.80 m rel. LiDAR IMU (IMU ~0.91 m above floor -> ~0.26..1.71 m above floor),
+     FLOOR_MARGIN_PER_M 0.035, 1440 bins (0.25 deg), angle -pi..pi (data only inside ~+-50 deg wedge), frame base_footprint
+  -> /qazbot_lio/scan (LaserScan, 5 Hz)            : AMCL scan_topic, Trust scan input
+  -> /qazbot_lio/scan_obstacles (PointCloud2)       : local+global costmap obstacle_layer 'scan' (marking, obstacle_max_range 3.0, raytrace 3.5)
+  -> /qazbot_lio/scan_clearing (PointCloud2)        : costmap 'bounded_rays' (clearing only, raytrace 3.5)
+  Measured stamp lag (recv - header, bag 18:58-19:02): /qazbot_lio/scan p50 0.049 / p95 0.622 / max 1.30 s; /qazbot_lio/odometry p50 0.038 / p95 0.549.
+
+SCAN B  (A/B experiment only, NOT used by Nav2/AMCL; do not switch)
+  lidar_pointcloud (raw, no FAST-LIO) + /aima/mc/leg_odometry (MC estimator ~150 Hz, attitude + intra-sweep deskew only)
+  -> raw_scan_bridge.py (pid 373764, -p scan_every:=2 range_max:=8.0 low_slice:=-0.80,-0.50,0.015; defaults deskew=True (10 sub-slices/sweep),
+     stamp_at_end=False, slice -0.65..0.80 rel IMU, margin 0.035, extrinsic = x2.yaml R_IL/T_IL)
+  -> /qazbot_raw/scan (5 Hz), /qazbot_raw/scan_obstacles, /qazbot_raw/scan_clearing,
+     /qazbot_raw/scan_low (slice -0.80..-0.50 rel IMU = ~0.11..0.41 m above floor, margin 0.015)
+  /qazbot_raw/nodeskew/scan: declared/subscribed by ab_eval_motion but NO publisher (inactive).
+  Measured stamp lag: /qazbot_raw/scan p50 0.117 / p95 0.305 / max 0.68 s; scan_low p50 0.131 / p95 0.364.
+  A/B evaluator: ab_eval_motion.py (pid 374032, nice 10, 3600 s -> raw_scan_ab_20261029/ab_motion_20261030.json) — untouched.

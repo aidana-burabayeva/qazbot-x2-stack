@@ -1,0 +1,19 @@
+# repo /home/agi/control_backend/qazbot-x2-stack
+HEAD 982f61802035ab5b033e26ce9df881dab2e27468
+branch nav/first-goals-20261028
+2026-10-30 14:59:52 +0800 docs: usage of operator-only /robot-sync-validate skill
+## status --porcelain
+ M ws/src/navigation/bt/navigate_to_pose.xml
+ M ws/src/navigation/goal_coordinator.py
+ M ws/src/navigation/loc_trust.py
+ M ws/src/navigation/localization.launch.py
+ M ws/src/navigation/localization_trust_node.py
+## diff --stat
+ ws/src/navigation/bt/navigate_to_pose.xml    |  7 ++-
+ ws/src/navigation/goal_coordinator.py        |  8 +++-
+ ws/src/navigation/loc_trust.py               | 68 ++++++++++++++++++++++++----
+ ws/src/navigation/localization.launch.py     | 10 +++-
+ ws/src/navigation/localization_trust_node.py |  3 +-
+ 5 files changed, 82 insertions(+), 14 deletions(-)
+## upstream
+fatal: upstream branch 'refs/heads/nav/first-goals-20261028' not stored as a remote-tracking branch

@@ -1,0 +1,9 @@
+/usr/lib/python3/dist-packages/scipy/__init__.py:146: UserWarning: A NumPy version >=1.17.3 and <1.25.0 is required for this version of SciPy (detected version 1.26.1
+  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
+[INFO] [1793356724.459646631] [qazbot_d1_map.localization_trust]: localization_trust started, map=/home/agi/control_backend/ws/src/maps/d1_qazbot_20261029/map.yaml, policy=go2, odom_source=native_imu, odom_topic=/qazbot_native/odom
+[WARN] [1793357630.779058907] [qazbot_d1_map.localization_trust]: initialpose received: READY cleared; policy=go2
+[INFO] [1793357631.143301306] [qazbot_d1_map.localization_trust]: initialpose: requested AMCL update without motion, attempt 1
+[WARN] [1793357984.830557300] [qazbot_d1_map.localization_trust]: initialpose received: READY cleared; policy=go2
+[INFO] [1793357985.142724989] [qazbot_d1_map.localization_trust]: initialpose: requested AMCL update without motion, attempt 1
+[WARN] [1793358096.859717068] [qazbot_d1_map.localization_trust]: initialpose received: READY cleared; policy=go2
+[INFO] [1793358097.351088413] [qazbot_d1_map.localization_trust]: initialpose: requested AMCL update without motion, attempt 1
