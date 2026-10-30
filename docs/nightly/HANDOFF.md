@@ -27,3 +27,27 @@ python3 tools/nightly/phase_analysis.py /home/adn/QazBot/digital_twin/results/<r
 - Фазы: A, B, C, D готовы (см. STATUS). E: `tools/nightly/run_l2.sh <id> <tsv>` — один сценарий через настоящий Nav2+P20+MC; первый запуск упал на парсинге `--goals` с минусом (исправлено `--goals=`), r2 в очереди.
 - Следующее: L2 doorway-серия (resource=sim, строго по одному), сравнение L1 vs L2, пересборка twin-образа (OPEN), fitness/Парето-оптимизатор, HTML-отчёт, GPU-замеры, пилот G.
 - Запрещено: команды на физический X2, ssh/deploy, ослабление допусков/safety ради PASS.
+
+## ОСТАНОВКА ПО УКАЗАНИЮ ОПЕРАТОРА — 2026-10-30 ~10:45 (физический робот снова доступен)
+**Состояние: лаборатория остановлена, ничего не выполняется.**
+- systemd: `qazbot-nightly.service` и `qazbot-nightly-enqueue.timer` отключены и остановлены (symlink в ~/.config/systemd/user удалены; unit-файлы лежат в `tools/nightly/systemd/`). Cron `/loop` (1ч, 2ч) удалены. Docker-проект x2-twin остановлен (`docker ps | grep x2-twin` пусто).
+- Очередь SQLite (`run/nightly/queue.db`, локально, не в git) сохранена; незавершённые задачи припаркованы `NEEDS_APPROVAL` (reason `OPERATOR STOP`). `make_nightly_20261030` и `_r2` упали на сборке (нет vendor в worktree / временный DNS-отказ docker.io) — NEEDS_ENGINEERING, не успешный nightly.
+- Codex 01a18872: послано сообщение `OPERATOR STOP` (queue 01a18b53-7a77…, ответ `STOPPED <sha>` ожидается; его последний принятый результат — коммит e54067f, смёржен). Его TUI не завершались мной. Задача FRAME CONTRACT (queue 01a18b51-7d86…) поставлена ДО стопа — Codex её по указанию оператора выполнять не должен.
+- Ветка: `test/p20-twin02-sim-20261029`; `run/` убран из git и добавлен в .gitignore (по ошибке был закоммичен merge-коммитом 003e8be; секретов в нём не найдено; baseline сохранён в docs/evidence/nightly_20261030/baseline).
+
+### Возобновление (только по просьбе оператора)
+```
+cd /home/adn/QazBot/control_backend_p20_twin02
+ln -sf $PWD/tools/nightly/systemd/* ~/.config/systemd/user/ && systemctl --user daemon-reload
+systemctl --user enable --now qazbot-nightly.service qazbot-nightly-enqueue.timer
+python3 tools/nightly/nq.py status        # припаркованные задачи вернуть: nq.py mark <name> PENDING
+```
+Для `make nightly` в worktree нужен `digital_twin/vendor/*` (локальные symlink на /home/adn/QazBot/digital_twin/vendor) и сеть к docker.io.
+
+### Подготовка к работе с физическим роботом (ТОЛЬКО оператор; агенты X2 не трогают)
+Всё ниже — NEEDS_HARDWARE, ничего из симуляции не доказывает поведение робота:
+1. **CCW-петля финального выравнивания.** В sim корень найден (допуски 0.10/0.10 vs робот 0.20/0.35, центр уходит 0.22–0.26 м при развороте). На роботе дрейф 0.16–0.23 м у границы xy_tol 0.20 — петля возможна. Проверка: тот же CCW-сценарий (+0.5 м, yaw π/2) с записью cmd_vel_nav/authorized/MC; критерий — SUCCEEDED ≤10 с без повторных выходов из XY. Регрессия `REG_CCW_DRIFT_LOOP` (DECISIONS D1).
+2. **Проём офиса ~0.80 м** (кандидат UNVALIDATED, карта (-6.49,-6.93)): замерить рулеткой реальную ширину до любых испытаний; ширина робота 0.712 м, запас ≈0.04 м/сторона. Не заходить в проём автономно, пока ширина и зазор не подтверждены.
+3. **Стопор «команда поворота без отклика»** (L2 s1_0046/s1_0005): причина не установлена; возможное расхождение карта↔мир sim до 0.7 м (Codex D3). Не переносить выводы L2 на робота.
+4. Допуски goal checker: на роботе `xy_tol:=0.20 yaw_tol:=0.35` (контракт `scripts/contract/robot.env`); ослаблять нельзя.
+5. Обычный порядок из CLAUDE.md/HANDOFF.md: T5 установлен, I1 E2E и review отдельно, любой старт сенсорного стека/движение/установка — только с разрешением оператора.

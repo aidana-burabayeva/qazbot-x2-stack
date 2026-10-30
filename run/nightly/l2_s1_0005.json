@@ -1,1 +1,0 @@
-{"scenario":"s1_0005","category":"corridor_to_office","expected":"reach","nav2_rc":1,"clearance":{"min_clearance_m": 0.175, "min_left_m": 0.47, "min_right_m": 0.175, "samples_in_collision": 0, "poses": 1020, "unknown_is_obstacle": true}}

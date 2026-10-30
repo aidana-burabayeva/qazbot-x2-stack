@@ -1,1 +1,0 @@
-{"scenario":"s1_0055","category":"corridor_to_wing","expected":"reach","nav2_rc":0,"clearance":{"min_clearance_m": 0.116, "min_left_m": 0.375, "min_right_m": 0.116, "samples_in_collision": 0, "poses": 244, "unknown_is_obstacle": true}}

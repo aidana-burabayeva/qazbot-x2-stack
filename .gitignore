@@ -27,3 +27,6 @@ tests/integration_results/
 *.tar.gz
 *.tgz
 *.zip
+
+# local nightly state (queue DB, logs, per-run artefacts); evidence goes to docs/evidence
+run/
