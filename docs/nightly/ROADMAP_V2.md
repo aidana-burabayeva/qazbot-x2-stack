@@ -18,3 +18,13 @@
 | Тесты §6 V2.1 (потеря доступа при 95/97/98 %, kill без handoff, reset <60/>60, оба лимита, восстановление, model/effort, крах SQLite) | OPEN, на симулированных quota states |
 
 Ограничения без изменений: нет deploy/SSH/движения X2, safety и допуски не ослаблять.
+
+## P1.1 — Agent Completion Gate (2026-10-30)
+| Пункт | Статус |
+|---|---|
+| Codex completion contract (`CODEX_COMPLETION_CONTRACT.md`): доставка ≠ выполнение, DELEGATED + фазы, результат привязан к task/attempt/attempt_id/SHA/hash | **VERIFIED на имитации** (23 теста `test_agent_handoff.py`, стабы CLI/observer) |
+| Lease на worktree до подтверждённого конца, блок чужого TUI, STOP при DELEGATED | **VERIFIED на имитации** |
+| Реальные источники квоты: Codex `account/rateLimits/read` (подтверждён живым вызовом), Claude — нет интерфейса (UNKNOWN) | Codex **VERIFIED (read-only)**; Claude **UNVERIFIED/UNKNOWN** |
+| Допущение сброса через 3600 с | **удалено** (`reset_known=false`, только ограниченный интервал повторной пробы `NIGHTLY_LIMIT_PROBE_S`) |
+| Пороги 95–99 % | **не включены** |
+| Реальный E2E Claude↔Codex (настоящая сессия Codex исполняет делегированную задачу) | **OPEN**: очередь Codex не потребляется, пока сессия не активирована оператором |

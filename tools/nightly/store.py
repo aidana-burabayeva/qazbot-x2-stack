@@ -130,8 +130,14 @@ def publish(run, task, attempt, src_dir, meta):
     tmp.mkdir()
     files = {}
     fault('before_result_write')
-    for p in sorted(Path(src_dir).rglob('*')):
-        if p.is_file():
+    regular = []
+    for dp, dns, fns in os.walk(src_dir, followlinks=False):  # symlinks are never followed or copied into evidence
+        for fn in fns:
+            fp = Path(dp) / fn
+            if not fp.is_symlink() and fp.is_file():
+                regular.append(fp)
+    for p in sorted(regular):
+        if True:
             rel = str(p.relative_to(src_dir))
             dst = tmp / rel
             dst.parent.mkdir(parents=True, exist_ok=True)
@@ -154,7 +160,7 @@ def publish(run, task, attempt, src_dir, meta):
     return str(final), sha256_file(final / 'MANIFEST.json')
 
 
-def commit(db, task_id, items, ev_path, man_sha, base, final_state, exit_code, reason, signature, now=None):
+def commit(db, task_id, items, ev_path, man_sha, base, final_state, exit_code, reason, signature, now=None, extra=()):
     """One transaction: result rows + task state. Evidence already durable on disk."""
     now = now or time.time()
     db.execute('BEGIN IMMEDIATE')
@@ -167,8 +173,10 @@ def commit(db, task_id, items, ev_path, man_sha, base, final_state, exit_code, r
                         None if it.get('seed') is None else str(it['seed']), base.get('git_sha'), int(bool(base.get('code_dirty'))),
                         it.get('map_sha'), it.get('config_sha') or base.get('config_sha'), it['verdict'], json.dumps(it['metrics'], sort_keys=True),
                         it.get('safety_violations', 0), it.get('notes'), ev_path, man_sha, now))
-        db.execute('UPDATE tasks SET state=?, exit_code=?, pid=NULL, finished=?, signature=?, reason=? WHERE id=?',
+        db.execute("UPDATE tasks SET state=?, exit_code=?, pid=NULL, finished=?, signature=?, reason=? WHERE id=? AND state!='COMPLETED'",
                    (final_state, exit_code, now, signature, reason, task_id))
+        for sql, params in extra:  # phase / root causes: same transaction as the state change
+            db.execute(sql, params)
         db.execute('COMMIT')
     except BaseException:
         db.execute('ROLLBACK')

@@ -59,6 +59,11 @@ def connect():
     cols = [r[1] for r in db.execute('PRAGMA table_info(tasks)')]
     if 'requires_result' not in cols:
         db.execute('ALTER TABLE tasks ADD COLUMN requires_result INTEGER NOT NULL DEFAULT 0')  # 1: no result.json -> never COMPLETED
+    for c_ in ('phase', 'attempt_id', 'dispatch_ref'):
+        if c_ not in cols:
+            db.execute(f'ALTER TABLE tasks ADD COLUMN {c_} TEXT')  # delegated-task contract: DISPATCHED..VERIFIED, bound to attempt_id
+    if 'dispatched_at' not in cols:
+        db.execute('ALTER TABLE tasks ADD COLUMN dispatched_at REAL')
     if 'owner' not in cols:
         db.execute('ALTER TABLE tasks ADD COLUMN owner TEXT')  # agent that currently holds the task (durable ownership)
     if 'klass' not in cols:
@@ -156,12 +161,12 @@ def ready(db):
     if kv_get(db, 'frozen', False):  # operator STOP: nothing new starts until `lab.py resume`
         return
     done = {r['name'] for r in db.execute("SELECT name FROM tasks WHERE state='COMPLETED'")}
-    busy = {r['resource'] for r in db.execute("SELECT resource FROM tasks WHERE state='RUNNING' AND resource IS NOT NULL")}
     now = time.time()
     for r in db.execute("SELECT * FROM tasks WHERE state='PENDING' AND not_before<=? ORDER BY priority, id", (now,)):
         if not all(d in done for d in json.loads(r['deps'])):
             continue
-        if r['resource'] and r['resource'] in busy:
+        # recomputed for every candidate: a dispatch earlier in the same tick must already hold its lease
+        if r['resource'] and db.execute("SELECT 1 FROM tasks WHERE resource=? AND state IN ('RUNNING','DELEGATED') LIMIT 1", (r['resource'],)).fetchone():
             continue
         yield r
 
@@ -185,7 +190,7 @@ def run_mechanical(db, r):
     checkpoint(db, f'start {name}')
     with open(log, 'wb') as fh:
         p = subprocess.Popen(['bash', '-lc', r['cmd']], cwd=r['cwd'], stdout=fh, stderr=subprocess.STDOUT, start_new_session=True,
-                             env=dict(os.environ, NIGHTLY_RESULT_DIR=str(rdir), NIGHTLY_TASK=name, NIGHTLY_ATTEMPT=str(attempt)))
+                             env=dict(os.environ, NIGHTLY_RESULT_DIR=str(rdir), NIGHTLY_TASK=name, NIGHTLY_ATTEMPT=str(attempt), NIGHTLY_ATTEMPT_ID=str(dict(r).get('attempt_id') or '')))
     db.execute('UPDATE tasks SET pid=? WHERE id=?', (p.pid, r['id']))
     return p, log
 
@@ -258,6 +263,18 @@ def finish(db, r, p, log, verdict):
     full = db.execute('SELECT * FROM tasks WHERE id=?', (r['id'],)).fetchone()
     if full['kind'] == 'engineering':
         eng_autocheckpoint(db, full, 'orchestrator-finish', f'agent command ended rc={rc} verdict={verdict}')
+    if full['kind'] == 'engineering' and verdict == 'ok':  # exit code 0 of an agent is not completion either
+        why = 'no result file'
+        f = find_result_file(full, full['cwd'] or str(ROOT))
+        if f:
+            ok_, res, why = verify_engineering_result(db, full, f)
+            if ok_:
+                ev(db, name, 'RESULT', why)
+                record_engineering_result(db, full, f, res, why == 'verified')
+                ev(db, name, db.execute('SELECT state FROM tasks WHERE id=?', (r['id'],)).fetchone()['state'], f'rc={rc} {why}')
+                checkpoint(db, f'finish {name}')
+                return
+        state, reason = 'NEEDS_ENGINEERING', f'agent exited {rc} without a verified result: {why}'[:300]
     if full['kind'] == 'engineering' and verdict != 'ok':
         hd = handoff_decision(db, full, rc, verdict, tail)
         if hd:
@@ -285,17 +302,40 @@ def agent_probe(db):
     return st
 
 
+def is_limited(s, now=None):
+    now = now or time.time()
+    return s.get('status') == 'usage_limited' and max(s.get('retry_after') or 0, s.get('recheck_after') or 0) > now
+
+
+def refresh_usage(db, force=False):
+    """Measured availability. Codex: provider API (official reset). Claude: no source -> UNKNOWN, left to log evidence."""
+    st = kv_get(db, 'agents', {})
+    ttl = int(os.environ.get('NIGHTLY_USAGE_TTL_S', 300))
+    c = st.setdefault('codex', {})
+    if force or time.time() - (c.get('usage') or {}).get('measured_at', 0) > ttl:
+        u = agents.codex_usage()
+        c['usage'] = u
+        if u['status'] == 'LIMITED':
+            c.update(status='usage_limited', retry_after=u.get('reset_at'), reset_known=bool(u.get('reset_at')),
+                     recheck_after=None if u.get('reset_at') else time.time() + int(os.environ.get('NIGHTLY_LIMIT_PROBE_S', 1800)))
+        elif u['status'] == 'AVAILABLE' and c.get('status') == 'usage_limited':
+            c.update(status='available', retry_after=None, recheck_after=None)  # provider says usable: stronger than an old log line
+    st.setdefault('claude', {})['usage'] = agents.claude_usage()
+    kv_set(db, 'agents', st)
+    return st
+
+
 def run_engineering(db, r):
     """Engineering task = headless agent call. Returns an agent that is installed and not in a recorded usage limit, else None."""
     st = agent_probe(db)
+    st = refresh_usage(db) or st
     now = time.time()
     tried = kv_get(db, f"tried:{r['name']}", [])
     for a in db_get_agents(r):
         if a in tried:
             continue
         s = st.get(a, {})
-        limited = s.get('status') == 'usage_limited' and s.get('retry_after', 0) > now
-        if s.get('installed') and not limited:
+        if s.get('installed') and not is_limited(s, now):
             return a
     return None
 
@@ -305,8 +345,231 @@ def db_get_agents(r):
     return m.group(1).split(',') if m else ['codex', 'claude']
 
 
+def own_sessions(db):
+    return {r['pid'] for r in db.execute("SELECT pid FROM tasks WHERE state='RUNNING' AND pid IS NOT NULL")}
+
+
+def result_contract(name, attempt, aid, rdir, cwd):
+    token = f'QAZBOT-TASK:{name}:{attempt}:{aid}'
+    return token, (f'[{token}] Delivery of this message is not completion. Work in your OWN worktree. When finished, write engineering_result.json to {rdir} '
+                   f'(or, if that path is not writable, to {cwd}/.qazbot/results/{name}.{attempt}.json) with: task="{name}", attempt={attempt}, attempt_id="{aid}", '
+                   'git_sha=<your commit>, summary, tests={cmd, passed:int, failed:int} (cmd is re-run by the orchestrator, must be an allow-listed pytest command), '
+                   'files=[{path, sha256}] (non-empty, relative to the worktree, no symlinks), root_causes=[{key, summary, status, evidence}]. '
+                   'Without that file the work is not accepted. If a newer attempt supersedes this one the file is rejected. Stop immediately on OPERATOR STOP.')
+
+
+def dispatch_codex(db, r):
+    """Hand the task to the existing Codex session. Delivery is NOT execution. A write-ahead intent (DELEGATED/DISPATCHING with the token)
+    is persisted BEFORE `codex queue` runs, so a crash or a timeout can never lose or duplicate the record of a possibly delivered message."""
+    name, attempt, aid = r['name'], r['attempts'] + 1, agents.new_attempt_id()
+    rdir = result_dir(name, attempt)
+    rdir.mkdir(parents=True, exist_ok=True)
+    cwd = r['cwd'] or str(ROOT)
+    token, contract = result_contract(name, attempt, aid, rdir, cwd)
+    base = dict(task=name, attempt=attempt, git_sha=git('rev-parse', 'HEAD'), code_dirty=bool(git('status', '--porcelain', '--untracked-files=no')),
+                config_sha=hashlib.sha256(r['cmd'].encode()).hexdigest()[:16])
+    kv_set(db, f'base:{name}:{attempt}', base)
+    thread = os.environ.get('NIGHTLY_CODEX_SESSION', '01a18872-7bd1-7701-b367-b63e344d449d')
+    db.execute("UPDATE tasks SET state='DELEGATED', phase='DISPATCHING', attempts=?, started=?, owner='codex', attempt_id=?, dispatched_at=?, finished=NULL, exit_code=NULL, "
+               "dispatch_ref=?, reason='dispatching to codex (intent recorded)' WHERE id=?",
+               (attempt, time.time(), aid, time.time(), json.dumps(dict(thread=thread, item_id=None, token=token)), r['id']))
+    ev(db, name, 'DISPATCH_INTENT', token)
+    prompt = f"{r['repro']}\n{agent_context(r)}\n{agents.RULES}\n{contract}"
+    ad = agents.ADAPTERS['codex']
+    try:
+        p = subprocess.run([ad.bin, 'queue', '--thread', thread, '--message', prompt], capture_output=True, text=True,
+                           timeout=float(os.environ.get('NIGHTLY_DISPATCH_TIMEOUT_S', 45)))
+        rc, out = p.returncode, p.stdout + p.stderr
+    except subprocess.TimeoutExpired:
+        ev(db, name, 'DISPATCH_UNKNOWN', 'codex queue timed out: delivery unknown, lease kept, will be resolved by observation')
+        return  # DISPATCHING stays: the message may still be delivered; never freed, never re-sent
+    except OSError as e:
+        rc, out = 127, str(e)
+    item = agents.parse_queued_id(out)
+    if rc == 0 and item:
+        db.execute("UPDATE tasks SET phase='DISPATCHED', dispatch_ref=?, reason='delivered to codex; execution unconfirmed' WHERE id=?",
+                   (json.dumps(dict(thread=thread, item_id=item, token=token)), r['id']))
+        ev(db, name, 'DISPATCHED', json.dumps(dict(thread=thread, item_id=item, token=token)))
+    elif rc == 0:  # delivery reported but unverifiable id: observe by token
+        ev(db, name, 'DISPATCH_UNKNOWN', 'rc=0 without a queued id')
+    else:  # the CLI itself failed: nothing was queued
+        ev(db, name, 'DISPATCH_FAILED', out[-300:])
+        full = db.execute('SELECT * FROM tasks WHERE id=?', (r['id'],)).fetchone()
+        hd = handoff_decision(db, full, rc, 'fail', out) or ('NEEDS_ENGINEERING', 'dispatch to codex failed')
+        db.execute("UPDATE tasks SET state=?, reason=?, phase=NULL WHERE id=? AND state='DELEGATED'", (hd[0], hd[1], r['id']))
+    checkpoint(db, f'dispatched {name}')
+
+
+def find_result_file(row, cwd):
+    name, attempt = row['name'], row['attempts']
+    for p in (result_dir(name, attempt) / 'engineering_result.json', Path(cwd) / '.qazbot' / 'results' / f'{name}.{attempt}.json'):
+        if p.is_file() and not p.is_symlink():
+            return p
+    return None
+
+
+def _inside(root, rel):
+    """rel must be a relative path that stays inside root and is not (behind) a symlink."""
+    if not isinstance(rel, str) or not rel or os.path.isabs(rel):
+        return None
+    full = Path(root) / rel
+    try:
+        if os.path.realpath(full) != os.path.normpath(os.path.join(os.path.realpath(root), rel)):
+            return None  # a symlink or .. changed where it really points
+        if not str(os.path.realpath(full)).startswith(os.path.realpath(root) + os.sep):
+            return None
+    except OSError:
+        return None
+    return full if full.is_file() and not full.is_symlink() else None
+
+
+def verify_engineering_result(db, row, path):
+    """Bind the claimed result to task, attempt, attempt_id, Git SHA, file hashes AND an orchestrator-run test. Never raises."""
+    try:
+        return _verify(db, row, path)
+    except Exception as e:  # malformed input must reject the result, never crash the orchestrator
+        return False, None, f'malformed result ({type(e).__name__}): {str(e)[:120]}'
+
+
+def _verify(db, row, path):
+    cwd = row['cwd'] or str(ROOT)
+    d = json.loads(path.read_text())
+    if not isinstance(d, dict):
+        return False, None, 'malformed result: not an object'
+    if d.get('task') != row['name'] or d.get('attempt') != row['attempts']:
+        return False, None, 'result is for another task/attempt'
+    if d.get('attempt_id') != row['attempt_id']:
+        return False, None, 'STALE_ATTEMPT: attempt_id does not match the current attempt (superseded or forged)'
+    sha = d.get('git_sha')
+    if not isinstance(sha, str) or not re.fullmatch(r'[0-9a-f]{40}', sha) or subprocess.run(['git', '-C', cwd, 'cat-file', '-e', sha + '^{commit}'], capture_output=True).returncode != 0:
+        return False, None, 'git_sha is not a commit in the task repository'
+    base = (kv_get(db, f"base:{row['name']}:{row['attempts']}", {}) or {}).get('git_sha')
+    if base and subprocess.run(['git', '-C', cwd, 'merge-base', '--is-ancestor', base, sha], capture_output=True).returncode != 0:
+        return False, None, 'git_sha does not descend from the SHA the attempt started from'
+    t = d.get('tests')
+    if not isinstance(t, dict) or type(t.get('passed')) is not int or type(t.get('failed')) is not int or not isinstance(t.get('cmd'), str):
+        return False, None, 'tests{cmd,passed,failed} missing: result not verifiable'
+    files = d.get('files')
+    if not isinstance(files, list) or not files:
+        return False, None, 'files[] must be a non-empty list: result is not bound to artefacts'
+    for f in files:
+        if not isinstance(f, dict):
+            return False, None, 'files[] entry is not an object'
+        fp = _inside(cwd, f.get('path'))
+        if fp is None:
+            return False, None, f"file path rejected (absolute, outside the worktree, symlink or missing): {str(f.get('path'))[:80]}"
+        if store.sha256_file(fp) != f.get('sha256'):
+            return False, None, f"file hash mismatch: {f.get('path')}"
+    rcs = d.get('root_causes', [])
+    if not isinstance(rcs, list) or not all(isinstance(x, dict) for x in rcs):
+        return False, None, 'root_causes must be a list of objects'
+    # the agent's own pass/fail counts are not trusted: the orchestrator re-runs the declared command (allow-listed prefixes only, no shell)
+    import shlex
+    argv = shlex.split(t['cmd'])
+    allow = [shlex.split(x) for x in os.environ.get('NIGHTLY_VERIFY_ALLOW', 'python3 -m pytest;pytest').split(';') if x.strip()]
+    if not argv or not any(argv[:len(a)] == a for a in allow):
+        return False, None, f"tests.cmd not allow-listed for orchestrator re-run: {t['cmd'][:60]}"
+    try:
+        rr = subprocess.run(argv, cwd=cwd, capture_output=True, text=True, timeout=float(os.environ.get('NIGHTLY_VERIFY_TIMEOUT_S', 900)))
+        ok = rr.returncode == 0 and t['passed'] > 0 and t['failed'] == 0
+    except (OSError, subprocess.TimeoutExpired):
+        ok = False
+    item = {'scenario_id': f"engineering:{row['name']}", 'seed': row['attempt_id'], 'verdict': 'PASS' if ok else 'FAIL',
+            'metrics': {'tests_passed': t['passed'], 'tests_failed': t['failed'], 'git_sha': sha, 'rerun_ok': ok}, 'safety_violations': 0,
+            'notes': str(d.get('summary') or '')[:300]}
+    return True, (item, d), ('verified' if ok else 'tests failing on orchestrator re-run')
+
+
+def record_engineering_result(db, row, path, item_d, ok):
+    item, d = item_d
+    attempt = row['attempts']
+    rdir = result_dir(row['name'], attempt)
+    rdir.mkdir(parents=True, exist_ok=True)
+    if path.parent != rdir:
+        tmp = rdir / '.engineering_result.json.tmp'
+        tmp.write_bytes(path.read_bytes())
+        os.replace(tmp, rdir / 'engineering_result.json')
+    base = kv_get(db, f"base:{row['name']}:{attempt}", None) or dict(task=row['name'], attempt=attempt, git_sha=git('rev-parse', 'HEAD'), code_dirty=False)
+    state = 'COMPLETED' if ok else 'NEEDS_ENGINEERING'
+    reason = None if ok else 'result recorded but tests failing on re-run'
+    meta = dict(base=base, items=[item], final_state=state, exit_code=0, signature=None)
+    ev_path, man_sha = store.publish(RUN, row['name'], attempt, rdir, meta)  # evidence durable BEFORE the queue may say COMPLETED
+    extra = [("UPDATE tasks SET phase=? WHERE id=?", ('VERIFIED' if ok else 'RESULT_RECORDED', row['id']))]
+    # root causes are written in the SAME transaction; "VERIFIED" is decided here (verified result + evidence), never self-declared
+    now = time.time()
+    for rc_ in d.get('root_causes') or []:
+        if rc_.get('key') and rc_.get('summary'):
+            st_ = 'VERIFIED' if ok and rc_.get('status') == 'VERIFIED' and rc_.get('evidence') else 'HYPOTHESIS'
+            extra.append(("INSERT INTO root_causes(key,summary,status,evidence,task,ts) VALUES(?,?,?,?,?,?) ON CONFLICT(key) DO UPDATE SET summary=excluded.summary, "
+                          "status=excluded.status, evidence=excluded.evidence, task=excluded.task, ts=excluded.ts WHERE root_causes.status!='VERIFIED'",
+                          (str(rc_['key'])[:80], str(rc_['summary'])[:400], st_, str(rc_.get('evidence') or '')[:300], row['name'], now)))
+    store.commit(db, row['id'], [item], ev_path, man_sha, base, state, 0, reason, None, extra=extra)
+    kv_set(db, f"tried:{row['name']}", [])
+
+
+def poll_delegated(db, force=False):
+    """Observation only: never starts, never kills. Advances phases from facts; absence of facts changes nothing. Never raises."""
+    if not force and time.time() - kv_get(db, 'last_delegate_poll', 0) < float(os.environ.get('NIGHTLY_POLL_S', 20)):
+        return
+    kv_set(db, 'last_delegate_poll', time.time())
+    for row in db.execute("SELECT * FROM tasks WHERE state='DELEGATED'").fetchall():
+        try:
+            _poll_one(db, row)
+        except Exception as e:
+            ev(db, row['name'], 'POLL_ERROR', f'{type(e).__name__}: {str(e)[:200]}')
+
+
+def _poll_one(db, row):
+    grace = float(os.environ.get('NIGHTLY_RESULT_GRACE_S', 120))
+    ref = json.loads(row['dispatch_ref'] or '{}')
+    cwd = row['cwd'] or str(ROOT)
+    f = find_result_file(row, cwd)
+    if f:
+        ok_, res, why = verify_engineering_result(db, row, f)
+        if ok_:
+            ev(db, row['name'], 'RESULT', why)
+            record_engineering_result(db, row, f, res, why == 'verified')
+            checkpoint(db, f"result {row['name']}")
+            return
+        if kv_get(db, f"badres:{row['name']}:{row['attempts']}") != why:
+            kv_set(db, f"badres:{row['name']}:{row['attempts']}", why)
+            ev(db, row['name'], 'RESULT_REJECTED', why)
+    obs = agents.codex_observe(ref.get('thread'), ref.get('item_id'), ref.get('token'))
+    phase = row['phase']
+    if not obs['source_ok']:
+        return  # unknown stays unknown
+    if obs['turn_status'] == 'inProgress':
+        new = 'RUNNING'
+    elif obs['turn_status'] or (obs['queued'] is False and ref.get('item_id')):
+        new = 'ACKNOWLEDGED' if phase in ('DISPATCHED', 'DISPATCHING', None) else phase
+    elif obs['queued'] and phase == 'DISPATCHING':
+        new = 'DISPATCHED'
+    else:
+        new = phase
+    if new != phase:
+        db.execute("UPDATE tasks SET phase=? WHERE id=? AND state='DELEGATED' AND attempt_id=?", (new, row['id'], row['attempt_id']))
+        ev(db, row['name'], 'PHASE', f'{phase}->{new}')
+    age = time.time() - (row['dispatched_at'] or time.time())
+    if obs['turn_status'] in ('completed', 'failed', 'interrupted'):
+        key = f"turn_done_at:{row['name']}:{row['attempts']}"
+        seen = kv_get(db, key)
+        if seen is None:
+            kv_set(db, key, time.time())
+        elif time.time() - seen > grace:  # attempt proven ended and still no verified result: release the lease, hand to engineering
+            n = db.execute("UPDATE tasks SET state='NEEDS_ENGINEERING', reason=? WHERE id=? AND state='DELEGATED' AND attempt_id=?",
+                           (f"codex turn {obs['turn_status']} without a verified result", row['id'], row['attempt_id'])).rowcount
+            if n:
+                ev(db, row['name'], 'ATTEMPT_ENDED_NO_RESULT', obs['turn_status'])
+                eng_autocheckpoint(db, db.execute('SELECT * FROM tasks WHERE id=?', (row['id'],)).fetchone(), 'orchestrator-delegate-ended', f"turn {obs['turn_status']}")
+                checkpoint(db, f"ended {row['name']}")
+    elif obs['turn_status'] is None and age > float(os.environ.get('NIGHTLY_NO_ACK_ALERT_S', 3600)) and not kv_get(db, f"noack:{row['name']}:{row['attempts']}"):
+        kv_set(db, f"noack:{row['name']}:{row['attempts']}", True)  # regardless of queue visibility; lease kept, nothing assumed
+        ev(db, row['name'], 'NO_ACK_ALERT', f"phase={new} delivered {int(age)}s ago, queued={obs['queued']}: not success, not safe to assume stopped; lease kept; operator: `nq.py supersede {row['name']} --force-lease-release`")
+
+
 def tick(db, cur):
     """One scheduling step. cur = (row, Popen, log, last_size, last_progress) or None. Returns the new cur."""
+    poll_delegated(db)
     if cur:
         r, p, log, size, prog = cur
         rc = p.poll()
@@ -332,10 +595,22 @@ def tick(db, cur):
                 ev(db, r['name'], 'PAUSED_AGENT', 'waiting for agent availability')
                 checkpoint(db, f"paused {r['name']}")
                 continue
+            fw = agents.foreign_writers(r['cwd'] or str(ROOT), own_sessions(db))
+            if fw:  # an agent we did not start (operator TUI) is already in this worktree: never become a second writer
+                if kv_get(db, f"leasewarn:{r['name']}") != [p_[0] for p_ in fw]:
+                    kv_set(db, f"leasewarn:{r['name']}", [p_[0] for p_ in fw])
+                    ev(db, r['name'], 'LEASE_BLOCKED_FOREIGN_WRITER', json.dumps(fw)[:400])
+                continue
             kv_set(db, f"tried:{r['name']}", kv_get(db, f"tried:{r['name']}", []) + [a])
             db.execute('UPDATE tasks SET owner=? WHERE id=?', (a, r['id']))
             ev(db, r['name'], 'OWNER', a)
-            r = dict(r) | {'cmd': agent_command(a, r)}
+            if a == 'codex':
+                dispatch_codex(db, r)
+                continue
+            attempt_n, aid = r['attempts'] + 1, agents.new_attempt_id()
+            _tok, contract = result_contract(r['name'], attempt_n, aid, result_dir(r['name'], attempt_n), r['cwd'] or str(ROOT))
+            db.execute('UPDATE tasks SET attempt_id=? WHERE id=?', (aid, r['id']))
+            r = dict(r) | {'cmd': agent_command(a, r, contract), 'attempt_id': aid}
         p, log = run_mechanical(db, r)
         row = db.execute('SELECT * FROM tasks WHERE id=?', (r['id'],)).fetchone()
         return (row, p, log, 0, time.time())
@@ -353,8 +628,8 @@ def agent_context(db_path_row):
     return '\n'.join(x for x in parts if x)
 
 
-def agent_command(agent, r):
-    return agents.ADAPTERS[agent].command(r, agent_context(r))
+def agent_command(agent, r, extra=''):
+    return agents.ADAPTERS[agent].command(r, agent_context(r) + ('\n' + extra if extra else ''))
 
 
 def handoff_decision(db, full, rc, verdict, tail):
@@ -366,14 +641,20 @@ def handoff_decision(db, full, rc, verdict, tail):
     owner = full['owner']
     st = kv_get(db, 'agents', {})
     if cause == 'limit' and owner:  # confirmed by provider text in the log; reset time is not parsed/assumed
-        st.setdefault(owner, {}).update(status='usage_limited', retry_after=time.time() + int(os.environ.get('NIGHTLY_LIMIT_BACKOFF_S', 3600)))
+        # reset time is NOT known from a log line: do not invent one. recheck_after is only a bounded probe cadence.
+        st.setdefault(owner, {}).update(status='usage_limited', retry_after=None, reset_known=False,
+                                        recheck_after=time.time() + int(os.environ.get('NIGHTLY_LIMIT_PROBE_S', 1800)))
         kv_set(db, 'agents', st)
     tried = kv_get(db, f"tried:{full['name']}", [])
     now = time.time()
+    nh = kv_get(db, f"handoffs:{full['name']}", 0)
+    if nh >= int(os.environ.get('NIGHTLY_MAX_HANDOFFS', 4)):
+        return 'NEEDS_ENGINEERING', f'handoff cap reached ({nh}): stop bouncing between agents'
     for a in db_get_agents(full):
         s = st.get(a, {})
-        if a not in tried and s.get('installed', agents.ADAPTERS[a].installed()) and not (s.get('status') == 'usage_limited' and s.get('retry_after', 0) > now):
+        if a not in tried and s.get('installed', agents.ADAPTERS[a].installed()) and not is_limited(s, now):
             db.execute('UPDATE tasks SET max_attempts=max_attempts+1 WHERE id=?', (full['id'],))  # a handoff is not a failed attempt
+            kv_set(db, f"handoffs:{full['name']}", nh + 1)
             return 'PENDING', f'HANDOFF {owner}->{a} ({cause})'
     kv_set(db, f"tried:{full['name']}", [])  # waiting for a reset: the limited owner may take the task again later
     if cause == 'limit':
@@ -386,7 +667,7 @@ def revive_agents(db):
     st = kv_get(db, 'agents', {})
     now = time.time()
     for a, s in st.items():
-        if s.get('status') == 'usage_limited' and s.get('retry_after', 0) < now:
+        if s.get('status') == 'usage_limited' and not is_limited(s, now):
             s['status'] = 'unknown'
     kv_set(db, 'agents', st)
     if any(s.get('installed') and s.get('status') != 'usage_limited' for s in st.values()):
@@ -409,11 +690,12 @@ def daemon(args):
     stop = []
     signal.signal(signal.SIGTERM, lambda *_: stop.append(1))
     cur, last_revive = None, 0
-    while not stop:
+    t_end = time.time() + args.max_seconds if args.max_seconds else None
+    while not stop and not (t_end and time.time() > t_end):
         cur = tick(db, cur)
         if time.time() - last_revive > 300:
             revive_agents(db); last_revive = time.time()
-        if cur is None and not args.keep_alive and not db.execute("SELECT 1 FROM tasks WHERE state IN ('PENDING','RUNNING') LIMIT 1").fetchone():
+        if cur is None and not args.keep_alive and not db.execute("SELECT 1 FROM tasks WHERE state IN ('PENDING','RUNNING','DELEGATED') LIMIT 1").fetchone():
             break
         time.sleep(args.poll)
     if cur:  # graceful stop: leave the child to be recovered on next start rather than orphaning silently
@@ -431,7 +713,7 @@ def cmd_status(args):
 def main():
     ap = argparse.ArgumentParser()
     sp = ap.add_subparsers(dest='c', required=True)
-    d = sp.add_parser('daemon'); d.add_argument('--poll', type=float, default=2.0); d.add_argument('--keep-alive', action='store_true')
+    d = sp.add_parser('daemon'); d.add_argument('--poll', type=float, default=2.0); d.add_argument('--keep-alive', action='store_true'); d.add_argument('--max-seconds', type=float, default=0)
     e = sp.add_parser('enqueue'); e.add_argument('name'); e.add_argument('cmd'); e.add_argument('--kind', default='mechanical')
     e.add_argument('--priority', type=int); e.add_argument('--deps', default='[]'); e.add_argument('--resource'); e.add_argument('--timeout', type=int)
     e.add_argument('--heartbeat', type=int); e.add_argument('--cwd'); e.add_argument('--state'); e.add_argument('--reason'); e.add_argument('--klass'); e.add_argument('--requires-result', action='store_true')
@@ -441,6 +723,9 @@ def main():
     sp.add_parser('checkpoint')
     rl = sp.add_parser('results'); rl.add_argument('--task'); rl.add_argument('--json', action='store_true')
     sp.add_parser('verify-evidence')
+    sp.add_parser('usage')
+    sp.add_parser('poll')
+    su = sp.add_parser('supersede'); su.add_argument('task'); su.add_argument('--force-lease-release', action='store_true')
     ec = sp.add_parser('eng-checkpoint'); ec.add_argument('task'); ec.add_argument('--agent'); ec.add_argument('--next'); ec.add_argument('--hypotheses', default='[]')
     ec.add_argument('--decisions', default='[]'); ec.add_argument('--files', default='[]'); ec.add_argument('--unfinished', default='[]'); ec.add_argument('--verified', action='store_true')
     rc_ = sp.add_parser('root-cause'); rc_.add_argument('key'); rc_.add_argument('summary'); rc_.add_argument('--status', default='HYPOTHESIS', choices=['VERIFIED', 'HYPOTHESIS', 'REFUTED'])
@@ -479,6 +764,26 @@ def main():
         for r in rows:
             if not a.json:
                 print(f"{r['id']:4} {r['verdict']:10} {r['status']:16} sv={r['safety_violations']} {r['task']}#{r['attempt']} {r['scenario_id']} seed={r['seed']} sha={str(r['git_sha'])[:9]}{' DIRTY' if r['code_dirty'] else ''}")
+    elif a.c == 'usage':
+        db = connect(); print(json.dumps({k: v.get('usage') for k, v in refresh_usage(db, force=True).items()}, indent=1))
+    elif a.c == 'poll':
+        db = connect()
+        lk = open(RUN / 'orchestrator.lock', 'a')
+        try:
+            fcntl.flock(lk, fcntl.LOCK_EX | fcntl.LOCK_NB)  # one writer of delegated state at a time
+        except OSError:
+            sys.exit('the daemon owns the lease and polls by itself; not polling from a second process')
+        poll_delegated(db, force=True); checkpoint(db, 'poll')
+    elif a.c == 'supersede':
+        db = connect()
+        if not a.force_lease_release:
+            sys.exit('refused: supersede releases the worktree lease while the old Codex delivery may still run later. Re-run with --force-lease-release if you accept that; a late result of the old attempt is rejected (attempt_id) but its file edits are not prevented.')
+        r = db.execute("SELECT * FROM tasks WHERE name=? AND state='DELEGATED'", (a.task,)).fetchone()
+        if not r:
+            sys.exit('no such DELEGATED task')
+        db.execute("UPDATE tasks SET state='PENDING', phase='SUPERSEDED', attempt_id=NULL, max_attempts=max_attempts+1, reason='superseded by operator; old attempt result will be rejected' WHERE id=?", (r['id'],))
+        ev(db, a.task, 'SUPERSEDED', f"operator forced; old attempt_id {r['attempt_id']} will be rejected")
+        checkpoint(db, f'supersede {a.task}')
     elif a.c == 'verify-evidence':
         db = connect(); rep = store.adopt_orphans(db, RUN); checkpoint(db, 'verify-evidence')
         print(json.dumps(rep)); sys.exit(1 if rep['damaged'] else 0)

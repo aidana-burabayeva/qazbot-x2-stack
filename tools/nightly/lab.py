@@ -199,7 +199,7 @@ def notify_codex(db, args, sha):
            f'Finish the atomic step, commit only in your own worktree, then acknowledge by writing "STOPPED <your HEAD sha>" to {ACK}. '
            f'Lab HEAD at stop: {sha}. Do not resume until the operator runs /nightly-resume.')
     try:
-        rc, o = sh(['codex', 'queue', '--thread', CODEX_THREAD, '--message', msg], timeout=45)
+        rc, o = sh([nq.agents.ADAPTERS['codex'].bin, 'queue', '--thread', CODEX_THREAD, '--message', msg], timeout=45)  # adapter bin: tests point it at a stub
     except (OSError, subprocess.TimeoutExpired) as ex:  # agent missing/hung must never block the stop
         rc, o = 127, f'codex unavailable: {ex}'
     nq.kv_set(db, 'codex_stop', 'STOP_UNVERIFIED' if rc == 0 else 'STOP_NOT_DELIVERED')
@@ -207,6 +207,10 @@ def notify_codex(db, args, sha):
 
 
 def codex_ack_status(db):
+    """An ack file proves the Codex SESSION stopped. A delegated attempt still recorded as open overrides it: not proven ended."""
+    if db.execute("SELECT 1 FROM tasks WHERE state='DELEGATED' LIMIT 1").fetchone():
+        nq.kv_set(db, 'codex_stop', 'STOP_UNVERIFIED')
+        return 'STOP_UNVERIFIED'
     if ACK.exists() and ACK.read_text().startswith('STOPPED'):
         nq.kv_set(db, 'codex_stop', 'STOP_ACKED')
         return 'STOP_ACKED'
@@ -332,6 +336,10 @@ def cmd_stop(args):
     freeze(db); log.append('FREEZE ok')
     units = stop_units(args); log.append(f'STOP units {units}')
     parked = park_tasks(db); log.append(f'STOP parked {len(parked)} tasks')
+    open_deleg = [r['name'] for r in db.execute("SELECT name FROM tasks WHERE state='DELEGATED'")]
+    if open_deleg:  # a delegated Codex attempt cannot be proven stopped from here: lease kept, never reported as stopped
+        nq.kv_set(db, 'delegated_open', open_deleg)
+        log.append(f'STOP DELEGATED_OPEN {open_deleg}: Codex attempt(s) not proven ended -> STOP_UNVERIFIED, lease kept')
     log.append(f'STOP sim {stop_sim(args)}')
     g = git_view()
     log.append(f'STOP codex {notify_codex(db, args, g["head"])}')
@@ -428,6 +436,7 @@ def cmd_resume(args):
         restored += n
     nq.kv_set(db, 'parked', {})
     nq.kv_set(db, 'frozen', False)
+    nq.kv_set(db, 'delegated_open', [])
     nq.kv_set(db, 'lab_state', 'RUNNING' if not args.no_start else 'RESUMED_NOT_STARTED')
     nq.kv_set(db, 'last_resume_ts', time.time())
     log.append(f'PRIORITIZE restored {restored} parked tasks; frozen=False')
