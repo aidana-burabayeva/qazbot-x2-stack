@@ -40,3 +40,9 @@
 | 6 | usage limit не останавливает механику | VERIFIED на тест-очереди (PAUSED_AGENT, механические продолжились); реальный лимит Claude не наблюдался |
 | 7 | commit/handoff в Git | VERIFIED: ветка test/p20-twin02-sim-20261029 |
 | 8 | /loop зарегистрирован | VERIFIED: CronCreate a56ac490 (1h) и 8c5b8731 (2h), session-only, 7 дней |
+
+## Engineering extension: машина готова (2026-10-30)
+- `tools/nightly/tournament.py`: сетка конфигураций (L1 MODEL), общие seed/карта, перепроверка победителей на unseen seeds, hard-fail = контакт footprint, Парето-набор (baseline/safest/most_accurate/fastest_among_safe + фронт). Первый прогон: **ни одна конфигурация не даёт 0 hard-fail** (baseline 246/~840 контактов), поэтому `fastest_among_safe = None` — правило соблюдено, сигнала нет: коллизии даёт сам упрощённый follower L1 (срезает углы), настраивать надо Nav2 в L2, не модель. Результаты: docs/nightly/tournament/l1_20261030.
+- `tools/nightly/report.py` -> run/nightly/report.html (очередь, сигнатуры, L2, Парето, карта).
+- Передача инженерной задачи L2-stall Codex: отдельный worktree `/home/adn/QazBot/control_backend_codex_nightly` (ветка nightly/codex-stall-20261030), общая очередь через NIGHTLY_RUN. Результат ожидается; OPEN.
+- GPU/RL: OPEN/не начато — по замерам Nav2 и MuJoCo physics не GPU-ускоряются; RL только после стабильного baseline на L2 (его нет: stall).

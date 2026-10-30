@@ -22,7 +22,8 @@ struct Grid {
   std::vector<float> edt;  // metres to the nearest non-free cell
 };
 static const double kFp[8][2] = {{0.17, 0.229}, {0.008, 0.34}, {-0.182, 0.34}, {-0.305, 0.229}, {-0.305, -0.261}, {-0.182, -0.372}, {0.008, -0.372}, {0.17, -0.261}};
-static const double kHalfW = 0.356, kVmax = 0.4, kWmax = 0.5, kDt = 0.05;  // v/w limits: MODEL assumptions, w from P20 measurement
+static const double kHalfW = 0.356, kWmax = 0.5, kDt = 0.05;
+static double kVmax = 0.4, kMargin = 0.03;  // MODEL parameters, overridable from argv for the config tournament  // v/w limits: MODEL assumptions, w from P20 measurement
 
 static void dt1d(const float* f, float* d, int n, std::vector<int>& v, std::vector<float>& z) {
   int k = 0; v[0] = 0; z[0] = -1e20f; z[1] = 1e20f;
@@ -124,7 +125,7 @@ static Res run1(const Grid& g, double inf, double sx, double sy, double sth, dou
 // strict first (circumscribed radius + margin); a gap narrower than that is only tried in `narrow` mode (half-width), which the
 // report keeps separate because at 0.05 m map resolution the verdict there is below the map's own quantisation.
 static Res run(const Grid& g, double sx, double sy, double sth, double gx, double gy, double gth) {
-  Res r = run1(g, 0.372 + 0.03, sx, sy, sth, gx, gy, gth);
+  Res r = run1(g, 0.372 + kMargin, sx, sy, sth, gx, gy, gth);
   if (r.reason == "no_geometric_path") { Res n = run1(g, kHalfW, sx, sy, sth, gx, gy, gth); if (n.result != "REJECT") { n.reason = n.result == "REACHED" ? "narrow_mode_passage" : n.reason + "+narrow_mode"; return n; } }
   return r;
 }
@@ -133,6 +134,8 @@ int main(int argc, char** argv) {
   Grid g; if (!load(argv[1], g)) { fprintf(stderr, "map load failed\n"); return 2; }
   struct S { std::string id, cat, exp; double v[6]; }; std::vector<S> sc; std::ifstream in(argv[2]); std::string ln;
   while (std::getline(in, ln)) { std::stringstream ss(ln); S s; std::getline(ss, s.id, '\t'); std::getline(ss, s.cat, '\t'); std::string f; for (int i = 0; i < 6; ++i) { std::getline(ss, f, '\t'); s.v[i] = atof(f.c_str()); } std::getline(ss, s.exp, '\t'); sc.push_back(s); }
+  if (argc > 5) kVmax = atof(argv[5]);
+  if (argc > 6) kMargin = atof(argv[6]);
   int nt = argc > 4 ? atoi(argv[4]) : 1; std::vector<Res> out(sc.size()); std::atomic<size_t> next{0};
   auto t0 = std::chrono::steady_clock::now();
   std::vector<std::thread> th; for (int k = 0; k < nt; ++k) th.emplace_back([&] { for (size_t i; (i = next++) < sc.size();) out[i] = run(g, sc[i].v[0], sc[i].v[1], sc[i].v[2], sc[i].v[3], sc[i].v[4], sc[i].v[5]); });
