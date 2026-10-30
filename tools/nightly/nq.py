@@ -25,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import store  # noqa: E402
 import agents  # noqa: E402
 import attempts  # noqa: E402
+import router  # noqa: E402
 
 ROOT = Path(os.environ.get('NIGHTLY_ROOT', Path(__file__).resolve().parents[2]))
 RUN = Path(os.environ.get('NIGHTLY_RUN', ROOT / 'run' / 'nightly'))
@@ -57,13 +58,14 @@ def connect():
     db.execute('PRAGMA synchronous=FULL')
     db.executescript(SCHEMA)
     store.init(db)
+    db.execute('CREATE TABLE IF NOT EXISTS router_stats(id INTEGER PRIMARY KEY, ts REAL, task TEXT, attempt INTEGER, cls TEXT, agent TEXT, model TEXT, effort TEXT, escalation INTEGER, outcome TEXT, seconds REAL, quota_before TEXT, quota_after TEXT)')
     cols = [r[1] for r in db.execute('PRAGMA table_info(tasks)')]
     if 'requires_result' not in cols:
         db.execute('ALTER TABLE tasks ADD COLUMN requires_result INTEGER NOT NULL DEFAULT 0')  # 1: no result.json -> never COMPLETED
     for c_ in ('phase', 'attempt_id', 'dispatch_ref'):
         if c_ not in cols:
             db.execute(f'ALTER TABLE tasks ADD COLUMN {c_} TEXT')  # delegated-task contract: DISPATCHED..VERIFIED, bound to attempt_id
-    for c_ in ('attempt_wt', 'branch', 'model', 'effort', 'base_from'):
+    for c_ in ('attempt_wt', 'branch', 'model', 'effort', 'base_from', 'task_type', 'complexity', 'risk', 'pin_model', 'pin_effort'):
         if c_ not in cols:
             db.execute(f'ALTER TABLE tasks ADD COLUMN {c_} TEXT')
     if 'dispatched_at' not in cols:
@@ -206,7 +208,7 @@ def run_mechanical(db, r):
     ev(db, name, 'START', r['cmd'])
     checkpoint(db, f'start {name}')
     with open(log, 'wb') as fh:
-        p = subprocess.Popen(['bash', '-lc', r['cmd']], cwd=dict(r).get('run_cwd') or r['cwd'], stdout=fh, stderr=subprocess.STDOUT, start_new_session=True,
+        p = subprocess.Popen(['bash', '-lc', r['cmd']], cwd=dict(r).get('run_cwd') or r['cwd'], stdin=subprocess.DEVNULL, stdout=fh, stderr=subprocess.STDOUT, start_new_session=True,
                              env=dict(os.environ, NIGHTLY_RESULT_DIR=str(rdir), NIGHTLY_TASK=name, NIGHTLY_ATTEMPT=str(attempt), NIGHTLY_ATTEMPT_ID=str(dict(r).get('attempt_id') or '')))
     db.execute('UPDATE tasks SET pid=? WHERE id=?', (p.pid, r['id']))
     return p, log
@@ -296,6 +298,8 @@ def finish(db, r, p, log, verdict):
                 checkpoint(db, f'finish {name} -> VERIFYING')
                 return
         state, reason = 'NEEDS_ENGINEERING', f'agent exited {rc} without a verified result: {why}'[:300]
+        route_log(db, full, 'NO_RESULT', time.time() - (full['started'] or time.time()))
+        kv_set(db, f"esc:{name}", kv_get(db, f"esc:{name}", 0) + 1)
     if full['kind'] == 'engineering' and verdict != 'ok':
         hd = handoff_decision(db, full, rc, verdict, tail)
         if hd:
@@ -346,19 +350,59 @@ def refresh_usage(db, force=False):
     return st
 
 
-def run_engineering(db, r):
-    """Engineering task = headless agent call. Returns an agent that is installed and not in a recorded usage limit, else None."""
+WAIT_RESET_MAX_S = 3600
+
+
+def select_agent(db, r):
+    """Pick provider+model+effort for an engineering task. Order: the task's own --agents list (default codex,claude); router fills model/effort.
+    A limited provider with an OFFICIAL reset within 60 minutes keeps the task (bounded wait, queue goes on) unless it is critical;
+    a longer or unknown reset hands off. Returns dict(agent, model, effort, route) | dict(wait_until, reason) | None."""
     st = agent_probe(db)
     st = refresh_usage(db) or st
     now = time.time()
     tried = kv_get(db, f"tried:{r['name']}", [])
-    for a in db_get_agents(r):
+    allowed = db_get_agents(r)
+    esc = kv_get(db, f"esc:{r['name']}", 0)
+    routed = router.route(r['task_type'], r['complexity'], r['risk'], escalation=esc, claude_verified=kv_get(db, 'claude_verified', {}), allowed_agents=set(allowed))
+    cands = []
+    for ag in allowed:
+        pick = next((c for c in routed if c['agent'] == ag), {'agent': ag, 'model': None, 'effort': None, 'cls': router.classify(r['task_type'], r['complexity'], r['risk']), 'verified': False, 'reason': 'no router candidate'})
+        if r['pin_model'] and ag == allowed[0]:  # explicit operator choice wins (tasks.model/effort only record what was chosen last time)
+            pick = dict(pick, model=r['pin_model'], effort=r['pin_effort'] or pick['effort'], reason='pinned by operator')
+        cands.append(pick)
+    limited_first, waits = None, []
+    for i, c in enumerate(cands):
+        a = c['agent']
         if a in tried:
             continue
-        s = st.get(a, {})
-        if s.get('installed') and not is_limited(s, now):
-            return a
+        s_ = st.get(a, {})
+        if not s_.get('installed'):
+            continue
+        if is_limited(s_, now):
+            until = s_.get('retry_after') or s_.get('recheck_after')
+            waits.append(until)
+            if i == 0 or limited_first is None:
+                limited_first = (a, s_.get('retry_after'), until)
+            continue
+        if limited_first and limited_first[1] and limited_first[1] - now <= WAIT_RESET_MAX_S and r['priority'] > 10:
+            # the preferred agent returns soon (official reset <= 60 min) and the task is not critical: wait, do not pay a handoff
+            return dict(wait_until=limited_first[1] + 5, reason=f"{limited_first[0]} limited, official reset in {int(limited_first[1] - now)}s (<=60 min): waiting instead of handoff")
+        return dict(agent=a, model=c['model'], effort=c['effort'], route=c)
+    if waits:
+        until = min(w for w in waits if w)
+        return dict(wait_until=until + 5, reason='all candidate agents limited; waiting for the earliest reset/recheck')
     return None
+
+
+def route_log(db, row, outcome, seconds=None):
+    """Quality/cost evidence per routed attempt: outcome of the regression gate, duration, Codex quota before/after when measurable."""
+    try:
+        db.execute('INSERT INTO router_stats(ts,task,attempt,cls,agent,model,effort,escalation,outcome,seconds,quota_before,quota_after) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)',
+                   (time.time(), row['name'], row['attempts'], router.classify(row['task_type'], row['complexity'], row['risk']), row['owner'], row['model'], row['effort'],
+                    kv_get(db, f"esc:{row['name']}", 0), outcome, seconds, json.dumps(kv_get(db, f"quota_before:{row['name']}:{row['attempts']}")),
+                    json.dumps((agents.codex_usage() if row['owner'] == 'codex' else agents.claude_usage()).get('used_pct'))))
+    except Exception as e:
+        ev(db, row['name'], 'ROUTE_LOG_ERROR', str(e)[:120])
 
 
 def db_get_agents(r):
@@ -562,6 +606,15 @@ def record_engineering_result(db, row, item_d, ok):
                           (str(rc_['key'])[:80], str(rc_['summary'])[:400], st_, str(rc_.get('evidence') or '')[:300], row['name'], now)))
     store.commit(db, row['id'], [item], ev_path, man_sha, base, state, 0, reason, None, extra=extra)
     kv_set(db, f"tried:{row['name']}", [])
+    route_log(db, row, 'PASS' if ok else 'GATE_FAIL', time.time() - (row['started'] or time.time()))
+    if not ok:
+        kv_set(db, f"esc:{row['name']}", kv_get(db, f"esc:{row['name']}", 0) + 1)  # a failed gate escalates the next attempt instead of repeating it
+    if ok and row['owner'] == 'claude' and row['model'] and row['effort']:
+        cv = kv_get(db, 'claude_verified', {})
+        cv.setdefault(row['model'], [])
+        if row['effort'] not in cv[row['model']]:
+            cv[row['model']].append(row['effort'])
+        kv_set(db, 'claude_verified', cv)  # first real success proves this model/effort pair is accepted by the CLI
     if ok:
         kv_set(db, f"verified_sha:{row['name']}", item['metrics']['git_sha'])
         ev(db, row['name'], 'INTEGRATION_READY', f"branch={row['branch']} sha={item['metrics']['git_sha']} (not merged anywhere; merge is a separate gated step)")
@@ -651,6 +704,7 @@ def _poll_one(db, row):
 def tick(db, cur):
     """One scheduling step. cur = (row, Popen, log, last_size, last_progress) or None. Returns the new cur."""
     poll_delegated(db)
+    db.execute("UPDATE tasks SET state='PENDING', reason='reset reached: retrying' WHERE state='PAUSED_LIMIT' AND not_before<=?", (time.time(),))
     if cur:
         r, p, log, size, prog = cur
         rc = p.poll()
@@ -670,12 +724,22 @@ def tick(db, cur):
         return (r, p, log, sz, beat)
     for r in ready(db):
         if r['kind'] == 'engineering':
-            a = run_engineering(db, r)
-            if a is None:
-                db.execute("UPDATE tasks SET state='PAUSED_AGENT', reason='no agent available (limit or not installed)' WHERE id=?", (r['id'],))
+            sel = select_agent(db, r)
+            if sel is None:
+                db.execute("UPDATE tasks SET state='PAUSED_AGENT', reason='no agent available (not installed)' WHERE id=?", (r['id'],))
                 ev(db, r['name'], 'PAUSED_AGENT', 'waiting for agent availability')
                 checkpoint(db, f"paused {r['name']}")
                 continue
+            if 'wait_until' in sel:
+                db.execute("UPDATE tasks SET state='PAUSED_LIMIT', not_before=?, reason=? WHERE id=?", (sel['wait_until'], sel['reason'][:300], r['id']))
+                ev(db, r['name'], 'PAUSED_LIMIT', sel['reason'])
+                checkpoint(db, f"paused-limit {r['name']}")
+                continue
+            a = sel['agent']
+            db.execute('UPDATE tasks SET model=?, effort=? WHERE id=?', (sel['model'], sel['effort'], r['id']))
+            ev(db, r['name'], 'ROUTE', json.dumps(sel['route']))
+            r = dict(r) | {'model': sel['model'], 'effort': sel['effort']}
+            kv_set(db, f"quota_before:{r['name']}:{r['attempts'] + 1}", (agents.codex_usage() if a == 'codex' else agents.claude_usage()).get('used_pct'))
             ad = agents.ADAPTERS[a]
             isolate = os.environ.get('NIGHTLY_ISOLATE', '1') != '0' and ad.mode == 'process' and attempts.is_git_repo(r['cwd'] or str(ROOT))
             if not isolate:
@@ -796,7 +860,7 @@ def daemon(args):
         cur = tick(db, cur)
         if time.time() - last_revive > 300:
             revive_agents(db); last_revive = time.time()
-        if cur is None and not args.keep_alive and not db.execute("SELECT 1 FROM tasks WHERE state IN ('PENDING','RUNNING','DELEGATED','VERIFYING') LIMIT 1").fetchone():
+        if cur is None and not args.keep_alive and not db.execute("SELECT 1 FROM tasks WHERE state IN ('PENDING','RUNNING','DELEGATED','VERIFYING','PAUSED_LIMIT') LIMIT 1").fetchone():
             break
         time.sleep(args.poll)
     if cur:  # graceful stop: leave the child to be recovered on next start rather than orphaning silently
@@ -817,7 +881,7 @@ def main():
     d = sp.add_parser('daemon'); d.add_argument('--poll', type=float, default=2.0); d.add_argument('--keep-alive', action='store_true'); d.add_argument('--max-seconds', type=float, default=0)
     e = sp.add_parser('enqueue'); e.add_argument('name'); e.add_argument('cmd'); e.add_argument('--kind', default='mechanical')
     e.add_argument('--priority', type=int); e.add_argument('--deps', default='[]'); e.add_argument('--resource'); e.add_argument('--timeout', type=int)
-    e.add_argument('--heartbeat', type=int); e.add_argument('--cwd'); e.add_argument('--state'); e.add_argument('--reason'); e.add_argument('--klass'); e.add_argument('--requires-result', action='store_true'); e.add_argument('--model'); e.add_argument('--effort'); e.add_argument('--base-from')
+    e.add_argument('--heartbeat', type=int); e.add_argument('--cwd'); e.add_argument('--state'); e.add_argument('--reason'); e.add_argument('--klass'); e.add_argument('--requires-result', action='store_true'); e.add_argument('--model'); e.add_argument('--effort'); e.add_argument('--base-from'); e.add_argument('--task-type'); e.add_argument('--complexity'); e.add_argument('--risk')
     sp.add_parser('status')
     m = sp.add_parser('mark'); m.add_argument('name'); m.add_argument('state'); m.add_argument('--reason', default='')
     ag = sp.add_parser('agent'); ag.add_argument('name'); ag.add_argument('status'); ag.add_argument('--retry-after-s', type=int, default=3600)
@@ -844,7 +908,7 @@ def main():
             db.execute('UPDATE tasks SET klass=? WHERE name=?', (a.klass, a.name))
         if a.requires_result:
             db.execute('UPDATE tasks SET requires_result=1 WHERE name=?', (a.name,))
-        db.execute('UPDATE tasks SET model=?, effort=?, base_from=? WHERE name=?', (a.model, a.effort, a.base_from, a.name))
+        db.execute('UPDATE tasks SET pin_model=?, pin_effort=?, base_from=?, task_type=?, complexity=?, risk=? WHERE name=?', (a.model, a.effort, a.base_from, a.task_type, a.complexity, a.risk, a.name))
         checkpoint(db, f'enqueue {a.name}')
         print('enqueued' if ok else 'exists (history kept)')
     elif a.c == 'mark':

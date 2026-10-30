@@ -35,7 +35,9 @@ def env(tmp_path):
     (b / 'observer').chmod(0o755)
     (b / 'usage').write_text('#!/usr/bin/env bash\n[ -f "$USAGE_FILE" ] && cat "$USAGE_FILE" || exit 3\n')
     (b / 'usage').chmod(0o755)
-    e = dict(os.environ, NIGHTLY_ROOT=str(root), NIGHTLY_RUN=str(root / 'run' / 'nightly'), NIGHTLY_CLAUDE_BIN=str(b / 'claude'),
+    (b / 'models').write_text('#!/usr/bin/env bash\necho \'{"models":[{"slug":"gpt-6.1-sol","supported_reasoning_levels":[{"effort":"low"},{"effort":"medium"},{"effort":"high"},{"effort":"xhigh"}]}]}\'\n')
+    (b / 'models').chmod(0o755)
+    e = dict(os.environ, NIGHTLY_CODEX_MODELS_CMD=str(b / 'models'), NIGHTLY_ROOT=str(root), NIGHTLY_RUN=str(root / 'run' / 'nightly'), NIGHTLY_CLAUDE_BIN=str(b / 'claude'),
              NIGHTLY_CODEX_BIN=str(b / 'codex'), NIGHTLY_CODEX_OBSERVE_CMD=str(b / 'observer'), NIGHTLY_CODEX_USAGE_CMD=str(b / 'usage'),
              NIGHTLY_CODEX_SOCK='/nonexistent', NIGHTLY_CODEX_QUEUE_DB='/nonexistent', NIGHTLY_POLL_S='0', NIGHTLY_USAGE_TTL_S='0',
              NIGHTLY_VERIFY_ALLOW='true;false', NIGHTLY_CODEX_MODE='queue', STUBLOG=str(log), OBS_FILE=str(obs), USAGE_FILE=str(tmp_path / 'usage.json'), QAZBOT_ROLE='LAB')
@@ -543,3 +545,143 @@ def test_verification_job_is_killed_on_restart_and_restarted_idempotently(env):
     assert not os.path.exists(f'/proc/{pid}') or open(f'/proc/{pid}/stat').read().split()[2] == 'Z'
     t = task(root)
     assert t['state'] == 'NEEDS_ENGINEERING' and q(root, 'SELECT verdict FROM results')[0]['verdict'] == 'FAIL'
+
+
+# ---------------------------------------------------------------- P4: usage-aware scheduling with official reset, P5: router
+
+def usage_file(e, used=50, limited=False, reset_in=None):
+    rl = {'primary': {'usedPercent': 100 if limited else used, 'windowDurationMins': 300, 'resetsAt': int(time.time() + reset_in) if reset_in else None},
+          'secondary': {'usedPercent': 43, 'windowDurationMins': 10080, 'resetsAt': int(time.time()) + 99999}}
+    if limited:
+        rl['rateLimitReachedType'] = 'rate_limit_reached'
+    Path(e['USAGE_FILE']).write_text(json.dumps({'ordinaryUsageAllowed': not limited, 'rateLimits': rl}))
+
+
+CATALOG = '{"models":[{"slug":"gpt-6.1-sol","supported_reasoning_levels":[{"effort":"low"},{"effort":"medium"},{"effort":"high"},{"effort":"xhigh"}]}]}'
+
+
+def exec_stubs(b):
+    stub(b, 'codex', 'if [ "$1" = debug ]; then echo \'' + CATALOG + '\'; exit 0; fi; echo "codex $*" | tr "\\n" " " >> "$STUBLOG"; echo >> "$STUBLOG"; ' + WRITE_RESULT + 'exit 0\n')
+    stub(b, 'claude', CLAUDE_OK)
+
+
+def test_short_official_reset_waits_instead_of_handoff_and_queue_goes_on(env):
+    e, root, b, log = env
+    e = exec_env(e); exec_stubs(b)
+    usage_file(e, limited=True, reset_in=1800)                                  # reset in 30 min (< 60)
+    nq(e, 'enqueue', 'eng', 'x --agents=codex,claude', '--kind', 'engineering', '--cwd', str(root))
+    nq(e, 'enqueue', 'mech', 'touch ' + str(root / 'mech.done'))
+    daemon(e, 3)
+    t = task(root)
+    assert t['state'] == 'PAUSED_LIMIT' and 1700 < t['not_before'] - time.time() < 1900 and 'waiting instead of handoff' in t['reason']
+    assert task(root, 'mech')['state'] == 'COMPLETED' and not (log.exists() and any(ln.startswith(('codex exec', 'claude ')) for ln in log.read_text().splitlines()))   # no agent started, the lab kept working
+
+
+def test_long_official_reset_hands_off_immediately(env):
+    e, root, b, log = env
+    e = exec_env(e); exec_stubs(b)
+    usage_file(e, limited=True, reset_in=3 * 3600)
+    nq(e, 'enqueue', 'eng', 'x --agents=codex,claude', '--kind', 'engineering', '--cwd', str(root))
+    daemon(e, 8)
+    t = task(root)
+    assert t['state'] == 'COMPLETED' and t['owner'] == 'claude'
+
+
+def test_critical_task_never_waits_for_reset(env):
+    e, root, b, log = env
+    e = exec_env(e); exec_stubs(b)
+    usage_file(e, limited=True, reset_in=600)
+    nq(e, 'enqueue', 'eng', 'x --agents=codex,claude', '--kind', 'engineering', '--cwd', str(root), '--priority', '5')
+    daemon(e, 8)
+    assert task(root)['owner'] == 'claude' and task(root)['state'] == 'COMPLETED'
+
+
+def test_both_limited_pauses_without_blocking_and_resumes_after_reset(env):
+    e, root, b, log = env
+    e = exec_env(e); exec_stubs(b)
+    usage_file(e, limited=True, reset_in=900)
+    nq(e, 'agent', 'claude', 'usage_limited', '--retry-after-s', '1200')
+    nq(e, 'enqueue', 'eng', 'x --agents=codex,claude', '--kind', 'engineering', '--cwd', str(root))
+    nq(e, 'enqueue', 'mech', 'touch ' + str(root / 'mech.done'))
+    daemon(e, 3)
+    assert task(root)['state'] == 'PAUSED_LIMIT' and task(root, 'mech')['state'] == 'COMPLETED'
+    # provider reports available again and the wait time has passed
+    usage_file(e, used=20)
+    c = sqlite3.connect(root / 'run' / 'nightly' / 'queue.db'); c.execute("UPDATE tasks SET not_before=? WHERE name='eng'", (time.time() - 1,)); c.commit(); c.close()
+    nq(e, 'agent', 'claude', 'available', '--retry-after-s', '0')
+    daemon(e, 10)
+    t = task(root)
+    assert t['state'] == 'COMPLETED' and t['owner'] == 'codex'                  # official source says available -> back on codex
+
+
+def test_claude_quota_unknown_never_blocks_and_codex_unknown_does_not_count_as_available(env):
+    e, root, b, log = env
+    e = exec_env(e); exec_stubs(b)
+    nq(e, 'enqueue', 'eng', 'x --agents=claude', '--kind', 'engineering', '--cwd', str(root))
+    daemon(e, 8)
+    assert task(root)['state'] == 'COMPLETED'                                   # no quota source for claude: not a reason to refuse work
+    u = json.loads(nq(e, 'usage').stdout)
+    assert u['claude']['status'] == 'UNKNOWN' and u['claude']['reset_at'] is None
+
+
+def test_results_survive_provider_state_changes(env):
+    e, root, b, log = env
+    e = exec_env(e); exec_stubs(b)
+    nq(e, 'enqueue', 'eng', 'x --agents=claude', '--kind', 'engineering', '--cwd', str(root))
+    daemon(e, 8)
+    before = [tuple(r) for r in q(root, 'SELECT result_key, verdict, evidence_path, manifest_sha256 FROM results')]
+    usage_file(e, limited=True, reset_in=100); nq(e, 'agent', 'claude', 'usage_limited'); nq(e, 'agent', 'codex', 'usage_limited')
+    daemon(e, 2)
+    assert [tuple(r) for r in q(root, 'SELECT result_key, verdict, evidence_path, manifest_sha256 FROM results')] == before and nq(e, 'verify-evidence').returncode == 0
+
+
+def test_router_classification_and_model_effort_choice(env):
+    sys.path.insert(0, str(NQ.parent))
+    import router
+    assert router.classify('documentation') == 'LOW' and router.classify('unit_tests') == 'MEDIUM' and router.classify('nav2') == 'HIGH'
+    assert router.classify('log_classification', risk='safety') == 'HIGH' and router.classify(None) == 'MEDIUM'
+    cat = {'gpt-6.1-sol': ['low', 'medium', 'high', 'xhigh']}
+    low = router.route('documentation', catalog=cat)
+    high = router.route('root_cause_analysis', catalog=cat)
+    assert low[0]['model'] == 'claude-haiku-5-5' and low[0]['effort'] == 'low'
+    assert high[0]['model'] == 'claude-opus-5-5' and high[0]['effort'] == 'high'
+    assert [c for c in high if c['agent'] == 'codex'][0]['effort'] == 'high'
+    assert not low[0]['verified']                                               # claude models are unverified until a real run proves them
+    assert router.route('documentation', catalog=cat, claude_verified={'claude-haiku-5-5': ['low']})[0]['verified']
+
+
+def test_router_validates_codex_efforts_against_catalog_and_never_silently_raises_cost(env):
+    sys.path.insert(0, str(NQ.parent))
+    import router
+    r = router.route('nav2', escalation=3, catalog={'gpt-6.1-sol': ['low', 'medium', 'high']}, allowed_agents={'codex'})
+    assert r[0]['effort'] == 'high'                                             # xhigh/max not supported -> highest supported not above the request
+    assert router.route('nav2', catalog={'other-model': ['low']}, allowed_agents={'codex'}) == []     # model absent from the catalog is unavailable
+    assert router.route('nav2', catalog=None, allowed_agents={'codex'})[0]['verified'] is False       # unreadable catalog is unknown, not "all supported"
+
+
+def test_failed_gate_escalates_next_attempt_and_stats_are_recorded(env):
+    e, root, b, log = env
+    e = exec_env(dict(e, NIGHTLY_VERIFY_ALLOW='false;true'))
+    stub(b, 'claude', CLAUDE_OK.replace('cmd="true"', 'cmd="false"'))           # result is structurally fine but the orchestrator's re-run fails
+    nq(e, 'enqueue', 'eng', 'x --agents=claude', '--kind', 'engineering', '--cwd', str(root), '--task-type', 'documentation')
+    daemon(e, 8)
+    assert task(root)['state'] == 'NEEDS_ENGINEERING'
+    first = task(root)
+    assert first['model'] == 'claude-haiku-5-5' and first['effort'] == 'low'
+    stub(b, 'claude', CLAUDE_OK)
+    nq(e, 'mark', 'eng', 'PENDING'); nq(e, 'agent', 'claude', 'available')
+    daemon(e, 8)
+    t = task(root)
+    assert t['state'] == 'COMPLETED' and (t['effort'], t['model']) != ('low', 'claude-haiku-5-5')      # escalated, not the same attempt again
+    stats = q(root, 'SELECT outcome, escalation, model, effort FROM router_stats ORDER BY id')
+    assert [s['outcome'] for s in stats] == ['GATE_FAIL', 'PASS'] and stats[1]['escalation'] == 1
+    assert json.loads(q(root, "SELECT v FROM kv WHERE k='claude_verified'")[0]['v'])               # first real success marks the pair verified
+
+
+def test_child_agents_do_not_inherit_stdin(env):
+    e, root, b, log = env
+    e = exec_env(e)
+    stub(b, 'codex', 'if [ -t 0 ]; then echo TTY >> "$STUBLOG"; fi; cat /dev/stdin | wc -c >> "$STUBLOG"; ' + WRITE_RESULT + 'exit 0\n')
+    nq(e, 'enqueue', 'eng', 'x --agents=codex', '--kind', 'engineering', '--cwd', str(root))
+    daemon(e, 8)
+    assert log.read_text().split()[0] == '0'
