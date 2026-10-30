@@ -78,7 +78,7 @@
 
 - **Манифеста всего дерева нет.** Есть только манифесты отдельных сессий (`docs/evidence/nav_session_2026102{8,9}/manifest.json`, карты `ws/src/maps/first_map_nav2_v*/manifest.json`); они фиксируют файлы сессии, а не развёртывание.
 - Версии зависимостей `runtime/` и `candidates/` нигде не записаны хэшами; префиксы не сравнивались с чем-либо.
-- Висячие симлинки `runtime/fast_lio` (79) и `fast_lio` в `AMENT_PREFIX_PATH`: нужно удалить из overlay либо задокументировать.
+- Висячие симлинки `runtime/fast_lio` (68; всего 79 во всём дереве, включая 10 в `runtime/user_pkgs` и `tests/twin`) и `fast_lio` в `AMENT_PREFIX_PATH`: нужно удалить из overlay либо задокументировать.
 - DDS-профиль и скрипты запуска живут в `docs/evidence/nav_20261029_1425/`, вне `ws/src`; в манифест нужно включать явно.
 - Пороги T5 заданы аргументами скриптов запуска, а не в `ws/src`.
 - `env.sh` с относительным `runtime/` не работает из checkout (см. `MIGRATION_PLAN.md`).
