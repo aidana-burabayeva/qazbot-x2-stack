@@ -84,6 +84,20 @@ class Config:
         return 3.0 / self.controller_hz
 
 
+def sim_yaw_lin_eps():
+    """SIM-only A/B fixture; production default and the linear command remain unchanged."""
+    key = 'QAZBOT_SIM_YAW_LIN_EPS'
+    if key not in os.environ:
+        return Config.yaw_lin_eps
+    if any(os.environ.get(k) != v for k, v in
+           {'QAZBOT_SIM': '1', 'TWIN_SANDBOX': '1', 'ROS_DOMAIN_ID': '87'}.items()):
+        raise ValueError('yaw_lin_eps experiment requires isolated SIM domain 87')
+    value = float(os.environ[key])
+    if not math.isfinite(value) or not 0.005 <= value <= 0.10:
+        raise ValueError('SIM yaw_lin_eps must be finite and within [0.005, 0.10]')
+    return value
+
+
 @dataclass
 class McState:
     """Snapshot of /aima/mc/common/state; stamp is local receive time."""
@@ -408,6 +422,7 @@ def main():
                 require_trust=bool(p('require_trust', True).value),
                 t1_pause_max_s=float(p('t1_pause_max_s', Config.t1_pause_max_s).value),
                 yaw_loop=bool(p('yaw_loop', Config.yaw_loop).value),
+                yaw_lin_eps=float(p('yaw_lin_eps', sim_yaw_lin_eps()).value),
                 yaw_u_min_ccw=float(p('yaw_u_min_ccw', Config.yaw_u_min_ccw).value),
                 yaw_u_min_cw=float(p('yaw_u_min_cw', Config.yaw_u_min_cw).value),
                 yaw_u_max=float(p('yaw_u_max', Config.yaw_u_max).value),
@@ -658,6 +673,7 @@ def main():
                 'registration': self.registration_state, 'registration_error': self.registration_error,
                 'sdk_service_ready': bool(self.cfg.live and self.registration_client.service_is_ready()),
                 'motion_armed': self.motion_armed,
+                'yaw_lin_eps': self.cfg.yaw_lin_eps,
                 't1_pause': bool(self.core.pause_since is not None or (self._health_fault(self._now()) and self._t1_ok(self._now())
                                  and not self.core._fault(self._now(), self.mc, True, '', ','.join(self.foreign)))),
                 'ready': bool(self._driver_path_ok()
