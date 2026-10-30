@@ -21,6 +21,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import nq  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'operator_skills'))
+import opskills  # noqa: E402
 
 ROOT, RUN = nq.ROOT, nq.RUN
 HW = ROOT / 'docs' / 'hardware'
@@ -34,7 +36,7 @@ BLOCK_PATH = re.compile(r'(^|/)(run/|__pycache__/)|\.(db|db-wal|db-shm|log|db3|m
 SECRET = re.compile(r'-----BEGIN [A-Z ]*PRIVATE KEY|ghp_[A-Za-z0-9]{20,}|sk-[A-Za-z0-9]{20,}|\b(password|passwd|secret|token|api_?key)\b\s*[=:]\s*[\'"]?[A-Za-z0-9/+_.-]{8,}[\'"]?\s*$', re.I | re.M)
 REGRESSION = os.environ.get('NIGHTLY_REGRESSION',
                             'source /opt/ros/humble/setup.bash 2>/dev/null; python3 -m pytest -q -p no:cacheprovider tests/nightly tests/motion_adapter')
-USAGE_ROBOT_PATHS = ('docs/hardware/ROBOT_FINDINGS.md', 'docs/evidence/robot_', 'docs/HANDOFF.md', 'docs/TEST_STATUS.md')
+USAGE_ROBOT_PATHS = ('docs/hardware/ROBOT_TO_LAB_FEEDBACK.md', 'docs/hardware/ROBOT_FINDINGS.md', 'docs/evidence/robot_', 'docs/HANDOFF.md', 'docs/TEST_STATUS.md')
 
 
 def sh(cmd, timeout=120, cwd=None):
@@ -219,14 +221,23 @@ def robot_doc_data():
 def render_handoff(db, g, tests):
     d = robot_doc_data()
     head, br = g['head'], g['branch']
-    L = [f'# Lab → Robot handoff', '',
+    contract = dict(contract_version=opskills.load_manifest()['contract_version'], doc='LAB_TO_ROBOT_HANDOFF', lab_branch=br,
+                    lab_sha=head, generated=now_iso(), package_version=opskills.load_manifest()['version'])
+    L = [f'<!-- QAZBOT-CONTRACT {json.dumps(contract)} -->', '', f'# Lab → Robot handoff', '',
          f'Сгенерировано `tools/nightly/lab.py stop` {now_iso()}. Ручные данные: `docs/hardware/lab_robot_state.json`. Сначала verify SHA ниже через `git ls-remote`.', '',
          '## Что доступно через Git', '',
          f'- Ветка: `{br}`, SHA на момент остановки: `{head}`', f'- Интеграция с production snapshot (`origin/main`): `{gout("rev-parse", "origin/main")}`',
          '- Тег остановки ставится после push: `lab-stop/<UTC>` (точный SHA в `docs/hardware/LAB_STATE.json` нельзя записать в тот же коммит; он в теге).', '',
          '## Тесты на момент остановки', '', f"- Regression: **{tests['verdict']}** — {tests['summary']}"]
+    L += ['', '## Классы верификации (контракт: SIM_VERIFIED / HARDWARE_VERIFIED / UNVERIFIED)', '']
+    cls = {'SIM_VERIFIED': [], 'SIM_FAILED': [], 'UNVERIFIED': [], 'NEEDS_HARDWARE': [], 'HARDWARE_VERIFIED': []}
     for t in d.get('tests', []):
-        L.append(f"- {t['status']}: {t['name']} — {t['note']}")
+        st = t['status'].upper()
+        k = 'SIM_VERIFIED' if st.startswith('PASS') else 'SIM_FAILED' if st.startswith('FAIL') else 'NEEDS_HARDWARE' if 'HARDWARE' in st else 'UNVERIFIED'
+        cls[k].append(f"{t['name']} — {t['note']}")
+    for k, v in cls.items():
+        L.append(f'**{k}**' + ('' if v else ': нет (HARDWARE_VERIFIED появляется только из ROBOT_TO_LAB_FEEDBACK.md после замеров на X2)' if k == 'HARDWARE_VERIFIED' else ': нет'))
+        L += [f'- {x}' for x in v]
     for title, key in (('Затронутые Nav2 / ROS 2 параметры', 'params'), ('Известные ошибки (открыты)', 'open_bugs'), ('НЕЛЬЗЯ переносить на X2', 'do_not_transfer'),
                        ('Проверки на физическом роботе (только по разрешению оператора)', 'robot_checks'), ('Диагностика (команды; read-only на роботе)', 'diag_commands'),
                        ('Риски (TF, локализация, Nav2, MC, сенсоры)', 'risks')):
@@ -326,6 +337,7 @@ def cmd_stop(args):
     log.append(f'STOP codex {notify_codex(db, args, g["head"])}')
     nq.checkpoint(db, 'lab stop'); log.append('CHECKPOINT ok')
     tests = run_regression(args); log.append(f"VALIDATE {tests['verdict']} {tests['summary']}")
+    e_, w_, _i = opskills.validate('lab'); log.append(f"VALIDATE operator-skills {'FAIL ' + str(e_) if e_ else 'OK'}")
     document(db, g, tests, parked, codex_ack_status(db), units); log.append('DOCUMENT ok')
     c = commit(args, g); log.append(f"COMMIT {c.get('commit') and c['commit'][:12]} staged={len(c['staged'])} skipped={c['skipped']}")
     log.append('MERGE n/a: merge queue is P3 (not implemented); the work branch is the integration branch and nothing is auto-merged to main')
@@ -396,6 +408,12 @@ def cmd_resume(args):
                         state='NEEDS_APPROVAL' if klass == 'NEEDS_APPROVAL' else 'NEEDS_ENGINEERING', reason=why[:200])
         db.execute('UPDATE tasks SET klass=? WHERE name=?', (klass, f"{name}_{time.strftime('%Y%m%d')}"))
         log.append(f'TRIAGE {klass} p{prio} {name} ({"new" if ok else "exists"})')
+    fb = opskills.contract_block(HW / 'ROBOT_TO_LAB_FEEDBACK.md')
+    if fb:  # robot-side checkpoints written by /robot-sync-validate; the lab only reads them
+        for k in ('last_lab_integrated_sha', 'last_lab_reviewed_sha'):
+            if fb.get(k):
+                nq.kv_set(db, 'robot_reported_' + k, fb[k])
+        log.append(f"FEEDBACK robot reports integrated={str(fb.get('last_lab_integrated_sha'))[:9]} reviewed={str(fb.get('last_lab_reviewed_sha'))[:9]}")
     # robot-integrated pointer: origin/main is the production snapshot
     om = gout('rev-parse', 'origin/main')
     if om and git('merge-base', '--is-ancestor', om, 'HEAD')[0] == 0:
@@ -443,6 +461,8 @@ def main():
         r.add_argument('--' + f, action='store_true')
     st = sp.add_parser('status'); st.add_argument('--json', action='store_true')
     a = ap.parse_args()
+    if a.c in ('stop', 'resume') and opskills.detect_role() == 'ROBOT':
+        sys.exit('refused: this checkout has role ROBOT; lab stop/resume are LAB-only (QAZBOT_ROLE / ~/.config/qazbot/role)')
     {'stop': cmd_stop, 'resume': cmd_resume, 'status': cmd_status}[a.c](a)
 
 
