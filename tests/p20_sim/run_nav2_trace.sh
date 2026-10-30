@@ -16,7 +16,7 @@ GOAL_ARGS=${GOAL_ARGS:---only-ccw --record-phases}
 export P20_BACKEND=$BACKEND TWIN_MAP=main_office TWIN_SIM_RES=320x180x24 LP_NUM_THREADS=1 SIM_CPUS=8 STACK_CPUS=4
 export TWIN_START=${TWIN_START:--7.885339914512176,12.96582446398428,0.0}
 C=(docker compose -p x2-twin -f "$TWIN/docker/compose.yaml" -f "$HERE/nav2.compose.yaml" --env-file "$TWIN/.env")
-cleanup() { "${C[@]}" down >/dev/null 2>&1 || true; }
+cleanup() { mkdir -p "$TWIN/results/$RUN"; "${C[@]}" logs --no-color stack > "$TWIN/results/$RUN/stack.log" 2>&1 || true; "${C[@]}" down >/dev/null 2>&1 || true; }
 trap cleanup EXIT
 "${C[@]}" up -d --wait --force-recreate sim stack
 docker run --rm --user 1000:1000 --network x2-twin_twin --entrypoint bash \

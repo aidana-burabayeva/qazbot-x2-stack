@@ -8,7 +8,7 @@ LINE=$(awk -F'\t' -v id="$ID" '$1==id' "$TSV"); [ -n "$LINE" ] || { echo "no sce
 read -r _ CAT SX SY SYAW GX GY GYAW EXP <<<"$(echo "$LINE" | tr '\t' ' ')"
 RUN="l2_${ID}_$(date +%Y%m%d_%H%M%S)"
 export TWIN_START="$SX,$SY,$SYAW" P20_RUN="$RUN"
-export GOAL_ARGS="--goals $GX,$GY,$GYAW --xy-tol 0.20 --yaw-tol 0.35 --record-phases"
+export GOAL_ARGS="--goals=$GX,$GY,$GYAW --xy-tol 0.20 --yaw-tol 0.35 --record-phases"
 rc=0; bash tests/p20_sim/run_nav2_trace.sh > "run/nightly/logs/$RUN.out" 2>&1 || rc=$?
 R=/home/adn/QazBot/digital_twin/results/$RUN
 CL=$(python3 tools/nightly/clearance_from_trace.py "$R/trace.json" 2>/dev/null || echo '{}')
