@@ -23,6 +23,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import store  # noqa: E402
+import agents  # noqa: E402
 
 ROOT = Path(os.environ.get('NIGHTLY_ROOT', Path(__file__).resolve().parents[2]))
 RUN = Path(os.environ.get('NIGHTLY_RUN', ROOT / 'run' / 'nightly'))
@@ -58,6 +59,8 @@ def connect():
     cols = [r[1] for r in db.execute('PRAGMA table_info(tasks)')]
     if 'requires_result' not in cols:
         db.execute('ALTER TABLE tasks ADD COLUMN requires_result INTEGER NOT NULL DEFAULT 0')  # 1: no result.json -> never COMPLETED
+    if 'owner' not in cols:
+        db.execute('ALTER TABLE tasks ADD COLUMN owner TEXT')  # agent that currently holds the task (durable ownership)
     if 'klass' not in cols:
         db.execute('ALTER TABLE tasks ADD COLUMN klass TEXT')  # SIM_ONLY | SIM_THEN_HARDWARE | HARDWARE_ONLY | NEEDS_APPROVAL
     return db
@@ -108,6 +111,8 @@ def enqueue(db, name, cmd, kind='mechanical', **kw):
     cols.update({k: v for k, v in kw.items() if v is not None})
     if isinstance(cols['deps'], list):
         cols['deps'] = json.dumps(cols['deps'])
+    if kind == 'engineering' and not cols['resource']:
+        cols['resource'] = 'wt:' + str(cols['cwd'])  # one writer per worktree: ready() never starts two tasks on one resource
     row = db.execute('SELECT state FROM tasks WHERE name=?', (name,)).fetchone()
     if row:
         return False  # never overwrite history; a re-run needs a new name
@@ -253,6 +258,11 @@ def finish(db, r, p, log, verdict):
     full = db.execute('SELECT * FROM tasks WHERE id=?', (r['id'],)).fetchone()
     if full['kind'] == 'engineering':
         eng_autocheckpoint(db, full, 'orchestrator-finish', f'agent command ended rc={rc} verdict={verdict}')
+    if full['kind'] == 'engineering' and verdict != 'ok':
+        hd = handoff_decision(db, full, rc, verdict, tail)
+        if hd:
+            state, reason = hd
+            ev(db, name, 'HANDOFF', reason)
     plain = harvest(db, full, rc, log, state, sig, reason)
     if plain is not None:  # nothing to persist (legacy task)
         db.execute('UPDATE tasks SET state=?, exit_code=?, pid=NULL, finished=?, signature=?, reason=? WHERE id=?', (state, rc, time.time(), sig, reason, r['id']))
@@ -266,7 +276,7 @@ def agent_probe(db):
     """Facts about agents, from the real CLIs. Never assume availability; a recorded limit pauses engineering tasks only."""
     st = kv_get(db, 'agents', {})
     for a in ('claude', 'codex'):
-        v = subprocess.run(['bash', '-lc', f'{a} --version'], capture_output=True, text=True).stdout.strip()
+        v = agents.ADAPTERS[a].version()
         cur = st.get(a, {})
         cur.update(version=v, installed=bool(v))
         cur.setdefault('status', 'unknown')
@@ -279,7 +289,10 @@ def run_engineering(db, r):
     """Engineering task = headless agent call. Returns an agent that is installed and not in a recorded usage limit, else None."""
     st = agent_probe(db)
     now = time.time()
+    tried = kv_get(db, f"tried:{r['name']}", [])
     for a in db_get_agents(r):
+        if a in tried:
+            continue
         s = st.get(a, {})
         limited = s.get('status') == 'usage_limited' and s.get('retry_after', 0) > now
         if s.get('installed') and not limited:
@@ -319,6 +332,9 @@ def tick(db, cur):
                 ev(db, r['name'], 'PAUSED_AGENT', 'waiting for agent availability')
                 checkpoint(db, f"paused {r['name']}")
                 continue
+            kv_set(db, f"tried:{r['name']}", kv_get(db, f"tried:{r['name']}", []) + [a])
+            db.execute('UPDATE tasks SET owner=? WHERE id=?', (a, r['id']))
+            ev(db, r['name'], 'OWNER', a)
             r = dict(r) | {'cmd': agent_command(a, r)}
         p, log = run_mechanical(db, r)
         row = db.execute('SELECT * FROM tasks WHERE id=?', (r['id'],)).fetchone()
@@ -338,14 +354,31 @@ def agent_context(db_path_row):
 
 
 def agent_command(agent, r):
-    prompt = f"{r['repro']}\n{agent_context(r)}\nRules: simulation only; never contact the physical X2 (no ssh/deploy/ros2 pub); do not weaken safety limits or goal tolerances; "\
-             "work only in your own git worktree; on usage limit stop, write docs/nightly/HANDOFF.md and exit."
-    q = json.dumps(prompt)
-    if agent == 'codex':
-        # `codex queue` hands the task to the EXISTING session (an open TUI holds the writer lock, so `exec resume` is refused:
-        # "already has an active writer"). No duplicate session, no limit bypass: Codex reads it when its quota is back.
-        return f"codex queue --thread {os.environ.get('NIGHTLY_CODEX_SESSION', '01a18872-7bd1-7701-b367-b63e344d449d')} --message {q}"
-    return f"claude -p {q} --permission-mode acceptEdits --output-format text"
+    return agents.ADAPTERS[agent].command(r, agent_context(r))
+
+
+def handoff_decision(db, full, rc, verdict, tail):
+    """Engineering task ended badly: decide continue-elsewhere vs wait vs engineering, from facts only.
+    Returns (state, reason) or None. Never needs the dying agent's last message."""
+    cause = agents.classify(rc, verdict, tail)
+    if cause in ('ok', 'error'):
+        return None
+    owner = full['owner']
+    st = kv_get(db, 'agents', {})
+    if cause == 'limit' and owner:  # confirmed by provider text in the log; reset time is not parsed/assumed
+        st.setdefault(owner, {}).update(status='usage_limited', retry_after=time.time() + int(os.environ.get('NIGHTLY_LIMIT_BACKOFF_S', 3600)))
+        kv_set(db, 'agents', st)
+    tried = kv_get(db, f"tried:{full['name']}", [])
+    now = time.time()
+    for a in db_get_agents(full):
+        s = st.get(a, {})
+        if a not in tried and s.get('installed', agents.ADAPTERS[a].installed()) and not (s.get('status') == 'usage_limited' and s.get('retry_after', 0) > now):
+            db.execute('UPDATE tasks SET max_attempts=max_attempts+1 WHERE id=?', (full['id'],))  # a handoff is not a failed attempt
+            return 'PENDING', f'HANDOFF {owner}->{a} ({cause})'
+    kv_set(db, f"tried:{full['name']}", [])  # waiting for a reset: the limited owner may take the task again later
+    if cause == 'limit':
+        return 'PAUSED_AGENT', f'{owner} limited and no other agent available (waiting)'
+    return 'NEEDS_ENGINEERING', f'agent {owner} lost and no alternative agent'
 
 
 def revive_agents(db):
