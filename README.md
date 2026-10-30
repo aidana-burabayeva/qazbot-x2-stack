@@ -19,6 +19,7 @@
 - Архитектура и правила: docs/DECISIONS.md.
 - Физическая приёмка (F0, F1, ступенчатая проба), пока НЕ разрешена: docs/X2_FIRST_PHYSICAL_TEST_PLAN.md.
 - Синхронизация лаборатории с X2 (команда оператора `/robot-sync-validate` в Claude Code): docs/ROBOT_SYNC_VALIDATE.md.
+- Структура репозитория и развёртывания X2 (что запускается, Git против live, целевая схема): docs/architecture/REPOSITORY_LAYOUT.md.
 
 Изолированный запуск модели, без MC и аппаратной локализации (домен 87, localhost; по умолчанию реальная цепочка с настоящими адаптером `live=false` и trust):
 
