@@ -1,0 +1,12 @@
+{
+ "stopped": "2026-10-30T11:52:15+0500",
+ "branch": "test/p20-twin02-sim-20261029",
+ "head_before_stop_commit": "33c10a1228cac7f2b005a49e60d44c1051fb55b5",
+ "codex_stop": "STOP_UNVERIFIED",
+ "last_robot_integrated_sha": null,
+ "queue": {
+  "COMPLETED": 32,
+  "NEEDS_APPROVAL": 2,
+  "NEEDS_ENGINEERING": 4
+ }
+}

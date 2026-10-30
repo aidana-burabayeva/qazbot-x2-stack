@@ -76,3 +76,8 @@ READY spans include blocked intervals; do not report 275.594 s as continuous REA
 | 2026-10-29 20:5x демо-goals (старая карта v3 despeckled, adapter 71db8ebd) | X2, оператор | **2/2 подряд SUCCEEDED**: A (-7.38,6.02)->(-5.20,2.82) 9.2 с ~3.9 м; B ->(-5.85,-2.27) 11 с ~4.9 м. Конфиг: T5 1.0/0.5, yaw tol 0.35, inflation 0.5/0.6, полигон footprint |
 | 2026-10-29 21:47-21:5x переключение на карту D1 `Qazbot_29.10` | X2 | load_map 0, AMCL 673x903; ошибка D1 map_saver `free_thresh 0.25` (unknown 205 -> FREE) исправлена на 0.196 (оригинал `map.yaml.orig_from_d1`); initialpose: READY, sigma 0.41, second_mode 0.53, **scan_score 0.47** (старая карта 0.35-0.40). Goals на D1 ещё не выполнялись |
 | 2026-10-29 21:56-22:00 P20 yaw-rate loop LIVE (adapter 9c05bb34, оператор одобрил) | X2, STAND_DEFAULT | **развёрнут** (DELETE+ADD `sdk_qazbot_nav2_1029a`). Тест 1 CCW 0.5 -> 0.563 рад/с, прерван по drift 0.30 м. Тест 2 (MAX_DRIFT 0.5): CCW 0.5 -> **0.534** рад/с (170 град, u 0.60-0.77); CW 0.5 -> **0.354** (u до 0.85); 90 град CCW: 3.3 с до 5 град, финал **+11.5 град** (обратный доворот); 90 град CW: 4.1 с, финал -4.9 град; дрейф 0.16-0.23 м на поворот. После ходьбы и в goals живьём не проверен. `evidence/nav_session_20261029/calib/p20_yaw_test_*` |
+
+<!-- BEGIN LAB_STOP_TESTS -->
+### Nightly lab regression at stop (2026-10-30T11:52:15+0500)
+- `python3 -m pytest -q -p no:cacheprovider tests/nightly tests/motion_adapter`: **PASS** — 96 passed in 41.70s
+<!-- END LAB_STOP_TESTS -->

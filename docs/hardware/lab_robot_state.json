@@ -1,0 +1,90 @@
+{
+ "tests": [
+  {"status": "PASS", "name": "P20 yaw-rate loop + motion adapter + nightly tooling (pytest)", "note": "см. строку Regression выше; симуляция, не железо"},
+  {"status": "PASS (sim)", "name": "L2 CCW-петля, допуски 0.20/0.35 (как на роботе)", "note": "3/3 за 3.9–4.3 с; при 0.10/0.10 было 2/4. Truth-localization, AMCL не квалифицирован"},
+  {"status": "FAIL (sim)", "name": "L2 s1_0046 / s1_0005 stall", "note": "NavigateToPose ABORTED, 'Failed to make progress'; контроллер командует wz≈-0.42, vx≈0.03, робот не поворачивается. Причина НЕ установлена"},
+  {"status": "UNVERIFIED", "name": "L2 выводы о контакте/зазоре по карте", "note": "frame-contract: мир симулятора и карта Nav2 расходятся до 0.7 м; все verdict по карте понижены"},
+  {"status": "UNVERIFIED", "name": "doorway_crossing_in", "note": "6/6 SUCCEEDED, но 2/6 контакт по карте и 2/6 зазор <=0.075 м (под вопросом из-за frame-contract)"},
+  {"status": "NEEDS_HARDWARE", "name": "Проём ~0.80 м (кандидат из анализа карты)", "note": "UNVALIDATED; нужен замер рулеткой, автономно не заходить"},
+  {"status": "FAIL", "name": "make nightly end-to-end", "note": "сборка падает (vendor в worktree, DNS docker.io); не расследовано до конца"}
+ ],
+ "params": [
+  "goal checker робота: xy_tol=0.20, yaw_tol=0.35 (twin по умолчанию 0.10/0.10) — в лаборатории выровнено под робота, на робота НЕ переносится (там уже так)",
+  "RPP rotate-to-heading срабатывает при dist<xy_tol; progress_checker radius 0.1 м / 15 с",
+  "x2_motion_adapter: P20 YawRateLoop активен только при |vx| < yaw_lin_eps=0.02; sim-only guarded QAZBOT_SIM_YAW_LIN_EPS (SIM domain 87), прод-дефолт не менялся",
+  "footprint X2 (8-угольник), T1/T5, collision detection — НЕ менялись"
+ ],
+ "open_bugs": [
+  "L2 stall: контроллер командует поворот, отклика по yaw нет (s1_0046, s1_0005). Корень не найден; H2 (windup P20) опровергнута кодом; yaw_lin_eps A/B confounded frame-contract",
+  "Недетерминизм: повтор s1_0048 даёт min-зазор 0.244 → 0.225 м",
+  "Расхождение world/plant ↔ карта Nav2 до 0.69–0.73 м (frame-contract)",
+  "CCW-петля: возврат в XY-допуск при повороте (дрейф 0.16–0.23 м)"
+ ],
+ "do_not_transfer": [
+  "любые изменения twin-стека, QAZBOT_SIM_YAW_LIN_EPS, run/nightly, l1/L2 раннеры, tournament-результаты (L1 follower упрощён, hard-fail в нём — артефакт модели)",
+  "любые выводы L2 по зазорам до закрытия frame-contract",
+  "образ x2-twin-stack:p20 и overlay nav2.compose.yaml — только симуляция"
+ ],
+ "robot_checks": [
+  "NEEDS_HARDWARE: CCW-петля при xy_tol 0.20 / yaw_tol 0.35 — замерить дрейф и число подходов",
+  "NEEDS_HARDWARE: стопор «команда поворота без отклика» — записать cmd_vel, MC-статус, одометрию одновременно",
+  "NEEDS_HARDWARE: ширина проёма рулеткой (кандидат ~0.80 м; координаты в docs/nightly/map/main_office_analysis.json)",
+  "обычный порядок: T5 / I1 / отдельные разрешения оператора; движение, SSH, deploy — только по явному слову оператора"
+ ],
+ "diag_commands": [
+  "ros2 topic echo --once /tf_static  # read-only: фреймы и привязка",
+  "ros2 param get /controller_server goal_checker.xy_goal_tolerance",
+  "ros2 param get /controller_server goal_checker.yaw_goal_tolerance",
+  "ros2 topic hz /cmd_vel_nav  # частота команд контроллера",
+  "ros2 doctor --report | head -40"
+ ],
+ "risks": [
+  "TF: расхождение привязки plant/world в симуляции может скрывать реальные ошибки frame; на роботе сверять map→odom→base",
+  "Локализация: в L2 использован truth, AMCL/T5 не квалифицированы",
+  "Nav2: допуски goal checker меняют поведение RPP rotate-to-heading",
+  "MC: native leg odometry в MC v1.0.0 в симуляции не выдавался; поведение на железе может отличаться",
+  "Сенсоры/LiDAR: не моделировались как реальные; freshness guards не менялись"
+ ],
+ "fidelity_requests": [
+  {"title": "Frame-contract: привязка plant/world ↔ карта Nav2",
+   "hypothesis": "Расхождение мира симулятора и карты до 0.7 м объясняет противоречия по зазорам и, возможно, L2-stall",
+   "measurements": "Поза робота в map (AMCL) и независимая поза (рулетка/метки) в 4–6 точках, включая проём",
+   "data": "/tf, /tf_static, /amcl_pose, /map metadata (origin, resolution), sha256 map.pgm",
+   "conditions": "Статичное положение в каждой точке 10 с; одна и та же карта main_office",
+   "motion": "Да — перестановка робота оператором между точками (автономного движения не требуется)",
+   "accuracy": "±0.02 м по рулетке/меткам",
+   "mapping": "Те же точки в twin по world pose; сравнить dxy на каждой точке"},
+  {"title": "Отклик MC на команду поворота на месте (yaw)",
+   "hypothesis": "Модель MC/MuJoCo воспроизводит stall (wz команда без поворота) иначе, чем реальный MC",
+   "measurements": "wz команда vs измеренный yaw-rate, 0.2/0.4/0.6 рад/с, оба направления, от нуля и после ходьбы",
+   "data": "/cmd_vel_authorized, одометрия торса/IMU, MC status, bag lossless",
+   "conditions": "Пустое открытое место, ровный пол, батарея >50%, одно и то же ПО",
+   "motion": "Да — требуется явное разрешение оператора",
+   "accuracy": "yaw-rate ±0.02 рад/с, тайминг ±20 мс",
+   "mapping": "Тот же профиль команд в twin; сравнить rise time, steady-state, coast"},
+  {"title": "Coast и терминальное выравнивание после остановки",
+   "hypothesis": "Twin недооценивает/переоценивает дрейф и дотяг после остановки (CCW 0.16–0.23 м)",
+   "measurements": "Путь и yaw после остановки с 0.2/0.4 м/с и поворота",
+   "data": "одометрия, TF, видео/метки для внешней позы",
+   "conditions": "Те же, что выше",
+   "motion": "Да — требуется явное разрешение оператора",
+   "accuracy": "±0.02 м, ±0.02 рад",
+   "mapping": "Сравнение распределений по 5 повторам, не по одному прогону"},
+  {"title": "Реальная геометрия проёма и зазор footprint",
+   "hypothesis": "Кандидат-проём ~0.80 м; footprint 0.712 м оставляет ~0.04 м запаса на сторону",
+   "measurements": "Ширина проёма и положение относительно карты",
+   "data": "рулетка + фото; координаты по карте",
+   "conditions": "Без движения робота",
+   "motion": "Нет",
+   "accuracy": "±0.01 м",
+   "mapping": "Обновление карты/мира twin; пересчёт map_analysis"},
+  {"title": "Синхронизация сенсоров и свежесть данных",
+   "hypothesis": "Тайминг LiDAR/одометрии в twin идеализирован",
+   "measurements": "Частоты и задержки topics, jitter",
+   "data": "ros2 topic hz/delay для scan, odom, tf; stamps vs wall",
+   "conditions": "Стек в штатном режиме, 60 с",
+   "motion": "Нет",
+   "accuracy": "±5 мс",
+   "mapping": "Те же метрики с recorder в twin"}
+ ]
+}

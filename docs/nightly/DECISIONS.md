@@ -24,3 +24,7 @@ A/B (одинаковые карта, старт, P20, 8/4 CPU, свежие к�
 На ветке `nightly/codex-stall-20261030` выполнены ровно два queued sim job-а: epsilon 0.02 → ABORTED 107.94 с, epsilon 0.10 → SUCCEEDED 37.60 с (XY 0.048, yaw -0.041). Настройки controller/допусков/footprint/costmap/safety одинаковы; vx не обнулялся. A остановился в другой позе, при vx≈0.30, а не в исходном low-vx stall. Подробности: [CODEX_STALL_AB.md](CODEX_STALL_AB.md).
 
 Найден frame confound: world generator использует фиксированный start→sim transform, plant переякоривается по первой HAL-позе. Fit raw torso→nav pelvis отличается от world yaw на -0.106 рад в старом stall, -0.091 в A и -0.005 в B; end-point discrepancies 0.69/0.73/0.08 м при fit RMSE ~5 мм. Следовательно map clearance в nav-позе не исключает physical-world contact. Контакты напрямую не измерены. **Не считать B доказанным исправлением H1/H3 и не поднимать production default.** NEEDS_ENGINEERING: сначала отдельная проверка raw HAL/world/contact и единых transforms. Дополнительных sim runs в этом task нет.
+
+<!-- BEGIN LAB_STOP -->
+- 2026-10-30T11:52:15+0500: оператор остановил лабораторию (`lab.py stop`); задачи запаркованы, расписания отключены, возобновление только `lab.py resume`.
+<!-- END LAB_STOP -->

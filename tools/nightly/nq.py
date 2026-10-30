@@ -51,6 +51,8 @@ def connect():
     db.execute('PRAGMA journal_mode=WAL')
     db.execute('PRAGMA synchronous=NORMAL')
     db.executescript(SCHEMA)
+    if 'klass' not in [r[1] for r in db.execute('PRAGMA table_info(tasks)')]:
+        db.execute('ALTER TABLE tasks ADD COLUMN klass TEXT')  # SIM_ONLY | SIM_THEN_HARDWARE | HARDWARE_ONLY | NEEDS_APPROVAL
     return db
 
 
@@ -129,6 +131,8 @@ def recover(db):
 
 
 def ready(db):
+    if kv_get(db, 'frozen', False):  # operator STOP: nothing new starts until `lab.py resume`
+        return
     done = {r['name'] for r in db.execute("SELECT name FROM tasks WHERE state='COMPLETED'")}
     busy = {r['resource'] for r in db.execute("SELECT resource FROM tasks WHERE state='RUNNING' AND resource IS NOT NULL")}
     now = time.time()
@@ -301,7 +305,7 @@ def main():
     d = sp.add_parser('daemon'); d.add_argument('--poll', type=float, default=2.0); d.add_argument('--keep-alive', action='store_true')
     e = sp.add_parser('enqueue'); e.add_argument('name'); e.add_argument('cmd'); e.add_argument('--kind', default='mechanical')
     e.add_argument('--priority', type=int); e.add_argument('--deps', default='[]'); e.add_argument('--resource'); e.add_argument('--timeout', type=int)
-    e.add_argument('--heartbeat', type=int); e.add_argument('--cwd'); e.add_argument('--state'); e.add_argument('--reason')
+    e.add_argument('--heartbeat', type=int); e.add_argument('--cwd'); e.add_argument('--state'); e.add_argument('--reason'); e.add_argument('--klass')
     sp.add_parser('status')
     m = sp.add_parser('mark'); m.add_argument('name'); m.add_argument('state'); m.add_argument('--reason', default='')
     ag = sp.add_parser('agent'); ag.add_argument('name'); ag.add_argument('status'); ag.add_argument('--retry-after-s', type=int, default=3600)
@@ -315,6 +319,8 @@ def main():
         db = connect()
         ok = enqueue(db, a.name, a.cmd, kind=a.kind, priority=a.priority, deps=json.loads(a.deps), resource=a.resource,
                      timeout_s=a.timeout, heartbeat_s=a.heartbeat, cwd=a.cwd, state=a.state, reason=a.reason)
+        if a.klass:
+            db.execute('UPDATE tasks SET klass=? WHERE name=?', (a.klass, a.name))
         checkpoint(db, f'enqueue {a.name}')
         print('enqueued' if ok else 'exists (history kept)')
     elif a.c == 'mark':
