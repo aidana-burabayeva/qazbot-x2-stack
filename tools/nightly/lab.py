@@ -163,6 +163,13 @@ def stop_units(args):
 def park_tasks(db):
     """Running tasks: kill their process groups, requeue-on-resume. Pending/paused: parked as-is. Previous state kept for resume."""
     parked = nq.kv_get(db, 'parked', {})
+    for r in db.execute("SELECT id FROM tasks WHERE state='VERIFYING'").fetchall():  # verification jobs are children we started: stop them, resume restarts them
+        vp = nq.kv_get(db, f"verifpid:{r['id']}")
+        if vp:
+            try:
+                os.killpg(vp, __import__('signal').SIGKILL)
+            except (ProcessLookupError, PermissionError):
+                pass
     for r in db.execute("SELECT * FROM tasks WHERE state IN ('RUNNING','PENDING','PAUSED_AGENT','INTERRUPTED')").fetchall():
         if r['state'] == 'RUNNING' and r['pid']:
             for sig in ('SIGTERM', 'SIGKILL'):

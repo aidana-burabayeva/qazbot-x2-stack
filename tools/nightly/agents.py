@@ -12,9 +12,11 @@ reports UNKNOWN and nothing is assumed about remaining quota.
 import json
 import os
 import re
+import shlex
 import shutil
 import subprocess
 import time
+from pathlib import Path
 
 LIMIT_RE = re.compile(r'usage limit|rate limit|quota|limit reached|try again at|too many requests', re.I)
 RULES = ('Rules: simulation only; never contact the physical X2 (no ssh/deploy/ros2 pub); do not weaken safety limits or goal tolerances; '
@@ -40,12 +42,14 @@ class Adapter:
     def prompt(self, task, context):
         return f"{task['repro']}\n{context}\n{RULES}"
 
-    def command(self, task, context):
+    def command(self, task, context, cwd=None, model=None, effort=None, result_dir=None):
         raise NotImplementedError
 
-    def resume_task(self, task, context):
+    mode = 'process'
+
+    def resume_task(self, task, context, **kw):
         """Recovery is stateless on purpose: a fresh invocation with the context rebuilt from SQLite/Git."""
-        return self.command(task, context)
+        return self.command(task, context, **kw)
 
     def request_stop(self, message):
         return None  # no cooperative channel proven; orchestrator kills the process group
@@ -68,16 +72,42 @@ class Adapter:
 class ClaudeAdapter(Adapter):
     name = 'claude'
 
-    def command(self, task, context):
-        return f"{self.bin} -p {json.dumps(self.prompt(task, context))} --permission-mode acceptEdits --output-format text"
+    def command(self, task, context, cwd=None, model=None, effort=None, result_dir=None):
+        opts = ' --permission-mode acceptEdits --output-format text --no-session-persistence'
+        if model:
+            opts += f' --model {shlex.quote(model)}'
+        if effort:
+            opts += f' --effort {shlex.quote(effort)}'
+        budget = os.environ.get('NIGHTLY_CLAUDE_MAX_BUDGET_USD')
+        if budget:
+            opts += f' --max-budget-usd {shlex.quote(budget)}'
+        return f"{self.bin} -p {shlex.quote(self.prompt(task, context))}{opts}"
 
 
 class CodexAdapter(Adapter):
+    """Default `exec` mode: official non-interactive `codex exec` in its own session and process group -> no open TUI needed,
+    explicit process lifecycle, exit code + last-message file + JSON events. `queue` mode (legacy) delivers into an existing TUI session."""
     name = 'codex'
 
-    def command(self, task, context):
-        thread = os.environ.get('NIGHTLY_CODEX_SESSION', '01a18872-7bd1-7701-b367-b63e344d449d')
-        return f"{self.bin} queue --thread {thread} --message {json.dumps(self.prompt(task, context))}"
+    @property
+    def mode(self):
+        return 'queue' if os.environ.get('NIGHTLY_CODEX_MODE', 'exec') == 'queue' else 'process'  # 'exec' = process mode
+
+    def command(self, task, context, cwd=None, model=None, effort=None, result_dir=None):
+        if self.mode == 'queue':
+            thread = os.environ.get('NIGHTLY_CODEX_SESSION', '01a18872-7bd1-7701-b367-b63e344d449d')
+            return f"{self.bin} queue --thread {thread} --message {shlex.quote(self.prompt(task, context))}"
+        parts = [self.bin, 'exec', '--json', '--skip-git-repo-check', '-s', 'workspace-write']
+        if cwd:
+            parts += ['-C', cwd]
+        if model:
+            parts += ['-m', model]
+        if effort:
+            parts += ['-c', f'model_reasoning_effort="{effort}"']
+        if result_dir:
+            parts += ['-o', str(Path(result_dir) / 'last_message.txt')]
+        parts += ['--', self.prompt(task, context)]
+        return ' '.join(shlex.quote(x) for x in parts)
 
     def request_stop(self, message):
         thread = os.environ.get('NIGHTLY_CODEX_SESSION', '01a18872-7bd1-7701-b367-b63e344d449d')

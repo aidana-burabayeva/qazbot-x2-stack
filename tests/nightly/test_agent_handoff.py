@@ -38,7 +38,7 @@ def env(tmp_path):
     e = dict(os.environ, NIGHTLY_ROOT=str(root), NIGHTLY_RUN=str(root / 'run' / 'nightly'), NIGHTLY_CLAUDE_BIN=str(b / 'claude'),
              NIGHTLY_CODEX_BIN=str(b / 'codex'), NIGHTLY_CODEX_OBSERVE_CMD=str(b / 'observer'), NIGHTLY_CODEX_USAGE_CMD=str(b / 'usage'),
              NIGHTLY_CODEX_SOCK='/nonexistent', NIGHTLY_CODEX_QUEUE_DB='/nonexistent', NIGHTLY_POLL_S='0', NIGHTLY_USAGE_TTL_S='0',
-             NIGHTLY_VERIFY_ALLOW='true;false', STUBLOG=str(log), OBS_FILE=str(obs), USAGE_FILE=str(tmp_path / 'usage.json'), QAZBOT_ROLE='LAB')
+             NIGHTLY_VERIFY_ALLOW='true;false', NIGHTLY_CODEX_MODE='queue', STUBLOG=str(log), OBS_FILE=str(obs), USAGE_FILE=str(tmp_path / 'usage.json'), QAZBOT_ROLE='LAB')
     return e, root, b, log
 
 
@@ -68,11 +68,11 @@ CODEX_OK = CODEX_Q
 CLAUDE_LIMIT = 'echo "claude $*" | tr "\\n" " " >> "$STUBLOG"; echo >> "$STUBLOG"; echo wip > wip.txt; echo "Claude usage limit reached, try again at 5pm"; exit 1\n'
 WRITE_RESULT = (
     'echo fixed > fix.txt; python3 - <<PY\n'
-    'import hashlib, json, os, subprocess\n'
+    'import hashlib, json, os, subprocess\nos.makedirs(".qazbot/results", exist_ok=True)\n'
     'sha = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()\n'
     'h = hashlib.sha256(open("fix.txt", "rb").read()).hexdigest()\n'
     'json.dump(dict(task=os.environ["NIGHTLY_TASK"], attempt=int(os.environ["NIGHTLY_ATTEMPT"]), attempt_id=os.environ["NIGHTLY_ATTEMPT_ID"], git_sha=sha, summary="ok",\n'
-    '  tests=dict(cmd="true", passed=3, failed=0), files=[dict(path="fix.txt", sha256=h)], root_causes=[]), open(os.environ["NIGHTLY_RESULT_DIR"] + "/engineering_result.json", "w"))\n'
+    '  tests=dict(cmd="true", passed=3, failed=0), files=[dict(path="fix.txt", sha256=h)], root_causes=[]), open(".qazbot/results/%s.%s.json" % (os.environ["NIGHTLY_TASK"], os.environ["NIGHTLY_ATTEMPT"]), "w"))\n'
     'PY\n')
 CLAUDE_OK = 'echo "claude $*" | tr "\\n" " " >> "$STUBLOG"; echo >> "$STUBLOG"; ' + WRITE_RESULT + 'exit 0\n'
 CLAUDE_NORESULT = 'echo "claude $*" | tr "\\n" " " >> "$STUBLOG"; echo >> "$STUBLOG"; exit 0\n'
@@ -303,20 +303,20 @@ def test_operator_stop_with_codex_running_keeps_lease_and_reports_unverified(env
     assert task(root, 'second')['state'] == 'PENDING'                       # frozen + leased
 
 
-def test_foreign_agent_tui_in_worktree_blocks_new_writer(env):
+def test_foreign_agent_tui_in_shared_worktree_blocks_legacy_mode_but_not_isolated_attempts(env):
     e, root, b, log = env
     stub(b, 'claude', CLAUDE_OK)
-    tui = subprocess.Popen(['bash', '-c', 'exec -a codex sleep 60'], cwd=str(root))          # operator's own Codex TUI
+    tui = subprocess.Popen(['bash', '-c', 'exec -a codex sleep 60'], cwd=str(root))          # operator's own Codex TUI in the base worktree
     try:
         time.sleep(0.3)
         nq(e, 'enqueue', 'eng', 'x --agents=claude', '--kind', 'engineering', '--cwd', str(root))
-        daemon(e, 2)
-        assert task(root)['state'] == 'PENDING' and events(root, 'LEASE_BLOCKED_FOREIGN_WRITER')
-        assert not log.exists()
+        daemon(dict(e, NIGHTLY_ISOLATE='0'), 2)                                              # legacy shared-worktree mode: must not become a 2nd writer
+        assert task(root)['state'] == 'PENDING' and events(root, 'LEASE_BLOCKED_FOREIGN_WRITER') and not log.exists()
+        daemon(e, 4)                                                                         # isolated attempt: own worktree, no shared writer
+        t = task(root)
+        assert t['state'] == 'COMPLETED' and t['attempt_wt'] and t['attempt_wt'] != str(root)
     finally:
         tui.send_signal(signal.SIGKILL); tui.wait()
-    daemon(e, 3)
-    assert task(root)['state'] == 'COMPLETED'
 
 
 def test_supersede_never_automatic_and_manual_needs_explicit_flag_and_late_result_is_rejected(env):
@@ -444,3 +444,102 @@ def test_codex_limited_without_reset_time_gets_bounded_recheck_not_available(env
     nq(e, 'usage')
     st = json.loads(q(root, "SELECT v FROM kv WHERE k='agents'")[0]['v'])['codex']
     assert st['status'] == 'usage_limited' and st['retry_after'] is None and st['recheck_after'] > time.time() and st['reset_known'] is False
+
+
+# ---------------------------------------------------------------- P1.2: process mode, isolation, non-blocking verification
+
+def exec_env(e):
+    return dict(e, NIGHTLY_CODEX_MODE='exec')
+
+
+def test_codex_exec_mode_runs_in_own_worktree_with_model_effort_and_completes_without_tui(env):
+    e, root, b, log = env
+    e = exec_env(e)
+    stub(b, 'codex', 'echo "codex $*" | tr "\\n" " " >> "$STUBLOG"; echo >> "$STUBLOG"; ' + WRITE_RESULT + 'exit 0\n')
+    nq(e, 'enqueue', 'eng', 'x --agents=codex', '--kind', 'engineering', '--cwd', str(root), '--model', 'gpt-6.1-sol', '--effort', 'low')
+    daemon(e, 6)
+    t = task(root)
+    assert t['state'] == 'COMPLETED' and t['phase'] == 'VERIFIED' and t['owner'] == 'codex'
+    call = log.read_text().splitlines()[0]
+    assert call.startswith('codex exec --json') and f"-C {t['attempt_wt']}" in call and '-s workspace-write' in call
+    assert '-m gpt-6.1-sol' in call and 'model_reasoning_effort="low"' in call and 'queue' not in call
+    r = q(root, 'SELECT * FROM results')[0]
+    assert r['verdict'] == 'PASS' and json.loads(r['metrics'])['rerun_ok'] is True and json.loads(r['metrics'])['git_sha'] != sha(root)   # orchestrator-made commit
+    assert subprocess.run(['git', '-C', str(root), 'rev-parse', '--verify', t['branch']], capture_output=True).returncode == 0
+    assert events(root, 'INTEGRATION_READY') and sha(root) == subprocess.run(['git', '-C', str(root), 'rev-parse', 'HEAD'], capture_output=True, text=True).stdout.strip()   # nothing merged
+
+
+def test_chained_attempt_starts_from_previous_verified_sha(env):
+    e, root, b, log = env
+    stub(b, 'claude', CLAUDE_OK)
+    nq(e, 'enqueue', 's1', 'a --agents=claude', '--kind', 'engineering', '--cwd', str(root))
+    nq(e, 'enqueue', 's2', 'b --agents=claude', '--kind', 'engineering', '--cwd', str(root), '--base-from', 's1', '--deps', '["s1"]')
+    daemon(e, 10)
+    t1, t2 = task(root, 's1'), task(root, 's2')
+    assert t1['state'] == 'COMPLETED'
+    sha1 = json.loads(q(root, "SELECT metrics FROM results WHERE task='s1'")[0]['metrics'])['git_sha']
+    base2 = json.loads(q(root, "SELECT v FROM kv WHERE k=?", f'base:s2:{t2["attempts"]}')[0]['v'])['git_sha']
+    assert base2 == sha1 and t1['attempt_wt'] != t2['attempt_wt']
+    assert t2['state'] in ('COMPLETED', 'NEEDS_ENGINEERING')      # s2 re-writes the same file: may legitimately be "no change"; the base is what matters here
+
+
+def test_attempt_worktrees_are_never_reused_and_old_writer_cannot_touch_new_attempt(env):
+    e, root, b, log = env
+    stub(b, 'claude', 'echo "claude" >> "$STUBLOG"; echo partial > half_written.txt; kill -9 $$\n')   # dies while modifying files
+    nq(e, 'enqueue', 'eng', 'x --agents=claude', '--kind', 'engineering', '--cwd', str(root))
+    daemon(e, 3)
+    t = task(root)
+    old_wt = t['attempt_wt']
+    assert old_wt and (Path(old_wt) / 'half_written.txt').exists()               # partial work preserved for inspection, uncommitted
+    assert subprocess.run(['git', '-C', old_wt, 'status', '--porcelain'], capture_output=True, text=True).stdout.strip()
+    stub(b, 'claude', CLAUDE_OK)
+    nq(e, 'mark', 'eng', 'PENDING')
+    nq(e, 'agent', 'claude', 'available')
+    daemon(e, 8)
+    t2 = task(root)
+    assert t2['attempt_wt'] != old_wt and not (Path(t2['attempt_wt']) / 'half_written.txt').exists()     # fresh worktree, no leftovers
+    (Path(old_wt) / '.qazbot' / 'results').mkdir(parents=True, exist_ok=True)
+    (Path(old_wt) / '.qazbot' / 'results' / f"eng.{t['attempts']}.json").write_text(json.dumps(dict(task='eng', attempt=t['attempts'], attempt_id='old', tests={'cmd': 'true'}, files=[{'path': 'half_written.txt'}])))
+    before = q(root, 'SELECT COUNT(*) c FROM results')[0]['c']
+    daemon(e, 2)
+    assert q(root, 'SELECT COUNT(*) c FROM results')[0]['c'] == before        # a late result from the old attempt is never even read
+
+
+def test_background_survivor_of_an_ended_attempt_is_killed_and_reported(env):
+    e, root, b, log = env
+    stub(b, 'claude', 'setsid nohup sleep 120 >/dev/null 2>&1 &\n' + CLAUDE_OK)
+    nq(e, 'enqueue', 'eng', 'x --agents=claude', '--kind', 'engineering', '--cwd', str(root))
+    daemon(e, 8)
+    t = task(root)
+    assert events(root, 'ATTEMPT_SURVIVORS_KILLED')
+    time.sleep(1)
+    out = subprocess.run(['pgrep', '-f', 'sleep 120'], capture_output=True, text=True).stdout.split()
+    assert not [p for p in out if os.path.realpath(f'/proc/{p}/cwd').startswith(t['attempt_wt'])]
+
+
+def test_slow_verification_does_not_block_the_rest_of_the_queue(env):
+    e, root, b, log = env
+    e = dict(e, NIGHTLY_VERIFY_ALLOW='sleep;true')
+    stub(b, 'claude', CLAUDE_OK.replace('cmd="true"', 'cmd="sleep 6"'))
+    nq(e, 'enqueue', 'eng', 'x --agents=claude', '--kind', 'engineering', '--cwd', str(root))
+    nq(e, 'enqueue', 'quick', 'touch ' + str(root / 'quick.done'), '--deps', '["eng"]' if False else '[]')
+    t0 = time.time()
+    daemon(e, 3)
+    assert task(root)['state'] == 'VERIFYING'                 # tests still running ...
+    assert task(root, 'quick')['state'] == 'COMPLETED'        # ... and the queue went on
+    daemon(e, 10)
+    assert task(root)['state'] == 'COMPLETED'
+
+
+def test_verification_job_is_killed_on_restart_and_restarted_idempotently(env):
+    e, root, b, log = env
+    e = dict(e, NIGHTLY_VERIFY_ALLOW='sleep;true')
+    stub(b, 'claude', CLAUDE_OK.replace('cmd="true"', 'cmd="sleep 30"'))
+    nq(e, 'enqueue', 'eng', 'x --agents=claude', '--kind', 'engineering', '--cwd', str(root))
+    daemon(e, 3)
+    pid = int(json.loads(q(root, "SELECT v FROM kv WHERE k LIKE 'verifpid:%'")[0]['v']))
+    time.sleep(0.5)
+    daemon(dict(e, NIGHTLY_VERIFY_TIMEOUT_S='1'), 4)           # orchestrator restart: old job killed, a new one started, then times out -> FAIL recorded
+    assert not os.path.exists(f'/proc/{pid}') or open(f'/proc/{pid}/stat').read().split()[2] == 'Z'
+    t = task(root)
+    assert t['state'] == 'NEEDS_ENGINEERING' and q(root, 'SELECT verdict FROM results')[0]['verdict'] == 'FAIL'

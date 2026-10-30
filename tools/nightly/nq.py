@@ -24,6 +24,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import store  # noqa: E402
 import agents  # noqa: E402
+import attempts  # noqa: E402
 
 ROOT = Path(os.environ.get('NIGHTLY_ROOT', Path(__file__).resolve().parents[2]))
 RUN = Path(os.environ.get('NIGHTLY_RUN', ROOT / 'run' / 'nightly'))
@@ -62,6 +63,9 @@ def connect():
     for c_ in ('phase', 'attempt_id', 'dispatch_ref'):
         if c_ not in cols:
             db.execute(f'ALTER TABLE tasks ADD COLUMN {c_} TEXT')  # delegated-task contract: DISPATCHED..VERIFIED, bound to attempt_id
+    for c_ in ('attempt_wt', 'branch', 'model', 'effort', 'base_from'):
+        if c_ not in cols:
+            db.execute(f'ALTER TABLE tasks ADD COLUMN {c_} TEXT')
     if 'dispatched_at' not in cols:
         db.execute('ALTER TABLE tasks ADD COLUMN dispatched_at REAL')
     if 'owner' not in cols:
@@ -140,6 +144,13 @@ def signature(task, log_tail):
 def recover(db):
     """After any restart: finish what a crash left half-done (evidence <-> index), then RUNNING rows are orphans:
     kill survivors of our process groups, then requeue or park."""
+    for r_ in db.execute("SELECT id FROM tasks WHERE state='VERIFYING'").fetchall():
+        vp = kv_get(db, f"verifpid:{r_['id']}")
+        if vp:
+            try:
+                os.killpg(vp, signal.SIGKILL)
+            except (ProcessLookupError, PermissionError):
+                pass
     rep = store.adopt_orphans(db, RUN)
     if any(rep.values()):
         ev(db, '*', 'STORE_RECOVER', json.dumps(rep)[:1500])
@@ -166,9 +177,14 @@ def ready(db):
         if not all(d in done for d in json.loads(r['deps'])):
             continue
         # recomputed for every candidate: a dispatch earlier in the same tick must already hold its lease
-        if r['resource'] and db.execute("SELECT 1 FROM tasks WHERE resource=? AND state IN ('RUNNING','DELEGATED') LIMIT 1", (r['resource'],)).fetchone():
+        if r['resource'] and db.execute("SELECT 1 FROM tasks WHERE resource=? AND state IN ('RUNNING','DELEGATED','VERIFYING') LIMIT 1", (r['resource'],)).fetchone():
             continue
         yield r
+
+
+def acwd(row):
+    """Directory that holds the attempt's artefacts: its own worktree when isolated, else the task cwd."""
+    return (row['attempt_wt'] if 'attempt_wt' in row.keys() else None) or row['cwd'] or str(ROOT)
 
 
 def result_dir(name, attempt):
@@ -185,11 +201,12 @@ def run_mechanical(db, r):
     base = dict(task=name, attempt=attempt, git_sha=git('rev-parse', 'HEAD'), code_dirty=dirty,
                 config_sha=hashlib.sha256(r['cmd'].encode()).hexdigest()[:16])
     db.execute("UPDATE tasks SET state='RUNNING', attempts=?, started=?, log_path=?, finished=NULL, exit_code=NULL WHERE id=?", (attempt, time.time(), str(log), r['id']))
-    kv_set(db, f'base:{name}:{attempt}', base)
+    if kv_get(db, f'base:{name}:{attempt}') is None:  # an isolated attempt already recorded its own base SHA
+        kv_set(db, f'base:{name}:{attempt}', base)
     ev(db, name, 'START', r['cmd'])
     checkpoint(db, f'start {name}')
     with open(log, 'wb') as fh:
-        p = subprocess.Popen(['bash', '-lc', r['cmd']], cwd=r['cwd'], stdout=fh, stderr=subprocess.STDOUT, start_new_session=True,
+        p = subprocess.Popen(['bash', '-lc', r['cmd']], cwd=dict(r).get('run_cwd') or r['cwd'], stdout=fh, stderr=subprocess.STDOUT, start_new_session=True,
                              env=dict(os.environ, NIGHTLY_RESULT_DIR=str(rdir), NIGHTLY_TASK=name, NIGHTLY_ATTEMPT=str(attempt), NIGHTLY_ATTEMPT_ID=str(dict(r).get('attempt_id') or '')))
     db.execute('UPDATE tasks SET pid=? WHERE id=?', (p.pid, r['id']))
     return p, log
@@ -197,7 +214,7 @@ def run_mechanical(db, r):
 
 def eng_autocheckpoint(db, r, source, why):
     """Engineering checkpoint written by ordinary code when an agent ends without writing its own. Never 'verified'."""
-    cwd = r['cwd'] or str(ROOT)
+    cwd = acwd(r)
 
     def g(*a):
         try:
@@ -263,16 +280,20 @@ def finish(db, r, p, log, verdict):
     full = db.execute('SELECT * FROM tasks WHERE id=?', (r['id'],)).fetchone()
     if full['kind'] == 'engineering':
         eng_autocheckpoint(db, full, 'orchestrator-finish', f'agent command ended rc={rc} verdict={verdict}')
+    if full['kind'] == 'engineering' and full['attempt_wt']:
+        left, still = attempts.reap(full['attempt_wt'])  # the attempt's process is over; anything left in its worktree is killed, and reported
+        if left:
+            ev(db, name, 'ATTEMPT_SURVIVORS_KILLED', f'{left} still_alive={still}')
     if full['kind'] == 'engineering' and verdict == 'ok':  # exit code 0 of an agent is not completion either
         why = 'no result file'
-        f = find_result_file(full, full['cwd'] or str(ROOT))
+        if full['attempt_wt']:
+            attempts.commit(full['attempt_wt'], name, full['attempts'])  # the orchestrator, not the agent, commits and hashes
+        f = find_result_file(full)
         if f:
             ok_, res, why = verify_engineering_result(db, full, f)
             if ok_:
-                ev(db, name, 'RESULT', why)
-                record_engineering_result(db, full, f, res, why == 'verified')
-                ev(db, name, db.execute('SELECT state FROM tasks WHERE id=?', (r['id'],)).fetchone()['state'], f'rc={rc} {why}')
-                checkpoint(db, f'finish {name}')
+                start_verification(db, full, f, res)  # state VERIFYING, lease kept, tests re-run by a separate job
+                checkpoint(db, f'finish {name} -> VERIFYING')
                 return
         state, reason = 'NEEDS_ENGINEERING', f'agent exited {rc} without a verified result: {why}'[:300]
     if full['kind'] == 'engineering' and verdict != 'ok':
@@ -349,8 +370,14 @@ def own_sessions(db):
     return {r['pid'] for r in db.execute("SELECT pid FROM tasks WHERE state='RUNNING' AND pid IS NOT NULL")}
 
 
-def result_contract(name, attempt, aid, rdir, cwd):
+def result_contract(name, attempt, aid, rdir, cwd, isolated=False):
     token = f'QAZBOT-TASK:{name}:{attempt}:{aid}'
+    if isolated:
+        return token, (f'[{token}] You work ONLY in your own git worktree {cwd} (a branch cut for this attempt). Do not commit: the orchestrator commits and hashes for you. '
+                       f'When finished write the file {cwd}/.qazbot/results/{name}.{attempt}.json containing JSON with: task="{name}", attempt={attempt}, attempt_id="{aid}", '
+                       'summary, tests={cmd} where cmd is the pytest command that proves the work (the orchestrator re-runs it; allowed: `python3 -m pytest ...`), '
+                       'files=[{path}] listing every file you changed or created (relative paths, no symlinks), root_causes=[{key, summary, status, evidence}] (optional). '
+                       'Without that file the work is not accepted. Never contact any robot or network service.')
     return token, (f'[{token}] Delivery of this message is not completion. Work in your OWN worktree. When finished, write engineering_result.json to {rdir} '
                    f'(or, if that path is not writable, to {cwd}/.qazbot/results/{name}.{attempt}.json) with: task="{name}", attempt={attempt}, attempt_id="{aid}", '
                    'git_sha=<your commit>, summary, tests={cmd, passed:int, failed:int} (cmd is re-run by the orchestrator, must be an allow-listed pytest command), '
@@ -400,9 +427,13 @@ def dispatch_codex(db, r):
     checkpoint(db, f'dispatched {name}')
 
 
-def find_result_file(row, cwd):
+def find_result_file(row, cwd=None):
     name, attempt = row['name'], row['attempts']
-    for p in (result_dir(name, attempt) / 'engineering_result.json', Path(cwd) / '.qazbot' / 'results' / f'{name}.{attempt}.json'):
+    cwd = cwd or acwd(row)
+    cands = [Path(cwd) / '.qazbot' / 'results' / f'{name}.{attempt}.json']
+    if not row['attempt_wt']:
+        cands.insert(0, result_dir(name, attempt) / 'engineering_result.json')
+    for p in cands:
         if p.is_file() and not p.is_symlink():
             return p
     return None
@@ -424,7 +455,8 @@ def _inside(root, rel):
 
 
 def verify_engineering_result(db, row, path):
-    """Bind the claimed result to task, attempt, attempt_id, Git SHA, file hashes AND an orchestrator-run test. Never raises."""
+    """STRUCTURAL verification only (cheap, synchronous): identity, fencing, Git SHA, artefact binding, allow-listed test command.
+    The test re-run itself is a separate non-blocking job. Never raises."""
     try:
         return _verify(db, row, path)
     except Exception as e:  # malformed input must reject the result, never crash the orchestrator
@@ -432,7 +464,9 @@ def verify_engineering_result(db, row, path):
 
 
 def _verify(db, row, path):
-    cwd = row['cwd'] or str(ROOT)
+    import shlex
+    cwd = acwd(row)
+    isolated = bool(row['attempt_wt'])
     d = json.loads(path.read_text())
     if not isinstance(d, dict):
         return False, None, 'malformed result: not an object'
@@ -440,15 +474,27 @@ def _verify(db, row, path):
         return False, None, 'result is for another task/attempt'
     if d.get('attempt_id') != row['attempt_id']:
         return False, None, 'STALE_ATTEMPT: attempt_id does not match the current attempt (superseded or forged)'
-    sha = d.get('git_sha')
-    if not isinstance(sha, str) or not re.fullmatch(r'[0-9a-f]{40}', sha) or subprocess.run(['git', '-C', cwd, 'cat-file', '-e', sha + '^{commit}'], capture_output=True).returncode != 0:
-        return False, None, 'git_sha is not a commit in the task repository'
     base = (kv_get(db, f"base:{row['name']}:{row['attempts']}", {}) or {}).get('git_sha')
+    sha = d.get('git_sha')
+    if isolated:  # the orchestrator committed the attempt; the agent's own sha, if any, must lie on this attempt's branch
+        tip = attempts.head(cwd)
+        if sha is not None and (not isinstance(sha, str) or subprocess.run(['git', '-C', cwd, 'merge-base', '--is-ancestor', sha, tip], capture_output=True).returncode != 0):
+            return False, None, 'git_sha is not on this attempt\'s branch'
+        sha = tip
+        changed = subprocess.run(['git', '-C', cwd, 'diff', '--name-only', f'{base}..{tip}'], capture_output=True, text=True).stdout.split()
+        if not changed:
+            return False, None, 'attempt produced no change relative to its base SHA'
+    else:
+        if not isinstance(sha, str) or not re.fullmatch(r'[0-9a-f]{40}', sha) or subprocess.run(['git', '-C', cwd, 'cat-file', '-e', sha + '^{commit}'], capture_output=True).returncode != 0:
+            return False, None, 'git_sha is not a commit in the task repository'
+        changed = None
     if base and subprocess.run(['git', '-C', cwd, 'merge-base', '--is-ancestor', base, sha], capture_output=True).returncode != 0:
         return False, None, 'git_sha does not descend from the SHA the attempt started from'
     t = d.get('tests')
-    if not isinstance(t, dict) or type(t.get('passed')) is not int or type(t.get('failed')) is not int or not isinstance(t.get('cmd'), str):
-        return False, None, 'tests{cmd,passed,failed} missing: result not verifiable'
+    if not isinstance(t, dict) or not isinstance(t.get('cmd'), str):
+        return False, None, 'tests{cmd} missing: result not verifiable'
+    if not isolated and (type(t.get('passed')) is not int or type(t.get('failed')) is not int):
+        return False, None, 'tests{passed,failed} missing: result not verifiable'
     files = d.get('files')
     if not isinstance(files, list) or not files:
         return False, None, 'files[] must be a non-empty list: result is not bound to artefacts'
@@ -458,78 +504,113 @@ def _verify(db, row, path):
         fp = _inside(cwd, f.get('path'))
         if fp is None:
             return False, None, f"file path rejected (absolute, outside the worktree, symlink or missing): {str(f.get('path'))[:80]}"
-        if store.sha256_file(fp) != f.get('sha256'):
+        actual = store.sha256_file(fp)
+        if f.get('sha256') is not None and f.get('sha256') != actual:
             return False, None, f"file hash mismatch: {f.get('path')}"
+        if isolated and f['path'] not in changed:
+            return False, None, f"file not changed by this attempt: {f.get('path')}"
+        f['sha256'] = actual  # hashes are computed here, not trusted
     rcs = d.get('root_causes', [])
     if not isinstance(rcs, list) or not all(isinstance(x, dict) for x in rcs):
         return False, None, 'root_causes must be a list of objects'
-    # the agent's own pass/fail counts are not trusted: the orchestrator re-runs the declared command (allow-listed prefixes only, no shell)
-    import shlex
     argv = shlex.split(t['cmd'])
     allow = [shlex.split(x) for x in os.environ.get('NIGHTLY_VERIFY_ALLOW', 'python3 -m pytest;pytest').split(';') if x.strip()]
     if not argv or not any(argv[:len(a)] == a for a in allow):
         return False, None, f"tests.cmd not allow-listed for orchestrator re-run: {t['cmd'][:60]}"
-    try:
-        rr = subprocess.run(argv, cwd=cwd, capture_output=True, text=True, timeout=float(os.environ.get('NIGHTLY_VERIFY_TIMEOUT_S', 900)))
-        ok = rr.returncode == 0 and t['passed'] > 0 and t['failed'] == 0
-    except (OSError, subprocess.TimeoutExpired):
-        ok = False
-    item = {'scenario_id': f"engineering:{row['name']}", 'seed': row['attempt_id'], 'verdict': 'PASS' if ok else 'FAIL',
-            'metrics': {'tests_passed': t['passed'], 'tests_failed': t['failed'], 'git_sha': sha, 'rerun_ok': ok}, 'safety_violations': 0,
-            'notes': str(d.get('summary') or '')[:300]}
-    return True, (item, d), ('verified' if ok else 'tests failing on orchestrator re-run')
+    item = {'scenario_id': f"engineering:{row['name']}", 'seed': row['attempt_id'], 'verdict': 'UNVERIFIED',
+            'metrics': {'tests_cmd': t['cmd'], 'git_sha': sha, 'branch': row['branch']}, 'safety_violations': 0, 'notes': str(d.get('summary') or '')[:300]}
+    return True, (item, d, argv), 'structurally accepted'
 
 
-def record_engineering_result(db, row, path, item_d, ok):
-    item, d = item_d
+VERIFS = {}
+
+
+def start_verification(db, row, path, res):
+    """Structural checks passed: persist VERIFYING (lease kept) and launch the test re-run as a separate niced job."""
+    item, d, argv = res
+    rdir = result_dir(row['name'], row['attempts'])
+    rdir.mkdir(parents=True, exist_ok=True)
+    tmp = rdir / '.engineering_result.json.tmp'
+    tmp.write_text(json.dumps(d))
+    os.replace(tmp, rdir / 'engineering_result.json')
+    db.execute("UPDATE tasks SET state='VERIFYING', phase='RESULT_RECORDED', reason='result accepted structurally; tests re-running' WHERE id=? AND state IN ('DELEGATED','RUNNING','VERIFYING')", (row['id'],))
+    ev(db, row['name'], 'RESULT', 'structurally accepted; verification job starting')
+    job = attempts.VerifyJob(argv, acwd(row), str(rdir / 'verify.log'), float(os.environ.get('NIGHTLY_VERIFY_TIMEOUT_S', 900)), int(os.environ.get('NIGHTLY_VERIFY_NICE', 10)))
+    VERIFS[(row['id'], row['attempts'])] = job
+    kv_set(db, f"verifpid:{row['id']}", job.p.pid)  # so a stop/restart can kill a job whose owner is gone
+
+
+def record_engineering_result(db, row, item_d, ok):
+    item, d = item_d[0], item_d[1]
     attempt = row['attempts']
     rdir = result_dir(row['name'], attempt)
     rdir.mkdir(parents=True, exist_ok=True)
-    if path.parent != rdir:
-        tmp = rdir / '.engineering_result.json.tmp'
-        tmp.write_bytes(path.read_bytes())
-        os.replace(tmp, rdir / 'engineering_result.json')
+    item = dict(item, verdict='PASS' if ok else 'FAIL')
+    item['metrics'] = dict(item['metrics'], rerun_ok=ok)
     base = kv_get(db, f"base:{row['name']}:{attempt}", None) or dict(task=row['name'], attempt=attempt, git_sha=git('rev-parse', 'HEAD'), code_dirty=False)
     state = 'COMPLETED' if ok else 'NEEDS_ENGINEERING'
-    reason = None if ok else 'result recorded but tests failing on re-run'
+    reason = None if ok else 'result recorded but tests failing on orchestrator re-run'
     meta = dict(base=base, items=[item], final_state=state, exit_code=0, signature=None)
     ev_path, man_sha = store.publish(RUN, row['name'], attempt, rdir, meta)  # evidence durable BEFORE the queue may say COMPLETED
     extra = [("UPDATE tasks SET phase=? WHERE id=?", ('VERIFIED' if ok else 'RESULT_RECORDED', row['id']))]
-    # root causes are written in the SAME transaction; "VERIFIED" is decided here (verified result + evidence), never self-declared
     now = time.time()
     for rc_ in d.get('root_causes') or []:
-        if rc_.get('key') and rc_.get('summary'):
+        if isinstance(rc_, dict) and rc_.get('key') and rc_.get('summary'):
             st_ = 'VERIFIED' if ok and rc_.get('status') == 'VERIFIED' and rc_.get('evidence') else 'HYPOTHESIS'
             extra.append(("INSERT INTO root_causes(key,summary,status,evidence,task,ts) VALUES(?,?,?,?,?,?) ON CONFLICT(key) DO UPDATE SET summary=excluded.summary, "
                           "status=excluded.status, evidence=excluded.evidence, task=excluded.task, ts=excluded.ts WHERE root_causes.status!='VERIFIED'",
                           (str(rc_['key'])[:80], str(rc_['summary'])[:400], st_, str(rc_.get('evidence') or '')[:300], row['name'], now)))
     store.commit(db, row['id'], [item], ev_path, man_sha, base, state, 0, reason, None, extra=extra)
     kv_set(db, f"tried:{row['name']}", [])
+    if ok:
+        kv_set(db, f"verified_sha:{row['name']}", item['metrics']['git_sha'])
+        ev(db, row['name'], 'INTEGRATION_READY', f"branch={row['branch']} sha={item['metrics']['git_sha']} (not merged anywhere; merge is a separate gated step)")
 
 
 def poll_delegated(db, force=False):
-    """Observation only: never starts, never kills. Advances phases from facts; absence of facts changes nothing. Never raises."""
+    """Observation + verification progress. Never starts agents, never kills them, never raises."""
     if not force and time.time() - kv_get(db, 'last_delegate_poll', 0) < float(os.environ.get('NIGHTLY_POLL_S', 20)):
         return
     kv_set(db, 'last_delegate_poll', time.time())
-    for row in db.execute("SELECT * FROM tasks WHERE state='DELEGATED'").fetchall():
+    for row in db.execute("SELECT * FROM tasks WHERE state IN ('DELEGATED','VERIFYING')").fetchall():
         try:
-            _poll_one(db, row)
+            _poll_verifying(db, row) if row['state'] == 'VERIFYING' else _poll_one(db, row)
         except Exception as e:
             ev(db, row['name'], 'POLL_ERROR', f'{type(e).__name__}: {str(e)[:200]}')
+
+
+def _poll_verifying(db, row):
+    key = (row['id'], row['attempts'])
+    f = find_result_file(row)
+    if f is None:
+        db.execute("UPDATE tasks SET state='NEEDS_ENGINEERING', reason='result file vanished during verification' WHERE id=? AND state='VERIFYING'", (row['id'],))
+        return
+    ok_, res, why = verify_engineering_result(db, row, f)
+    if not ok_:
+        db.execute("UPDATE tasks SET state='NEEDS_ENGINEERING', reason=? WHERE id=? AND state='VERIFYING'", (f'verification precondition failed: {why}'[:300], row['id']))
+        return
+    job = VERIFS.get(key)
+    if job is None:  # orchestrator restarted: the job is simply started again (idempotent)
+        start_verification(db, row, f, res)
+        return
+    out = job.poll()
+    if out is None:
+        return
+    VERIFS.pop(key, None)
+    ok, why2 = out
+    ev(db, row['name'], 'VERIFIED' if ok else 'VERIFY_FAILED', why2)
+    record_engineering_result(db, row, res, ok)
+    checkpoint(db, f"verified {row['name']}")
 
 
 def _poll_one(db, row):
     grace = float(os.environ.get('NIGHTLY_RESULT_GRACE_S', 120))
     ref = json.loads(row['dispatch_ref'] or '{}')
-    cwd = row['cwd'] or str(ROOT)
-    f = find_result_file(row, cwd)
+    f = find_result_file(row)
     if f:
         ok_, res, why = verify_engineering_result(db, row, f)
         if ok_:
-            ev(db, row['name'], 'RESULT', why)
-            record_engineering_result(db, row, f, res, why == 'verified')
-            checkpoint(db, f"result {row['name']}")
+            start_verification(db, row, f, res)
             return
         if kv_get(db, f"badres:{row['name']}:{row['attempts']}") != why:
             kv_set(db, f"badres:{row['name']}:{row['attempts']}", why)
@@ -595,22 +676,42 @@ def tick(db, cur):
                 ev(db, r['name'], 'PAUSED_AGENT', 'waiting for agent availability')
                 checkpoint(db, f"paused {r['name']}")
                 continue
-            fw = agents.foreign_writers(r['cwd'] or str(ROOT), own_sessions(db))
-            if fw:  # an agent we did not start (operator TUI) is already in this worktree: never become a second writer
-                if kv_get(db, f"leasewarn:{r['name']}") != [p_[0] for p_ in fw]:
-                    kv_set(db, f"leasewarn:{r['name']}", [p_[0] for p_ in fw])
-                    ev(db, r['name'], 'LEASE_BLOCKED_FOREIGN_WRITER', json.dumps(fw)[:400])
-                continue
+            ad = agents.ADAPTERS[a]
+            isolate = os.environ.get('NIGHTLY_ISOLATE', '1') != '0' and ad.mode == 'process' and attempts.is_git_repo(r['cwd'] or str(ROOT))
+            if not isolate:
+                fw = agents.foreign_writers(r['cwd'] or str(ROOT), own_sessions(db))
+                if fw:  # an agent we did not start (operator TUI) is already in this worktree: never become a second writer
+                    if kv_get(db, f"leasewarn:{r['name']}") != [p_[0] for p_ in fw]:
+                        kv_set(db, f"leasewarn:{r['name']}", [p_[0] for p_ in fw])
+                        ev(db, r['name'], 'LEASE_BLOCKED_FOREIGN_WRITER', json.dumps(fw)[:400])
+                    continue
             kv_set(db, f"tried:{r['name']}", kv_get(db, f"tried:{r['name']}", []) + [a])
             db.execute('UPDATE tasks SET owner=? WHERE id=?', (a, r['id']))
             ev(db, r['name'], 'OWNER', a)
-            if a == 'codex':
+            if ad.mode == 'queue':
                 dispatch_codex(db, r)
                 continue
             attempt_n, aid = r['attempts'] + 1, agents.new_attempt_id()
-            _tok, contract = result_contract(r['name'], attempt_n, aid, result_dir(r['name'], attempt_n), r['cwd'] or str(ROOT))
+            run_cwd, wt = r['cwd'] or str(ROOT), None
+            if isolate:
+                bf = r['base_from']
+                base_sha = (kv_get(db, f'verified_sha:{bf}') if bf else None) or attempts.head(run_cwd)
+                try:
+                    wt, branch = attempts.prepare(run_cwd, RUN, r['name'], attempt_n, aid, base_sha)
+                except Exception as e:
+                    ev(db, r['name'], 'ATTEMPT_PREPARE_FAILED', str(e)[:300])
+                    db.execute("UPDATE tasks SET state='NEEDS_ENGINEERING', reason=? WHERE id=?", (f'cannot prepare attempt worktree: {e}'[:300], r['id']))
+                    continue
+                db.execute('UPDATE tasks SET attempt_wt=?, branch=? WHERE id=?', (wt, branch, r['id']))
+                kv_set(db, f"base:{r['name']}:{attempt_n}", dict(task=r['name'], attempt=attempt_n, git_sha=base_sha, code_dirty=False,
+                                                                   config_sha=hashlib.sha256(r['cmd'].encode()).hexdigest()[:16]))
+                run_cwd = wt
+            else:
+                db.execute('UPDATE tasks SET attempt_wt=NULL, branch=NULL WHERE id=?', (r['id'],))
+            _tok, contract = result_contract(r['name'], attempt_n, aid, result_dir(r['name'], attempt_n), run_cwd, isolated=bool(wt))
             db.execute('UPDATE tasks SET attempt_id=? WHERE id=?', (aid, r['id']))
-            r = dict(r) | {'cmd': agent_command(a, r, contract), 'attempt_id': aid}
+            cmd = ad.command(r, agent_context(r) + '\n' + contract, cwd=run_cwd, model=r['model'], effort=r['effort'], result_dir=result_dir(r['name'], attempt_n))
+            r = dict(r) | {'cmd': cmd, 'attempt_id': aid, 'run_cwd': run_cwd}
         p, log = run_mechanical(db, r)
         row = db.execute('SELECT * FROM tasks WHERE id=?', (r['id'],)).fetchone()
         return (row, p, log, 0, time.time())
@@ -695,7 +796,7 @@ def daemon(args):
         cur = tick(db, cur)
         if time.time() - last_revive > 300:
             revive_agents(db); last_revive = time.time()
-        if cur is None and not args.keep_alive and not db.execute("SELECT 1 FROM tasks WHERE state IN ('PENDING','RUNNING','DELEGATED') LIMIT 1").fetchone():
+        if cur is None and not args.keep_alive and not db.execute("SELECT 1 FROM tasks WHERE state IN ('PENDING','RUNNING','DELEGATED','VERIFYING') LIMIT 1").fetchone():
             break
         time.sleep(args.poll)
     if cur:  # graceful stop: leave the child to be recovered on next start rather than orphaning silently
@@ -716,7 +817,7 @@ def main():
     d = sp.add_parser('daemon'); d.add_argument('--poll', type=float, default=2.0); d.add_argument('--keep-alive', action='store_true'); d.add_argument('--max-seconds', type=float, default=0)
     e = sp.add_parser('enqueue'); e.add_argument('name'); e.add_argument('cmd'); e.add_argument('--kind', default='mechanical')
     e.add_argument('--priority', type=int); e.add_argument('--deps', default='[]'); e.add_argument('--resource'); e.add_argument('--timeout', type=int)
-    e.add_argument('--heartbeat', type=int); e.add_argument('--cwd'); e.add_argument('--state'); e.add_argument('--reason'); e.add_argument('--klass'); e.add_argument('--requires-result', action='store_true')
+    e.add_argument('--heartbeat', type=int); e.add_argument('--cwd'); e.add_argument('--state'); e.add_argument('--reason'); e.add_argument('--klass'); e.add_argument('--requires-result', action='store_true'); e.add_argument('--model'); e.add_argument('--effort'); e.add_argument('--base-from')
     sp.add_parser('status')
     m = sp.add_parser('mark'); m.add_argument('name'); m.add_argument('state'); m.add_argument('--reason', default='')
     ag = sp.add_parser('agent'); ag.add_argument('name'); ag.add_argument('status'); ag.add_argument('--retry-after-s', type=int, default=3600)
@@ -743,6 +844,7 @@ def main():
             db.execute('UPDATE tasks SET klass=? WHERE name=?', (a.klass, a.name))
         if a.requires_result:
             db.execute('UPDATE tasks SET requires_result=1 WHERE name=?', (a.name,))
+        db.execute('UPDATE tasks SET model=?, effort=?, base_from=? WHERE name=?', (a.model, a.effort, a.base_from, a.name))
         checkpoint(db, f'enqueue {a.name}')
         print('enqueued' if ok else 'exists (history kept)')
     elif a.c == 'mark':
