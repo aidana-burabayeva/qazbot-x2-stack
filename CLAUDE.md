@@ -4,6 +4,8 @@
 
 Калибровка P20 и DDS recovery regressions прошли. Следующий открытый gate — отдельное время финального выравнивания полной CCW Nav2-цели (общая длительность 31.8 с, повторные XY-подходы). Recovery — экспериментальный C++ кандидат; реальный evidence provider и production wiring не готовы. Не устанавливать на X2, не ослаблять T1/T5/footprint/collision detection и не менять одновременно P20, localisation и costmap. Simulation processes этой сессии остановлены.
 
+**Nightly lab (sim):** состояние в `python3 tools/nightly/nq.py status` и `docs/nightly/{STATUS,HANDOFF}.md`; оркестратор `qazbot-nightly` (systemd --user). Подробности: skill `qazbot-nightly`.
+
 ---
 
 # Claude Code: QazBot X2
