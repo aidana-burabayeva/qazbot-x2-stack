@@ -42,7 +42,7 @@ public:
         }));
     }
     for (const auto & item : std::vector<std::pair<std::string, std::string>>{
-      {"nav", "/qazbot_d1_map/cmd_vel_nav"}, {"smoothed", "/qazbot_d1_map/cmd_vel"},
+      {"nav", "/qazbot_d1_map/cmd_vel_nav"}, {"nav_ns", "/qazbot_d1_map/nav2/cmd_vel_nav"}, {"smoothed", "/qazbot_d1_map/cmd_vel"},
       {"authorized", "/qazbot_d1_map/cmd_vel_authorized"}})
     {
       twists_.push_back(create_subscription<geometry_msgs::msg::Twist>(item.second, 20,

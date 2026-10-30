@@ -22,3 +22,9 @@
 - /loop: CronCreate job a56ac490, каждый час :17, session-only, живёт 7 дней (не заменяет systemd).
 
 - Регрессия A: adapter/native/TWIN-02 набор = 122 passed (очередь, regress_a_adapter_native). Пересборка twin-образа с новым twin.launch.py: OPEN.
+
+## L2 stall: сигнатура `controller_no_progress_commanded_rotation` (2026-10-30, sim, truth-localisation)
+- Воспроизведено 3 раза из 5 L2-прогонов (s1_0005 r3/r4, s1_0046 x2): NavigateToPose ABORTED, `Failed to make progress` x5. s1_0048 PASS (48.7 с), s1_0004 SUCCEEDED, но yaw 0.40>0.35 и footprint касается unknown/obstacle по карте (12 отсчётов, -0.025 м) — `SUCCEEDED` не доказательство безопасности.
+- s1_0046 (evidence l2_stall_s1_0046, с cmd_vel_nav): с 60 с робот стоит в (-9.93,-8.73), контроллер Nav2 (nav_ns) 99% времени командует wz<0 (в среднем -0.42), vx≈0.03; MC получает wz -0.36 -> -0.59 (растёт монотонно), truth: dyaw≈0 (±0.08/10 с), dxy≈0. По карте в этой позе зазор >=0.378 м при любом yaw => НЕ упор в стену.
+- Гипотезы: H1 MC не исполняет смесь малый vx + wz (stall, ср. P20 CW baseline); H2 P20 yaw-петля без ограничения интегратора (команда растёт при отсутствии отклика; saturated=0, rejected=0) — вопрос безопасности/anti-windup; H3 RPP вместо чистого rotate-to-heading даёт vx>0 при большом heading error. Не проверено: контакт в MuJoCo (мир != карта Nav2).
+- Следующий эксперимент (один): тот же сценарий с одним изменением — A/B по (a) выключен P20 (baseline adapter) и (b) rotate_to_heading_min_angle; НЕ менять допуски/footprint/costmap. Статус: eng_l2_doorway_stall = NEEDS_ENGINEERING.
