@@ -28,3 +28,15 @@
 - s1_0046 (evidence l2_stall_s1_0046, с cmd_vel_nav): с 60 с робот стоит в (-9.93,-8.73), контроллер Nav2 (nav_ns) 99% времени командует wz<0 (в среднем -0.42), vx≈0.03; MC получает wz -0.36 -> -0.59 (растёт монотонно), truth: dyaw≈0 (±0.08/10 с), dxy≈0. По карте в этой позе зазор >=0.378 м при любом yaw => НЕ упор в стену.
 - Гипотезы: H1 MC не исполняет смесь малый vx + wz (stall, ср. P20 CW baseline); H2 P20 yaw-петля без ограничения интегратора (команда растёт при отсутствии отклика; saturated=0, rejected=0) — вопрос безопасности/anti-windup; H3 RPP вместо чистого rotate-to-heading даёт vx>0 при большом heading error. Не проверено: контакт в MuJoCo (мир != карта Nav2).
 - Следующий эксперимент (один): тот же сценарий с одним изменением — A/B по (a) выключен P20 (baseline adapter) и (b) rotate_to_heading_min_angle; НЕ менять допуски/footprint/costmap. Статус: eng_l2_doorway_stall = NEEDS_ENGINEERING.
+
+## P0 verification matrix (2026-10-30)
+| # | Проверка | Результат |
+|---|---|---|
+| 1 | nightly стартует без меня | VERIFIED: transient systemd timer -> enqueue -> демон выполнил (`verify_timer_unattended`); реальный `qazbot-nightly-enqueue.timer` 01:00, ближайший срабатывает 2026-10-31 (ещё не срабатывал — UNVERIFIED на деле) |
+| 2 | закрытие сессии не убивает очередь | VERIFIED косвенно: демон (systemd --user, linger=yes) пережил все сессии/терминалы; перезагрузка ПК UNVERIFIED |
+| 3 | kill -9 worker сохраняет результаты | VERIFIED: partial-лог сохранён, задача -> NEEDS_ENGINEERING (без слепого повтора), следующая задача выполнена; kill -9 демона -> recover -> COMPLETED |
+| 4 | NEEDS_APPROVAL не блокирует независимые | VERIFIED |
+| 5 | передача Claude -> Codex | VERIFIED: `codex queue` -> сессия 01a18872 ответила `ACK d63f50c` (01:16); контекст = HEAD SHA + handoff в git |
+| 6 | usage limit не останавливает механику | VERIFIED на тест-очереди (PAUSED_AGENT, механические продолжились); реальный лимит Claude не наблюдался |
+| 7 | commit/handoff в Git | VERIFIED: ветка test/p20-twin02-sim-20261029 |
+| 8 | /loop зарегистрирован | VERIFIED: CronCreate a56ac490 (1h) и 8c5b8731 (2h), session-only, 7 дней |
