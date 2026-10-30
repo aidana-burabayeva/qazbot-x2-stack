@@ -1,0 +1,13 @@
+# Real MuJoCo sim (x2-twin-stack:p20, TWIN_MAP=main_office, TWIN_START=-7.885,12.966,0.0), probe subscribed to /aima/hal/odom/state from container start.
+# Columns: seconds since the first received sample, pelvis x y z yaw in the SIM WORLD frame (world.py contract: pelvis spawns at (0,0), yaw 0).
+t=  0.00  x=  0.0000 y=  0.0000 z= 0.676 yaw= -0.0000
+t=  0.00  x=  0.0000 y=  0.0000 z= 0.675 yaw= -0.0000
+t=  1.00  x= -0.3499 y=  0.0007 z= 0.077 yaw= -0.0022     # first spawn: robot collapsed (z 0.077), chaotic yaw
+t=  2.00  x= -0.4517 y=  0.0091 z= 0.077 yaw= -1.6915
+t=  3.00  x= -0.4521 y=  0.0107 z= 0.075 yaw= -3.1262
+t=  8.00  x= -0.4051 y=  0.2451 z= 0.076 yaw=  0.9309
+t= 16.79  x=  0.0000 y=  0.0000 z= 0.677 yaw= -0.0000     # sim re-spawned: nominal pose (0,0,yaw 0)
+t= 17.00  x= -0.0378 y=  0.0091 z= 0.626 yaw=  0.0080
+t= 18.00  x=  0.0455 y= -0.0174 z= 0.652 yaw=  0.1082     # stand-up transient: settled yaw +0.108 rad
+t= 20.00  x=  0.0406 y= -0.0138 z= 0.652 yaw=  0.1045
+t= 29.00  x=  0.0371 y= -0.0110 z= 0.653 yaw=  0.0850
