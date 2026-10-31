@@ -1,3 +1,9 @@
+# Capability-scoped bootstrap continuation
+
+Read [docs/nightly/EXECUTION_MODES.md](docs/nightly/EXECUTION_MODES.md). ENGINEERING has its own preflight and does not require a full L3 receipt. L3/FULL still require their scoped runtime proof. Offline PASS is not SIM_VERIFIED. Current clean start is blocked by systemd permissions; no runtime daemon or real engineering CLI task verified. Physical X2 forbidden; queue frozen. This supersedes the older global receipt statement below.
+
+---
+
 # Current AIMDK fidelity continuation
 
 Read [docs/nightly/AIMDK_FIDELITY.md](docs/nightly/AIMDK_FIDELITY.md) and linked evidence. Source sensor contract corrections and recorded replay verified; live ROS graph/MC/runtime E2E remain OPEN. Do not bypass the new current L3/runtime receipt check in labctl start. Physical X2 untouched; queue frozen.

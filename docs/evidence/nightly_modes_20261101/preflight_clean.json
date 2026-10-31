@@ -1,0 +1,125 @@
+{
+ "kind": "all",
+ "mode": "ENGINEERING",
+ "vendor_identity": {},
+ "images": {
+  "stack": null,
+  "sim": null
+ },
+ "verdict": "FAIL",
+ "stamp": "20261101T010015",
+ "started": 1793476813.3812156,
+ "seconds": 2.0,
+ "git_head": "61970ea7652496bd0dd01ba3a57b4d67f095dea6",
+ "code_dirty": false,
+ "integration": "61970ea7652496bd0dd01ba3a57b4d67f095dea6",
+ "robot_ref": "origin/robot/stable",
+ "robot_sha": "1212d7eda003022d74c6ecc4a2c745fd48f57c2f",
+ "checks": [
+  {
+   "name": "role",
+   "status": "PASS",
+   "detail": "LAB"
+  },
+  {
+   "name": "git.control_branch",
+   "status": "PASS",
+   "detail": "lab/control"
+  },
+  {
+   "name": "git.integration_not_checked_out",
+   "status": "PASS",
+   "detail": "lab/stable is not checked out in any worktree"
+  },
+  {
+   "name": "git.fetch",
+   "status": "WARN",
+   "detail": "offline? cess 'https://github.com/aidana-burabayeva/qazbot-x2-stack.git/': Could not resolve host: github.com"
+  },
+  {
+   "name": "git.integration_in_control",
+   "status": "PASS",
+   "detail": "integration 61970ea76 contained in control HEAD"
+  },
+  {
+   "name": "git.integration_vs_origin",
+   "status": "WARN",
+   "detail": "local ahead of origin (publishes at stop)"
+  },
+  {
+   "name": "git.tracked_clean",
+   "status": "PASS",
+   "detail": "no tracked or untracked modifications"
+  },
+  {
+   "name": "git.robot_ref",
+   "status": "PASS",
+   "detail": "origin/robot/stable 1212d7e"
+  },
+  {
+   "name": "isolation.no_ssh_in_lab_chain",
+   "status": "PASS",
+   "detail": "41 lab-chain files scanned: no ssh/scp/robot address/check_robot.sh"
+  },
+  {
+   "name": "agents.claude",
+   "status": "PASS",
+   "detail": "2.1.316 (Claude Code) authenticated"
+  },
+  {
+   "name": "agents.codex",
+   "status": "PASS",
+   "detail": "codex-cli 0.166.0 authenticated"
+  },
+  {
+   "name": "systemd.user_manager",
+   "status": "FAIL",
+   "detail": "systemctl --user unavailable"
+  },
+  {
+   "name": "systemd.linger",
+   "status": "WARN",
+   "detail": "Failed to connect to bus: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user)"
+  },
+  {
+   "name": "systemd.qazbot-nightly.service",
+   "status": "FAIL",
+   "detail": "Failed to connect to bus: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user) (start enables the daemon first, the timer last)"
+  },
+  {
+   "name": "systemd.qazbot-nightly-enqueue.timer",
+   "status": "FAIL",
+   "detail": "Failed to connect to bus: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user) (start enables the daemon first, the timer last)"
+  },
+  {
+   "name": "systemd.timer_no_catchup",
+   "status": "PASS",
+   "detail": "Persistent=false: enabling the timer cannot trigger a missed nightly"
+  },
+  {
+   "name": "engineering.disk",
+   "status": "PASS",
+   "detail": "7 GiB free; existing 5 GiB floor preserved"
+  },
+  {
+   "name": "engineering.namespace_isolation",
+   "status": "PASS",
+   "detail": "read-only host and hidden runtime sockets"
+  },
+  {
+   "name": "engineering.docker_optional",
+   "status": "WARN",
+   "detail": "permission denied while trying to connect to the docker API at unix:///var/run/docker.sock (not required for offline Engineering)"
+  },
+  {
+   "name": "engineering.robot_parity",
+   "status": "PASS",
+   "detail": "73/73 files match captured X2"
+  },
+  {
+   "name": "engineering.basic_tests",
+   "status": "PASS",
+   "detail": "........................................................................ [ 68%]\n.................................                                        [100%]\n105 passed in 0.46s"
+  }
+ ]
+}
