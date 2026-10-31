@@ -92,6 +92,7 @@ def test_start_success_prepares_once_then_existing_resume(tmp_path, db, monkeypa
     monkeypatch.setattr(labctl.nq, 'connect', lambda: db)
     prepared, calls = [], []
     monkeypatch.setattr(labctl, 'prepare_campaign', lambda db: prepared.append(True))
+    monkeypatch.setattr(labctl, 'runtime_qualification_errors', lambda db: [])
     monkeypatch.setattr(labctl, 'call', lambda *a: calls.append(a) or 0)
     assert labctl.start() == 0
     assert prepared == [True]
@@ -161,3 +162,26 @@ def test_preflight_does_not_use_operator_backend_or_truth_overrides(monkeypatch)
     assert seen[0]['TWIN_BACKEND'] == str(preflight.ROOT)
     assert seen[0]['TWIN_MAP_DIR'] == str(preflight.ROOT / 'ws/src/maps/d1_qazbot_20261029')
     assert seen[0]['TWIN_LOCALIZATION'] == 'amcl'
+
+
+def test_no_runtime_receipt_cannot_authorize_nightly_start(tmp_path, db):
+    import qualification
+    assert qualification.check(db,tmp_path/'missing',tmp_path,'git','robot','map','stack','sim') == ['missing_runtime_e2e_receipt']
+
+
+def test_pass_doctor_without_e2e_receipt_cannot_enqueue_or_resume(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+    monkeypatch.setattr(labctl.lab,'sh',lambda *a:(3,'inactive'))
+    monkeypatch.setattr(labctl.nq.mergeq,'checked_out_at',lambda *a:None)
+    monkeypatch.setattr(labctl.lab,'sync_control',lambda *a:None)
+    monkeypatch.setattr(labctl,'doctor',lambda:0)
+    monkeypatch.setattr(labctl,'RUN',tmp_path)
+    (tmp_path/'preflight').mkdir()
+    (tmp_path/'preflight/latest.json').write_text('{"git_head":"head","integration":"integration"}')
+    monkeypatch.setattr(labctl.lab,'gout',lambda *a:'head')
+    monkeypatch.setattr(labctl.nq.mergeq,'integration_head',lambda *a:'integration')
+    monkeypatch.setattr(labctl.nq,'connect',lambda:SimpleNamespace(close=lambda:None))
+    monkeypatch.setattr(labctl,'runtime_qualification_errors',lambda db:['missing_runtime_e2e_receipt'])
+    monkeypatch.setattr(labctl,'prepare_campaign',lambda *a:pytest.fail('unqualified campaign was enqueued'))
+    monkeypatch.setattr(labctl,'call',lambda *a:pytest.fail('unqualified daemon was resumed'))
+    assert labctl.start()==1

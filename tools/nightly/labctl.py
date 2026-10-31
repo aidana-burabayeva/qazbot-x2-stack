@@ -10,6 +10,7 @@ from pathlib import Path
 import lab
 import nq
 import preflight
+import qualification
 
 ROOT, RUN = nq.ROOT, nq.RUN
 REVIEWED_ROBOT = '1212d7eda003022d74c6ecc4a2c745fd48f57c2f'
@@ -79,6 +80,16 @@ def doctor():
     return call(sys.executable, str(ROOT / 'tools/nightly/preflight.py'), 'all', '--tests')
 
 
+def runtime_qualification_errors(db):
+    contract = preflight.env_file(ROOT / 'digital_twin/scripts/contract/robot.env')
+    def image(name):
+        rc, out = lab.sh(['docker','image','inspect',name,'--format','{{.Id}}'])
+        return out.strip() if rc == 0 else None
+    return qualification.check(db, RUN / 'nightly_qualification.json', ROOT,
+                               nq.mergeq.integration_head(ROOT), lab.gout('rev-parse','origin/robot/stable'),
+                               contract['ROBOT_MAP_SHA256'], image('x2-twin-stack:nightly'), image('x2-twin-sim:nightly'))
+
+
 def start():
     if lab.sh('systemctl --user is-active qazbot-nightly.service')[1].strip() == 'active':
         print('Daemon already active; no duplicate orchestrator or campaign launched. Use status.')
@@ -104,6 +115,11 @@ def start():
         print('Git changed during preflight; start refused. Run start again.', file=sys.stderr)
         return 1
     db = nq.connect()
+    errors = runtime_qualification_errors(db)
+    if errors:
+        db.close()
+        print('Autonomous start refused: official L3/runtime E2E is unqualified: ' + ', '.join(errors), file=sys.stderr)
+        return 1
     db.execute('BEGIN IMMEDIATE')
     try:
         prepare_campaign(db)

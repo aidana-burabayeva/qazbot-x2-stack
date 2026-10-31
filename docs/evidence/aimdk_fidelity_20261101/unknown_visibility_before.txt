@@ -1,0 +1,23 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________ test_unknown_strip_blocks_evidence_for_wall_and_disc_behind __________
+
+tmp_path = PosixPath('/tmp/pytest-of-adn/pytest-54/test_unknown_strip_blocks_evid0')
+
+    def test_unknown_strip_blocks_evidence_for_wall_and_disc_behind(tmp_path):
+        image=np.full((80,80),254,np.uint8)
+        image[:,70:]=0
+        image[:,48:52]=205
+        Image.fromarray(image).save(tmp_path/'map.pgm')
+        path=tmp_path/'map.yaml'
+        path.write_text(yaml.safe_dump(dict(image='map.pgm',resolution=.1,origin=[-4.,-4.,0.],free_thresh=.196,occupied_thresh=.65)))
+        caster=RayCaster(OccupancyMap.from_yaml(str(path)),n_beams=1440,fov_deg=103,range_max=8)
+>       assert not np.isfinite(caster.scan((0.,0.,0.))[720])
+E       AssertionError: assert not True
+E        +  where True = <ufunc 'isfinite'>(3.0100000000000002)
+E        +    where <ufunc 'isfinite'> = np.isfinite
+
+tests/sensor_parity/test_unknown_visibility.py:21: AssertionError
+=========================== short test summary info ============================
+FAILED tests/sensor_parity/test_unknown_visibility.py::test_unknown_strip_blocks_evidence_for_wall_and_disc_behind
+1 failed in 0.26s
