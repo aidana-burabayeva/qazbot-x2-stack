@@ -1,3 +1,9 @@
+# 2026-10-31 — terminal LAB bootstrap continuation
+
+`labctl.sh` implementation: [runbook](nightly/LABCTL.md), [qualification evidence](evidence/lab_bootstrap_20261031/README.md). Control checkout `lab/control`; integration ref `lab/stable` remains un-checked-out. Physical X2 untouched. Full runtime acceptance is INCOMPLETE because this environment blocks Docker, user systemd and GitHub DNS. The saved STOPPED_OK checkpoint is preserved; do not report a new successful start/stop.
+
+---
+
 # 2026-10-29 — P20 / TWIN-02, simulation handoff (самая свежая запись)
 
 Ветка `test/p20-twin02-sim-20261029`, worktree `/home/adn/QazBot/control_backend_p20_twin02`. Подробная передача Claude: [P20_TWIN02_HANDOFF.md](P20_TWIN02_HANDOFF.md). Начать с неё, без нового полного аудита.

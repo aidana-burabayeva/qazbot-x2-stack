@@ -862,11 +862,12 @@ def revive_agents(db):
 
 def daemon(args):
     db = connect()
-    lock = open(RUN / 'orchestrator.lock', 'w')
+    lock = open(RUN / 'orchestrator.lock', 'a+')
     try:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)  # single-owner lease
     except OSError:
         sys.exit('another orchestrator owns the lease')
+    lock.seek(0); lock.truncate()
     lock.write(str(os.getpid())); lock.flush()
     recover(db)
     agent_probe(db)

@@ -10,6 +10,7 @@ Status vocabulary: PASS | FAIL | WARN | UNVERIFIED (never promoted to PASS witho
 """
 import argparse
 import json
+import math
 import os
 import re
 import shutil
@@ -35,8 +36,18 @@ KEYS = {1: 'bool_value', 2: 'integer_value', 3: 'double_value', 4: 'string_value
         7: 'integer_array_value', 8: 'double_array_value', 9: 'string_array_value'}
 # parameters whose divergence is a known, documented simulation difference (never silently ignored: reported as `allowed`)
 LIVE_NODES = {'/qazbot_d1_map/amcl': None, '/qazbot_d1_map/localization_trust': None}
+# Known, documented sim-vs-robot differences. Anything else that differs is a FAIL. `stricter` = the sim value must be <= the robot's (the gate is never weaker in the twin).
+ALLOWED = {
+    '/qazbot_d1_map/localization_trust': {
+        'map_yaml': ('path', 'robot path /home/agi/..., twin mounts the same map at /opt/x2twin/stack/maps/ (sha256 verified separately)'),
+        'odom_source': ('exact', 'twin plant publishes odom->base_footprint (kinematic_plant); the robot runs native_odom_bridge (native_imu). Plant is the sim substitute, not a code difference'),
+        'odom_topic': ('exact', 'consequence of odom_source: /qazbot_lio/odom_level in the twin vs /qazbot_native/odom on the robot'),
+        'jump_xy_max': ('stricter', 'robot live T5 = 1.0 m (operator CLI -p jump_xy_max:=1.0, nav_session_20261029/start.sh); code default and twin = 0.10. Twin is NOT relaxed'),
+        'jump_yaw_max': ('stricter', 'robot live T5 = 0.5 rad (operator CLI); code default and twin = 0.10. Twin is NOT relaxed'),
+    }}
 
 RES = []
+START_HEAD = START_INTEGRATION = None
 
 
 def add(name, status, detail='', **extra):
@@ -62,7 +73,7 @@ def gout(*a):
 def dc(*a, timeout=900, env=None):
     """docker compose against the lab env file, in its own throw-away project."""
     return sh(['docker', 'compose', '-p', PROJECT, '-f', 'docker/compose.yaml', '--env-file', ENVFILE, *a], timeout=timeout, cwd=TW,
-              env={'TWIN_VERSION': 'nightly', **(env or {})})
+              env={**env_file(TW / ENVFILE), 'TWIN_BACKEND': str(ROOT), 'TWIN_LOCALIZATION': 'amcl', 'TWIN_VERSION': 'nightly', **(env or {})})
 
 
 def robot_params():
@@ -97,7 +108,7 @@ def check_git():
     add('git.integration_not_checked_out', 'FAIL' if co else 'PASS',
         f'{mergeq.branch_name()} is checked out in {co}: the merge queue would leave that tree stale' if co else f'{mergeq.branch_name()} is not checked out in any worktree')
     rc, o = git('fetch', '--prune', 'origin', timeout=120)
-    add('git.fetch', 'PASS' if rc == 0 else 'WARN', 'origin fetched' if rc == 0 else f'offline? {o[-100:]}')
+    add('git.fetch', 'PASS' if rc == 0 else 'FAIL', 'origin fetched' if rc == 0 else f'offline? {o[-100:]}')
     ih = gout('rev-parse', '-q', '--verify', f'refs/heads/{mergeq.branch_name()}')
     if not ih:
         add('git.integration_branch', 'FAIL', f'{mergeq.branch_name()} missing')
@@ -115,7 +126,22 @@ def check_git():
     add('git.robot_ref', 'PASS' if gout('rev-parse', '-q', '--verify', ROBOT_REF) else 'FAIL', f'{ROBOT_REF} {gout("rev-parse", "--short", ROBOT_REF)}')
 
 
+def integration_baseline_matches():
+    """Check Git blobs, including maps, on the ref attempts actually start from."""
+    import hashlib
+    manifest = ROOT / 'docs/evidence/x2_twin_20261030/robot_baseline_manifest.json'
+    items = json.loads(manifest.read_text())['files']
+    ref = mergeq.integration_head(ROOT)
+    for item in items:
+        r = subprocess.run(['git', '-C', str(ROOT), 'show', f'{ref}:{item["path"]}'], capture_output=True)
+        if r.returncode or hashlib.sha256(r.stdout).hexdigest() != item['sha256']:
+            return False
+    return len(items) == 73
+
+
 def check_baseline():
+    ok = integration_baseline_matches()
+    add('baseline.integration_sha256', 'PASS' if ok else 'FAIL', '73/73 integration Git blobs match snapshot' if ok else 'integration branch differs from captured robot files')
     rc, o = sh('digital_twin/scripts/contract/check_published.sh', env=None)
     add('baseline.published_in_sync', 'PASS' if rc == 0 else 'FAIL', o.splitlines()[-1] if o else rc)
     rc, o = sh([sys.executable, 'tools/twin/verify_robot_baseline.py'])
@@ -186,10 +212,10 @@ def check_docker():
     rc, o = sh("docker info --format '{{.ServerVersion}}'", timeout=30)
     add('docker.daemon', 'PASS' if rc == 0 else 'FAIL', o[-80:])
     free = shutil.disk_usage(ROOT).free // 2**30
-    add('host.disk_free_gb', 'PASS' if free >= 20 else 'FAIL', f'{free} GB free (need >= 20)')
-    _rc, o = sh("docker ps --format '{{.Names}}'")
+    add('host.disk_free_gb', 'PASS' if free >= 10 else 'WARN' if free >= 5 else 'FAIL', f'{free} GB free (run_nightly refuses < 5; WARN < 10)')
+    ps_rc, o = sh("docker ps --format '{{.Names}}'")
     foreign = [n for n in o.split() if n.startswith('x2-twin') or n.startswith('x2tn') or n.startswith('x2tp')]
-    add('docker.no_stray_twin', 'WARN' if foreign else 'PASS', f'running twin containers: {foreign}' if foreign else 'no twin containers running')
+    add('docker.no_stray_twin', 'FAIL' if foreign or ps_rc else 'PASS', f'running twin containers: {foreign}' if foreign else 'no twin containers running')
 
 
 def check_systemd():
@@ -199,7 +225,7 @@ def check_systemd():
     add('systemd.linger', 'PASS' if 'yes' in o else 'WARN', o or 'unknown')
     for u in ('qazbot-nightly.service', 'qazbot-nightly-enqueue.timer'):
         a = sh(f'systemctl --user is-active {u}')[1].strip()
-        add(f'systemd.{u}', 'PASS', f'{a} (start enables the daemon first, the timer last)')
+        add(f'systemd.{u}', 'FAIL' if 'Failed to connect' in a else 'PASS', f'{a} (start enables the daemon first, the timer last)')
     t = (ROOT / 'tools/nightly/systemd/qazbot-nightly-enqueue.timer').read_text()
     add('systemd.timer_no_catchup', 'PASS' if 'Persistent=false' in t else 'FAIL', 'Persistent=false: enabling the timer cannot trigger a missed nightly' if 'Persistent=false' in t else 'Persistent=true can fire a missed nightly on enable')
 
@@ -234,21 +260,48 @@ def flat(d, pre=''):
     return out
 
 
+def allowed_difference(node, key, robot, sim):
+    """Accept only the measured substitutions; unknown values fail closed."""
+    if node != '/qazbot_d1_map/localization_trust':
+        return False
+    if key in ('jump_xy_max', 'jump_yaw_max'):
+        return (type(robot) in (int, float) and type(sim) in (int, float)
+                and math.isfinite(robot) and math.isfinite(sim) and 0 < sim <= min(robot, 0.10))
+    if key == 'odom_source':
+        return (robot, sim) == ('native_imu', 'lio')
+    if key == 'odom_topic':
+        return (robot, sim) == ('/qazbot_native/odom', '/qazbot_lio/odom_level')
+    if key == 'map_yaml':
+        name = env_file(TW / 'scripts/contract/robot.env')['ROBOT_MAP']
+        return (robot == f'/home/agi/control_backend/ws/src/maps/{name}/map.yaml'
+                and sim == f'/opt/x2twin/stack/maps/{name}/map.yaml')
+    return False
+
+
 def live_parity(nodes):
     import yaml  # PyYAML ships with the ROS-capable host python; fall back to UNVERIFIED if absent
     skip = lambda k: k in {'use_sim_time', 'start_type_description_service'} or k.startswith('qos_overrides.')
     num = lambda a, b: isinstance(a, (int, float)) and isinstance(b, (int, float)) and not isinstance(a, bool) and abs(a - b) <= 1e-9 * max(1, abs(a), abs(b))
     for node in LIVE_NODES:
-        rc, o = in_stack(f'ros2 param dump {node} --print', timeout=60)
+        rc, o = in_stack(f'ros2 param dump {node} --print 2>/dev/null', timeout=60)
+        o = '\n'.join(ln for ln in o.splitlines() if not ln.startswith('WARNING'))
         if rc != 0 or not o.strip():
             add(f'live.params.{node}', 'FAIL', f'node absent / dump failed: {o[-100:]}')
             continue
-        y = yaml.safe_load(o[o.index('/') :] if o.lstrip().startswith('/') or '/' in o else o)
+        y = yaml.safe_load(o)
         sim = {k: v for k, v in flat(next(iter(y.values()))['ros__parameters']).items() if not skip(k)}
         rob = {k: pval(v) for k, v in nodes[node].items() if isinstance(v, dict) and 'type' in v and not skip(k)}
         diff = {k: dict(robot=rob[k], sim=sim[k]) for k in rob if k in sim and rob[k] != sim[k] and not num(rob[k], sim[k]) and not (rob[k] == [] and sim[k] in ([], None))}
-        add(f'live.params.{node}', 'PASS' if not diff else 'FAIL', f'compared {len([k for k in rob if k in sim])} params, differ={json.dumps(diff, default=str)[:300]}',
-            only_robot=sorted(k for k in rob if k not in sim)[:20], only_sim=sorted(k for k in sim if k not in rob)[:20], differ=diff)
+        allowed, bad = {}, {}
+        for k, dv in diff.items():
+            rule = ALLOWED.get(node, {}).get(k)
+            if rule and allowed_difference(node, k, dv['robot'], dv['sim']):
+                allowed[k] = dict(dv, why=rule[1])
+            else:
+                bad[k] = dv
+        missing = sorted(k for k in rob if k not in sim)
+        add(f'live.params.{node}', 'PASS' if not bad and not missing else 'FAIL', f'compared {len([k for k in rob if k in sim])} params, unexplained differ={json.dumps(bad, default=str)[:260]}, documented differences={sorted(allowed)}',
+            only_robot=missing, only_sim=sorted(k for k in sim if k not in rob)[:20], differ=bad, allowed=allowed)
     # key AMCL knobs explicitly (P23 profile) so a dropped override can never hide behind "only_sim"
     want = {'max_beams': 180, 'alpha1': 0.3, 'alpha2': 0.2, 'alpha3': 0.15, 'alpha4': 0.15, 'alpha5': 0.15}
     got = {}
@@ -265,21 +318,38 @@ import json, time, rclpy
 from rclpy.node import Node
 from tf2_msgs.msg import TFMessage
 from rclpy.qos import QoSProfile, DurabilityPolicy
-rclpy.init(); n = Node('tf_owner_probe'); edges = {}
-def cb(m):
-    for t in m.transforms: edges[t.header.frame_id + '->' + t.child_frame_id] = edges.get(t.header.frame_id + '->' + t.child_frame_id, 0) + 1
+rclpy.init(); n = Node('tf_owner_probe'); edges = {}; owners = {}
+import math, os
+from geometry_msgs.msg import PoseWithCovarianceStamped
+x, y, yaw = [float(v) for v in os.environ['TWIN_START'].split(',')]
+ip = n.create_publisher(PoseWithCovarianceStamped, '/qazbot_d1_map/initialpose', 10)
+def cb(m, info):
+    for t in m.transforms:
+        edge = t.header.frame_id + '->' + t.child_frame_id
+        edges[edge] = edges.get(edge, 0) + 1
+        owners.setdefault(edge, set()).add(bytes(info.publisher_gid).hex())
 for topic in ('/tf', '/qazbot_d1_map/tf'):
     n.create_subscription(TFMessage, topic, cb, 100)
 n.create_subscription(TFMessage, '/tf_static', cb, QoSProfile(depth=100, durability=DurabilityPolicy.TRANSIENT_LOCAL))
-pubs = {}
+pubs = {}; gids = {}
+m = PoseWithCovarianceStamped(); m.header.frame_id = 'map'
+m.pose.pose.position.x, m.pose.pose.position.y = x, y
+m.pose.pose.orientation.z, m.pose.pose.orientation.w = math.sin(yaw / 2), math.cos(yaw / 2)
+m.pose.covariance[0] = m.pose.covariance[7] = 0.05; m.pose.covariance[35] = 0.05
+t_end = time.time() + 20
+while time.time() < t_end and 'map->odom' not in edges:
+    m.header.stamp = n.get_clock().now().to_msg(); ip.publish(m)
+    rclpy.spin_once(n, timeout_sec=0.5)
 t_end = time.time() + 8
 while time.time() < t_end:
     rclpy.spin_once(n, timeout_sec=0.2)
 for topic in ('/tf', '/qazbot_d1_map/tf'):
+    for i in n.get_publishers_info_by_topic(topic):
+        gids[bytes(i.endpoint_gid).hex()] = i.node_namespace.rstrip('/') + '/' + i.node_name
     pubs[topic] = sorted({(i.node_namespace.rstrip('/') + '/' + i.node_name) for i in n.get_publishers_info_by_topic(topic)})
-print('TFJSON' + json.dumps(dict(edges=edges, publishers=pubs)))
+print('TFJSON' + json.dumps(dict(edges=edges, publishers=pubs, owners={e: sorted(v) for e,v in owners.items()}, gids=gids)))
 PY'''
-    rc, o = in_stack(script, timeout=60)
+    rc, o = in_stack('export TWIN_START=' + env_file(TW / ENVFILE)['TWIN_START'] + '\n' + script, timeout=90)
     m = re.search(r'TFJSON(.*)', o)
     if not m:
         add('tf.owners', 'FAIL', f'probe failed: {o[-150:]}')
@@ -291,7 +361,9 @@ PY'''
     add('tf.edges', 'PASS' if not missing else 'FAIL', f'edges={sorted(e)} missing={missing}')
     amcl_pub = any('amcl' in p for v in pubs.values() for p in v)
     add('tf.map_odom_owner_amcl', 'PASS' if amcl_pub else 'FAIL', f'publishers={pubs}')
-    add('tf.single_owner_per_edge', 'UNVERIFIED', 'TF messages carry no publisher id: ownership is inferred from the publisher set + expected edges; per-edge uniqueness needs a multi-owner regression test', publishers=pubs)
+    owners = {e: [d['gids'].get(g, 'UNKNOWN:' + g) for g in d['owners'].get(e, [])] for e in need}
+    ok = owners == {'map->odom': ['/qazbot_d1_map/amcl'], 'odom->base_footprint': ['/kinematic_plant']}
+    add('tf.single_owner_per_edge', 'PASS' if ok else 'FAIL', f'observed DDS publisher GIDs per TF edge (8s observation): {owners}', owners=owners)
 
 
 def isolation(domain_expected='87'):
@@ -315,6 +387,7 @@ def isolation(domain_expected='87'):
 def stage_sim(nodes):
     print('== sim (project %s, image tag nightly)' % PROJECT)
     c = env_file(TW / 'scripts/contract/robot.env')
+    sh(f'docker ps -aq --filter label=com.docker.compose.project={PROJECT} | xargs -r docker rm -f; docker network rm {PROJECT}_twin 2>/dev/null; true')  # leftovers of a crashed run
     rc, o = dc('build', 'stack', timeout=1800)
     add('sim.build_stack_image', 'PASS' if rc == 0 else 'FAIL', 'x2-twin-stack:nightly rebuilt' if rc == 0 else o[-200:])
     if rc != 0:
@@ -335,11 +408,12 @@ def stage_sim(nodes):
         img = o.splitlines()
         import difflib
         d = [ln for ln in difflib.unified_diff(host, img, lineterm='', n=0) if ln[:1] in '+-' and ln[:3] not in ('+++', '---')]
-        ok = len(d) <= 4 and any('TWIN_SANDBOX' in ln for ln in d) and any('inf_is_valid' in ln for ln in d)
+        expected = '\n'.join(host).replace("'ROS_LOCALHOST_ONLY':'1'", "'TWIN_SANDBOX':'1'").replace("'obstacle_layer.scan.inf_is_valid': False,", "'obstacle_layer.scan.inf_is_valid': os.environ.get('QAZBOT_I1_INF_VALID') == '1',")
+        ok = '\n'.join(img) == expected
         add('sim.image_patch_is_documented', 'PASS' if ok else 'FAIL', f'{len(d)} changed line(s) in the image copy of nav_control.launch.py (Dockerfile SIM-only hooks: TWIN_SANDBOX guard, I1 inf_is_valid)', diff=d[:8])
-    rc, o = dc('up', '-d', '--wait', '--wait-timeout', '240', 'stack-lite', timeout=330)
-    add('sim.stack_lite_healthy', 'PASS' if rc == 0 else 'FAIL', 'stack-lite healthy (AMCL, Trust, adapter, coordinator, Nav2 on the graph)' if rc == 0 else o[-250:])
     try:
+        rc, o = dc('up', '-d', '--wait', '--wait-timeout', '240', 'stack-lite', timeout=330)
+        add('sim.stack_lite_healthy', 'PASS' if rc == 0 else 'FAIL', 'stack-lite healthy (AMCL, Trust, adapter, coordinator, Nav2 on the graph)' if rc == 0 else o[-250:])
         if rc != 0:
             return
         rc, o = in_stack(f'sha256sum /opt/x2twin/stack/maps/{c["ROBOT_MAP"]}/map.pgm')
@@ -348,17 +422,21 @@ def stage_sim(nodes):
         rc, o = in_stack('ros2 param get /qazbot_d1_map/map_server yaml_filename; ros2 param get /qazbot_d1_map/localization_trust expected_map_sha256', timeout=60)
         add('sim.live_map_server_and_trust_map', 'PASS' if c['ROBOT_MAP'] in o and c['ROBOT_MAP_SHA256'] in o else 'FAIL', o.replace('\n', ' | ')[-220:])
         rc, o = in_stack('ros2 param get /qazbot_d1_map/nav2/controller_server goal_checker.xy_goal_tolerance; ros2 param get /qazbot_d1_map/nav2/controller_server goal_checker.yaw_goal_tolerance', timeout=60)
-        add('sim.live_goal_tolerance', 'PASS' if '0.35' in o and '0.17' in o else 'FAIL', o.replace('\n', ' | ')[-160:])
+        got_tol = [float(v) for v in re.findall(r'Double value is: ([-+0-9.eE]+)', o)]
+        add('sim.live_goal_tolerance', 'PASS' if rc == 0 and got_tol == [float(c['ROBOT_XY_TOL']), float(c['ROBOT_YAW_TOL'])] else 'FAIL', o.replace('\n', ' | ')[-160:])
         rc, o = in_stack("grep -c 'P23: pause, not reset' /opt/x2twin/stack/navigation/x2_motion_adapter.py; pgrep -af x2_motion_adapter | head -2")
         add('sim.p23_in_container', 'PASS' if o.splitlines()[0].strip() not in ('0', '') and 'x2_motion_adapter' in o else 'FAIL', o.replace('\n', ' | ')[:200])
-        live_parity(nodes)
-        tf_owners()
-        isolation()
+        for fn, args in ((live_parity, (nodes,)), (tf_owners, ()), (isolation, ())):
+            try:
+                fn(*args)
+            except Exception as e:  # noqa: BLE001 - a crashed check is a FAIL in the report, never a silent abort
+                add(f'sim.{fn.__name__}', 'FAIL', f'{type(e).__name__}: {e}')
         rc, o = in_stack("ros2 pkg xml nav2_amcl | sed -n 's/.*<version>\\(.*\\)<\\/version>.*/\\1/p' | head -1")
         add('sim.nav2_version', 'UNVERIFIED', f'twin nav2_amcl {o.strip()} vs robot 1.1.18 (snapshot); compatible regression tests not yet run: stays UNVERIFIED')
     finally:
         d_rc, d_o = dc('down', '-v', '--remove-orphans', timeout=180)
-        add('sim.teardown', 'PASS' if d_rc == 0 else 'WARN', f'{PROJECT} down rc={d_rc}')
+        sh(f'docker ps -aq --filter label=com.docker.compose.project={PROJECT} | xargs -r docker rm -f; docker network rm {PROJECT}_twin 2>/dev/null; true')
+        add('sim.teardown', 'PASS' if d_rc == 0 else 'FAIL', f'{PROJECT} down rc={d_rc}')
 
 
 def report(kind, started):
@@ -366,8 +444,11 @@ def report(kind, started):
     d.mkdir(parents=True, exist_ok=True)
     stamp = time.strftime('%Y%m%dT%H%M%S')
     verdict = 'FAIL' if any(r['status'] == 'FAIL' for r in RES) else 'PASS'
-    doc = dict(kind=kind, verdict=verdict, stamp=stamp, started=started, seconds=round(time.time() - started, 1), git_head=gout('rev-parse', 'HEAD'),
-               integration=gout('rev-parse', f'refs/heads/{mergeq.branch_name()}'), robot_ref=ROBOT_REF, robot_sha=gout('rev-parse', ROBOT_REF), checks=RES)
+    if START_HEAD and (gout('rev-parse', 'HEAD') != START_HEAD or mergeq.integration_head(ROOT) != START_INTEGRATION):
+        add('git.changed_during_preflight', 'FAIL', 'Git refs moved during checks; rebuild and recheck')
+        verdict = 'FAIL'
+    doc = dict(kind=kind, verdict=verdict, stamp=stamp, started=started, seconds=round(time.time() - started, 1), git_head=START_HEAD or gout('rev-parse', 'HEAD'), code_dirty=bool(gout('status', '--porcelain')),
+               integration=START_INTEGRATION or gout('rev-parse', f'refs/heads/{mergeq.branch_name()}'), robot_ref=ROBOT_REF, robot_sha=gout('rev-parse', ROBOT_REF), checks=RES)
     (d / f'{stamp}_{kind}.json').write_text(json.dumps(doc, indent=1, default=str))
     (d / 'latest.json').write_text(json.dumps(doc, indent=1, default=str))
     md = [f'# Preflight {kind} {stamp}: {verdict}', '', f'control `{doc["git_head"][:9]}`, integration `{doc["integration"][:9]}`, robot ref `{doc["robot_sha"][:9]}`', '', '| status | check | detail |', '|---|---|---|']
@@ -380,11 +461,22 @@ def report(kind, started):
 
 
 def main():
+    global START_HEAD, START_INTEGRATION
+    START_HEAD, START_INTEGRATION = gout('rev-parse', 'HEAD'), mergeq.integration_head(ROOT)
     ap = argparse.ArgumentParser()
     ap.add_argument('stage', choices=('static', 'sim', 'all'))
     ap.add_argument('--tests', action='store_true')
     a = ap.parse_args()
     t0 = time.time()
+    try:
+        return run_stage(a, t0)
+    except Exception as e:
+        add('preflight.exception', 'FAIL', f'{type(e).__name__}: {e}')
+        report(a.stage, t0)
+        return 1
+
+
+def run_stage(a, t0):
     nodes = stage_static() if a.stage in ('static', 'all') else check_contract()
     if a.stage in ('sim', 'all'):
         fails = [r for r in RES if r['status'] == 'FAIL']
@@ -393,9 +485,12 @@ def main():
         elif nodes:
             stage_sim(nodes)
     if a.tests:
-        run_tests()
-    sys.exit(0 if report(a.stage, t0) == 'PASS' else 1)
+        if any(r['status'] == 'FAIL' for r in RES):
+            add('tests.skipped', 'WARN', 'preflight already failed; regression can be run independently')
+        else:
+            run_tests()
+    return 0 if report(a.stage, t0) == 'PASS' else 1
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

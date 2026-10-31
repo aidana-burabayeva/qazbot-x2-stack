@@ -1,0 +1,12 @@
+{
+ "source": "Installed X2 map d1_qazbot_20261029 (robot/stable). Byte-identical to main_office (same pgm and yaml sha256); twin-side descriptor only, NOT part of the 73-file robot baseline",
+ "pgm_sha256": "72ee4094b394241e7b2761878774efbdd99e93731d7cb52709b2231c3975b354",
+ "map_yaml_sha256": "c86aa2aaefbefcaa2ddee994572cf6d13dd777b37b8e070de947f7685be43c1b",
+ "pixel_histogram": {
+  "0": 13712,
+  "205": 413052,
+  "254": 180955
+ },
+ "trust_expected_map_sha256": "localization_trust.expected_map_sha256 on the robot (actual_parameters.json 2026-10-30)",
+ "status": "Digital twin only; not a physical-robot qualification"
+}

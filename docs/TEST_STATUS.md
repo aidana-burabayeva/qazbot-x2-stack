@@ -1,3 +1,9 @@
+# 2026-10-31 — terminal LAB bootstrap continuation
+
+`labctl.sh` implementation: [runbook](nightly/LABCTL.md), [qualification evidence](evidence/lab_bootstrap_20261031/README.md). Control checkout `lab/control`; integration ref `lab/stable` remains un-checked-out. Physical X2 untouched. Full runtime acceptance is INCOMPLETE because this environment blocks Docker, user systemd and GitHub DNS. The saved STOPPED_OK checkpoint is preserved; do not report a new successful start/stop.
+
+---
+
 # 2026-10-30 — Codex bounded s1_0046 A/B
 
 79 adapter tests + 3 frame-audit tests PASS. Ровно два queued sim runs, `resource=sim`: eps=.02 ABORTED 107.94 с; eps=.10 SUCCEEDED 37.60 с. Causal conclusion OPEN из-за другой stall-позы A и world/plant frame confound. Ни hardware qualification, ни production fix не заявляются. Подробности: [nightly/CODEX_STALL_AB.md](nightly/CODEX_STALL_AB.md), D3 и [nightly/HANDOFF.md](nightly/HANDOFF.md).
