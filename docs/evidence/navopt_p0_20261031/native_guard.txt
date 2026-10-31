@@ -1,0 +1,1 @@
+refused: requires isolated SIM environment

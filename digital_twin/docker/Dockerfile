@@ -82,7 +82,7 @@ RUN . /opt/ros/${ROS_DISTRO}/setup.sh && . /opt/x2twin/overlay/setup.sh \
  && colcon build --merge-install --install-base /opt/x2twin/overlay --packages-select qazbot_mc_turn \
       --base-paths /ws/src/mc_turn --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF
 RUN . /opt/ros/${ROS_DISTRO}/setup.sh && . /opt/x2twin/overlay/setup.sh \
- && colcon build --merge-install --install-base /opt/x2twin/overlay --packages-select x2_twin_sim x2_twin_bringup x2_twin_scenarios
+ && colcon build --merge-install --install-base /opt/x2twin/overlay --packages-select x2_twin_sim x2_twin_bringup x2_twin_scenarios qazbot_tf_probe
 
 # ---- 3b. tests: unit tests of the twin packages run inside the build (a failing test fails `make test`)
 FROM build AS test
@@ -113,25 +113,8 @@ RUN --mount=type=bind,from=backend,source=ws/src,target=/mnt/src \
       -exec cp --parents {} /opt/x2twin/stack/ \;
 # Twin-only: the stack's SIM-candidate guard asks for ROS_LOCALHOST_ONLY=1 (single-container research setup). Here the isolation is the
 # internal network + TWIN_SANDBOX=1, so that one check (and only in this image copy) is made to require TWIN_SANDBOX instead.
-RUN python3 - <<'PY'
-p = '/opt/x2twin/stack/navigation/nav_control.launch.py'
-s = open(p).read()
-old = ("    if experimental_turn:\n        if any(os.environ.get(k) != v for k,v in "
-       "{'QAZBOT_SIM':'1','ROS_DOMAIN_ID':'87','ROS_LOCALHOST_ONLY':'1'}.items()):")
-assert s.count(old) == 1, 'turn guard not found'
-open(p, 'w').write(s.replace(old, old.replace("'ROS_LOCALHOST_ONLY':'1'", "'TWIN_SANDBOX':'1'")))
-PY
-# Twin-only I1 switch (QAZBOT_I1_INF_VALID=1): the local costmap's obstacle_layer treats +inf as observed free (NaN stays ignored).
-# The X2 code (I1 2d240dbd, installed) already carries `'obstacle_layer.scan.inf_is_valid': False`; only that literal is made env-driven in the
-# image copy, default (env unset/0) is byte-for-byte the robot's value. The stack source in control_backend is not touched.
-RUN python3 - <<'PY'
-p = '/opt/x2twin/stack/navigation/nav_control.launch.py'
-s = open(p).read()
-old = "'obstacle_layer.scan.inf_is_valid': False,"
-assert s.count(old) == 1, 'inf_is_valid literal not found'
-new = "'obstacle_layer.scan.inf_is_valid': os.environ.get('QAZBOT_I1_INF_VALID') == '1',"
-open(p, 'w').write(s.replace(old, new))
-PY
+COPY docker/nav_control_patch.py /opt/x2twin/nav_control_patch.py
+RUN python3 /opt/x2twin/nav_control_patch.py /opt/x2twin/stack/navigation/nav_control.launch.py
 COPY docker/dds/udp_only.xml /etc/qazbot/dds.xml
 COPY docker/entrypoints/ros_entrypoint.sh /usr/local/bin/ros_entrypoint.sh
 COPY docker/entrypoints/stack_health.sh /usr/local/bin/twin-stack-health
