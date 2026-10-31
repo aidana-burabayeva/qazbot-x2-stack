@@ -14,10 +14,16 @@ from x2_twin_sim.plant.base import PlantNode, State, spin
 
 
 class HalPlantNode(PlantNode):
+    """By default map = start (+) world pose; the spawn pose is the world origin.
+
+    The ``anchor`` parameter can select legacy ``'first_sample'`` anchoring.
+    """
+
     def __init__(self):
         super().__init__('hal_plant')
         self.hal_topic = self.declare_parameter('hal_odom_topic', '/aima/hal/odom/state').value
-        self.aligner = FrameAligner(self.start_pose)
+        anchor = self.declare_parameter('anchor', 'nominal').value
+        self.aligner = FrameAligner(self.start_pose, anchor=anchor)
         self.pose = None
         self.track = []                                   # (t, x, y, yaw) for the finite-difference twist
         self.v = self.w = 0.0

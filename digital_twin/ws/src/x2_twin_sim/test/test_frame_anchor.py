@@ -21,7 +21,7 @@ SETTLED = planar_pose(
 
 def test_first_sample_anchor_rotates_nav_frame_vs_world_contract():
     """Document current behavior: a late HAL sample rotates navigation vs walls."""
-    aligner = FrameAligner(START)
+    aligner = FrameAligner(START, anchor='first_sample')
     assert aligner.align(SETTLED) == pytest.approx(START)
 
     world_pose = compose(SPAWN, (7.0, 0.0, 0.0))
@@ -44,7 +44,6 @@ def test_first_sample_anchor_rotates_nav_frame_vs_world_contract():
     assert nav_pose[2] - world_contract_map_pose[2] == pytest.approx(implied_rotation)
 
 
-@pytest.mark.xfail(strict=True, reason='fix pending: nominal anchor not implemented')
 def test_nominal_anchor_matches_world_contract():
     """Nominal anchoring must agree with wall placement regardless of sample order."""
     # Include a rotated start to check the complete SE(2) wall contract as well
