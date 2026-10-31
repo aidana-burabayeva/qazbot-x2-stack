@@ -1,0 +1,9 @@
+{
+  "source_fix_sha": "17d3951",
+  "reviewed_base": "e0bfe491ca58c8e915f556bae94b0271a54317eb",
+  "completed_operator_stop": "56ed44a56cdad89132361c8d005b52dc57ef897a",
+  "expected_integration_base": "57615780c90e8068e270cf7aa723dd84646cc8cb",
+  "source_sha256": "c2ef93bec7202fe5d0ba84fb0c837256980cb19f1f29b813d92c2328b7ca90ce",
+  "test_sha256": "d90852b806d38aeb6e65aa149d536201d4b3f71f5e7bb38989b5a77264f5bd17",
+  "runtime_qualification": "CLI_CHALLENGES_ONLY; modified dispatch and full Task\u2192Review E2E remain UNVERIFIED"
+}

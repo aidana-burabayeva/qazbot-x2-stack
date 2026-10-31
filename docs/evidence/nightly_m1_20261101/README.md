@@ -25,6 +25,12 @@ Changed source: `tools/nightly/nq.py` (one dispatch branch); regression: `tests/
 
 ## Remaining M1 acceptance
 
-Not achieved: integrated fix, independent review, permitted STOP release, current positive preflight, live systemd PID/held lease, actual AMCL task → test rerun → stored engineering result → independent review → next task. Full regression/merged-tree gate must run before promotion. Current session cannot reach the user systemd bus; operator-host execution is required. No run or PASS is manufactured to complete the milestone.
+Not achieved: integrated fix, independent review, permitted STOP release, current positive preflight, live systemd PID/held lease, actual AMCL task → test rerun → stored engineering result → independent review → next task. Full regression passed (300 tests); the existing Merge Queue merged-tree gate is still required before promotion. Current session cannot reach the user systemd bus; operator-host execution is required. No run or PASS is manufactured to complete the milestone.
 
 Use the existing Merge Queue to integrate the entire reviewed dependency chain from this branch, preserving published and local history. Do not cherry-pick the remote tree-snapshot commit as if its history equalled local integration. After successful gates and explicit operator resume, start only ENGINEERING through labctl. Keep L3/Full closed until their own evidence exists. Physical X2 forbidden.
+
+## Final preparation validation
+
+[Full regression](regression_300.txt): **300 PASS** in the isolated checkout, `python3 -m pytest -q tests/nightly tests/motion_adapter`. [Source parity](source_parity.txt): **73/73**. The workspace was expanded from sparse after checking that materializing its ~64 MB tracked tree would preserve the 5 GiB free-space floor. No old results or volumes were deleted.
+
+The completed operator stop `56ed44a56cdad89132361c8d005b52dc57ef897a` was merged into this private preparation branch without rewriting history. Later read-only inspection confirmed **STOPPED_OK / STOP_ACKED / frozen=true / 0 active tasks**. STOP remains in force for daemon/agent execution. Integration, if performed, uses the existing Merge Queue under its sole-owner lease and preserves frozen state. The reproducible [merged gate](merged_gate.sh) is stored with the evidence.
