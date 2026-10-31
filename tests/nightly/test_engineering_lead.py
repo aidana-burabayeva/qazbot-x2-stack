@@ -126,3 +126,22 @@ def test_trusted_probe_cannot_escape_into_parent_shell():
     assert lead.trusted_probe('python3 tools/nightly/workflow.py capability-probe --provider codex --model gpt-6.1-sol')
     for bad in ('$(id)','foo;id','`id`','foo\nid'):
         assert not lead.trusted_probe('python3 tools/nightly/workflow.py capability-probe --provider codex --model '+bad)
+
+
+def test_fingerprint_ignores_volatile_provider_state_but_tracks_config(tmp_path,monkeypatch):
+    """~/.claude.json is rewritten by every CLI/interactive session; it must not invalidate a capability."""
+    import time
+    from pathlib import Path
+    home=tmp_path;(home/'.claude').mkdir();(home/'.codex').mkdir()
+    (home/'.claude.json').write_text('{"n":1}');(home/'.claude/settings.json').write_text('{}')
+    (home/'.codex/config.toml').write_text('a=1');(home/'.codex/auth.json').write_text('{}')
+    monkeypatch.setattr(Path,'home',classmethod(lambda cls:home))
+    monkeypatch.setenv('HOME',str(home))
+    for provider in ('claude','codex'):
+        before=lead.fingerprint(provider,'m')
+        time.sleep(0.01);(home/'.claude.json').write_text('{"n":2,"startups":99}')
+        assert lead.fingerprint(provider,'m')==before
+    c=lead.fingerprint('claude','m');(home/'.claude/settings.json').write_text('{"model":"x"}')
+    assert lead.fingerprint('claude','m')!=c
+    x=lead.fingerprint('codex','m');(home/'.codex/config.toml').write_text('a=2')
+    assert lead.fingerprint('codex','m')!=x

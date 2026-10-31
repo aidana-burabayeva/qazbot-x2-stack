@@ -158,7 +158,8 @@ def fingerprint(provider,model):
     paths=[Path(__file__).with_name(n) for n in ('agents.py','execution.py')]
     binary=shutil.which(agents.ADAPTERS[provider].bin)
     if binary:paths.append(Path(binary).resolve())
-    paths.extend([Path.home()/'.codex/config.toml',Path.home()/'.codex/auth.json'] if provider=='codex' else [Path.home()/'.claude.json'])
+    # Claude: settings.json, not ~/.claude.json (CLI/session state rewritten on every run)
+    paths.extend([Path.home()/'.codex/config.toml',Path.home()/'.codex/auth.json'] if provider=='codex' else [Path.home()/'.claude/settings.json'])
     metadata=[]
     for path in paths:
         try:st=path.stat();metadata.append((str(path),st.st_size,st.st_mtime_ns))
