@@ -71,10 +71,10 @@ python3 tools/nightly/nq.py status        # припаркованные зад�
 5. Обычный порядок из CLAUDE.md/HANDOFF.md: T5 установлен, I1 E2E и review отдельно, любой старт сенсорного стека/движение/установка — только с разрешением оператора.
 
 <!-- BEGIN LAB_STOP -->
-## LAB STOP 2026-11-01T02:45:10+0500
-- HEAD `f5be4bc6444e` (lab/control); очередь {'COMPLETED': 43, 'NEEDS_APPROVAL': 15, 'NEEDS_ENGINEERING': 8, 'NEEDS_HARDWARE': 2}; запаркованных задач 13.
+## LAB STOP 2026-11-01T02:56:56+0500
+- HEAD `09818e04d8ec` (lab/control); очередь {'COMPLETED': 44, 'NEEDS_APPROVAL': 15, 'NEEDS_ENGINEERING': 8, 'NEEDS_HARDWARE': 2}; запаркованных задач 13.
 - Codex: STOP_ACKED. Units: {'qazbot-nightly.service': 'inactive/Failed to get unit file state for qazbot-nightly.service: No such file or directory', 'qazbot-nightly-enqueue.service': 'inactive/Failed to get unit file state for qazbot-nightly-enqueue.service: No such file or directory', 'qazbot-nightly-enqueue.timer': 'inactive/Failed to get unit file state for qazbot-nightly-enqueue.timer: No such file or directory'}.
-- Regression: PASS (302 passed in 323.74s (0:05:23)).
+- Regression: PASS (303 passed in 326.14s (0:05:26)).
 - Не контролируется отсюда: открытые TUI Claude/Codex, session-only /loop cron и /goal hook открытых сессий.
 - Возобновление: `python3 tools/nightly/lab.py resume` (`/nightly-resume`).
 <!-- END LAB_STOP -->
