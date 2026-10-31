@@ -353,6 +353,15 @@ def tf_owners():
     add('tf.owners', 'PASS' if ok else 'FAIL', 'native per-message DDS GIDs, 28s observation, >=3 samples per edge', observation=doc, error=out[-200:] if not ok else '')
 
 
+def costmap_sensor_contract():
+    script = (ROOT / 'tools/nightly/costmap_sensor_probe.py').read_text()
+    rc, output = in_stack("export QAZBOT_SIM=1; python3 - <<'QAZBOT_SENSOR_PROBE'\n" + script + "\nQAZBOT_SENSOR_PROBE", timeout=30)
+    match = re.search(r'SENSORJSON(.*)', output)
+    doc = json.loads(match.group(1)) if match else {}
+    add('sensor.costmap_contract', 'PASS' if rc == 0 and doc.get('passed') is True else 'FAIL',
+        doc if doc else output[-200:], observation=doc)
+
+
 def isolation(domain_expected='87'):
     rc, o = sh(f"docker network inspect {PROJECT}_twin --format '{{{{.Internal}}}}'")
     internal = o.strip() == 'true'
@@ -418,7 +427,7 @@ def stage_sim(nodes):
         add('sim.live_goal_tolerance', 'PASS' if rc == 0 and got_tol == [float(c['ROBOT_XY_TOL']), float(c['ROBOT_YAW_TOL'])] else 'FAIL', o.replace('\n', ' | ')[-160:])
         rc, o = in_stack("grep -c 'P23: pause, not reset' /opt/x2twin/stack/navigation/x2_motion_adapter.py; pgrep -af x2_motion_adapter | head -2")
         add('sim.p23_in_container', 'PASS' if o.splitlines()[0].strip() not in ('0', '') and 'x2_motion_adapter' in o else 'FAIL', o.replace('\n', ' | ')[:200])
-        for fn, args in ((live_parity, (nodes,)), (tf_owners, ()), (isolation, ())):
+        for fn, args in ((live_parity, (nodes,)), (tf_owners, ()), (costmap_sensor_contract, ()), (isolation, ())):
             try:
                 fn(*args)
             except Exception as e:  # noqa: BLE001 - a crashed check is a FAIL in the report, never a silent abort

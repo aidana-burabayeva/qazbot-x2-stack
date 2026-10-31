@@ -1,0 +1,17 @@
+{
+  "sim/bin/aima-sim-app": {
+    "path": "/home/adn/QazBot/digital_twin/vendor/sim/bin/aima-sim-app",
+    "sha256": "289092f1faa2f042fda0491231f55eb59524c08d12c793f6931b7e119ae81d47",
+    "bytes": 339424
+  },
+  "sim/lib/libaima-sim-module-mujoco.so.0.0.0": {
+    "path": "/home/adn/QazBot/digital_twin/vendor/sim/lib/libaima-sim-module-mujoco.so.0.0.0",
+    "sha256": "25e4a5283fa3a1aee038ff3008c280d034be94de2f39eb493dbbff1dee89bc6f",
+    "bytes": 988648
+  },
+  "mc/bin/aima-mc-app-main": {
+    "path": "/home/adn/QazBot/digital_twin/vendor/mc/bin/aima-mc-app-main",
+    "sha256": "698865d7c86270269f5b8c77c5977c2a9e5d428e0914f34478feb4b72083c63e",
+    "bytes": 351720
+  }
+}

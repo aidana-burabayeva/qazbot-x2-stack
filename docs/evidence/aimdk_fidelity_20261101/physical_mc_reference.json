@@ -1,0 +1,96 @@
+{
+  "source": "docs/evidence/nav_session_20261029/calib/p20_yaw_test_20261029_215906_summary.json",
+  "source_sha256": "b69ae83b0ae095bf95289f336afe4098447c0bccfdf8fc676c2469aef4387833",
+  "scope": "Historical physical X2 run, not a new sim comparison; P20 not P23",
+  "steps": [
+    {
+      "kind": "rate",
+      "w_cmd": 0.5,
+      "rate_0_1.5": 0.3853058483142224,
+      "rate_1.5_6": 0.53423272979269,
+      "u_1.5_6(mean,min,max)": [
+        0.629,
+        0.6,
+        0.767
+      ],
+      "turn_deg": 169.83167641978542,
+      "coast_deg": -3.1810739905388243,
+      "drift_m": 0.23498687311894756,
+      "mc": [
+        "sdk_qazbot_nav2_1029a",
+        "STAND_DEFAULT",
+        4,
+        1
+      ],
+      "abort": null
+    },
+    {
+      "kind": "rate",
+      "w_cmd": -0.5,
+      "rate_0_1.5": -0.39817453961172783,
+      "rate_1.5_6": -0.35414155166684563,
+      "u_1.5_6(mean,min,max)": [
+        -0.578,
+        -0.846,
+        -0.45
+      ],
+      "turn_deg": -124.6055036852852,
+      "coast_deg": 2.67668911839881,
+      "drift_m": 0.18697183418594546,
+      "mc": [
+        "sdk_qazbot_nav2_1029a",
+        "STAND_DEFAULT",
+        4,
+        1
+      ],
+      "abort": null
+    },
+    {
+      "kind": "turn90",
+      "dir": "CCW",
+      "time_to_5deg_s": 3.334576984998421,
+      "overshoot_deg": -2.082629693262526,
+      "final_err_deg": 11.482375234962383,
+      "corrections": 0,
+      "total_s": 7.335227005998604,
+      "u(mean,min,max)": [
+        0.601,
+        0.0,
+        0.683
+      ],
+      "peak_rate": 1.3552868076352562,
+      "drift_m": 0.1602425950728735,
+      "mc": [
+        "sdk_qazbot_nav2_1029a",
+        "STAND_DEFAULT",
+        4,
+        1
+      ],
+      "abort": null
+    },
+    {
+      "kind": "turn90",
+      "dir": "CW",
+      "time_to_5deg_s": 4.134288560999266,
+      "overshoot_deg": -4.050477899584364,
+      "final_err_deg": -4.931998594426051,
+      "corrections": 0,
+      "total_s": 8.157248814000923,
+      "u(mean,min,max)": [
+        -0.483,
+        -0.574,
+        0.0
+      ],
+      "peak_rate": 1.2724535549663587,
+      "drift_m": 0.1715843184857834,
+      "mc": [
+        "sdk_qazbot_nav2_1029a",
+        "STAND_DEFAULT",
+        4,
+        1
+      ],
+      "abort": null
+    }
+  ],
+  "abort": null
+}

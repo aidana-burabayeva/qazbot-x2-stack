@@ -1,3 +1,9 @@
+# 2026-11-01 sensor contract update
+
+Plant now publishes production PointCloud2 marking and clearing topics using finite planar returns only. Unknown cells bound observation evidence, without becoming physical walls. No infinity/coverage-based clearing is inferred. Default 103°/5 Hz and the missing calibrated 3D sensing remain UNVERIFIED. Current gates and measured hardware fixture: [AIMDK fidelity](../../docs/nightly/AIMDK_FIDELITY.md). Older descriptions below are historical and do not establish runtime E2E qualification.
+
+---
+
 # Достоверность модели (что twin доказывает, а что нет)
 
 | Вопрос | Ответ |

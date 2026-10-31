@@ -1,3 +1,9 @@
+# Current AIMDK fidelity continuation
+
+Read [docs/nightly/AIMDK_FIDELITY.md](docs/nightly/AIMDK_FIDELITY.md) and linked evidence. Source sensor contract corrections and recorded replay verified; live ROS graph/MC/runtime E2E remain OPEN. Do not bypass the new current L3/runtime receipt check in labctl start. Physical X2 untouched; queue frozen.
+
+---
+
 # Current navigation optimization continuation
 
 Read [docs/nightly/NAV_OPTIMIZATION.md](docs/nightly/NAV_OPTIMIZATION.md) and its linked evidence. P0 source fixes/native probe/archive implemented; live doctor and L3 qualification remain UNVERIFIED. Do not enable optimization before real P0 PASS and single-worker official MC baseline. Physical X2 untouched; existing queue remains frozen.

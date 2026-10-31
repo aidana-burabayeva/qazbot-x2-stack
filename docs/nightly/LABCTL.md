@@ -1,3 +1,9 @@
+# 2026-11-01 startup gate update
+
+In addition to doctor, `start` requires a current verified official L3/runtime-E2E archive receipt. Lite preflight alone cannot authorize unattended execution. See [AIMDK_FIDELITY.md](AIMDK_FIDELITY.md) for receipt requirements and remaining runtime blockers.
+
+---
+
 # Terminal lab bootstrap
 
 Run from an ordinary Linux terminal as the lab user:
