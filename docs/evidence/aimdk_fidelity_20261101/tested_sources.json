@@ -1,0 +1,18 @@
+{
+  "base_git_sha": "ed387a694f0547ded278a274e092d4b4db5a7eb0",
+  "source_sha256": {
+    "digital_twin/ws/src/x2_twin_sim/x2_twin_sim/occupancy.py": "2c8dcc56d15afcff134563f8ab65710e74e415df6f008ea8c60efb8fc37dd37c",
+    "digital_twin/ws/src/x2_twin_sim/x2_twin_sim/sensor_observations.py": "7fb7019dd1cabff45c9f6059e9273ada33da67d39cb38431e26b7206c9717073",
+    "digital_twin/ws/src/x2_twin_sim/x2_twin_sim/plant/base.py": "65b1726be6e85fa365f104e946f7843158f0fa4ddd13a51081e90c93c0503a30",
+    "digital_twin/ws/src/x2_twin_sim/x2_twin_sim/plant/hal_plant_node.py": "100a3095341bdade8af62355e9e94d00102914bba42f10f30ef28e74c14af85d",
+    "tools/nightly/preflight.py": "c914c5188390e391bd463f1ad6cbcb8dee5097a58f949d1ccb5d57aa698ff2e4",
+    "tools/nightly/labctl.py": "4062b7c0844f420c54ad3481dd19d5ca947bec706e8f03c37b3038017c08df48",
+    "tools/nightly/qualification.py": "acc79168244775ffef3a42fc8fb6cd7209937ead767b58ac7bbbeceec5aa88be",
+    "tools/nightly/costmap_sensor_probe.py": "8323f018bcb474498430677ead62f46e1b935702335de492ab1a3ace0d3406dc",
+    "tools/nightly/extract_lidar_fixture.py": "50807fa73ad4747e492649ecbe7c014e24a0faf18100246ce6bdc14f407ad659",
+    "tools/nightly/fixtures/x2_recorded_lidar.json": "377c1edabf0fcde97d707c50452d10c8c31ac8bebbc0e617a769bbb02648b0c3"
+  },
+  "full_regression": 270,
+  "final_focused": 39,
+  "note": "Full regression began before the final receipt gate constants/test additions; final focused and merged gate cover latest source."
+}

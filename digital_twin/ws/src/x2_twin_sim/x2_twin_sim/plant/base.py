@@ -4,6 +4,7 @@ Topic names, rates, QoS and frame conventions mirror ``ws/src/lio/level_bridge.p
   * ``/qazbot_lio/odom_level``  nav_msgs/Odometry, frame ``odom`` -> ``base_footprint``, twist in the child frame (REP-105)
   * ``/qazbot_d1_map/tf``       odom -> base_footprint (the private TF graph the stack uses; map -> odom belongs to AMCL)
   * ``/qazbot_lio/scan``        sensor_msgs/LaserScan in ``base_footprint``
+  * ``scan_obstacles`` / ``scan_clearing`` PointCloud2, finite planar observations only (not calibrated E1R clouds)
 Subclasses implement :meth:`current_state`.
 """
 import json
@@ -16,7 +17,8 @@ from geometry_msgs.msg import TransformStamped
 from nav_msgs.msg import Odometry
 from rclpy.node import Node
 from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
-from sensor_msgs.msg import LaserScan
+from sensor_msgs.msg import LaserScan, PointCloud2
+from sensor_msgs_py import point_cloud2 as pc2
 from std_msgs.msg import String
 from tf2_msgs.msg import TFMessage
 
@@ -24,6 +26,7 @@ from x2_twin_sim.geometry import Pose2D
 from x2_twin_sim.guards import require_sim_environment
 from x2_twin_sim.level_scan import build_ranges, coverage_bins
 from x2_twin_sim.occupancy import OccupancyMap, RayCaster
+from x2_twin_sim.sensor_observations import bounded_observations
 
 State = Tuple[Pose2D, float, float]   # pose in odom, forward speed, yaw rate
 
@@ -49,6 +52,8 @@ class PlantNode(Node):
         self.odom_pub = self.create_publisher(Odometry, self.odom_topic, 50)
         self.truth_pub = self.create_publisher(Odometry, self.truth_topic, 10)
         self.scan_pub = self.create_publisher(LaserScan, self.scan_topic, QoSProfile(depth=20, reliability=ReliabilityPolicy.RELIABLE))
+        self.obstacle_pub = self.create_publisher(PointCloud2, self.scan_pub.topic_name + '_obstacles', 20)
+        self.clearing_pub = self.create_publisher(PointCloud2, self.scan_pub.topic_name + '_clearing', 20)
         # Scan semantics: legacy = what level_bridge publishes today (inf = no return, everywhere); i1 = the I1 candidate
         # (finite / +inf observed-free inside the FOV / NaN unknown). Scenario commands: transient discs in the map and scan dropouts.
         self.scan_format = str(p('scan_format', 'legacy').value)
@@ -108,7 +113,7 @@ class PlantNode(Node):
         if state is None or self.scan_mode == 'none':
             return
         ranges = self.caster.scan(state[0], self.ghosts)  # map == odom at the start (AMCL owns the correction)
-        bearing_all = self.caster.angle_min + self.caster.angle_increment * (np.arange(self.caster.n) + 0.5)
+        bearing_all = self.caster.angle_min + self.caster.angle_increment * np.arange(self.caster.n)
         sensor = np.zeros(self.caster.n, bool)               # bearings for which the sensor delivers points at all (its sector)
         sensor[self.caster.observed] = True
         if self.scan_mode == 'empty':
@@ -116,7 +121,7 @@ class PlantNode(Node):
             sensor[:] = False
         elif self.scan_mode.startswith('blind:'):
             lo, hi = (float(v) for v in self.scan_mode.split(':')[1:3])
-            blocked = (np.degrees(bearing_all) >= lo) & (np.degrees(bearing_all) <= hi)
+            blocked = (np.degrees(bearing_all) >= lo - 1e-9) & (np.degrees(bearing_all) <= hi + 1e-9)
             ranges[blocked] = np.inf
             sensor[blocked] = False
         scan = LaserScan()
@@ -129,7 +134,10 @@ class PlantNode(Node):
             fin = np.isfinite(ranges)
             ranges = build_ranges(ranges[fin], bearing_all[fin], coverage_bins(bearing_all[sensor], self.caster.n), self.caster.n)
         scan.ranges = ranges.astype(float).tolist()
+        mark, clear = bounded_observations(ranges, bearing_all, sensor, self.caster.rmin, self.caster.rmax)
         self.scan_pub.publish(scan)
+        self.obstacle_pub.publish(pc2.create_cloud_xyz32(scan.header, mark.tolist()))
+        self.clearing_pub.publish(pc2.create_cloud_xyz32(scan.header, clear.tolist()))
 
 
 def spin(node_factory) -> None:

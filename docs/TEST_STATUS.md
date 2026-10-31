@@ -1,3 +1,9 @@
+# 2026-11-01 — AIMDK-aligned sensor/runtime qualification
+
+Read [AIMDK fidelity gates](nightly/AIMDK_FIDELITY.md) and [evidence](evidence/aimdk_fidelity_20261101/README.md). Recorded cloud fixtures and source sensor contract corrections implemented. Runtime E2E is NOT READY: Docker/systemd are inaccessible here. A PASS lite doctor is insufficient for unattended start; a current verified L3/E2E receipt is now required. No physical X2 access; existing queue remains frozen.
+
+---
+
 # 2026-10-31 — navigation optimization P0 continuation
 
 [Current implementation and gates](nightly/NAV_OPTIMIZATION.md), [evidence](evidence/navopt_p0_20261031/README.md). Shared exact image transformation and native Humble DDS-GID probe implemented; compile/offline tests verified. Live doctor/DDS/official-MC qualification remains UNVERIFIED due restricted Docker/systemd access. Append-only archive implemented; automatic optimization disabled. Physical X2 untouched, queue remains frozen.

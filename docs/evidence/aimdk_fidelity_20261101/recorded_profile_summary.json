@@ -1,0 +1,44 @@
+{
+  "finite_bins": [
+    202,
+    215
+  ],
+  "bearing_min_deg": [
+    -45.999999999999986,
+    -45.75000000000001
+  ],
+  "bearing_max_deg": [
+    44.000000000000014,
+    44.24999999999999
+  ],
+  "range_min_m": [
+    2.1291534900665283,
+    2.162196397781372
+  ],
+  "range_max_m": [
+    7.8451409339904785,
+    7.9826579093933105
+  ],
+  "obstacle_points": [
+    202,
+    215
+  ],
+  "clearing_points": [
+    362,
+    362
+  ],
+  "usable_frames": 71,
+  "header_period_s_p05_p50_p95": [
+    0.09865460435000001,
+    0.10001897800000001,
+    0.2551096560499997
+  ],
+  "receive_minus_header_s_p05_p50_p95": [
+    0.034002328,
+    0.036170328,
+    0.0555785795
+  ],
+  "scope": "RECORDED_CALLBACK_REPLAY_ONLY; no DDS, no physics/noise/dropout calibration",
+  "source_raw_sha256": "76e6f510427ff98ae690fbf538dfb61ee5309e11213a238e8df8e7c8f99191a1",
+  "fixture_sha256": "377c1edabf0fcde97d707c50452d10c8c31ac8bebbc0e617a769bbb02648b0c3"
+}

@@ -1,3 +1,9 @@
+# 2026-11-01 — AIMDK fidelity continuation
+
+Read [AIMDK_FIDELITY.md](AIMDK_FIDELITY.md). Recorded sensor replay and source corrections verified; live sensor graph/MC/runtime gates remain OPEN. Autonomous start requires a verified current runtime receipt; optimization disabled. X2 untouched.
+
+---
+
 # 2026-10-31 — Nav optimization P0
 
 Read [NAV_OPTIMIZATION.md](NAV_OPTIMIZATION.md) and [evidence](../evidence/navopt_p0_20261031/README.md). Native probe and exact patch implemented; live P0 doctor/official MC still UNVERIFIED, automatic optimization disabled. No physical X2 actions.

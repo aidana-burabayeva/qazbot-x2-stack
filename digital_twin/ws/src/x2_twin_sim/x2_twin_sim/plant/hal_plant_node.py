@@ -1,7 +1,8 @@
 """Plant fed by the OFFICIAL MuJoCo body: pose from ``/aima/hal/odom/state`` (simulated pelvis, ground truth).
 
 Limits (stated, not hidden): the pose is the pelvis, not the chest-LiDAR IMU point FAST-LIO tracks (~0.1 m planar offset on the
-robot); there is no odometry drift; the floor in MuJoCo is flat without the map's walls (only the scan 'sees' them).
+robot); there is no odometry drift. TWIN_WORLD=map supplies physical walls; this planar sensor model
+remains separate from MuJoCo geometry, and its perception-only discs are not physical collision objects.
 """
 import math
 from typing import Optional

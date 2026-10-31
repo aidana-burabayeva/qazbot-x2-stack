@@ -1,0 +1,20 @@
+....F                                                                    [100%]
+=================================== FAILURES ===================================
+_______________________ test_blind_sector_is_not_cleared _______________________
+
+plant = (<x2_twin_sim.plant.base.PlantNode object at 0x749313f0cf40>, {'/qazbot_d1_map/tf': namespace(cls=<class 'tf2_msgs.msg... 125, 148, 64, 0, 0, 0, 0], is_dense=False)], publish=<built-in method append of list object at 0x749313edfd80>), ...})
+
+    def test_blind_sector_is_not_cleared(plant):
+        node,pubs=plant;node.scan_mode='blind:-10:10';node._publish_scan()
+        p=points(pubs['/qazbot_lio/scan_clearing'])
+        a=np.degrees(np.arctan2(p[:,1],p[:,0]))
+>       assert not np.any(abs(a)<=10)
+E       assert not True
+E        +  where True = <function any at 0x74935516edb0>(array([45.999996, 45.749996, 45.499996, 45.249992, 45.      , 44.75    ,\n       44.5     , 44.25    , 43.999996, 43.74...6, 42.499996, 42.749996,\n       43.      , 43.249996, 43.499996, 43.749996, 43.999996, 44.25    ],\n      dtype=float32) <= 10)
+E        +    where <function any at 0x74935516edb0> = np.any
+E        +    and   array([45.999996, 45.749996, 45.499996, 45.249992, 45.      , 44.75    ,\n       44.5     , 44.25    , 43.999996, 43.74...6, 42.499996, 42.749996,\n       43.      , 43.249996, 43.499996, 43.749996, 43.999996, 44.25    ],\n      dtype=float32) = abs(array([-45.999996, -45.749996, -45.499996, -45.249992, -45.      ,\n       -44.75    , -44.5     , -44.25    , -43.9999...9996,\n        42.749996,  43.      ,  43.249996,  43.499996,  43.749996,\n        43.999996,  44.25    ], dtype=float32))
+
+tests/sensor_parity/test_plant_contract.py:84: AssertionError
+=========================== short test summary info ============================
+FAILED tests/sensor_parity/test_plant_contract.py::test_blind_sector_is_not_cleared
+1 failed, 4 passed in 0.82s

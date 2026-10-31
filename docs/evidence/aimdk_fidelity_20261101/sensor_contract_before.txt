@@ -1,0 +1,63 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+____________ test_production_pointcloud_publishers_and_common_stamp ____________
+
+plant = (<x2_twin_sim.plant.base.PlantNode object at 0x7827f4fc2860>, {'/qazbot_d1_map/tf': namespace(cls=<class 'tf2_msgs.msg...pic_name='/x2_twin/model_truth', messages=[], publish=<built-in method append of list object at 0x7827f445d0c0>), ...})
+
+    def test_production_pointcloud_publishers_and_common_stamp(plant):
+        node,pubs=plant
+        node._publish_scan()
+        for topic in ('/qazbot_lio/scan_obstacles','/qazbot_lio/scan_clearing'):
+>           assert topic in pubs, 'production PointCloud2 source has no plant publisher: '+topic
+E           AssertionError: production PointCloud2 source has no plant publisher: /qazbot_lio/scan_obstacles
+E           assert '/qazbot_lio/scan_obstacles' in {'/qazbot_d1_map/tf': namespace(cls=<class 'tf2_msgs.msg._tf_message.TFMessage'>, topic_name='/qazbot_d1_map/tf', mess...opic_name='/x2_twin/model_truth', messages=[], publish=<built-in method append of list object at 0x7827f445d0c0>), ...}
+
+tests/sensor_parity/test_plant_contract.py:51: AssertionError
+_________________ test_missing_scan_publishes_no_sensor_stream _________________
+
+plant = (<x2_twin_sim.plant.base.PlantNode object at 0x7827f44cbc10>, {'/qazbot_d1_map/tf': namespace(cls=<class 'tf2_msgs.msg...pic_name='/x2_twin/model_truth', messages=[], publish=<built-in method append of list object at 0x78283250ba40>), ...})
+
+    def test_missing_scan_publishes_no_sensor_stream(plant):
+        node,pubs=plant;node.scan_mode='none';node._publish_scan()
+        for key in ('/qazbot_lio/scan','/qazbot_lio/scan_obstacles','/qazbot_lio/scan_clearing'):
+>           assert not pubs[key].messages
+E           KeyError: '/qazbot_lio/scan_obstacles'
+
+tests/sensor_parity/test_plant_contract.py:60: KeyError
+_______________ test_empty_scan_cannot_produce_any_clearing_ray ________________
+
+plant = (<x2_twin_sim.plant.base.PlantNode object at 0x7828356c9ea0>, {'/qazbot_d1_map/tf': namespace(cls=<class 'tf2_msgs.msg...pic_name='/x2_twin/model_truth', messages=[], publish=<built-in method append of list object at 0x7828263e6a80>), ...})
+
+    def test_empty_scan_cannot_produce_any_clearing_ray(plant):
+        node,pubs=plant;node.scan_mode='empty';node._publish_scan()
+>       assert points(pubs['/qazbot_lio/scan_obstacles']).size==0
+E       KeyError: '/qazbot_lio/scan_obstacles'
+
+tests/sensor_parity/test_plant_contract.py:65: KeyError
+________ test_disappearing_perception_object_requires_finite_background ________
+
+plant = (<x2_twin_sim.plant.base.PlantNode object at 0x7827f44cad40>, {'/qazbot_d1_map/tf': namespace(cls=<class 'tf2_msgs.msg...pic_name='/x2_twin/model_truth', messages=[], publish=<built-in method append of list object at 0x7827f445cdc0>), ...})
+
+    def test_disappearing_perception_object_requires_finite_background(plant):
+        node,pubs=plant;node.ghosts=[(2.,0.,.3)];node._publish_scan()
+>       p=points(pubs['/qazbot_lio/scan_obstacles']);front=p[abs(p[:,1])<.02]
+E       KeyError: '/qazbot_lio/scan_obstacles'
+
+tests/sensor_parity/test_plant_contract.py:71: KeyError
+_______________________ test_blind_sector_is_not_cleared _______________________
+
+plant = (<x2_twin_sim.plant.base.PlantNode object at 0x7827f44c3730>, {'/qazbot_d1_map/tf': namespace(cls=<class 'tf2_msgs.msg...pic_name='/x2_twin/model_truth', messages=[], publish=<built-in method append of list object at 0x7827f42f6c00>), ...})
+
+    def test_blind_sector_is_not_cleared(plant):
+        node,pubs=plant;node.scan_mode='blind:-10:10';node._publish_scan()
+>       p=points(pubs['/qazbot_lio/scan_clearing'])
+E       KeyError: '/qazbot_lio/scan_clearing'
+
+tests/sensor_parity/test_plant_contract.py:82: KeyError
+=========================== short test summary info ============================
+FAILED tests/sensor_parity/test_plant_contract.py::test_production_pointcloud_publishers_and_common_stamp
+FAILED tests/sensor_parity/test_plant_contract.py::test_missing_scan_publishes_no_sensor_stream
+FAILED tests/sensor_parity/test_plant_contract.py::test_empty_scan_cannot_produce_any_clearing_ray
+FAILED tests/sensor_parity/test_plant_contract.py::test_disappearing_perception_object_requires_finite_background
+FAILED tests/sensor_parity/test_plant_contract.py::test_blind_sector_is_not_cleared
+5 failed in 0.64s
