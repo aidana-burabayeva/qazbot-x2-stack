@@ -212,9 +212,12 @@ def record_result(repo, cid, status, evidence, installed_manifest=None, lab_ref=
 
 
 def diff_manifests(prev, new):
-    """SHA256 comparison with the previous robot baseline: what changed on the robot between two snapshots."""
+    """SHA256 comparison with the previous robot baseline. A file absent from the new manifest is `removed` ONLY when the new manifest declares
+    scope=="full"; a partial manifest (e.g. tooling only) reports it as `not_covered` - it says nothing about the robot's files."""
     a, b = {f['path']: f['sha256'] for f in prev['files']}, {f['path']: f['sha256'] for f in new['files']}
-    return {'added': sorted(set(b) - set(a)), 'removed': sorted(set(a) - set(b)), 'changed': sorted(p for p in set(a) & set(b) if a[p] != b[p])}
+    gone = sorted(set(a) - set(b))
+    full = new.get('scope') == 'full'
+    return {'added': sorted(set(b) - set(a)), 'removed': gone if full else [], 'not_covered': [] if full else gone, 'changed': sorted(p for p in set(a) & set(b) if a[p] != b[p]), 'scope': new.get('scope', 'partial')}
 
 
 def integrate_snapshot(repo, integration_branch, manifest_path):

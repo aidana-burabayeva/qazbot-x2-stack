@@ -217,3 +217,13 @@ def test_interrupted_merge_leaves_no_half_state_and_the_candidate_is_retried(uni
     monkeypatch.setenv('NIGHTLY_INTEGRATION_GATE', 'true')
     drain(nq, mq, db)
     assert states(db) == {'a': 'INTEGRATED'} and len(cands(repo)) == 1                        # exactly one candidate, no duplicate
+
+
+def test_partial_manifest_never_reports_robot_files_as_removed():
+    prev = {'files': [{'path': 'ws/src/a.py', 'sha256': '1'}, {'path': 'ws/src/b.py', 'sha256': '2'}]}
+    part = {'files': [{'path': 'tools/operator_skills/x.py', 'sha256': '3'}]}
+    d = rs.diff_manifests(prev, part)
+    assert d['removed'] == [] and d['not_covered'] == ['ws/src/a.py', 'ws/src/b.py'] and d['added'] == ['tools/operator_skills/x.py'] and d['scope'] == 'partial'
+    full = rs.diff_manifests(prev, dict(part, scope='full'))
+    assert full['removed'] == ['ws/src/a.py', 'ws/src/b.py'] and full['not_covered'] == []
+    assert rs.diff_manifests(prev, {'scope': 'full', 'files': [{'path': 'ws/src/a.py', 'sha256': '9'}, {'path': 'ws/src/b.py', 'sha256': '2'}]})['changed'] == ['ws/src/a.py']
