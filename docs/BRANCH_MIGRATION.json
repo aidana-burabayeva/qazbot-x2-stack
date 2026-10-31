@@ -1,0 +1,252 @@
+[
+ {
+  "branch": "attempt/nav_frame_fix-1-e4bce3",
+  "sha": "fdd692a7d2c3",
+  "date": "2026-10-30 16:43",
+  "cls": "INTEGRATED",
+  "why": "tip is contained in lab/stable",
+  "ahead_of": {
+   "robot/stable": "41",
+   "lab/stable": "0"
+  },
+  "subject": "nightly attempt nav_frame_repro#1 (committed by the orchestrator, not by the age"
+ },
+ {
+  "branch": "attempt/nav_frame_fix-2-3cfc8f",
+  "sha": "ba40df5c8772",
+  "date": "2026-10-31 18:57",
+  "cls": "INTEGRATED",
+  "why": "tip is contained in lab/stable",
+  "ahead_of": {
+   "robot/stable": "42",
+   "lab/stable": "0"
+  },
+  "subject": "nightly attempt nav_frame_fix#2 (committed by the orchestrator, not by the agent"
+ },
+ {
+  "branch": "attempt/nav_frame_repro-1-0e90a7",
+  "sha": "fdd692a7d2c3",
+  "date": "2026-10-30 16:43",
+  "cls": "INTEGRATED",
+  "why": "tip is contained in lab/stable",
+  "ahead_of": {
+   "robot/stable": "41",
+   "lab/stable": "0"
+  },
+  "subject": "nightly attempt nav_frame_repro#1 (committed by the orchestrator, not by the age"
+ },
+ {
+  "branch": "attempt/nav_frame_review-1-11f5b0",
+  "sha": "c47ec77d25a1",
+  "date": "2026-10-31 18:58",
+  "cls": "INTEGRATED",
+  "why": "tip is contained in lab/stable",
+  "ahead_of": {
+   "robot/stable": "43",
+   "lab/stable": "0"
+  },
+  "subject": "nightly attempt nav_frame_review#1 (committed by the orchestrator, not by the ag"
+ },
+ {
+  "branch": "baseline/x2-robot-20261030",
+  "sha": "fac640fd3e4a",
+  "date": "2026-10-30 17:47",
+  "cls": "INTEGRATED",
+  "why": "tip is contained in robot/stable",
+  "ahead_of": {
+   "robot/stable": "0",
+   "lab/stable": "3"
+  },
+  "subject": "chore(stack): pin deployed X2 baseline"
+ },
+ {
+  "branch": "docs/repo-deploy-alignment-20261030",
+  "sha": "d3db63a75f21",
+  "date": "2026-10-30 13:28",
+  "cls": "ACTIVE",
+  "why": "recent work not yet in a stable branch",
+  "ahead_of": {
+   "robot/stable": "2",
+   "lab/stable": "3"
+  },
+  "subject": "docs: fix fast_lio dangling count, time-qualify run state and map drift"
+ },
+ {
+  "branch": "docs/x2-twin-evidence-20261030",
+  "sha": "c9b376ed5ac7",
+  "date": "2026-10-30 17:38",
+  "cls": "INTEGRATED",
+  "why": "tip is contained in robot/stable",
+  "ahead_of": {
+   "robot/stable": "0",
+   "lab/stable": "2"
+  },
+  "subject": "docs(twin): capture X2 evidence and replay gaps"
+ },
+ {
+  "branch": "fix/i1-rpp-collision",
+  "sha": "2d240dbd09ca",
+  "date": "2026-10-28 15:30",
+  "cls": "NEEDS_REVIEW",
+  "why": "not contained in a stable branch, no newer branch contains it, not recent: a human/agent must decide",
+  "ahead_of": {
+   "robot/stable": "4",
+   "lab/stable": "4"
+  },
+  "subject": "fix(i1): align marking and clearing in measured point geometry"
+ },
+ {
+  "branch": "handoff/first-rviz-goal-20261028",
+  "sha": "2b0f9a77fe7f",
+  "date": "2026-10-28 16:02",
+  "cls": "INTEGRATED",
+  "why": "tip is contained in robot/stable, lab/stable",
+  "ahead_of": {
+   "robot/stable": "0",
+   "lab/stable": "0"
+  },
+  "subject": "Document I1 passive test rollback and sensor freshness findings"
+ },
+ {
+  "branch": "integration/operator-skills-robot-20261030",
+  "sha": "e2f44be3b3f6",
+  "date": "2026-10-30 12:27",
+  "cls": "ACTIVE",
+  "why": "recent work not yet in a stable branch",
+  "ahead_of": {
+   "robot/stable": "1",
+   "lab/stable": "2"
+  },
+  "subject": "feat(tooling): Operator Skills package v1.0.1 for the robot checkout (ROBOT role"
+ },
+ {
+  "branch": "lab/integration",
+  "sha": "3cf878a494ae",
+  "date": "2026-10-31 18:59",
+  "cls": "INTEGRATED",
+  "why": "tip is contained in lab/stable",
+  "ahead_of": {
+   "robot/stable": "46",
+   "lab/stable": "0"
+  },
+  "subject": "integrate nav_frame_review (c47ec77d25a1) into lab/integration"
+ },
+ {
+  "branch": "lab/stable",
+  "sha": "5ff0cfa1f2fa",
+  "date": "2026-10-31 19:46",
+  "cls": "ACTIVE",
+  "why": "permanent: SIM_VERIFIED lab state",
+  "ahead_of": {
+   "robot/stable": "52"
+  },
+  "subject": "integrate migrate_lab_integration (3cf878a494ae) into lab/stable"
+ },
+ {
+  "branch": "main",
+  "sha": "6e70c0f90665",
+  "date": "2026-10-28 13:35",
+  "cls": "ARCHIVED",
+  "why": "untouched by operator decision (not the installed X2 state, not the lab state)",
+  "ahead_of": {
+   "robot/stable": "0",
+   "lab/stable": "0"
+  },
+  "subject": "docs: preserve measured T5 LIVE handoff and I1 validation status"
+ },
+ {
+  "branch": "nav/first-goals-20261028",
+  "sha": "982f61802035",
+  "date": "2026-10-30 11:59",
+  "cls": "INTEGRATED",
+  "why": "tip is contained in robot/stable",
+  "ahead_of": {
+   "robot/stable": "0",
+   "lab/stable": "1"
+  },
+  "subject": "docs: usage of operator-only /robot-sync-validate skill"
+ },
+ {
+  "branch": "nightly/codex-stall-20261030",
+  "sha": "e54067fe48f9",
+  "date": "2026-10-30 10:07",
+  "cls": "INTEGRATED",
+  "why": "tip is contained in lab/stable",
+  "ahead_of": {
+   "robot/stable": "20",
+   "lab/stable": "0"
+  },
+  "subject": "docs(sim): report single s1_0046 stall A/B and measured frame-contract confound"
+ },
+ {
+  "branch": "robot/stable",
+  "sha": "fac640fd3e4a",
+  "date": "2026-10-30 17:47",
+  "cls": "ACTIVE",
+  "why": "permanent: installed X2 state",
+  "ahead_of": {
+   "lab/stable": "3"
+  },
+  "subject": "chore(stack): pin deployed X2 baseline"
+ },
+ {
+  "branch": "test/p20-odom-regression-20261029",
+  "sha": "ab837253d6cf",
+  "date": "2026-10-29 21:26",
+  "cls": "INTEGRATED",
+  "why": "tip is contained in lab/stable",
+  "ahead_of": {
+   "robot/stable": "3",
+   "lab/stable": "0"
+  },
+  "subject": "test: add offline P20 and odometry regression evidence"
+ },
+ {
+  "branch": "test/p20-twin02-sim-20261029",
+  "sha": "f4116e4b0354",
+  "date": "2026-10-30 15:42",
+  "cls": "INTEGRATED",
+  "why": "tip is contained in lab/stable",
+  "ahead_of": {
+   "robot/stable": "37",
+   "lab/stable": "0"
+  },
+  "subject": "docs+evidence(nightly): P1.2 real Claude->Codex->Claude E2E PASS x2, queue audit"
+ },
+ {
+  "branch": "tooling/operator-skills-20261030",
+  "sha": "d3bd4f14ba38",
+  "date": "2026-10-31 19:46",
+  "cls": "INTEGRATED",
+  "why": "tip is contained in lab/stable",
+  "ahead_of": {
+   "robot/stable": "44",
+   "lab/stable": "0"
+  },
+  "subject": "feat(stable): dual permanent branches V3 - robot/stable + lab/stable, X2-bound c"
+ },
+ {
+  "branch": "tooling/robot-sync-validate-skill-20261030",
+  "sha": "ce4537e72bd6",
+  "date": "2026-10-30 11:53",
+  "cls": "INTEGRATED",
+  "why": "tip is contained in robot/stable, lab/stable",
+  "ahead_of": {
+   "robot/stable": "0",
+   "lab/stable": "0"
+  },
+  "subject": "tooling: add operator-only /robot-sync-validate Claude Code skill"
+ },
+ {
+  "branch": "tooling/robot-sync-validate-skill-main",
+  "sha": "a77161dae0b7",
+  "date": "2026-10-30 12:00",
+  "cls": "ACTIVE",
+  "why": "recent work not yet in a stable branch",
+  "ahead_of": {
+   "robot/stable": "1",
+   "lab/stable": "1"
+  },
+  "subject": "tooling: add operator-only /robot-sync-validate skill and usage doc"
+ }
+]
