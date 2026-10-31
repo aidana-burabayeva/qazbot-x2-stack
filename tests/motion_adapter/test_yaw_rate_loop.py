@@ -59,26 +59,49 @@ def test_mc_limit_and_stale_feedback_passthrough():
     assert 'yaw_meas_stale' in result.notes and not core.yaw.active
 
 
-def test_translation_bypasses_loop_and_resets_integral():
+def _wound_up():
     core = AdapterCore(Config(yaw_settle_s=0.))
     for i in range(10):
         drive(core, 1. + i * .1)
     assert core.yaw.integ > 0
+    return core
+
+
+def test_translation_bypasses_loop_and_pauses_integral():
+    """P23 contract (deployed on X2 2026-10-30): a translation tick hands the output back and PAUSES the loop; I is kept, frozen."""
+    core = _wound_up()
+    kept = core.yaw.integ
     result = drive(core, 2., cmd=(.2, 0., .3))
     assert result.publish == pytest.approx((.2, 0., .3))
-    assert core.yaw.integ == 0 and not core.yaw.active
+    assert core.yaw.integ == kept and not core.yaw.active
 
 
 @pytest.mark.parametrize('pause', [False, True])
-def test_stop_or_t1_pause_resets_integral(pause):
-    core = AdapterCore(Config(yaw_settle_s=0.))
-    for i in range(10):
-        drive(core, 1. + i * .1)
-    assert core.yaw.integ > 0
+def test_stop_or_t1_pause_keeps_integral_frozen_for_hold_window(pause):
+    core = _wound_up()
+    kept = core.yaw.integ
     result = (drive(core, 2., localized=False, loc_reason='T1_scan_stale', t1_ok=True)
               if pause else drive(core, 2., cmd=(0., 0., 0.)))
     assert result.publish == (0., 0., 0.)
-    assert core.yaw.integ == 0 and not core.yaw.active
+    assert core.yaw.integ == kept and not core.yaw.active
+
+
+def test_resume_within_hold_keeps_integral_and_after_hold_resets_it():
+    core = _wound_up()
+    kept = core.yaw.integ
+    drive(core, 2., cmd=(0., 0., 0.))
+    drive(core, 2.5)                                   # same sign, 0.5 s <= yaw_hold_s: I survives the interruption
+    assert core.yaw.integ >= kept * 0.99
+    core = _wound_up()
+    drive(core, 2., cmd=(0., 0., 0.))
+    drive(core, 2. + core.cfg.yaw_hold_s + .5)         # paused longer than yaw_hold_s: restart from zero
+    assert core.yaw.integ == 0
+
+
+def test_target_sign_change_resets_integral():
+    core = _wound_up()
+    drive(core, 2., cmd=(0., 0., -.5))
+    assert core.yaw.integ == 0
 
 
 def test_localization_fault_latches_and_rejects_motion():

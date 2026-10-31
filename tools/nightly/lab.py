@@ -383,6 +383,88 @@ def triage(paths, subjects):
     return tasks
 
 
+
+ROBOT_AREAS = (('navigation', 'ws/src/navigation/'), ('lio', 'ws/src/lio/'), ('maps', 'ws/src/maps/'), ('stack', 'ws/src/'))
+BLOCKER_RE = re.compile(r'blocker|блокер|\bFAIL\b|NEEDS_(HARDWARE|ENGINEERING|APPROVAL)|TWIN_MISMATCH|нестабил|unstable|регресс|regression', re.I)
+FEEDBACK_FILES = ('docs/hardware/ROBOT_TO_LAB_FEEDBACK.md', 'docs/HANDOFF.md', 'docs/TEST_STATUS.md')
+
+
+def latest_robot_ref():
+    """Newest published robot baseline branch (origin/baseline/x2-robot-*), or the operator override NIGHTLY_ROBOT_REF."""
+    ref = os.environ.get('NIGHTLY_ROBOT_REF')
+    if ref:
+        return ref if rev_ok(ref) else None
+    out = gout('for-each-ref', '--sort=-committerdate', '--format=%(refname:short)', 'refs/remotes/origin/baseline/x2-robot-*')
+    return out.splitlines()[0] if out else None
+
+
+def rev_ok(ref):
+    return git('rev-parse', '--verify', '-q', ref + '^{commit}')[0] == 0
+
+
+def robot_sync(db):
+    """Robot -> Lab: analyse only what the physical-robot branch published SINCE the last processed robot baseline.
+    Reads with git show/diff from the remote ref (never merges, so diverged histories are harmless and the feedback file need not exist
+    in the lab branch). The checkpoint moves only after every task was created."""
+    log = []
+    ref = latest_robot_ref()
+    if not ref:
+        return ['ROBOT-SYNC no robot baseline ref (origin/baseline/x2-robot-*) found: nothing to analyse (not an error)']
+    tip = gout('rev-parse', ref + '^{commit}')
+    last = nq.kv_get(db, 'last_robot_integrated_sha')
+    if last and tip == last:
+        return [f'ROBOT-SYNC {ref} {tip[:9]} already processed']
+    valid_last = bool(last) and rev_ok(last)
+    if valid_last:
+        mb = gout('merge-base', last, tip)
+        base = mb or last  # diverged robot history: compare from the common ancestor, still read-only
+    else:
+        base = gout('merge-base', 'HEAD', tip)  # first run: only what the robot added beyond the lab's own history
+    if not base:
+        return [f'ROBOT-SYNC {ref} shares no history with the lab branch; analysis skipped, checkpoint not moved']
+    try:
+        status = [ln.split('\t') for ln in gout('diff', '--name-status', '--no-renames', base, tip).splitlines() if ln.strip()]
+        paths = [x[-1] for x in status]
+        subjects = gout('log', '--format=%h %s', f'{base}..{tip}').splitlines()
+        log.append(f'ROBOT-SYNC {ref} tip={tip[:9]} base={base[:9]} commits={len(subjects)} files={len(paths)} diverged_from_last={bool(valid_last and base != last)}')
+        made = []
+        areas = {}
+        for name, prefix in ROBOT_AREAS[:3]:
+            hit = [p for p in paths if p.startswith(prefix)]
+            if hit:
+                areas[name] = hit
+        for name, hit in areas.items():
+            tname = f'robot_parity_{name}_{tip[:7]}'
+            text = (f'ROBOT SYNC: the physical-robot baseline {ref} ({tip[:9]}) changed installed {name} files since {base[:9]}: {", ".join(hit[:12])}. '
+                    'Establish whether the digital twin / lab code reflects each change (intentional sim difference vs unintended drift), reproduce in simulation where possible, '
+                    'and fix or document. Simulation only; never contact the robot. Do not change localization, P20 and costmap in one step.')
+            if nq.enqueue(db, tname, 'true', kind='engineering', repro=text, priority=12, state='PENDING'):
+                made.append(tname)
+                db.execute('UPDATE tasks SET klass=?, task_type=? WHERE name=?', ('SIM_THEN_HARDWARE', 'nav2', tname))
+        # blockers: added lines of robot-side status documents + the current feedback file (read from the robot ref, may be absent in the lab branch)
+        lines = set()
+        for f in FEEDBACK_FILES:
+            diff = gout('diff', '-U0', base, tip, '--', f)
+            lines |= {ln[1:].strip() for ln in diff.splitlines() if ln.startswith('+') and not ln.startswith('+++') and BLOCKER_RE.search(ln)}
+        fb = gout('show', f'{tip}:docs/hardware/ROBOT_TO_LAB_FEEDBACK.md') if git('cat-file', '-e', f'{tip}:docs/hardware/ROBOT_TO_LAB_FEEDBACK.md')[0] == 0 else ''
+        lines |= {ln.strip() for ln in fb.splitlines() if BLOCKER_RE.search(ln) and not ln.lstrip().startswith('<!--')}
+        for ln in sorted(lines)[:20]:
+            h = __import__('hashlib').sha1(ln.encode()).hexdigest()[:6]
+            tname = f'robot_blocker_{h}'
+            text = f'ROBOT-REPORTED BLOCKER (from {ref} {tip[:9]}): {ln[:400]}. Reproduce in simulation first, then establish the root cause; no fix before a reproduction. Simulation only.'
+            if nq.enqueue(db, tname, 'true', kind='engineering', repro=text, priority=10, state='PENDING'):
+                made.append(tname)
+                db.execute('UPDATE tasks SET klass=?, task_type=? WHERE name=?', ('SIM_THEN_HARDWARE', 'root_cause_analysis', tname))
+        if os.environ.get('NIGHTLY_TEST_FAIL_ROBOT_SYNC'):
+            raise RuntimeError('injected failure after task creation')
+        nq.kv_set(db, 'last_robot_integrated_sha', tip)  # only after everything above succeeded
+        nq.kv_set(db, 'last_robot_ref', ref)
+        log.append(f'ROBOT-SYNC created {len(made)} task(s): {made}; checkpoint last_robot_integrated_sha={tip[:9]}')
+    except Exception as e:
+        log.append(f'ROBOT-SYNC FAILED ({type(e).__name__}: {e}); checkpoint NOT advanced, will be retried on the next resume')
+    return log
+
+
 def cmd_resume(args):
     db = nq.connect()
     g0 = git_view()
@@ -429,10 +511,7 @@ def cmd_resume(args):
             if fb.get(k):
                 nq.kv_set(db, 'robot_reported_' + k, fb[k])
         log.append(f"FEEDBACK robot reports integrated={str(fb.get('last_lab_integrated_sha'))[:9]} reviewed={str(fb.get('last_lab_reviewed_sha'))[:9]}")
-    # robot-integrated pointer: origin/main is the production snapshot
-    om = gout('rev-parse', 'origin/main')
-    if om and git('merge-base', '--is-ancestor', om, 'HEAD')[0] == 0:
-        nq.kv_set(db, 'last_robot_integrated_sha', om)
+    log.extend(robot_sync(db))
     nq.kv_set(db, 'current_integration_sha', g['head'])
     # PRIORITIZE/restore parked work (a git problem never blocks independent sim tasks, but results on stale code are flagged)
     parked = nq.kv_get(db, 'parked', {})

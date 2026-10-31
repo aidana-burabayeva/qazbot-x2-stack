@@ -68,7 +68,10 @@ class Config:
     # P20 2026-10-29 closed-loop yaw rate for PURE in-place turns (MC deadband/overspeed, reports p19/p20)
     yaw_loop: bool = True
     yaw_lin_eps: float = 0.02          # |vx| below this (and vy=0) counts as pure rotation
-    yaw_w_min: float = 0.05            # |wz| at or below this is passed through unchanged
+    # P23 2026-10-30: was 0.05. RPP ramps wz at ~1.5 rad/s^2 (0.075 per 20 Hz cycle), so |wz| < 0.15 only occurs for
+    # <= 2 cycles while ramping/reversing; lifting it to u_min (0.6) kicked the robot at full turn speed, possibly
+    # against the current motion (live 1030: target +0.07 meas -0.35 -> u +0.60). Below this: raw pass-through.
+    yaw_w_min: float = 0.15            # |wz| at or below this is passed through unchanged (no u_min lift)
     yaw_u_min_ccw: float = 0.6         # just above the sustained-turn threshold (calibration 18:40/18:50)
     yaw_u_min_cw: float = 0.45
     yaw_u_max: float = 1.0             # MC angular bound
@@ -77,25 +80,14 @@ class Config:
     yaw_settle_s: float = 0.6          # MC dead time from stand ~0.5 s: no integration right after entry
     yaw_overspeed: float = 1.3         # measured > this * target -> back off twice as fast
     yaw_meas_max_age_s: float = 0.3    # older yaw-rate measurement -> pass-through
+    # P23: RPP interleaves pure rotation with vx ramps, the trust gate zeroes for 0.6-0.9 s, odom has 0.7 s gaps; the
+    # P20 loop reset on each of these, no pure-rotation run outlived yaw_settle_s and I stayed 0.00 (live 1030).
+    yaw_hold_s: float = 1.0            # keep I across interruptions up to this long when the target sign is unchanged
 
     @property
     def cmd_timeout_s(self):
         # Three controller periods, below MC's own 200 ms zeroing of silent commands.
         return 3.0 / self.controller_hz
-
-
-def sim_yaw_lin_eps():
-    """SIM-only A/B fixture; production default and the linear command remain unchanged."""
-    key = 'QAZBOT_SIM_YAW_LIN_EPS'
-    if key not in os.environ:
-        return Config.yaw_lin_eps
-    if any(os.environ.get(k) != v for k, v in
-           {'QAZBOT_SIM': '1', 'TWIN_SANDBOX': '1', 'ROS_DOMAIN_ID': '87'}.items()):
-        raise ValueError('yaw_lin_eps experiment requires isolated SIM domain 87')
-    value = float(os.environ[key])
-    if not math.isfinite(value) or not 0.005 <= value <= 0.10:
-        raise ValueError('SIM yaw_lin_eps must be finite and within [0.005, 0.10]')
-    return value
 
 
 @dataclass
@@ -158,7 +150,9 @@ class YawRateEstimator:
 
 class YawRateLoop:
     """Inner loop for pure in-place turns: u = sign(w) * clamp(u_ff(|w|) + I, u_min_dir, u_max), rate-limited.
-    Integrator: anti-windup (conditional + clamp), frozen during the MC dead time, reset on sign change / exit."""
+    Integrator: anti-windup (conditional + clamp), frozen during the MC dead time. P23: an exit only PAUSES the loop
+    (output handed back, I kept and frozen); I is reset on a target sign change, a pause longer than yaw_hold_s, or
+    reset() (latch). After a stop-type pause the MC dead time applies again (I frozen for yaw_settle_s)."""
 
     def __init__(self, cfg):
         self.cfg = cfg
@@ -167,13 +161,27 @@ class YawRateLoop:
     def reset(self):
         self.sign, self.integ, self.u, self.t_last, self.t_enter = 0, 0.0, None, None, None
         self.active, self.target, self.meas = False, 0.0, None
+        self.t_pause, self.stopped = None, False
+
+    def pause(self, now, stopped):
+        """Loop not in control this tick. stopped: MC got zero / sub-deadband (dead time on resume)."""
+        if self.sign == 0:
+            return
+        if self.t_pause is None:
+            self.t_pause = now
+        self.stopped = self.stopped or stopped
+        self.active, self.u, self.t_last = False, None, None
 
     def update(self, now, w_cmd, meas):
         cfg = self.cfg
         s = 1 if w_cmd > 0 else -1
-        if s != self.sign:
+        if s != self.sign or (self.t_pause is not None and now - self.t_pause > cfg.yaw_hold_s):
             self.reset()
             self.sign, self.t_enter = s, now
+        elif self.t_pause is not None:              # resume within hold, same sign: keep I
+            if self.stopped:
+                self.t_enter = now                  # robot stopped -> MC dead time again, I frozen meanwhile
+            self.t_pause, self.stopped = None, False
         r = abs(w_cmd)
         u_min = cfg.yaw_u_min_ccw if s > 0 else cfg.yaw_u_min_cw
         u_max = max(cfg.yaw_u_max, u_min)
@@ -239,6 +247,7 @@ class AdapterCore:
         t1_ok: the trust status reports T1-only (freshness) loss with READY kept (or has not yet classified a new
         loss): a localization-only fault then PAUSES (zero, IDLE) for up to t1_pause_max_s instead of latching."""
         cfg, notes = self.cfg, []
+        self._t_step = now
         was_active = self.state == ACTIVE
         # 1. a latch persists, but flushes a zero burst once if we were driving
         if self.state == LATCHED:
@@ -311,6 +320,7 @@ class AdapterCore:
         return Decision(ACTIVE, publish=cmdout, reason='driving', notes=notes)
 
     _ever_ours = False
+    _t_step = None
 
     def _fault(self, now, mc, localized, loc_reason='', foreign_pub=''):
         cfg = self.cfg
@@ -336,13 +346,17 @@ class AdapterCore:
         by the closed-loop command. Otherwise pass-through and reset (no lingering integral)."""
         cfg = self.cfg
         vx, vy, wz = cmdout
-        if not (cfg.yaw_loop and abs(vx) < cfg.yaw_lin_eps and vy == 0.0 and abs(wz) > cfg.yaw_w_min):
+        if not cfg.yaw_loop:
             self.yaw.reset()
+            return cmdout
+        if not (abs(vx) < cfg.yaw_lin_eps and vy == 0.0 and abs(wz) > cfg.yaw_w_min):
+            # P23: pause, not reset. Robot still turning under a vx ramp -> no new dead time on resume.
+            self.yaw.pause(now, stopped=abs(wz) <= cfg.yaw_w_min)
             return cmdout
         if yaw_rate is None or not math.isfinite(yaw_rate):
             self.counters['yaw_meas_stale'] += 1
             notes.append('yaw_meas_stale')
-            self.yaw.reset()
+            self.yaw.pause(now, stopped=True)
             return cmdout
         u = min(max(self.yaw.update(now, wz, yaw_rate), mc.ang[0]), mc.ang[1])
         self.counters['yaw_loop'] += 1
@@ -351,7 +365,12 @@ class AdapterCore:
 
     def _drain(self, d):
         """Attach one zero message while a burst is pending (live: MC topic; dry run: ~/dry_run_cmd)."""
-        self.yaw.reset()                 # every non-driving tick ends the loop: zero in -> zero out, no integral kept
+        # every non-driving tick hands the output back: zero in -> zero out. P23: I is kept (frozen) for yaw_hold_s
+        # across short stops (trust-gate pauses, command gaps); a latch clears it.
+        if self.state == LATCHED or self._t_step is None:
+            self.yaw.reset()
+        else:
+            self.yaw.pause(self._t_step, stopped=True)
         if self.burst_left > 0:
             self.burst_left -= 1
             d.publish = (0.0, 0.0, 0.0)
@@ -422,7 +441,6 @@ def main():
                 require_trust=bool(p('require_trust', True).value),
                 t1_pause_max_s=float(p('t1_pause_max_s', Config.t1_pause_max_s).value),
                 yaw_loop=bool(p('yaw_loop', Config.yaw_loop).value),
-                yaw_lin_eps=float(p('yaw_lin_eps', sim_yaw_lin_eps()).value),
                 yaw_u_min_ccw=float(p('yaw_u_min_ccw', Config.yaw_u_min_ccw).value),
                 yaw_u_min_cw=float(p('yaw_u_min_cw', Config.yaw_u_min_cw).value),
                 yaw_u_max=float(p('yaw_u_max', Config.yaw_u_max).value),
@@ -673,7 +691,6 @@ def main():
                 'registration': self.registration_state, 'registration_error': self.registration_error,
                 'sdk_service_ready': bool(self.cfg.live and self.registration_client.service_is_ready()),
                 'motion_armed': self.motion_armed,
-                'yaw_lin_eps': self.cfg.yaw_lin_eps,
                 't1_pause': bool(self.core.pause_since is not None or (self._health_fault(self._now()) and self._t1_ok(self._now())
                                  and not self.core._fault(self._now(), self.mc, True, '', ','.join(self.foreign)))),
                 'ready': bool(self._driver_path_ok()

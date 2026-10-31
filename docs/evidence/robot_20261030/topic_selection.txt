@@ -1,0 +1,45 @@
+# Twin topic selection, bandwidth and decisions (measured on this robot 2026-10-30 18:54-19:07 robot local)
+# Rates/sizes from probe/heavy_probe (31 s) and bags/twin_core_185759 (243 s), bags/twin_hf_190402 (154 s); see *_stats.txt.
+
+ROLE                         TOPIC (real name)                                         TYPE                              RATE      B/msg    KiB/s   STATUS
+Nav2 controller out          /qazbot_d1_map/nav2/cmd_vel_nav                           geometry_msgs/Twist               20 Hz*    52       1.0     RECORDED core
+Smoother out                 /qazbot_d1_map/cmd_vel                                    geometry_msgs/Twist               20 Hz*    52       1.0     RECORDED core
+Motion adapter in (GC auth.) /qazbot_d1_map/cmd_vel_authorized                         geometry_msgs/Twist               20 Hz*    52       1.0     RECORDED core
+Adapter out = SDK/MC command /aima/mc/locomotion/velocity (5 pubs, QoS override BE/VOL)  aimdk_msgs/McLocomotionVelocity   47 Hz*    84       3.8     RECORDED core
+Adapter / GC status          /qazbot_d1_map/motion_adapter/status, goal_coordinator/status  std_msgs/String               2 / 5 Hz  475/226  2.0     RECORDED core
+MC mode / FSM / action       /aima/mc/common/state                                     aimdk_msgs/McCommonState          10 Hz     252      2.5     RECORDED core
+MC body pose                 /aima/mc/body_pose                                        aimdk_msgs/McBodyPose             48 Hz     100      4.7     RECORDED core
+MC RL policy obs/action      /aima/mc/rl/debug (obs 85, action 14 floats)              aimdk_msgs/McRLDebug              49 Hz     449      21.4    RECORDED core
+Native leg+IMU odom (MC)     /aima/mc/leg_odometry (frame leg_odom -> lidar_imu_chest_front) nav_msgs/Odometry          148-157Hz 740      107     RECORDED core
+Native odom (Nav2 odom)      /qazbot_native/odom + /qazbot_native/status               nav_msgs/Odometry                 28 Hz     724      20      RECORDED core
+FAST-LIO odom (scan A chain) /qazbot_lio/odometry                                      nav_msgs/Odometry                 10 Hz     724      7.0     RECORDED core
+Scan A (Nav2/AMCL/Trust)     /qazbot_lio/scan                                          sensor_msgs/LaserScan             5 Hz      5828     28      RECORDED core
+Scan B (A/B only)            /qazbot_raw/scan, /qazbot_raw/scan_low                    sensor_msgs/LaserScan             4.8 Hz    5828     28+28   RECORDED core
+Nav TF                       /qazbot_d1_map/tf                                         tf2_msgs/TFMessage                34 Hz     106      3.5     RECORDED core
+Vendor TF                    /tf, /tf_static                                           tf2_msgs/TFMessage                44 Hz     3556     153     RECORDED core
+Localization                 /qazbot_d1_map/amcl_pose, /initialpose                    PoseWithCovarianceStamped         event     364      ~0      RECORDED core
+Trust                        /qazbot_d1_map/localization_trust/status, /trusted        String / Bool                     5 Hz      2077     10      RECORDED core
+Goals / status               /qazbot_d1_map/goal_pose, navigate_to_pose/_action/status (GC), nav2/navigate_to_pose/_action/status, nav2/follow_path/_action/status, nav2/plan   event  - ~7  RECORDED core
+Map (latched, 1 msg)         /qazbot_d1_map/map                                        nav_msgs/OccupancyGrid            1 msg     607823   -       RECORDED core
+Raw IMU (MC body IMU)        /aima/hal/imu/torso/state                                 sensor_msgs/Imu                   438 Hz    324      139     RECORDED hf (windows only, see below)
+Raw IMU (LiDAR IMU)          /aima/hal/sensor/lidar_chest_front/imu                    sensor_msgs/Imu                   187 Hz    340      62      RECORDED hf (windows only)
+Joint states (legs)          /aima/hal/joint/leg/state                                 aimdk_msgs/JointStateArray        437 Hz    712      304     RECORDED hf (windows only)
+Raw IMU chest                /aima/hal/imu/chest/state                                 sensor_msgs/Imu                   427 Hz    324      135     EXCLUDED (redundant with torso+LiDAR IMU; load)
+Joint states waist           /aima/hal/joint/waist/state                               aimdk_msgs/JointStateArray        425 Hz    208      86      EXCLUDED (load)
+Raw 3D LiDAR                 /aima/hal/sensor/lidar_chest_front/lidar_pointcloud       sensor_msgs/PointCloud2           10 Hz     ~800000  ~7800   EXCLUDED: ~7.6 MiB/s (~27 GiB/h), 1 more 8 MB/s DDS reader on a host at load 20-30
+3D LiDAR "down_sampling"     .../lidar_pointcloud_down_sampling                        sensor_msgs/PointCloud2           2.4 Hz rx 813016   1879    EXCLUDED: NOT downsampled (813 kB/msg); recorder received only 2.4 Hz (drops)
+Costmap inputs A/B           /qazbot_{lio,raw}/scan_obstacles, scan_clearing           PointCloud2                       5 Hz      small    -       EXCLUDED (deterministic projections of the same slice as the LaserScans)
+* = only while commanded (silent at standstill)
+
+MISSING / INACTIVE (exist nowhere or have no publisher at 19:05):
+  foot contact state         MISSING — no topic; aimdk_msgs has no contact message; only vendor STATIC TF map->foot_contact (z -0.6), not a sensor.
+                             (possible implicit source: /aima/mc/rl/debug obs_vec — layout undocumented, UNVERIFIED)
+  /qazbot_d1_map/tf_static   NO PUBLISHER (navigation tree has no static frames; scans are emitted in base_footprint)
+  /qazbot_raw/nodeskew/scan  NO PUBLISHER (subscribed by ab_eval_motion only)
+  /qazbot_d1_map/nav2/speed_limit  NO PUBLISHER
+  MC firmware version        NOT READABLE (docs/X2_AIMDK_VERSIONS.md); platform v1.1.5, aimdk_msgs v1.1.0.4, aimrte v0.9.2.14
+  docs/hardware/ROBOT_TO_LAB_FEEDBACK.md, docs/hardware/TWIN_FIDELITY_REQUESTS.md  MISSING in repo (no docs/hardware dir on any local branch)
+  joint states / raw IMU for the whole session  PARTIAL (hf recorder dropped for load; windows listed in recorder_events.log)
+
+Totals measured: core 102.7 MiB / 243.5 s = 0.42 MiB/s (~1.5 GiB/h, ~400 msg/s); hf 82.0 MiB / 153.7 s = 0.53 MiB/s (~1.9 GiB/h, ~1050 msg/s).
+Recorder CPU (nice 10, ionice idle): core 14-18 % of one core, hf 15-21 %. Disk free ~348 GB -> no disk constraint.

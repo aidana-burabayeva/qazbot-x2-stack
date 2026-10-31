@@ -31,7 +31,11 @@ def generate_launch_description():
             Node(package='nav2_amcl', executable='amcl', namespace=NS, name='amcl', output='screen', remappings=tf,
                  parameters=[{'use_sim_time': False, 'global_frame_id': 'map', 'odom_frame_id': 'odom',
                               'base_frame_id': 'base_footprint', 'map_topic': 'map',
-                              'scan_topic': LaunchConfiguration('scan_topic'), 'max_beams': 1440,
+                              'scan_topic': LaunchConfiguration('scan_topic'), 'max_beams': 180,
+                              # PARITY with the X2 backend installed 2026-10-30 (ws/src/navigation/localization.launch.py, baseline fac640f)
+                              'alpha1': 0.3, 'alpha2': 0.2, 'alpha3': 0.15, 'alpha4': 0.15, 'alpha5': 0.15,
+                              'recovery_alpha_slow': 0.0, 'recovery_alpha_fast': 0.0,
+                              'update_min_d': 0.10, 'update_min_a': 0.05,
                               'robot_model_type': 'nav2_amcl::OmniMotionModel'}]),
             Node(package='nav2_lifecycle_manager', executable='lifecycle_manager', namespace=NS,
                  name='lifecycle_manager_localization', output='screen',
