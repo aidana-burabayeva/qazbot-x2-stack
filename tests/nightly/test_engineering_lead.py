@@ -169,3 +169,19 @@ def test_capability_helper_preserves_daemon_environment_without_login_shell(db,t
     assert seen['argv']==[sys.executable,str(tmp_path/'tools/nightly/workflow.py'),'capability-probe','--provider','codex','--model','gpt-6.1-sol']
     assert seen['env']['PATH']=='/usr/local/bin:/usr/bin:/bin:/home/adn/.local/bin'
     assert seen['env']['ROS_LOCALHOST_ONLY']=='1'
+
+
+def test_claude_streams_events_so_heartbeat_sees_progress():
+    """text mode prints nothing until exit: a 15 min analysis was SIGKILLed as 'hang' (empty log, exit -9)."""
+    argv=shlex.split(agents.ClaudeAdapter().command(dict(repro='x'),''))
+    opts=argv[:argv.index('--')]
+    assert opts[opts.index('--output-format')+1]=='stream-json' and '--verbose' in opts
+
+
+def test_claude_final_text_only_from_successful_result_event():
+    ok='\n'.join([json.dumps(dict(type='system',subtype='init')),json.dumps(dict(type='assistant',message='partial')),
+                  json.dumps(dict(type='result',subtype='success',is_error=False,result='TOKEN'))])
+    assert lead.claude_final_text(ok)=='TOKEN'
+    assert lead.claude_final_text(ok.replace('"is_error": false','"is_error": true'))is None
+    assert lead.claude_final_text('TOKEN')is None
+    assert lead.claude_final_text(json.dumps(dict(type='assistant',message='TOKEN')))is None

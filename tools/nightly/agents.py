@@ -80,7 +80,7 @@ class ClaudeAdapter(Adapter):
     name = 'claude'
 
     def command(self, task, context, cwd=None, model=None, effort=None, result_dir=None):
-        opts = ' --permission-mode acceptEdits --output-format text --no-session-persistence'
+        opts = ' --permission-mode acceptEdits --output-format stream-json --verbose --no-session-persistence'  # events grow the log: heartbeat sees progress
         if model:
             opts += f' --model {shlex.quote(model)}'
         if effort:
