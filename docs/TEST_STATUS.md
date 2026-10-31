@@ -1,3 +1,9 @@
+# 2026-10-31 — navigation optimization P0 continuation
+
+[Current implementation and gates](nightly/NAV_OPTIMIZATION.md), [evidence](evidence/navopt_p0_20261031/README.md). Shared exact image transformation and native Humble DDS-GID probe implemented; compile/offline tests verified. Live doctor/DDS/official-MC qualification remains UNVERIFIED due restricted Docker/systemd access. Append-only archive implemented; automatic optimization disabled. Physical X2 untouched, queue remains frozen.
+
+---
+
 # 2026-10-31 — terminal LAB bootstrap continuation
 
 `labctl.sh` implementation: [runbook](nightly/LABCTL.md), [qualification evidence](evidence/lab_bootstrap_20261031/README.md). Control checkout `lab/control`; integration ref `lab/stable` remains un-checked-out. Physical X2 untouched. Full runtime acceptance is INCOMPLETE because this environment blocks Docker, user systemd and GitHub DNS. The saved STOPPED_OK checkpoint is preserved; do not report a new successful start/stop.

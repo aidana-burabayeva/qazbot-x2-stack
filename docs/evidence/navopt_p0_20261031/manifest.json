@@ -1,0 +1,14 @@
+{
+  "sha256": {
+    "README.md": "cfaf53151b9e7492258e021b9a2628b82ed938bf190d63d3d84f1c8dc5a702ef",
+    "doctor_blocked.txt": "1423bdd8a0e8662b4a3e7467e1324263e56574693ebc814413f975d4d916f9a6",
+    "focused_tests.txt": "18cf19ff6c35675b12885ead7967c3de353207fe6bbbd1e04e35cdf5c2d4fea8",
+    "merged_gate.txt": "d07c7c759a8f5d1156a225f2132c760df5837c2625ef48b28c1c8081f804d738",
+    "native_build.txt": "66d3ebf23bde8a01f67663c9ab8bf78c638a402e9e2f7f0980b7740dd544e67d",
+    "native_guard.txt": "ca6b0043a2fe552e90cfe4df43fbf42dfa86e85c9bc08fa01a7b77acc7e5f3a0",
+    "queue_preserved.json": "513f1142dafc9da42bbd71578e7c24ed93552ec2a2e59f6528daee2a00e4ddfd",
+    "regression_tests.txt": "54664088ac1893d61b1065c2b7cf48ac2cd5c9d7dd646453f3ef2708016e6ff5"
+  },
+  "runtime_qualification": "UNVERIFIED",
+  "automatic_optimization_enabled": false
+}

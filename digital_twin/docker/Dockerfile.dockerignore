@@ -3,6 +3,7 @@
 !ws/src
 !candidates/qazbot_mc_turn
 !docker/dds
+!docker/nav_control_patch.py
 !docker/patches
 !docker/entrypoints
 **/__pycache__
