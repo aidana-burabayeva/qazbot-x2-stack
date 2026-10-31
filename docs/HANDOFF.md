@@ -1,3 +1,9 @@
+# 2026-11-01 — autonomous engineering execution repair
+
+Read [engineering lead policy](nightly/ENGINEERING_LEAD.md) and [evidence](evidence/engineering_lead_20261101/README.md). Historical provider/adapter failures are separated from navigation defects; original attempts are retained. WAL cursor lock reproduced and corrected without increasing busy_timeout. AMCL effective P0, blocked until actual provider execution is qualified. Both real session probes failed; no genuine verified engineering CLI result or live daemon restart claimed. Stored RUNNING_ENGINEERING is historical; systemd access is denied and the observed lease was free. Physical X2 untouched.
+
+---
+
 # 2026-11-01 — capability-scoped Nightly bootstrap
 
 The global L3-receipt bootstrap deadlock is replaced by ENGINEERING / L3_QUALIFICATION / FULL_NIGHTLY in the existing queue. Read [execution modes](nightly/EXECUTION_MODES.md) and [current evidence](evidence/nightly_modes_20261101/README.md). Engineering uses its own preflight; it cannot certify simulation. The first official MC scope is bounded/stationary and remains UNVERIFIED until real metrics exist. Actual systemd/Docker access is blocked here; no runtime start or real CLI engineering task is claimed. Saved STOPPED_OK/frozen checkpoint retained. Physical X2 untouched. Historical reports below are not current verification.

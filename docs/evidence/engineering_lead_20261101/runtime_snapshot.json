@@ -1,0 +1,154 @@
+{
+  "runtime_live": false,
+  "runtime_detail": "qazbot-nightly not active within 2s (Failed to connect to bus: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user))",
+  "lease_held": false,
+  "stored_state": "STOPPED_OK",
+  "mode": "ENGINEERING",
+  "tasks": [
+    {
+      "name": "engineering_amcl_initialpose_v3",
+      "state": "BLOCKED_EXECUTION",
+      "attempts": 1,
+      "reason": "PROVIDER_TRANSPORT: workspace routing discovery failed",
+      "priority": 5
+    },
+    {
+      "name": "engineering_amcl_initialpose_v3_review",
+      "state": "NEEDS_APPROVAL",
+      "attempts": 0,
+      "reason": "LAB_STOP (was PENDING)",
+      "priority": 20
+    },
+    {
+      "name": "engineering_sensor_contract_v3",
+      "state": "BLOCKED_EXECUTION",
+      "attempts": 1,
+      "reason": "PROVIDER_TRANSPORT: workspace routing discovery failed",
+      "priority": 6
+    },
+    {
+      "name": "engineering_sensor_contract_v3_review",
+      "state": "NEEDS_APPROVAL",
+      "attempts": 0,
+      "reason": "LAB_STOP (was PENDING)",
+      "priority": 21
+    },
+    {
+      "name": "engineering_p23_motion_v3",
+      "state": "BLOCKED_EXECUTION",
+      "attempts": 1,
+      "reason": "PROVIDER_TRANSPORT: workspace routing discovery failed",
+      "priority": 7
+    },
+    {
+      "name": "engineering_p23_motion_v3_review",
+      "state": "NEEDS_APPROVAL",
+      "attempts": 0,
+      "reason": "LAB_STOP (was PENDING)",
+      "priority": 22
+    },
+    {
+      "name": "engineering_frame_anchor_v3",
+      "state": "BLOCKED_EXECUTION",
+      "attempts": 1,
+      "reason": "PROVIDER_TRANSPORT: workspace routing discovery failed",
+      "priority": 8
+    },
+    {
+      "name": "engineering_frame_anchor_v3_review",
+      "state": "NEEDS_APPROVAL",
+      "attempts": 0,
+      "reason": "LAB_STOP (was PENDING)",
+      "priority": 23
+    },
+    {
+      "name": "engineering_gpu_egl_v3",
+      "state": "BLOCKED_EXECUTION",
+      "attempts": 1,
+      "reason": "PROVIDER_TRANSPORT: workspace routing discovery failed",
+      "priority": 9
+    },
+    {
+      "name": "engineering_gpu_egl_v3_review",
+      "state": "NEEDS_APPROVAL",
+      "attempts": 0,
+      "reason": "LAB_STOP (was PENDING)",
+      "priority": 24
+    },
+    {
+      "name": "engineering_odometry_reset_v3",
+      "state": "BLOCKED_EXECUTION",
+      "attempts": 1,
+      "reason": "PROVIDER_TRANSPORT: workspace routing discovery failed",
+      "priority": 10
+    },
+    {
+      "name": "engineering_odometry_reset_v3_review",
+      "state": "NEEDS_APPROVAL",
+      "attempts": 0,
+      "reason": "LAB_STOP (was PENDING)",
+      "priority": 25
+    },
+    {
+      "name": "engineering_defect_f7703543b6a3e62e",
+      "state": "BLOCKED_EXECUTION",
+      "attempts": 1,
+      "reason": "ADAPTER_INVOCATION: --agents file not found",
+      "priority": 2
+    },
+    {
+      "name": "engineering_defect_f7703543b6a3e62e_review",
+      "state": "NEEDS_APPROVAL",
+      "attempts": 0,
+      "reason": "LAB_STOP (was PENDING)",
+      "priority": 15
+    },
+    {
+      "name": "infra_execution_293dd76d439fa4ab5a43",
+      "state": "NEEDS_ENGINEERING",
+      "attempts": 0,
+      "reason": "PROVIDER_TRANSPORT: workspace routing discovery failed",
+      "priority": 0
+    },
+    {
+      "name": "infra_execution_0954c44a8ff1abd9cdcd",
+      "state": "NEEDS_ENGINEERING",
+      "attempts": 0,
+      "reason": "ADAPTER_INVOCATION: --agents file not found",
+      "priority": 0
+    }
+  ],
+  "health": [
+    {
+      "provider": "codex",
+      "status": "BLOCKED",
+      "category": "SANDBOX_NETWORK",
+      "signature": "947b0148f3fabd350b69",
+      "evidence": "/home/adn/QazBot/control_backend_p20_twin02/run/nightly/capabilities/capability_codex_ec10686ada22/task.log",
+      "model": "gpt-6.1-sol",
+      "source_sha": "57615780c90e8068e270cf7aa723dd84646cc8cb",
+      "ts": 1793478973.8289983
+    },
+    {
+      "provider": "claude",
+      "status": "BLOCKED",
+      "category": "SANDBOX_NETWORK",
+      "signature": "16b2142ee45bc62413ad",
+      "evidence": "/home/adn/QazBot/control_backend_p20_twin02/run/nightly/capabilities/capability_claude_5b509bdd295a/task.log",
+      "model": null,
+      "source_sha": "57615780c90e8068e270cf7aa723dd84646cc8cb",
+      "ts": 1793478973.8246038
+    }
+  ],
+  "amcl_plan": {
+    "id": 97,
+    "ts": 1793479198.9633036,
+    "task": "engineering_amcl_initialpose_v3",
+    "facts_sha": "4e52bf4b93af8eea278cce64cef0e798a2745f44ce0bc61f4b42dda26ef5f59a",
+    "base_priority": 5,
+    "effective_priority": 0,
+    "explanation": "Navigation P0; localization-first; blocks 1 task(s); base priority 5; hard dependency/tier/provider gates remain mandatory"
+  },
+  "results": [],
+  "running_tasks": 0
+}

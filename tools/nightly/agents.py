@@ -45,6 +45,7 @@ class Adapter:
         scope = ('ENGINEERING ONLY: offline/source/replay/tests/review. No Docker/MuJoCo/MC or live ROS graph. '
                  'Never label offline tests SIM_VERIFIED. Request L3_QUALIFICATION for runtime evidence; '
                  'missing hardware facts -> NEEDS_HARDWARE; preserve evidence, then work on an independent issue. '
+                 'Source fixes require diagnosis={hypotheses,reproduction,causal_evidence,original_fail_retest,regression} and root_causes with VERIFIED status and evidence; no fix before causal reproduction. '
                  if dict(task).get('execution_tier') == 'ENGINEERING' else '')
         return f"{task['repro']}\n{context}\n{scope}{RULES}"
 
@@ -87,7 +88,7 @@ class ClaudeAdapter(Adapter):
         budget = os.environ.get('NIGHTLY_CLAUDE_MAX_BUDGET_USD')
         if budget:
             opts += f' --max-budget-usd {shlex.quote(budget)}'
-        return f"{self.bin} -p {shlex.quote(self.prompt(task, context))}{opts}"
+        return f"{self.bin} -p{opts} -- {shlex.quote(self.prompt(task, context))}"
 
 
 class CodexAdapter(Adapter):

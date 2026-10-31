@@ -1,0 +1,13 @@
+{
+  "provider": "claude",
+  "model": null,
+  "source_sha": "57615780c90e8068e270cf7aa723dd84646cc8cb",
+  "worktree": "/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/capability_claude_5b509bdd295a.1.5b509b",
+  "branch": "attempt/capability_claude_5b509bdd295a-1-5b509b",
+  "rc": 1,
+  "passed": false,
+  "category": "AGENT_EXECUTION",
+  "evidence": "/home/adn/QazBot/control_backend_p20_twin02/run/nightly/capabilities/capability_claude_5b509bdd295a/task.log",
+  "sandbox": "execution.engineering_sandbox",
+  "command": "claude -p --permission-mode acceptEdits --output-format text --no-session-persistence -- 'Reply with exactly <challenge>. Do not run tools, modify files or contact the physical robot.\n\nENGINEERING ONLY: offline/source/replay/tests/review. No Docker/MuJoCo/MC or live ROS graph. Never label offline tests SIM_VERIFIED. Request L3_QUALIFICATION for runtime evidence; missing hardware facts -> NEEDS_HARDWARE; preserve evidence, then work on an independent issue. Rules: simulation only; never contact the physical X2 (no ssh/deploy/ros2 pub); do not weaken safety limits or goal tolerances; work only in your own git worktree; commit nothing to shared branches; on usage limit stop and exit (state is recovered from SQLite and Git).'"
+}
