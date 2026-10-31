@@ -270,7 +270,8 @@ def stage_engineering():
     free=shutil.disk_usage(ROOT).free//2**30
     add('engineering.disk','PASS' if free>=5 else 'FAIL',f'{free} GiB free; existing 5 GiB floor preserved')
     rc,out=sh(['bwrap','--die-with-parent','--unshare-pid','--unshare-ipc','--ro-bind','/','/',
-               '--proc','/proc','--dev','/dev','--tmpfs','/run','--tmpfs','/tmp','--','true'])
+               '--proc','/proc','--dev','/dev','--tmpfs','/run','--tmpfs','/tmp','--ro-bind-try','/run/systemd/resolve','/run/systemd/resolve',
+               '--','true'])
     add('engineering.namespace_isolation','PASS' if rc==0 else 'FAIL',out or 'read-only host and hidden runtime sockets')
     rc,out=sh("docker info --format '{{.ServerVersion}}'",timeout=20)
     add('engineering.docker_optional','PASS' if rc==0 else 'WARN',out[-120:]+' (not required for offline Engineering)')
