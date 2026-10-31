@@ -8,6 +8,16 @@ disable-model-invocation: true
 
 You are running on, or in the software workspace controlling, the **physical X2**. This is an operator-invoked workflow. Do not interpret the existence of a lab commit as authorization to deploy, command motion, restart safety-critical services, or alter the production robot.
 
+## 0a. Two permanent branches (V3) — read this first
+
+- `robot/stable` = what is actually INSTALLED on the X2 (source of truth for the robot). `lab/stable` = what the autonomous lab verified in simulation (SIM_VERIFIED). Never use `origin/main` as the installed state.
+- Discover new lab fixes automatically: `git fetch --prune origin`, then `python3 tools/operator_skills/robot_stable.py --repo . list` (reads `docs/hardware/CANDIDATES.json` from `origin/lab/stable`; effective status also reflects hardware results already on `origin/robot/stable`).
+- Prepare a candidate (Git only, no hardware): `python3 tools/operator_skills/robot_stable.py --repo . make <candidate-id>` -> branch `robot/candidate/<id>` cut from the CURRENT `robot/stable`, carrying ONLY the listed `ws/src/**` production files plus the plan. Simulator, test stubs and lab tools are refused. A candidate whose dependency is not HW_VERIFIED is refused.
+- Hardware validation (deployment, motion, restarts) only with explicit operator approval in this session, following the candidate's `hardware_validation_plan` and `rollback`.
+- Record the outcome: `... result <id> HW_VERIFIED --evidence <ref> --installed-manifest <path->sha256 json measured on the robot>` integrates the files into `robot/stable` ONLY if the installed SHA256 equals the candidate; `HW_FAILED` records the failure and evidence without changing robot files. Failed candidates are not installed and stay in lab history.
+- New installed-state snapshot (config/map/params/hardware evidence, bag references with sha256 — bags themselves need not be copied): publish via an integration branch, then `... snapshot <branch> --manifest <file>` (SHA256 compared with the previous baseline, forbidden paths refused, CAS update of `robot/stable`).
+- Pointers (`docs/hardware/SYNC_POINTERS.json`): last_robot_processed_sha, last_robot_snapshot_sha, last_lab_published_sha, last_lab_reviewed_sha, last_hardware_verified_candidate_sha — move them only after the corresponding step fully succeeded.
+
 ## 0. Scope and baseline (read-only)
 
 1. Positively verify that this is the authorized physical X2 workspace and that physical hardware identity, robot mode, and operator procedures match the documentation. If the host is a simulation/lab machine or identity is uncertain, do not issue hardware actions. Read `CLAUDE.md`, `AGENTS.md` and the existing robot operating/safety instructions. Locate the robot's actual Git repository and the documented laboratory integration branch; do not assume a path or branch name. Read `docs/hardware/LAB_TO_ROBOT_HANDOFF.md`, `docs/hardware/TWIN_FIDELITY_REQUESTS.md`, and applicable nightly handoff files **if present**. If absent, record the missing contract instead of inventing one.
