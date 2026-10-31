@@ -36,6 +36,7 @@ RUN = Path(os.environ.get('NIGHTLY_RUN', ROOT / 'run' / 'nightly'))
 DB = RUN / 'queue.db'
 LOGS = RUN / 'logs'
 TERMINAL = ('COMPLETED', 'FAILED', 'NEEDS_ENGINEERING', 'NEEDS_APPROVAL', 'NEEDS_HARDWARE')
+PROBE_RECHECK_S = 60  # bounded recheck while a queued capability probe runs; not a retry loop
 LIMIT_RE = agents.LIMIT_RE  # single definition (agents.py)
 FORBIDDEN = re.compile(r'\b(ssh|scp|rsync)\b.*(10\.|192\.168|x2|agibot)|ros2 (topic pub|service call).*x2', re.I)
 
@@ -425,7 +426,7 @@ def select_agent(db, r):
         if r['pin_model'] and ag == allowed[0]:  # explicit operator choice wins (tasks.model/effort only record what was chosen last time)
             pick = dict(pick, model=r['pin_model'], effort=r['pin_effort'] or pick['effort'], reason='pinned by operator')
         cands.append(pick)
-    limited_first, waits = None, []
+    limited_first, waits, probe_pending = None, [], False
     for i, c in enumerate(cands):
         a = c['agent']
         if a in tried:
@@ -445,6 +446,7 @@ def select_agent(db, r):
             current_fp=lead.fingerprint(a,c['model'])
             if capability.get('fingerprint')!=current_fp:
                 lead.ensure_probe(db,sys.modules[__name__],a,c['model'])
+                probe_pending = True
                 continue
             if capability.get('status')!='EXEC_VERIFIED':
                 continue
@@ -457,6 +459,8 @@ def select_agent(db, r):
         return dict(agent=a, model=c['model'], effort=c['effort'], route=c)
     if waits:
         until = min(w for w in waits if w)
+        if probe_pending:  # a qualified candidate is minutes away; do not park behind another provider's multi-hour reset
+            return dict(wait_until=min(until, now + PROBE_RECHECK_S) + 5, reason='candidate awaiting execution capability probe; rechecking soon')
         return dict(wait_until=until + 5, reason='all candidate agents limited; waiting for the earliest reset/recheck')
     return None
 

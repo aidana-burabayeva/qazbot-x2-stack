@@ -185,3 +185,24 @@ def test_claude_final_text_only_from_successful_result_event():
     assert lead.claude_final_text(ok.replace('"is_error": false','"is_error": true'))is None
     assert lead.claude_final_text('TOKEN')is None
     assert lead.claude_final_text(json.dumps(dict(type='assistant',message='TOKEN')))is None
+
+
+def test_probe_pending_candidate_is_not_parked_until_other_providers_reset(db,tmp_path,monkeypatch):
+    """claude only awaits its minutes-long qualification probe; codex is limited for ~2h. The task must recheck soon."""
+    import execution,time
+    for col in ('task_type','complexity','risk','pin_model','pin_effort'):
+        db.execute('ALTER TABLE tasks ADD COLUMN '+col+' TEXT')
+    monkeypatch.setattr(execution,'managed',lambda root:True)
+    monkeypatch.setattr(nq,'ROOT',tmp_path)
+    now=time.time()
+    states={'codex':{'installed':True,'status':'usage_limited','retry_after':now+7000},'claude':{'installed':True,'status':'unknown'}}
+    monkeypatch.setattr(nq,'agent_probe',lambda db:states);monkeypatch.setattr(nq,'refresh_usage',lambda db:states)
+    monkeypatch.setattr(nq.router,'route',lambda *a,**k:[dict(agent='codex',model='m1',effort='low'),dict(agent='claude',model='m2',effort='low')])
+    monkeypatch.setattr(lead,'fingerprint',lambda *a:'facts')
+    nq.enqueue(db,'engineering_x','true',kind='engineering',repro='--agents=codex,claude',priority=50)
+    row=db.execute("SELECT * FROM tasks WHERE name='engineering_x'").fetchone()
+    sel=nq.select_agent(db,row)
+    assert sel['wait_until']-now<=nq.PROBE_RECHECK_S+10, sel
+    assert 'probe' in sel['reason']
+    nq.kv_set(db,'execution_capability:claude:m2',dict(fingerprint='facts',status='EXEC_VERIFIED',ts=100))
+    assert nq.select_agent(db,row)['agent']=='claude'
