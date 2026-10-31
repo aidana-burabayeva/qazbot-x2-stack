@@ -1,27 +1,27 @@
 {
  "package": "qazbot-operator-skills",
- "version": "1.0.1",
+ "version": "1.1.0",
  "contract_version": 1,
  "skills": {
   "nightly-stop": {
    "role": "LAB",
-   "version": "1.0.0",
-   "sha256": "d3c1bd4007da258fad42db10700f87fab539af00722d1bf87f58f6b50ea24b0f"
+   "version": "1.1.0",
+   "sha256": "ba536c7a918bf1e89f467ea1183799257e0bcbddc1386e253f56c4e619bc9418"
   },
   "nightly-resume": {
    "role": "LAB",
-   "version": "1.0.0",
-   "sha256": "628ccce44749f4e3942da86215b059d1dcca917e2422daece2f688579c22c58d"
+   "version": "1.1.0",
+   "sha256": "e263025d72cdcd4f07573fb38e4d881cfc5093160383e1c33bf61bbed56a03ad"
   },
   "nightly-status": {
    "role": "LAB",
-   "version": "1.0.0",
+   "version": "1.1.0",
    "sha256": "c4c5061c92cb0d1c255b873b45db2f8f9d09b63a6c71aabcaf4e27bcab13db43"
   },
   "robot-sync-validate": {
    "role": "ROBOT",
-   "version": "1.0.0",
-   "sha256": "b0e297fe41716e16a5f769cba9719aa4fa25882bcb309d568683cf45933f5dc2"
+   "version": "1.1.0",
+   "sha256": "0a39ea555b55adfcbdefbd4bd5c9c05007d29bd514a05d09cb7fa5337e2ee146"
   }
  },
  "unmanaged": [

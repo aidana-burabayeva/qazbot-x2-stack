@@ -18,7 +18,9 @@ import subprocess
 import time
 from pathlib import Path
 
-LIMIT_RE = re.compile(r'usage limit|rate limit|quota|limit reached|try again at|too many requests', re.I)
+LIMIT_RE = re.compile(r"usage limit|rate limit|quota|limit reached|try again at|too many requests|hit your[\w\s-]{0,24}limit|limit\s*[·.\-:]*\s*resets", re.I)
+# observed verbatim from the real claude CLI: "You've hit your 5-hour limit · resets 7:10pm (Asia/Almaty)"
+RESET_RE = re.compile(r"resets\s+(\d{1,2})(?::(\d{2}))?\s*([ap]m)\s*\(([A-Za-z_]+/[A-Za-z_]+)\)", re.I)
 RULES = ('Rules: simulation only; never contact the physical X2 (no ssh/deploy/ros2 pub); do not weaken safety limits or goal tolerances; '
          'work only in your own git worktree; commit nothing to shared branches; on usage limit stop and exit (state is recovered from SQLite and Git).')
 
@@ -115,6 +117,26 @@ class CodexAdapter(Adapter):
 
 
 ADAPTERS = {'claude': ClaudeAdapter(), 'codex': CodexAdapter()}
+
+
+def parse_reset(text, now=None):
+    """Official reset time stated BY THE PROVIDER in its limit message, as epoch seconds; None if the text has no explicit time+zone."""
+    from datetime import datetime, timedelta
+    from zoneinfo import ZoneInfo
+    m = RESET_RE.search(text or '')
+    if not m:
+        return None
+    try:
+        tz = ZoneInfo(m.group(4))
+    except Exception:
+        return None
+    h, mi, ap = int(m.group(1)) % 12, int(m.group(2) or 0), m.group(3).lower()
+    h += 12 if ap == 'pm' else 0
+    now_dt = datetime.fromtimestamp(now if now is not None else time.time(), tz)
+    t = now_dt.replace(hour=h, minute=mi, second=0, microsecond=0)
+    if t <= now_dt:
+        t += timedelta(days=1)
+    return t.timestamp()
 
 
 def classify(rc, verdict, log_tail):

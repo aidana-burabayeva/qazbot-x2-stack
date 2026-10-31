@@ -1,0 +1,111 @@
+{
+ "source": "robot X2 .72 (agi), bags copied read-only, sha256 verified vs robot; recorded 2026-10-30 ~18:58-19:34 robot local (UTC+8)",
+ "bag_sha256": {
+  "metadata.yaml": "c1124fc07c3847637dd26faf87b81d7536be31307a152f6d4551ce48fe3da61c",
+  "twin_core_185759_0.mcap": "2c5890b824853f2ae3a29f94954ce0970c33633a5fdaa8e8911708ed4b374780",
+  "twin_hf_185759_0.mcap": "0e9b3997245ebc84f2bf4e7ff047c2f5677a9ce0e47041bb1ff265e063cb0e94",
+  "twin_hf_185910_0.mcap": "576a7066c383c413cec4bde3c5111e2d0562fe55b030799805a7e88ee3b72adf",
+  "twin_hf_190402_0.mcap": "ba6cd360631536f7d6afce553bc1311a26ecd75190d0d11d45c0fe1bc41167ab"
+ },
+ "note": "native_odom twist/yaw is the LiDAR-IMU projection used by Nav2, not ground truth; no external pose reference exists in these bags (FID-01)",
+ "bursts": [
+  {
+   "bag": "core_190402_part01",
+   "start_s": 145.5,
+   "dur_s": 16.8,
+   "cmd_vx": 0.203,
+   "cmd_vy": 0.0,
+   "cmd_wz": 0.016,
+   "meas_vx_mean": 0.241,
+   "meas_wz_mean": 0.142,
+   "coast2s_xy_m": 0.041,
+   "coast2s_yaw_rad": -0.313
+  },
+  {
+   "bag": "core_190402_part01",
+   "start_s": 163.9,
+   "dur_s": 3.8,
+   "cmd_vx": 0.0,
+   "cmd_vy": 0.0,
+   "cmd_wz": 0.671,
+   "meas_vx_mean": -0.0,
+   "meas_wz_mean": 0.593,
+   "coast2s_xy_m": 0.027,
+   "coast2s_yaw_rad": -0.097
+  },
+  {
+   "bag": "core_190402_part01",
+   "start_s": 237.1,
+   "dur_s": 9.3,
+   "cmd_vx": 0.3,
+   "cmd_vy": 0.0,
+   "cmd_wz": 0.186,
+   "meas_vx_mean": 0.427,
+   "meas_wz_mean": 0.161,
+   "coast2s_xy_m": 0.045,
+   "coast2s_yaw_rad": -0.032
+  },
+  {
+   "bag": "core_190402_part01",
+   "start_s": 248.0,
+   "dur_s": 4.9,
+   "cmd_vx": 0.3,
+   "cmd_vy": 0.0,
+   "cmd_wz": 0.249,
+   "meas_vx_mean": 0.406,
+   "meas_wz_mean": 0.136,
+   "coast2s_xy_m": 0.167,
+   "coast2s_yaw_rad": -0.014
+  },
+  {
+   "bag": "core_190402_part01",
+   "start_s": 257.0,
+   "dur_s": 11.1,
+   "cmd_vx": 0.245,
+   "cmd_vy": 0.0,
+   "cmd_wz": 0.044,
+   "meas_vx_mean": 0.351,
+   "meas_wz_mean": 0.037,
+   "coast2s_xy_m": 0.139,
+   "coast2s_yaw_rad": 0.183
+  },
+  {
+   "bag": "core_190402_part01",
+   "start_s": 313.2,
+   "dur_s": 40.5,
+   "cmd_vx": 0.8,
+   "cmd_vy": -0.0,
+   "cmd_wz": 0.0,
+   "meas_vx_mean": 0.454,
+   "meas_wz_mean": -0.002,
+   "coast2s_xy_m": 0.005,
+   "coast2s_yaw_rad": -0.006
+  },
+  {
+   "bag": "core_185759",
+   "start_s": 157.8,
+   "dur_s": 6.0,
+   "cmd_vx": 0.3,
+   "cmd_vy": 0.0,
+   "cmd_wz": -0.067,
+   "meas_vx_mean": 0.39,
+   "meas_wz_mean": 0.014,
+   "coast2s_xy_m": 0.119,
+   "coast2s_yaw_rad": 0.024
+  }
+ ],
+ "localization": {
+  "core_190402_part01": {
+   "amcl_poses": 96,
+   "map_to_odom_msgs": 5979,
+   "map_to_odom_xy_sd_m": 2.385,
+   "map_to_odom_stamp_minus_rx_p50_s": 0.95
+  },
+  "core_185759": {
+   "amcl_poses": 10,
+   "map_to_odom_msgs": 1202,
+   "map_to_odom_xy_sd_m": 0.365,
+   "map_to_odom_stamp_minus_rx_p50_s": 0.95
+  }
+ }
+}

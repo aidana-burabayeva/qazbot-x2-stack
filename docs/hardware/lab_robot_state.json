@@ -1,12 +1,40 @@
 {
  "tests": [
-  {"status": "PASS", "name": "P20 yaw-rate loop + motion adapter + nightly tooling (pytest)", "note": "см. строку Regression выше; симуляция, не железо"},
-  {"status": "PASS (sim)", "name": "L2 CCW-петля, допуски 0.20/0.35 (как на роботе)", "note": "3/3 за 3.9–4.3 с; при 0.10/0.10 было 2/4. Truth-localization, AMCL не квалифицирован"},
-  {"status": "FAIL (sim)", "name": "L2 s1_0046 / s1_0005 stall", "note": "NavigateToPose ABORTED, 'Failed to make progress'; контроллер командует wz≈-0.42, vx≈0.03, робот не поворачивается. Причина НЕ установлена"},
-  {"status": "UNVERIFIED", "name": "L2 выводы о контакте/зазоре по карте", "note": "frame-contract: мир симулятора и карта Nav2 расходятся до 0.7 м; все verdict по карте понижены"},
-  {"status": "UNVERIFIED", "name": "doorway_crossing_in", "note": "6/6 SUCCEEDED, но 2/6 контакт по карте и 2/6 зазор <=0.075 м (под вопросом из-за frame-contract)"},
-  {"status": "NEEDS_HARDWARE", "name": "Проём ~0.80 м (кандидат из анализа карты)", "note": "UNVALIDATED; нужен замер рулеткой, автономно не заходить"},
-  {"status": "FAIL", "name": "make nightly end-to-end", "note": "сборка падает (vendor в worktree, DNS docker.io); не расследовано до конца"}
+  {
+   "status": "PASS",
+   "name": "P20 yaw-rate loop + motion adapter + nightly tooling (pytest)",
+   "note": "см. строку Regression выше; симуляция, не железо"
+  },
+  {
+   "status": "PASS (sim)",
+   "name": "L2 CCW-петля, допуски 0.20/0.35 (как на роботе)",
+   "note": "3/3 за 3.9–4.3 с; при 0.10/0.10 было 2/4. Truth-localization, AMCL не квалифицирован"
+  },
+  {
+   "status": "FAIL (sim)",
+   "name": "L2 s1_0046 / s1_0005 stall",
+   "note": "NavigateToPose ABORTED, 'Failed to make progress'; контроллер командует wz≈-0.42, vx≈0.03, робот не поворачивается. Причина НЕ установлена"
+  },
+  {
+   "status": "UNVERIFIED",
+   "name": "L2 выводы о контакте/зазоре по карте",
+   "note": "frame-contract: мир симулятора и карта Nav2 расходятся до 0.7 м; все verdict по карте понижены"
+  },
+  {
+   "status": "UNVERIFIED",
+   "name": "doorway_crossing_in",
+   "note": "6/6 SUCCEEDED, но 2/6 контакт по карте и 2/6 зазор <=0.075 м (под вопросом из-за frame-contract)"
+  },
+  {
+   "status": "NEEDS_HARDWARE",
+   "name": "Проём ~0.80 м (кандидат из анализа карты)",
+   "note": "UNVALIDATED; нужен замер рулеткой, автономно не заходить"
+  },
+  {
+   "status": "FAIL",
+   "name": "make nightly end-to-end",
+   "note": "сборка падает (vendor в worktree, DNS docker.io); не расследовано до конца"
+  }
  ],
  "params": [
   "goal checker робота: xy_tol=0.20, yaw_tol=0.35 (twin по умолчанию 0.10/0.10) — в лаборатории выровнено под робота, на робота НЕ переносится (там уже так)",
@@ -46,45 +74,75 @@
   "Сенсоры/LiDAR: не моделировались как реальные; freshness guards не менялись"
  ],
  "fidelity_requests": [
-  {"title": "Frame-contract: привязка plant/world ↔ карта Nav2",
-   "hypothesis": "Расхождение мира симулятора и карты до 0.7 м объясняет противоречия по зазорам и, возможно, L2-stall",
-   "measurements": "Поза робота в map (AMCL) и независимая поза (рулетка/метки) в 4–6 точках, включая проём",
+  {
+   "title": "Frame-contract: привязка plant/world <-> карта Nav2 (ПЕРВОПРИЧИНА УСТАНОВЛЕНА в симуляции)",
+   "hypothesis": "В симуляции причина доказана (FrameAligner привязывается к первому сэмплу, а стены — к номинальному спавну; после подъёма робот оседает с yaw +0.108 рад). Для робота это НЕ причина (там map->odom ведёт AMCL/T5), но нужен независимый эталон позы, чтобы проверить, что карта и реальный мир согласованы",
+   "measurements": "Поза робота в map (AMCL) и независимая поза (рулетка/метки) в 4–6 точках, включая проём; плюс yaw-ориентация по лазерной метке/стене. Данных для этого в бэгах НЕТ (там только AMCL/одометрия)",
    "data": "/tf, /tf_static, /amcl_pose, /map metadata (origin, resolution), sha256 map.pgm",
    "conditions": "Статичное положение в каждой точке 10 с; одна и та же карта main_office",
    "motion": "Да — перестановка робота оператором между точками (автономного движения не требуется)",
    "accuracy": "±0.02 м по рулетке/меткам",
-   "mapping": "Те же точки в twin по world pose; сравнить dxy на каждой точке"},
-  {"title": "Отклик MC на команду поворота на месте (yaw)",
+   "mapping": "Те же точки в twin по world pose; сравнить dxy на каждой точке"
+  },
+  {
+   "title": "Отклик MC на команду поворота на месте (yaw)",
    "hypothesis": "Модель MC/MuJoCo воспроизводит stall (wz команда без поворота) иначе, чем реальный MC",
    "measurements": "wz команда vs измеренный yaw-rate, 0.2/0.4/0.6 рад/с, оба направления, от нуля и после ходьбы",
    "data": "/cmd_vel_authorized, одометрия торса/IMU, MC status, bag lossless",
    "conditions": "Пустое открытое место, ровный пол, батарея >50%, одно и то же ПО",
    "motion": "Да — требуется явное разрешение оператора",
    "accuracy": "yaw-rate ±0.02 рад/с, тайминг ±20 мс",
-   "mapping": "Тот же профиль команд в twin; сравнить rise time, steady-state, coast"},
-  {"title": "Coast и терминальное выравнивание после остановки",
+   "mapping": "Тот же профиль команд в twin; сравнить rise time, steady-state, coast"
+  },
+  {
+   "title": "Coast и терминальное выравнивание после остановки",
    "hypothesis": "Twin недооценивает/переоценивает дрейф и дотяг после остановки (CCW 0.16–0.23 м)",
    "measurements": "Путь и yaw после остановки с 0.2/0.4 м/с и поворота",
    "data": "одометрия, TF, видео/метки для внешней позы",
    "conditions": "Те же, что выше",
    "motion": "Да — требуется явное разрешение оператора",
    "accuracy": "±0.02 м, ±0.02 рад",
-   "mapping": "Сравнение распределений по 5 повторам, не по одному прогону"},
-  {"title": "Реальная геометрия проёма и зазор footprint",
+   "mapping": "Сравнение распределений по 5 повторам, не по одному прогону"
+  },
+  {
+   "title": "Реальная геометрия проёма и зазор footprint",
    "hypothesis": "Кандидат-проём ~0.80 м; footprint 0.712 м оставляет ~0.04 м запаса на сторону",
    "measurements": "Ширина проёма и положение относительно карты",
    "data": "рулетка + фото; координаты по карте",
    "conditions": "Без движения робота",
    "motion": "Нет",
    "accuracy": "±0.01 м",
-   "mapping": "Обновление карты/мира twin; пересчёт map_analysis"},
-  {"title": "Синхронизация сенсоров и свежесть данных",
+   "mapping": "Обновление карты/мира twin; пересчёт map_analysis"
+  },
+  {
+   "title": "Синхронизация сенсоров и свежесть данных",
    "hypothesis": "Тайминг LiDAR/одометрии в twin идеализирован",
    "measurements": "Частоты и задержки topics, jitter",
    "data": "ros2 topic hz/delay для scan, odom, tf; stamps vs wall",
    "conditions": "Стек в штатном режиме, 60 с",
    "motion": "Нет",
    "accuracy": "±5 мс",
-   "mapping": "Те же метрики с recorder в twin"}
+   "mapping": "Те же метрики с recorder в twin"
+  },
+  {
+   "title": "MC: насыщение скорости и выбег — сравнить реальные ответы с twin (данные УЖЕ получены, нужен только replay в sim)",
+   "hypothesis": "Реальный MC: команда vx=0.8 даёт ~0.45 м/с (насыщение); команда 0.2–0.3 даёт 0.24–0.43 м/с по native_odom (превышение до 1.4×); выбег 0.04–0.17 м за 2 с; yaw-отклик 0.67 -> 0.59 рад/с. Модель MC/MuJoCo в twin может вести себя иначе",
+   "measurements": "Ступенчатые команды vx = 0.1/0.2/0.3/0.45/0.6/0.8 и wz = ±0.2/±0.4/±0.67, по 3 повтора, оба знака; записывать /aima/mc/locomotion/velocity, /aima/mc/leg_odometry, /qazbot_native/odom, /aima/mc/body_pose с внешним эталоном (метки/рулетка на 3 м пробеге)",
+   "data": "docs/evidence/robot_20261030/real_mc_response_summary.json (7 серий из бэгов); сырые бэги в robot_data (sha256 в summary)",
+   "conditions": "Ровный пол, свободные 6 м, батарея >50%, тот же софт (platform v1.1.5, aimdk_msgs v1.1.0.4)",
+   "motion": "Да — только с явным разрешением оператора; существующие серии записаны во время ab_eval_motion",
+   "accuracy": "скорость ±0.02 м/с, путь ±0.02 м, yaw ±0.02 рад",
+   "mapping": "Те же профили команд в twin; сравнить steady-state ratio, rise time, coast на тех же 7 сериях (первый шаг не требует робота)"
+  },
+  {
+   "title": "Время и свежесть данных: map->odom опережает приём на ~0.95 с; скан устаревает под нагрузкой",
+   "hypothesis": "AMCL датирует map->odom вперёд на transform_tolerance (1.0 с по умолчанию): stamp - rx p50 = +0.95 с. Под нагрузкой (load ~18) scan age p95 0.6–1.9 с, T1_scan_stale 0.11–0.25. Twin работает с идеальными таймингами",
+   "measurements": "Повторить замер age(scan), age(odom), lag(tf) при нагрузке стека, покоя и ходьбы; записать load1/CPU",
+   "data": "docs/evidence/robot_20261030/topic_selection.txt, tf_tree.txt; recorder_events.log и monitor.csv на роботе (docs/evidence/twin_20261030)",
+   "conditions": "Тот же стек, recorder выключен в контрольном окне; без движения и с движением",
+   "motion": "Нет для покоя; да для ходьбы (с разрешением)",
+   "accuracy": "±5 мс",
+   "mapping": "Добавить в twin инжекцию задержки/дрожания сканов по измеренным распределениям, проверять T1/T5 на тех же p50/p95"
+  }
  ]
 }

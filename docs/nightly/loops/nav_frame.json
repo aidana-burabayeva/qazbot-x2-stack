@@ -1,0 +1,39 @@
+{
+ "repo": ".",
+ "gate": "python3 -m pytest -q -p no:cacheprovider digital_twin/ws/src/x2_twin_sim/test tests/nightly/test_mergeq.py",
+ "claude_budget_usd": 2,
+ "tasks": [
+  {
+   "name": "nav_frame_repro",
+   "agents": "codex,claude",
+   "task_type": "unit_tests",
+   "complexity": "medium",
+   "risk": "low",
+   "text": "CONTEXT (measured, see docs/evidence/nightly_20261030/frame_root_cause/README.md and probe_output.txt): digital_twin/ws/src/x2_twin_sim/x2_twin_sim/world.py map_to_sim places walls assuming the pelvis spawns at sim (0,0) yaw 0. geometry.FrameAligner (used only by plant/hal_plant_node.py HalPlantNode) anchors the map pose on the FIRST HAL sample the plant receives. After stand-up the robot settles at yaw +0.108 rad, xy (+0.0455,-0.0174), so a late first sample rotates the nav frame by about -0.108 rad about the start relative to the walls (0.69-0.73 m at the end of a ~7 m path). SCOPE: only this twin frame-anchor mismatch. Do NOT touch P20, localization, controller, costmap, goal tolerances, footprint or safety logic. No artificial offsets. Work ONLY inside your worktree; never contact any robot or network service. TASK 1 (REPRODUCE): add the OFFLINE pytest file digital_twin/ws/src/x2_twin_sim/test/test_frame_anchor.py using only x2_twin_sim.geometry (FrameAligner, compose, inverse, planar_pose) and x2_twin_sim.world.map_to_sim (pure python, no rclpy). Tests: (1) test_first_sample_anchor_rotates_nav_frame_vs_world_contract: spawn pose is world (0,0,0); the first sample seen is the settled pose (0.0455,-0.0174,0.1082); with start=(-7.885,12.966,0.0), show that FrameAligner(start).align(world_pose) for a world point 7 m ahead differs from the world-contract map point start (+) world_pose by >= 0.6 m, and the implied rotation is about -0.108 rad (documents CURRENT behaviour; must pass). (2) test_nominal_anchor_matches_world_contract: expects a NOT YET EXISTING option FrameAligner(start, anchor='nominal') whose align(world) equals compose(start, world) for every world pose and is consistent with the inverse of world.map_to_sim; mark it @pytest.mark.xfail(strict=True, reason='fix pending: nominal anchor not implemented'). Do not edit any non-test file. Declare in the result file: tests.cmd = python3 -m pytest -q digital_twin/ws/src/x2_twin_sim/test/test_frame_anchor.py ; files = [{path: digital_twin/ws/src/x2_twin_sim/test/test_frame_anchor.py}]."
+  },
+  {
+   "name": "nav_frame_fix",
+   "agents": "claude,codex",
+   "deps": [
+    "nav_frame_repro"
+   ],
+   "base_from": "nav_frame_repro",
+   "task_type": "local_fix",
+   "complexity": "medium",
+   "risk": "medium",
+   "text": "CONTEXT (measured, see docs/evidence/nightly_20261030/frame_root_cause/README.md and probe_output.txt): digital_twin/ws/src/x2_twin_sim/x2_twin_sim/world.py map_to_sim places walls assuming the pelvis spawns at sim (0,0) yaw 0. geometry.FrameAligner (used only by plant/hal_plant_node.py HalPlantNode) anchors the map pose on the FIRST HAL sample the plant receives. After stand-up the robot settles at yaw +0.108 rad, xy (+0.0455,-0.0174), so a late first sample rotates the nav frame by about -0.108 rad about the start relative to the walls (0.69-0.73 m at the end of a ~7 m path). SCOPE: only this twin frame-anchor mismatch. Do NOT touch P20, localization, controller, costmap, goal tolerances, footprint or safety logic. No artificial offsets. Work ONLY inside your worktree; never contact any robot or network service. TASK 2 (FIX, minimal): the previous step added test_frame_anchor.py with a strict-xfail test. Implement FrameAligner(start, anchor='first_sample'|'nominal') in geometry.py: keep the CLASS default 'first_sample' (existing test_geometry.py must keep passing unchanged); 'nominal' means the origin is identity so align(world) = compose(start, world). In plant/hal_plant_node.py add a ROS parameter `anchor` (default 'nominal') and pass it to FrameAligner. Remove the xfail marker from the nominal-anchor test (it must now pass, using anchor='nominal' explicitly) and keep test (1) passing with anchor='first_sample' if needed. Update the docstring of FrameAligner/HalPlantNode to state the contract (map = start (+) world pose; spawn pose is the world origin). No other files. Declare tests.cmd = python3 -m pytest -q digital_twin/ws/src/x2_twin_sim/test ; files = geometry.py, plant/hal_plant_node.py, test_frame_anchor.py (paths relative to the worktree root)."
+  },
+  {
+   "name": "nav_frame_review",
+   "agents": "codex,claude",
+   "deps": [
+    "nav_frame_fix"
+   ],
+   "base_from": "nav_frame_fix",
+   "task_type": "documentation",
+   "complexity": "low",
+   "risk": "low",
+   "text": "CONTEXT (measured, see docs/evidence/nightly_20261030/frame_root_cause/README.md and probe_output.txt): digital_twin/ws/src/x2_twin_sim/x2_twin_sim/world.py map_to_sim places walls assuming the pelvis spawns at sim (0,0) yaw 0. geometry.FrameAligner (used only by plant/hal_plant_node.py HalPlantNode) anchors the map pose on the FIRST HAL sample the plant receives. After stand-up the robot settles at yaw +0.108 rad, xy (+0.0455,-0.0174), so a late first sample rotates the nav frame by about -0.108 rad about the start relative to the walls (0.69-0.73 m at the end of a ~7 m path). SCOPE: only this twin frame-anchor mismatch. Do NOT touch P20, localization, controller, costmap, goal tolerances, footprint or safety logic. No artificial offsets. Work ONLY inside your worktree; never contact any robot or network service. TASK 3 (INDEPENDENT REVIEW, no source edits): review the committed fix (git diff of the previous step against its base) for regressions: list every consumer of FrameAligner and HalPlantNode in the repository (grep), say for each whether behaviour changes, and whether any launch file/parameter must set anchor explicitly. Write the review to docs/nightly/NAV_FRAME_FIX_REVIEW.md (sections: Consumers, Behaviour change, Risks, Verdict). Declare tests.cmd = python3 -m pytest -q digital_twin/ws/src/x2_twin_sim/test ; files = [{path: docs/nightly/NAV_FRAME_FIX_REVIEW.md}]."
+  }
+ ]
+}

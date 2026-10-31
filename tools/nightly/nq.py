@@ -26,13 +26,14 @@ import store  # noqa: E402
 import agents  # noqa: E402
 import attempts  # noqa: E402
 import router  # noqa: E402
+import mergeq  # noqa: E402
 
 ROOT = Path(os.environ.get('NIGHTLY_ROOT', Path(__file__).resolve().parents[2]))
 RUN = Path(os.environ.get('NIGHTLY_RUN', ROOT / 'run' / 'nightly'))
 DB = RUN / 'queue.db'
 LOGS = RUN / 'logs'
 TERMINAL = ('COMPLETED', 'FAILED', 'NEEDS_ENGINEERING', 'NEEDS_APPROVAL', 'NEEDS_HARDWARE')
-LIMIT_RE = re.compile(r'usage limit|rate limit|quota|limit reached|try again at', re.I)
+LIMIT_RE = agents.LIMIT_RE  # single definition (agents.py)
 FORBIDDEN = re.compile(r'\b(ssh|scp|rsync)\b.*(10\.|192\.168|x2|agibot)|ros2 (topic pub|service call).*x2', re.I)
 
 SCHEMA = """
@@ -58,6 +59,7 @@ def connect():
     db.execute('PRAGMA synchronous=FULL')
     db.executescript(SCHEMA)
     store.init(db)
+    mergeq.init(db)
     db.execute('CREATE TABLE IF NOT EXISTS router_stats(id INTEGER PRIMARY KEY, ts REAL, task TEXT, attempt INTEGER, cls TEXT, agent TEXT, model TEXT, effort TEXT, escalation INTEGER, outcome TEXT, seconds REAL, quota_before TEXT, quota_after TEXT)')
     cols = [r[1] for r in db.execute('PRAGMA table_info(tasks)')]
     if 'requires_result' not in cols:
@@ -617,6 +619,9 @@ def record_engineering_result(db, row, item_d, ok):
         kv_set(db, 'claude_verified', cv)  # first real success proves this model/effort pair is accepted by the CLI
     if ok:
         kv_set(db, f"verified_sha:{row['name']}", item['metrics']['git_sha'])
+        full_ = db.execute('SELECT * FROM tasks WHERE id=?', (row['id'],)).fetchone()
+        if mergeq.enqueue(db, RUN, kv_get, full_):
+            ev(db, row['name'], 'MERGEQ_QUEUED', mergeq.branch_name())
         ev(db, row['name'], 'INTEGRATION_READY', f"branch={row['branch']} sha={item['metrics']['git_sha']} (not merged anywhere; merge is a separate gated step)")
 
 
@@ -704,6 +709,10 @@ def _poll_one(db, row):
 def tick(db, cur):
     """One scheduling step. cur = (row, Popen, log, last_size, last_progress) or None. Returns the new cur."""
     poll_delegated(db)
+    try:
+        mergeq.step(db, RUN, lambda t, e, d='': ev(db, t, e, d))
+    except Exception as e_:
+        ev(db, '*', 'MERGEQ_ERROR', f'{type(e_).__name__}: {str(e_)[:200]}')
     db.execute("UPDATE tasks SET state='PENDING', reason='reset reached: retrying' WHERE state='PAUSED_LIMIT' AND not_before<=?", (time.time(),))
     if cur:
         r, p, log, size, prog = cur
@@ -805,11 +814,21 @@ def handoff_decision(db, full, rc, verdict, tail):
         return None
     owner = full['owner']
     st = kv_get(db, 'agents', {})
-    if cause == 'limit' and owner:  # confirmed by provider text in the log; reset time is not parsed/assumed
-        # reset time is NOT known from a log line: do not invent one. recheck_after is only a bounded probe cadence.
-        st.setdefault(owner, {}).update(status='usage_limited', retry_after=None, reset_known=False,
-                                        recheck_after=time.time() + int(os.environ.get('NIGHTLY_LIMIT_PROBE_S', 1800)))
+    wait_until = None
+    if cause == 'limit' and owner:  # confirmed by provider text in the log
+        official = agents.parse_reset(tail)  # the provider's own "resets 7:10pm (Asia/Almaty)"; None when the message has no explicit time
+        if official:
+            st.setdefault(owner, {}).update(status='usage_limited', retry_after=official, reset_known=True, reset_source='provider message', recheck_after=None)
+        else:  # reset time is NOT known from a log line: do not invent one. recheck_after is only a bounded probe cadence.
+            st.setdefault(owner, {}).update(status='usage_limited', retry_after=None, reset_known=False,
+                                            recheck_after=time.time() + int(os.environ.get('NIGHTLY_LIMIT_PROBE_S', 1800)))
         kv_set(db, 'agents', st)
+        if official and 0 < official - time.time() <= WAIT_RESET_MAX_S and full['priority'] > 10:
+            wait_until = official + 5  # bounded wait for the same agent instead of a handoff (context stays warm, no handoff cost)
+    if wait_until:
+        db.execute('UPDATE tasks SET not_before=?, max_attempts=max_attempts+1 WHERE id=?', (wait_until, full['id']))
+        kv_set(db, f"tried:{full['name']}", [])
+        return 'PAUSED_LIMIT', f"{owner} limit, provider reset in {int(wait_until - time.time())}s (<=60 min): waiting instead of handoff"
     tried = kv_get(db, f"tried:{full['name']}", [])
     now = time.time()
     nh = kv_get(db, f"handoffs:{full['name']}", 0)
@@ -860,7 +879,8 @@ def daemon(args):
         cur = tick(db, cur)
         if time.time() - last_revive > 300:
             revive_agents(db); last_revive = time.time()
-        if cur is None and not args.keep_alive and not db.execute("SELECT 1 FROM tasks WHERE state IN ('PENDING','RUNNING','DELEGATED','VERIFYING','PAUSED_LIMIT') LIMIT 1").fetchone():
+        if cur is None and not args.keep_alive and not db.execute("SELECT 1 FROM tasks WHERE state IN ('PENDING','RUNNING','DELEGATED','VERIFYING','PAUSED_LIMIT') LIMIT 1").fetchone() \
+                and not db.execute("SELECT 1 FROM merge_queue WHERE state IN ('QUEUED','GATING') LIMIT 1").fetchone():
             break
         time.sleep(args.poll)
     if cur:  # graceful stop: leave the child to be recovered on next start rather than orphaning silently
@@ -889,6 +909,7 @@ def main():
     rl = sp.add_parser('results'); rl.add_argument('--task'); rl.add_argument('--json', action='store_true')
     sp.add_parser('verify-evidence')
     sp.add_parser('usage')
+    mq = sp.add_parser('mergeq'); mq.add_argument('action', choices=['status', 'step', 'publish'])
     sp.add_parser('poll')
     su = sp.add_parser('supersede'); su.add_argument('task'); su.add_argument('--force-lease-release', action='store_true')
     ec = sp.add_parser('eng-checkpoint'); ec.add_argument('task'); ec.add_argument('--agent'); ec.add_argument('--next'); ec.add_argument('--hypotheses', default='[]')
@@ -930,6 +951,22 @@ def main():
         for r in rows:
             if not a.json:
                 print(f"{r['id']:4} {r['verdict']:10} {r['status']:16} sv={r['safety_violations']} {r['task']}#{r['attempt']} {r['scenario_id']} seed={r['seed']} sha={str(r['git_sha'])[:9]}{' DIRTY' if r['code_dirty'] else ''}")
+    elif a.c == 'mergeq':
+        db = connect()
+        if a.action == 'status':
+            print(json.dumps([dict(r) for r in db.execute('SELECT id,task,branch,substr(sha,1,12) sha,state,detail FROM merge_queue ORDER BY id')], indent=1))
+        elif a.action == 'step':
+            lk = open(RUN / 'orchestrator.lock', 'a')
+            try:
+                fcntl.flock(lk, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except OSError:
+                sys.exit('the daemon owns the lease and advances the merge queue by itself')
+            while mergeq.step(db, RUN, lambda t, e, d='': ev(db, t, e, d)):
+                time.sleep(0.5)
+            print('idle')
+        else:
+            r_ = db.execute('SELECT repo FROM merge_queue ORDER BY id DESC LIMIT 1').fetchone()
+            print(mergeq.publish(r_['repo'] if r_ else str(ROOT)))
     elif a.c == 'usage':
         db = connect(); print(json.dumps({k: v.get('usage') for k, v in refresh_usage(db, force=True).items()}, indent=1))
     elif a.c == 'poll':

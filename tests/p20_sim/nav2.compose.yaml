@@ -2,7 +2,6 @@
 services:
   stack:
     environment:
-      QAZBOT_SIM_YAW_LIN_EPS: "${P20_YAW_LIN_EPS:-0.02}"
       TWIN_LOCALIZATION: truth   # healthcheck reads this; the launch line below uses the same mode
     volumes:
       - ${P20_BACKEND:?set P20_BACKEND}/ws/src:/opt/x2twin/stack:ro
