@@ -9,7 +9,8 @@ Environment=QAZBOT_ROLE=LAB QAZBOT_LAB=1 TWIN_ENVFILE=.env.lab TWIN_LOCALIZATION
 ExecStart=/usr/bin/python3 tools/nightly/nq.py daemon --keep-alive
 Restart=always
 RestartSec=5
-KillMode=process
+KillMode=control-group
+TimeoutStopSec=30
 
 [Install]
 WantedBy=default.target
