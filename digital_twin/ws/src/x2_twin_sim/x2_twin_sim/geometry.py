@@ -35,14 +35,22 @@ def inverse(a: Pose2D) -> Pose2D:
 
 @dataclass
 class FrameAligner:
-    """Maps poses of an arbitrary world frame so that the first pose seen equals ``start``.
+    """Map world poses using a nominal spawn or first-sample anchor.
 
-    The official sim spawns the robot at an arbitrary world pose; the navigation map has its own START. Mapping by the
-    relative motion from the first sample keeps both consistent without moving anything.
+    With ``anchor='nominal'``, map = start (+) world pose: the spawn pose is
+    the world origin, matching wall placement. The default ``'first_sample'``
+    instead maps the first received pose to ``start`` and preserves relative motion.
     """
 
     start: Pose2D
+    anchor: str = 'first_sample'
     _origin_inv: Optional[Pose2D] = None
+
+    def __post_init__(self) -> None:
+        if self.anchor not in ('first_sample', 'nominal'):
+            raise ValueError(f'Unknown frame anchor: {self.anchor!r}')
+        if self.anchor == 'nominal':
+            self._origin_inv = (0.0, 0.0, 0.0)
 
     def align(self, world: Pose2D) -> Pose2D:
         if self._origin_inv is None:
