@@ -1,0 +1,16 @@
+{
+  "parent_style": {
+    "rc": 0,
+    "fingerprints": {
+      "claude": "d004ddef1eb75cea3a36",
+      "codex": "2b0855f251887395643d"
+    }
+  },
+  "old_helper_style": {
+    "rc": 0,
+    "fingerprints": {
+      "claude": "4155900572ceeb073117",
+      "codex": "7203d77170d87f33bc22"
+    }
+  }
+}

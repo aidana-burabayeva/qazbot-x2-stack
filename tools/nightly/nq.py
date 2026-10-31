@@ -248,7 +248,13 @@ def run_mechanical(db, r):
     checkpoint(db, f'start {name}')
     with open(log, 'wb') as fh:
         argv = ['bash', '-lc', r['cmd']]
-        if execution.managed(ROOT) and execution.task_tier(r)==execution.ENGINEERING and not lead.trusted_probe(r['cmd']):
+        managed=execution.managed(ROOT)
+        if managed and lead.trusted_probe(r['cmd']):
+            # Fingerprints must see the daemon's environment, not a login profile's PATH/proxies.
+            # Invoke only our trusted helper; the helper still sandboxes the actual agent CLI.
+            import shlex
+            argv=[sys.executable,str(ROOT/'tools/nightly/workflow.py'),*shlex.split(r['cmd'])[2:]]
+        elif managed and execution.task_tier(r)==execution.ENGINEERING:
             argv = execution.engineering_sandbox(argv, dict(r).get('run_cwd') or r['cwd'], rdir, writable_run=RUN if r['kind']!='engineering' else None)
         p = subprocess.Popen(argv, cwd=dict(r).get('run_cwd') or r['cwd'], stdin=subprocess.DEVNULL, stdout=fh, stderr=subprocess.STDOUT, start_new_session=True,
                              env=dict(os.environ, NIGHTLY_ROOT=str(ROOT), NIGHTLY_RUN=str(RUN), NIGHTLY_DISPATCH_TOKEN=dispatch_token, NIGHTLY_TASK_TIER=execution.task_tier(r), ROS_LOCALHOST_ONLY='1', ROS_DOMAIN_ID='87', DOCKER_HOST='', OMP_NUM_THREADS='1', OPENBLAS_NUM_THREADS='1', NIGHTLY_RESULT_DIR=str(rdir), NIGHTLY_TASK=name, NIGHTLY_ATTEMPT=str(attempt), NIGHTLY_ATTEMPT_ID=str(dict(r).get('attempt_id') or '')))

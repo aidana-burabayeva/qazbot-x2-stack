@@ -145,3 +145,27 @@ def test_fingerprint_ignores_volatile_provider_state_but_tracks_config(tmp_path,
     assert lead.fingerprint('claude','m')!=c
     x=lead.fingerprint('codex','m');(home/'.codex/config.toml').write_text('a=2')
     assert lead.fingerprint('codex','m')!=x
+
+
+def test_capability_helper_preserves_daemon_environment_without_login_shell(db,tmp_path,monkeypatch):
+    import execution,subprocess
+    monkeypatch.setattr(nq,'ROOT',tmp_path)
+    monkeypatch.setattr(nq,'RUN',tmp_path)
+    monkeypatch.setattr(nq,'LOGS',tmp_path)
+    monkeypatch.setattr(nq,'checkpoint',lambda *a:None)
+    monkeypatch.setattr(nq,'git',lambda *a:'a'*40)
+    monkeypatch.setattr(execution,'managed',lambda root:True)
+    monkeypatch.setenv('PATH','/usr/local/bin:/usr/bin:/bin:/home/adn/.local/bin')
+    seen={}
+    class Child:
+        pid=123
+    def launch(argv,**kwargs):
+        seen.update(argv=argv,env=kwargs['env']);return Child()
+    monkeypatch.setattr(subprocess,'Popen',launch)
+    cmd='python3 tools/nightly/workflow.py capability-probe --provider codex --model gpt-6.1-sol'
+    nq.enqueue(db,'probe',cmd,execution_tier='ENGINEERING')
+    row=db.execute("SELECT * FROM tasks WHERE name='probe'").fetchone()
+    nq.run_mechanical(db,row)
+    assert seen['argv']==[sys.executable,str(tmp_path/'tools/nightly/workflow.py'),'capability-probe','--provider','codex','--model','gpt-6.1-sol']
+    assert seen['env']['PATH']=='/usr/local/bin:/usr/bin:/bin:/home/adn/.local/bin'
+    assert seen['env']['ROS_LOCALHOST_ONLY']=='1'
