@@ -155,8 +155,12 @@ def analyze(db,report):
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('command',choices=('audit','enqueue','feedback'));p.add_argument('--refresh',action='store_true');p.add_argument('--file',type=Path)
+    p=argparse.ArgumentParser();p.add_argument('command',choices=('audit','enqueue','feedback','capability-probe'));p.add_argument('--refresh',action='store_true');p.add_argument('--file',type=Path);p.add_argument('--provider',choices=('claude','codex'));p.add_argument('--model')
     a=p.parse_args();db=nq.connect()
+    if a.command=='capability-probe':
+        import lead
+        if not a.provider:p.error('--provider required')
+        report=lead.probe(nq,a.provider,a.model);print(json.dumps(report));raise SystemExit(0 if report['passed'] else 1)
     if a.command=='enqueue': print(json.dumps(daily(db)))
     elif a.command=='feedback': print(analyze(db,json.loads(a.file.read_text())))
     else: print(json.dumps(audit(db,a.refresh),indent=2))

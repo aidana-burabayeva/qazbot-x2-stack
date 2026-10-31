@@ -1,3 +1,9 @@
+# Engineering execution continuation
+
+Read [docs/nightly/ENGINEERING_LEAD.md](docs/nightly/ENGINEERING_LEAD.md). Execution transport/adapter failures are not navigation bugs; require a real sandbox capability before dispatch. AMCL is P0 after recovery. Preserve all attempts. Both session probes failed; no runtime acceptance claimed. Physical X2 forbidden.
+
+---
+
 # Capability-scoped bootstrap continuation
 
 Read [docs/nightly/EXECUTION_MODES.md](docs/nightly/EXECUTION_MODES.md). ENGINEERING has its own preflight and does not require a full L3 receipt. L3/FULL still require their scoped runtime proof. Offline PASS is not SIM_VERIFIED. Current clean start is blocked by systemd permissions; no runtime daemon or real engineering CLI task verified. Physical X2 forbidden; queue frozen. This supersedes the older global receipt statement below.

@@ -1,0 +1,13 @@
+{
+  "provider": "codex",
+  "model": "gpt-6.1-sol",
+  "source_sha": "57615780c90e8068e270cf7aa723dd84646cc8cb",
+  "worktree": "/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/capability_codex_ec10686ada22.1.ec1068",
+  "branch": "attempt/capability_codex_ec10686ada22-1-ec1068",
+  "rc": 1,
+  "passed": false,
+  "category": "AGENT_EXECUTION",
+  "evidence": "/home/adn/QazBot/control_backend_p20_twin02/run/nightly/capabilities/capability_codex_ec10686ada22/task.log",
+  "sandbox": "execution.engineering_sandbox",
+  "command": "codex exec --json --skip-git-repo-check -s workspace-write -C /home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/capability_codex_ec10686ada22.1.ec1068 -m gpt-6.1-sol -o /home/adn/QazBot/control_backend_p20_twin02/run/nightly/capabilities/capability_codex_ec10686ada22/last_message.txt -- 'Reply with exactly <challenge>. Do not run tools, modify files or contact the physical robot.\n\nENGINEERING ONLY: offline/source/replay/tests/review. No Docker/MuJoCo/MC or live ROS graph. Never label offline tests SIM_VERIFIED. Request L3_QUALIFICATION for runtime evidence; missing hardware facts -> NEEDS_HARDWARE; preserve evidence, then work on an independent issue. Rules: simulation only; never contact the physical X2 (no ssh/deploy/ros2 pub); do not weaken safety limits or goal tolerances; work only in your own git worktree; commit nothing to shared branches; on usage limit stop and exit (state is recovered from SQLite and Git).'"
+}

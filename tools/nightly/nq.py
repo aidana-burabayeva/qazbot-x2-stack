@@ -28,6 +28,7 @@ import attempts  # noqa: E402
 import router  # noqa: E402
 import mergeq  # noqa: E402
 import execution  # noqa: E402
+import lead  # noqa: E402
 import safety_guard
 
 ROOT = Path(os.environ.get('NIGHTLY_ROOT', Path(__file__).resolve().parents[2]))
@@ -118,8 +119,10 @@ def checkpoint(db, why):
           'running': [dict(name=r['name'], pid=r['pid'], started=r['started']) for r in db.execute("SELECT * FROM tasks WHERE state='RUNNING'")],
           'blocked': [dict(name=r['name'], state=r['state'], reason=r['reason'], repro=r['repro'])
                       for r in db.execute("SELECT * FROM tasks WHERE state IN ('NEEDS_APPROVAL','NEEDS_HARDWARE','NEEDS_ENGINEERING','PAUSED_AGENT','FAILED')")]}
-    tmp = RUN / 'checkpoint.json.tmp'
-    tmp.write_text(json.dumps(cp, indent=1))
+    import tempfile
+    # Timer and daemon may checkpoint concurrently; never share a temporary filename.
+    with tempfile.NamedTemporaryFile(mode='w',dir=RUN,prefix='checkpoint.',suffix='.tmp',delete=False) as fh:
+        json.dump(cp,fh,indent=1);fh.flush();os.fsync(fh.fileno());tmp=fh.name
     os.replace(tmp, RUN / 'checkpoint.json')
 
 
@@ -189,7 +192,10 @@ def ready(db):
         return
     done = {r['name'] for r in db.execute("SELECT name FROM tasks WHERE state='COMPLETED'")}
     now = time.time()
-    for r in db.execute("SELECT * FROM tasks WHERE state='PENDING' AND not_before<=? ORDER BY priority, id", (now,)):
+    rows=db.execute("SELECT * FROM tasks WHERE state='PENDING' AND not_before<=? ORDER BY priority, id", (now,)).fetchall()
+    # Do not hold a WAL read cursor over dispatch/provider work or another writer's commit.
+    if execution.managed(ROOT):rows=lead.order(db,rows)
+    for r in rows:
         if not all(d in done for d in json.loads(r['deps'])):
             continue
         if execution.managed(ROOT):
@@ -242,7 +248,7 @@ def run_mechanical(db, r):
     checkpoint(db, f'start {name}')
     with open(log, 'wb') as fh:
         argv = ['bash', '-lc', r['cmd']]
-        if execution.managed(ROOT) and execution.task_tier(r)==execution.ENGINEERING:
+        if execution.managed(ROOT) and execution.task_tier(r)==execution.ENGINEERING and not lead.trusted_probe(r['cmd']):
             argv = execution.engineering_sandbox(argv, dict(r).get('run_cwd') or r['cwd'], rdir, writable_run=RUN if r['kind']!='engineering' else None)
         p = subprocess.Popen(argv, cwd=dict(r).get('run_cwd') or r['cwd'], stdin=subprocess.DEVNULL, stdout=fh, stderr=subprocess.STDOUT, start_new_session=True,
                              env=dict(os.environ, NIGHTLY_ROOT=str(ROOT), NIGHTLY_RUN=str(RUN), NIGHTLY_DISPATCH_TOKEN=dispatch_token, NIGHTLY_TASK_TIER=execution.task_tier(r), ROS_LOCALHOST_ONLY='1', ROS_DOMAIN_ID='87', DOCKER_HOST='', OMP_NUM_THREADS='1', OPENBLAS_NUM_THREADS='1', NIGHTLY_RESULT_DIR=str(rdir), NIGHTLY_TASK=name, NIGHTLY_ATTEMPT=str(attempt), NIGHTLY_ATTEMPT_ID=str(dict(r).get('attempt_id') or '')))
@@ -286,7 +292,7 @@ def harvest(db, r, rc, log, state, sig, reason):
             errs = [f'result.json is not valid JSON: {e}']
     elif req:
         errs = ['result.json missing']
-    if errs:
+    if errs and state not in ('BLOCKED_EXECUTION','PAUSED_LIMIT','PAUSED_AGENT'):
         state, reason = 'NEEDS_ENGINEERING', ('invalid/missing result: ' + '; '.join(errs))[:300]
         items = []
     rdir.mkdir(parents=True, exist_ok=True)
@@ -341,6 +347,11 @@ def finish(db, r, p, log, verdict):
         if hd:
             state, reason = hd
             ev(db, name, 'HANDOFF', reason)
+    if full['kind']=='engineering':
+        category,signal_=lead.classify(tail,rc)
+        if category in lead.INFRA and execution.managed(ROOT):
+            lead.block(db,sys.modules[__name__],full,category,signal_,log)
+            state,reason='BLOCKED_EXECUTION',category+': '+signal_
     plain = harvest(db, full, rc, log, state, sig, reason)
     if plain is not None:  # nothing to persist (legacy task)
         db.execute('UPDATE tasks SET state=?, exit_code=?, pid=NULL, finished=?, signature=?, reason=? WHERE id=?', (state, rc, time.time(), sig, reason, r['id']))
@@ -420,6 +431,18 @@ def select_agent(db, r):
             if i == 0 or limited_first is None:
                 limited_first = (a, s_.get('retry_after'), until)
             continue
+        if execution.managed(ROOT):
+            provider_health=lead.health(db,a)
+            capability=kv_get(db,'execution_capability:'+a+':'+str(c['model']),{})
+            current_fp=lead.fingerprint(a,c['model'])
+            if capability.get('fingerprint')!=current_fp:
+                lead.ensure_probe(db,sys.modules[__name__],a,c['model'])
+                continue
+            if capability.get('status')!='EXEC_VERIFIED':
+                continue
+            if (provider_health and provider_health['status']=='BLOCKED' and
+                    provider_health['category']!='MODEL_UNAVAILABLE' and provider_health['ts']>capability['ts']):
+                continue
         if limited_first and limited_first[1] and limited_first[1] - now <= WAIT_RESET_MAX_S and r['priority'] > 10:
             # the preferred agent returns soon (official reset <= 60 min) and the task is not critical: wait, do not pay a handoff
             return dict(wait_until=limited_first[1] + 5, reason=f"{limited_first[0]} limited, official reset in {int(limited_first[1] - now)}s (<=60 min): waiting instead of handoff")
@@ -596,6 +619,11 @@ def _verify(db, row, path):
     rcs = d.get('root_causes', [])
     if not isinstance(rcs, list) or not all(isinstance(x, dict) for x in rcs):
         return False, None, 'root_causes must be a list of objects'
+    if isolated and execution.managed(ROOT) and any(p.startswith(('ws/src/','tools/nightly/','digital_twin/ws/')) for p in changed):
+        diagnosis=d.get('diagnosis',{})
+        required=('hypotheses','reproduction','causal_evidence','original_fail_retest','regression')
+        if not all(diagnosis.get(k) for k in required) or not any(x.get('status')=='VERIFIED' and x.get('evidence') for x in rcs):
+            return False,None,'source fix requires hypotheses, reproduction, causal evidence, original FAIL retest, regression and VERIFIED root cause'
     argv = shlex.split(t['cmd'])
     allow = [shlex.split(x) for x in os.environ.get('NIGHTLY_VERIFY_ALLOW', 'python3 -m pytest;pytest').split(';') if x.strip()]
     if not argv or not any(argv[:len(a)] == a for a in allow):
@@ -632,7 +660,7 @@ def record_engineering_result(db, row, item_d, ok):
     item['metrics'] = dict(item['metrics'], rerun_ok=ok)
     base = kv_get(db, f"base:{row['name']}:{attempt}", None) or dict(task=row['name'], attempt=attempt, git_sha=git('rev-parse', 'HEAD'), code_dirty=False)
     state = 'COMPLETED' if ok else 'NEEDS_ENGINEERING'
-    reason = None if ok else 'result recorded but tests failing on orchestrator re-run'
+    reason = None if ok else 'REGRESSION_FAILURE: result recorded but tests failing on orchestrator re-run'
     meta = dict(base=base, items=[item], final_state=state, exit_code=0, signature=None)
     ev_path, man_sha = store.publish(RUN, row['name'], attempt, rdir, meta)  # evidence durable BEFORE the queue may say COMPLETED
     extra = [("UPDATE tasks SET phase=? WHERE id=?", ('VERIFIED' if ok else 'RESULT_RECORDED', row['id']))]
@@ -787,6 +815,10 @@ def tick(db, cur):
                 db.execute("UPDATE tasks SET state='PAUSED_LIMIT', not_before=?, reason=? WHERE id=?", (sel['wait_until'], sel['reason'][:300], r['id']))
                 ev(db, r['name'], 'PAUSED_LIMIT', sel['reason'])
                 checkpoint(db, f"paused-limit {r['name']}")
+                continue
+            if kv_get(db,'frozen',False):
+                break
+            if db.execute('SELECT state FROM tasks WHERE id=?',(r['id'],)).fetchone()['state']!='PENDING':
                 continue
             a = sel['agent']
             db.execute('UPDATE tasks SET model=?, effort=? WHERE id=?', (sel['model'], sel['effort'], r['id']))
