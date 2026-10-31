@@ -5,10 +5,12 @@ Description=QazBot nightly orchestrator (simulation only, SQLite queue)
 Type=simple
 WorkingDirectory=/home/adn/QazBot/control_backend_p20_twin02
 Environment=PATH=/usr/local/bin:/usr/bin:/bin:/home/adn/.local/bin
+Environment=QAZBOT_ROLE=LAB QAZBOT_LAB=1 TWIN_ENVFILE=.env.lab TWIN_LOCALIZATION=amcl NIGHTLY_CODEX_MODE=exec NIGHTLY_ROBOT_REF=origin/robot/stable
 ExecStart=/usr/bin/python3 tools/nightly/nq.py daemon --keep-alive
 Restart=always
 RestartSec=5
-KillMode=process
+KillMode=control-group
+TimeoutStopSec=30
 
 [Install]
 WantedBy=default.target

@@ -1,0 +1,154 @@
+{
+ "kind": "all",
+ "verdict": "FAIL",
+ "stamp": "20261031T212455",
+ "started": 1793463894.1948378,
+ "seconds": 1.3,
+ "git_head": "d97073345071bc5a720a30a44099f15b9b493130",
+ "code_dirty": true,
+ "integration": "a467c16eb472bdc32acf6e056cb954a78e59b3ab",
+ "robot_ref": "origin/robot/stable",
+ "robot_sha": "1212d7eda003022d74c6ecc4a2c745fd48f57c2f",
+ "checks": [
+  {
+   "name": "role",
+   "status": "PASS",
+   "detail": "LAB"
+  },
+  {
+   "name": "git.control_branch",
+   "status": "PASS",
+   "detail": "lab/control"
+  },
+  {
+   "name": "git.integration_not_checked_out",
+   "status": "PASS",
+   "detail": "lab/stable is not checked out in any worktree"
+  },
+  {
+   "name": "git.fetch",
+   "status": "FAIL",
+   "detail": "offline? cess 'https://github.com/aidana-burabayeva/qazbot-x2-stack.git/': Could not resolve host: github.com"
+  },
+  {
+   "name": "git.integration_in_control",
+   "status": "PASS",
+   "detail": "integration a467c16eb contained in control HEAD"
+  },
+  {
+   "name": "git.integration_vs_origin",
+   "status": "PASS",
+   "detail": "a467c16eb == origin"
+  },
+  {
+   "name": "git.tracked_clean",
+   "status": "FAIL",
+   "detail": "7 tracked modification(s): ['M docs/HANDOFF.md', ' M docs/TEST_STATUS.md', ' M tools/nightly/lab.py']"
+  },
+  {
+   "name": "git.robot_ref",
+   "status": "PASS",
+   "detail": "origin/robot/stable 1212d7e"
+  },
+  {
+   "name": "baseline.integration_sha256",
+   "status": "PASS",
+   "detail": "73/73 integration Git blobs match snapshot"
+  },
+  {
+   "name": "baseline.published_in_sync",
+   "status": "PASS",
+   "detail": "IN SYNC with origin/robot/stable"
+  },
+  {
+   "name": "baseline.manifest_sha256",
+   "status": "PASS",
+   "detail": "73/73 files match captured X2"
+  },
+  {
+   "name": "contract.robot_env_vs_snapshot",
+   "status": "PASS",
+   "detail": "robot.env xy=0.35 yaw=0.17 sha=72ee4094b394 vs snapshot xy=0.35 yaw=0.17 trust=72ee4094b394"
+  },
+  {
+   "name": "contract.lab_env",
+   "status": "PASS",
+   "detail": ".env.lab: map=d1_qazbot_20261029 xy=0.35 yaw=0.17"
+  },
+  {
+   "name": "map.host_sha256",
+   "status": "PASS",
+   "detail": "ws/src/maps/d1_qazbot_20261029/map.pgm 72ee4094b394241e7b2761878774efbdd99e93731d7cb52709b2231c3975b354"
+  },
+  {
+   "name": "motion_adapter.p23_host",
+   "status": "PASS",
+   "detail": "P23 markers present in ws/src/navigation/x2_motion_adapter.py"
+  },
+  {
+   "name": "isolation.no_ssh_in_lab_chain",
+   "status": "PASS",
+   "detail": "32 lab-chain files scanned: no ssh/scp/robot address/check_robot.sh"
+  },
+  {
+   "name": "agents.claude",
+   "status": "PASS",
+   "detail": "2.1.316 (Claude Code) authenticated"
+  },
+  {
+   "name": "agents.codex",
+   "status": "PASS",
+   "detail": "codex-cli 0.166.0 authenticated"
+  },
+  {
+   "name": "docker.daemon",
+   "status": "FAIL",
+   "detail": " denied while trying to connect to the docker API at unix:///var/run/docker.sock"
+  },
+  {
+   "name": "host.disk_free_gb",
+   "status": "WARN",
+   "detail": "6 GB free (run_nightly refuses < 5; WARN < 10)"
+  },
+  {
+   "name": "docker.no_stray_twin",
+   "status": "FAIL",
+   "detail": "no twin containers running"
+  },
+  {
+   "name": "systemd.user_manager",
+   "status": "FAIL",
+   "detail": "systemctl --user unavailable"
+  },
+  {
+   "name": "systemd.linger",
+   "status": "WARN",
+   "detail": "Failed to connect to bus: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user)"
+  },
+  {
+   "name": "systemd.qazbot-nightly.service",
+   "status": "FAIL",
+   "detail": "Failed to connect to bus: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user) (start enables the daemon first, the timer last)"
+  },
+  {
+   "name": "systemd.qazbot-nightly-enqueue.timer",
+   "status": "FAIL",
+   "detail": "Failed to connect to bus: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user) (start enables the daemon first, the timer last)"
+  },
+  {
+   "name": "systemd.timer_no_catchup",
+   "status": "PASS",
+   "detail": "Persistent=false: enabling the timer cannot trigger a missed nightly"
+  },
+  {
+   "name": "sim.skipped",
+   "status": "WARN",
+   "detail": "static FAIL: containers are not started"
+  },
+  {
+   "name": "tests.skipped",
+   "status": "WARN",
+   "detail": "preflight already failed; regression can be run independently"
+  }
+ ]
+}

@@ -1,6 +1,6 @@
 # X2 digital twin — single entry point.   make help
 SHELL := /bin/bash
-COMPOSE := docker compose -f docker/compose.yaml --env-file $(or $(wildcard .env),.env.example)
+COMPOSE := docker compose -f docker/compose.yaml --env-file $(or $(TWIN_ENVFILE),$(wildcard .env),.env.example)
 # navigation stack source: sibling control_backend/ (dev workspace) or the repo root (this directory inside qazbot-x2-stack)
 BACKEND := $(if $(wildcard ../control_backend/ws),../control_backend,..)
 export TWIN_BACKEND := ../$(BACKEND)

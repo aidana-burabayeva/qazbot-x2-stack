@@ -1,0 +1,13 @@
+{
+  "queue": {
+    "COMPLETED": 32,
+    "NEEDS_APPROVAL": 2,
+    "NEEDS_ENGINEERING": 4
+  },
+  "kv": {
+    "frozen": true,
+    "lab_state": "STOPPED_OK",
+    "last_robot_integrated_sha": "6e70c0f90665c06dfc704162c9ddc84efce977c1"
+  },
+  "note": "Read-only local SQLite snapshot after refused start. Host runtime state remains unverified."
+}
