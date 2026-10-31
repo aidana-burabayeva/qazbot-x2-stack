@@ -155,7 +155,7 @@ def fingerprint(provider,model):
     import os,shutil
     from pathlib import Path
     import agents
-    paths=[Path(__file__).with_name(n) for n in ('agents.py','execution.py')]
+    paths=[Path(__file__).with_name(n) for n in ('agents.py','execution.py','nq.py')]
     binary=shutil.which(agents.ADAPTERS[provider].bin)
     if binary:paths.append(Path(binary).resolve())
     # Claude: settings.json, not ~/.claude.json (CLI/session state rewritten on every run)

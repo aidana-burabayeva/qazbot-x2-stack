@@ -1,0 +1,13 @@
+{
+  "provider": "claude",
+  "model": "claude-opus-5-5",
+  "source_sha": "0c652f824773cf85d70040fd1b25c08a6ecae00c",
+  "worktree": "/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/capability_claude_56b3390f614f.1.56b339",
+  "branch": "attempt/capability_claude_56b3390f614f-1-56b339",
+  "rc": 0,
+  "passed": true,
+  "category": "EXECUTION_OK",
+  "evidence": "/home/adn/QazBot/control_backend_p20_twin02/run/nightly/capabilities/capability_claude_56b3390f614f/task.log",
+  "sandbox": "execution.engineering_sandbox",
+  "command": "claude -p --permission-mode acceptEdits --output-format text --no-session-persistence --model claude-opus-5-5 -- 'Reply with exactly <challenge>. Do not run tools, modify files or contact the physical robot.\n\nENGINEERING ONLY: offline/source/replay/tests/review. No Docker/MuJoCo/MC or live ROS graph. Never label offline tests SIM_VERIFIED. Request L3_QUALIFICATION for runtime evidence; missing hardware facts -> NEEDS_HARDWARE; preserve evidence, then work on an independent issue. Source fixes require diagnosis={hypotheses,reproduction,causal_evidence,original_fail_retest,regression} and root_causes with VERIFIED status and evidence; no fix before causal reproduction. Rules: simulation only; never contact the physical X2 (no ssh/deploy/ros2 pub); do not weaken safety limits or goal tolerances; work only in your own git worktree; commit nothing to shared branches; on usage limit stop and exit (state is recovered from SQLite and Git).'"
+}

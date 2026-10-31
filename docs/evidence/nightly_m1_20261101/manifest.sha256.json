@@ -1,0 +1,23 @@
+{
+  "final_focused_57.txt": "5abbb7eeb093caf2e1dbbf21d49dc6053632b06c071c1f0389527d004c99a017",
+  "host_observations.json": "366440374ff62626ce0f53604184c269626754167e61ba3ca3d3e5bec7799d40",
+  "merged_gate_165.txt": "8435a2d83e74319a87273fc04cd1b13bad0c77ffb1f86891f9fb0564cc94936e",
+  "host_codex.log": "95838f6e710527f8945e116be10a6193103b7b32f9b54fe89e87e32926e0b300",
+  "regression_300.txt": "35733aa74a8ec36b5d6fb800d212eab93bda5ae7f61c64f3ec5677934dc05d07",
+  "base_focused_80.txt": "d93e1c56322b89fd0be46efe9b79c56812a66ca8d94430b5c74734f7d9738663",
+  "host_claude.log": "a825b859ccd7be3da57e1c0f07f1129c4e2cadac1b8fd09c8d7fe9481e313f41",
+  "regression_after_56.txt": "d168bfd110b4d422b3e53b079925377bf5c1f76d5ac7ed21c27f20759a201431",
+  "host_runtime_started.json": "2248d323971bde08c9c2d4d578a7fe0b65dda4aef19fb240544e98101b2ae05c",
+  "source_identity.json": "65376b4eb8d04012a359fa37fc724839a955b04ef1ce358732704790dce68a38",
+  "environment_reproduction.json": "9595883f37c43213316cdad97833ca12d580812ccae30fc6683e5c3799629882",
+  "migration_before.txt": "2e13becb37dcb98e38f579e161803d4a185e5d9a2878ca60b83ff69f3d9589e6",
+  "integration_receipt.json": "efbdeede58195067dc94862d23bbe55a5edfdb062cb6537521530a4b83c112cd",
+  "host_claude_receipt.json": "5097f1c2f02f7ddfdce6b5fd0998bd65e38fbd4c7c1c9ef3945b5cb34dad607b",
+  "regression_before.txt": "f2006f2a0ec971935919b3b45dca27e72b52b88f963b0d008ad7fbb0db2e8205",
+  "source_parity.txt": "96e38f0351c888fc4a2dee42746be7b247cde46c60417eb428dbe57839755983",
+  "README.md": "0c101f52041f5c14a8dbb59f52d8042c1c7247a867e51deac2f93ac9093edeef",
+  "host_codex_receipt.json": "18c0f65ff291b4c4382512386f30707db16e934f7371895001f39d5665202b53",
+  "merged_gate.sh": "5e97fd11c0b518e30e4508b282d096d2020a2338377d1828f33160ca3717e66b",
+  "host_resumed_claude_receipt.json": "31ac7e09f8a352b50a18c8503d249e355712dbf9c3e3e20826c24d786692c87e",
+  "host_resumed_claude.log": "d4036a6c19f80069b1fc73efb72f8fcd0795811dcebc0f18ccb3c3f233ff8859"
+}

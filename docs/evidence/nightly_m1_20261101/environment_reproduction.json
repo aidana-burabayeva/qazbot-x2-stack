@@ -1,0 +1,41 @@
+{
+  "parent_style": {
+    "fingerprints": {
+      "claude": "d004ddef1eb75cea3a36",
+      "codex": "2b0855f251887395643d"
+    },
+    "environment_hashes": {
+      "HOME": "cae4a06023873330ea92bc34ae9a4da17d22409ee96ec537be70eeb156c2ab44",
+      "PATH": "e686e82da645f02d26b1f608488f736acbceb945dd82f5c78899d32342dc8657",
+      "HTTP_PROXY": "dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91",
+      "HTTPS_PROXY": "dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91",
+      "ALL_PROXY": "dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91",
+      "NO_PROXY": "dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91"
+    },
+    "resolved_bins": {
+      "claude": "/home/adn/.local/bin/claude",
+      "codex": "/home/adn/.local/bin/codex"
+    }
+  },
+  "old_helper_style": {
+    "fingerprints": {
+      "claude": "4155900572ceeb073117",
+      "codex": "7203d77170d87f33bc22"
+    },
+    "environment_hashes": {
+      "HOME": "cae4a06023873330ea92bc34ae9a4da17d22409ee96ec537be70eeb156c2ab44",
+      "PATH": "6074a599e5c89d982a7a08e75d00ef6b5ff4e5bc90eac673f5937a9ea82a417f",
+      "HTTP_PROXY": "dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91",
+      "HTTPS_PROXY": "dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91",
+      "ALL_PROXY": "dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91",
+      "NO_PROXY": "dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91"
+    },
+    "resolved_bins": {
+      "claude": "/home/adn/.local/bin/claude",
+      "codex": "/home/adn/.local/bin/codex"
+    }
+  },
+  "changed_environment_keys": [
+    "PATH"
+  ]
+}

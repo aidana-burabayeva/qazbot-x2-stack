@@ -1,0 +1,32 @@
+{
+  "observed_at": 1793481851.1918144,
+  "host_start": {
+    "mode": "ENGINEERING",
+    "status": "VERIFIED_START",
+    "exit_code": 0,
+    "ts": 1793481479.7469194
+  },
+  "preflight_summary": {
+    "stamp": "20261101T021756",
+    "mode": "ENGINEERING",
+    "verdict": "PASS",
+    "git_head": "0c652f824773cf85d70040fd1b25c08a6ecae00c",
+    "integration": "0c652f824773cf85d70040fd1b25c08a6ecae00c"
+  },
+  "state": {
+    "execution_mode": "ENGINEERING",
+    "frozen": false,
+    "lab_state": "RUNNING_ENGINEERING"
+  },
+  "task": {
+    "name": "engineering_amcl_initialpose_v3",
+    "state": "RUNNING",
+    "owner": "claude",
+    "attempts": 2,
+    "phase": null,
+    "started": 1793481494.742124,
+    "attempt_wt": "/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/engineering_amcl_initialpose_v3.2.695983",
+    "log_path": "/home/adn/QazBot/control_backend_p20_twin02/run/nightly/logs/engineering_amcl_initialpose_v3.2.log"
+  },
+  "qualification": "HOST_VERIFIED_START_AND_REAL_TASK_DISPATCH; result and review still unverified"
+}

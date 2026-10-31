@@ -145,3 +145,42 @@ def test_fingerprint_ignores_volatile_provider_state_but_tracks_config(tmp_path,
     assert lead.fingerprint('claude','m')!=c
     x=lead.fingerprint('codex','m');(home/'.codex/config.toml').write_text('a=2')
     assert lead.fingerprint('codex','m')!=x
+
+
+def test_capability_helper_preserves_daemon_environment_without_login_shell(db,tmp_path,monkeypatch):
+    import execution,subprocess
+    monkeypatch.setattr(nq,'ROOT',tmp_path)
+    monkeypatch.setattr(nq,'RUN',tmp_path)
+    monkeypatch.setattr(nq,'LOGS',tmp_path)
+    monkeypatch.setattr(nq,'checkpoint',lambda *a:None)
+    monkeypatch.setattr(nq,'git',lambda *a:'a'*40)
+    monkeypatch.setattr(execution,'managed',lambda root:True)
+    monkeypatch.setenv('PATH','/usr/local/bin:/usr/bin:/bin:/home/adn/.local/bin')
+    seen={}
+    class Child:
+        pid=123
+    def launch(argv,**kwargs):
+        seen.update(argv=argv,env=kwargs['env']);return Child()
+    monkeypatch.setattr(subprocess,'Popen',launch)
+    cmd='python3 tools/nightly/workflow.py capability-probe --provider codex --model gpt-6.1-sol'
+    nq.enqueue(db,'probe',cmd,execution_tier='ENGINEERING')
+    row=db.execute("SELECT * FROM tasks WHERE name='probe'").fetchone()
+    nq.run_mechanical(db,row)
+    assert seen['argv']==[sys.executable,str(tmp_path/'tools/nightly/workflow.py'),'capability-probe','--provider','codex','--model','gpt-6.1-sol']
+    assert seen['env']['PATH']=='/usr/local/bin:/usr/bin:/bin:/home/adn/.local/bin'
+    assert seen['env']['ROS_LOCALHOST_ONLY']=='1'
+
+
+def test_dispatch_change_requalifies_without_reusing_completed_probe(db,tmp_path,monkeypatch):
+    import shutil
+    monkeypatch.setattr(lead,'__file__',str(tmp_path/'lead.py'))
+    monkeypatch.setattr(shutil,'which',lambda *a:None)
+    for file in ('agents.py','execution.py','nq.py'):
+        (tmp_path/file).write_text('old launch contract')
+    old=lead.ensure_probe(db,nq,'codex','test')
+    db.execute("UPDATE tasks SET state='COMPLETED' WHERE name=?",('execution_probe_codex_'+old,))
+    (tmp_path/'nq.py').write_text('corrected direct helper launch contract')
+    new=lead.ensure_probe(db,nq,'codex','test')
+    assert new!=old
+    assert db.execute("SELECT state FROM tasks WHERE name=?",('execution_probe_codex_'+old,)).fetchone()[0]=='COMPLETED'
+    assert db.execute("SELECT state FROM tasks WHERE name=?",('execution_probe_codex_'+new,)).fetchone()[0]=='PENDING'

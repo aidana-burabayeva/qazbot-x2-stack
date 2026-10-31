@@ -1,0 +1,43 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___ test_capability_helper_preserves_daemon_environment_without_login_shell ____
+
+db = <sqlite3.Connection object at 0x7b6e288d8940>
+tmp_path = PosixPath('/tmp/pytest-of-adn/pytest-113/test_capability_helper_preserv0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7b6e2895bfa0>
+
+    def test_capability_helper_preserves_daemon_environment_without_login_shell(db,tmp_path,monkeypatch):
+        import execution,subprocess
+        monkeypatch.setattr(nq,'ROOT',tmp_path)
+        monkeypatch.setattr(nq,'RUN',tmp_path)
+        monkeypatch.setattr(nq,'LOGS',tmp_path)
+        monkeypatch.setattr(nq,'checkpoint',lambda *a:None)
+        monkeypatch.setattr(nq,'git',lambda *a:'a'*40)
+        monkeypatch.setattr(execution,'managed',lambda root:True)
+        monkeypatch.setenv('PATH','/usr/local/bin:/usr/bin:/bin:/home/adn/.local/bin')
+        seen={}
+        class Child:
+            pid=123
+        def launch(argv,**kwargs):
+            seen.update(argv=argv,env=kwargs['env']);return Child()
+        monkeypatch.setattr(subprocess,'Popen',launch)
+        cmd='python3 tools/nightly/workflow.py capability-probe --provider codex --model gpt-6.1-sol'
+        nq.enqueue(db,'probe',cmd,execution_tier='ENGINEERING')
+        row=db.execute("SELECT * FROM tasks WHERE name='probe'").fetchone()
+        nq.run_mechanical(db,row)
+>       assert seen['argv']==[sys.executable,str(tmp_path/'tools/nightly/workflow.py'),'capability-probe','--provider','codex','--model','gpt-6.1-sol']
+E       AssertionError: assert ['bash', '-lc... gpt-6.1-sol'] == ['/usr/bin/py...--model', ...]
+E         At index 0 diff: 'bash' != '/usr/bin/python3'
+E         Right contains 4 more items, first extra item: '--provider'
+E         Full diff:
+E           [
+E         +  'bash',
+E         +  '-lc',
+E         +  'python3 tools/nightly/workflow.py capability-probe --provider codex --model '...
+E         
+E         ...Full output truncated (9 lines hidden), use '-vv' to show
+
+tests/nightly/test_engineering_lead.py:169: AssertionError
+=========================== short test summary info ============================
+FAILED tests/nightly/test_engineering_lead.py::test_capability_helper_preserves_daemon_environment_without_login_shell
+1 failed in 0.09s

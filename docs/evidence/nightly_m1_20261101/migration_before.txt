@@ -1,0 +1,25 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______ test_dispatch_change_requalifies_without_reusing_completed_probe _______
+
+db = <sqlite3.Connection object at 0x7234e3444a40>
+tmp_path = PosixPath('/tmp/pytest-of-adn/pytest-119/test_dispatch_change_requalifi0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7234e345c550>
+
+    def test_dispatch_change_requalifies_without_reusing_completed_probe(db,tmp_path,monkeypatch):
+        import shutil
+        monkeypatch.setattr(lead,'__file__',str(tmp_path/'lead.py'))
+        monkeypatch.setattr(shutil,'which',lambda *a:None)
+        for file in ('agents.py','execution.py','nq.py'):
+            (tmp_path/file).write_text('old launch contract')
+        old=lead.ensure_probe(db,nq,'codex','test')
+        db.execute("UPDATE tasks SET state='COMPLETED' WHERE name=?",('execution_probe_codex_'+old,))
+        (tmp_path/'nq.py').write_text('corrected direct helper launch contract')
+        new=lead.ensure_probe(db,nq,'codex','test')
+>       assert new!=old
+E       AssertionError: assert '114474fc179eb5d52ee6' != '114474fc179eb5d52ee6'
+
+tests/nightly/test_engineering_lead.py:184: AssertionError
+=========================== short test summary info ============================
+FAILED tests/nightly/test_engineering_lead.py::test_dispatch_change_requalifies_without_reusing_completed_probe
+1 failed in 0.06s

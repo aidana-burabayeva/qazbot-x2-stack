@@ -1,0 +1,5 @@
+Reading additional input from stdin...
+{"type":"thread.started","thread_id":"01a193bd-eb5a-77e0-805b-97f43b544050"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"QAZBOT_EXEC_OK_fed9935f8d4349d1"}}
+{"type":"turn.completed","usage":{"input_tokens":16227,"cached_input_tokens":12288,"cache_write_input_tokens":0,"output_tokens":20,"reasoning_output_tokens":0}}
