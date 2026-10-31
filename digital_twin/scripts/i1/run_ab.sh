@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+echo 'Historical harness: not authorized as the current Nightly baseline; use SHA-pinned campaign.py' >&2
+exit 2
 # I1 A/B in the twin: legacy (baseline) vs candidate (scan_format=i1 + obstacle_layer inf_is_valid), same start, same scenario.
 #   scripts/i1/run_ab.sh [TAG] [MODE...]   MODE: baseline candidate (default) | abl_inf_only (legacy scan + inf_is_valid) | abl_scan_only (i1 scan, no inf_is_valid)
 #   results: results/i1-TAG-MODE/ (+ stack_collision_lines.txt)

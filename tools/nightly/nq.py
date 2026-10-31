@@ -27,6 +27,8 @@ import agents  # noqa: E402
 import attempts  # noqa: E402
 import router  # noqa: E402
 import mergeq  # noqa: E402
+import execution  # noqa: E402
+import safety_guard
 
 ROOT = Path(os.environ.get('NIGHTLY_ROOT', Path(__file__).resolve().parents[2]))
 RUN = Path(os.environ.get('NIGHTLY_RUN', ROOT / 'run' / 'nightly'))
@@ -43,7 +45,7 @@ CREATE TABLE IF NOT EXISTS tasks(
   deps TEXT NOT NULL DEFAULT '[]', resource TEXT, attempts INTEGER NOT NULL DEFAULT 0, max_attempts INTEGER NOT NULL DEFAULT 2,
   timeout_s INTEGER NOT NULL DEFAULT 3600, heartbeat_s INTEGER NOT NULL DEFAULT 900,
   signature TEXT, reason TEXT, repro TEXT, log_path TEXT, exit_code INTEGER, pid INTEGER,
-  created REAL, started REAL, finished REAL, not_before REAL NOT NULL DEFAULT 0);
+  created REAL, started REAL, finished REAL, not_before REAL NOT NULL DEFAULT 0, execution_tier TEXT NOT NULL DEFAULT 'FULL_NIGHTLY', review_required INTEGER NOT NULL DEFAULT 0);
 CREATE TABLE IF NOT EXISTS events(ts REAL, task TEXT, event TEXT, detail TEXT);
 CREATE TABLE IF NOT EXISTS kv(k TEXT PRIMARY KEY, v TEXT);
 CREATE TABLE IF NOT EXISTS failures(signature TEXT PRIMARY KEY, first_task TEXT, count INTEGER, first_ts REAL, last_ts REAL, detail TEXT);
@@ -74,6 +76,10 @@ def connect():
         db.execute('ALTER TABLE tasks ADD COLUMN dispatched_at REAL')
     if 'owner' not in cols:
         db.execute('ALTER TABLE tasks ADD COLUMN owner TEXT')  # agent that currently holds the task (durable ownership)
+    if 'review_required' not in cols:
+        db.execute('ALTER TABLE tasks ADD COLUMN review_required INTEGER NOT NULL DEFAULT 0')
+    if 'execution_tier' not in cols:
+        db.execute("ALTER TABLE tasks ADD COLUMN execution_tier TEXT NOT NULL DEFAULT 'FULL_NIGHTLY'")
     if 'klass' not in cols:
         db.execute('ALTER TABLE tasks ADD COLUMN klass TEXT')  # SIM_ONLY | SIM_THEN_HARDWARE | HARDWARE_ONLY | NEEDS_APPROVAL
     return db
@@ -126,12 +132,18 @@ def enqueue(db, name, cmd, kind='mechanical', **kw):
         cols['deps'] = json.dumps(cols['deps'])
     if kind == 'engineering' and not cols['resource']:
         cols['resource'] = 'wt:' + str(cols['cwd'])  # one writer per worktree: ready() never starts two tasks on one resource
+    tier = cols.pop('execution_tier', None) or ('ENGINEERING' if kind == 'engineering' and cols['resource'] != 'sim' else 'FULL_NIGHTLY')
+    if tier not in execution.MODES:
+        raise ValueError('unknown execution tier')
+    if tier == execution.L3 or (tier == execution.FULL and cols['resource'] == 'sim'):
+        cols['resource'] = 'sim'
     row = db.execute('SELECT state FROM tasks WHERE name=?', (name,)).fetchone()
     if row:
         return False  # never overwrite history; a re-run needs a new name
     db.execute('INSERT INTO tasks(name,kind,cmd,cwd,state,priority,deps,resource,max_attempts,timeout_s,heartbeat_s,repro,reason,created) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
                (name, kind, cmd, cols['cwd'], cols['state'], cols['priority'], cols['deps'], cols['resource'], cols['max_attempts'],
                 cols['timeout_s'], cols['heartbeat_s'], cols['repro'] or cmd, cols['reason'], time.time()))
+    db.execute('UPDATE tasks SET execution_tier=? WHERE name=?', (tier,name))
     ev(db, name, 'ENQUEUED', cmd)
     return True
 
@@ -180,6 +192,13 @@ def ready(db):
     for r in db.execute("SELECT * FROM tasks WHERE state='PENDING' AND not_before<=? ORDER BY priority, id", (now,)):
         if not all(d in done for d in json.loads(r['deps'])):
             continue
+        if execution.managed(ROOT):
+            ok,why=execution.allowed(db,ROOT,execution.task_tier(r),mergeq.integration_head(ROOT))
+            if not ok:
+                if kv_get(db,'tier_block:'+r['name'])!=why:
+                    kv_set(db,'tier_block:'+r['name'],why)
+                    ev(db,r['name'],'TIER_BLOCKED',why)
+                continue
         # recomputed for every candidate: a dispatch earlier in the same tick must already hold its lease
         if r['resource'] and db.execute("SELECT 1 FROM tasks WHERE resource=? AND state IN ('RUNNING','DELEGATED','VERIFYING') LIMIT 1", (r['resource'],)).fetchone():
             continue
@@ -197,6 +216,16 @@ def result_dir(name, attempt):
 
 def run_mechanical(db, r):
     name = r['name']
+    if execution.managed(ROOT) and r['cmd']=='python3 tools/nightly/workflow.py audit --refresh':
+        url=git('config','--get','remote.origin.url')
+        if url.startswith('https://github.com/') or url.startswith('git@github.com:'):
+            try:
+                fetched=subprocess.run(['git','-C',str(ROOT),'fetch','origin','robot/stable'],capture_output=True,text=True,timeout=30)
+                ev(db,name,'ROBOT_REF_FETCH',str(fetched.returncode)+': '+fetched.stderr[-160:])
+            except subprocess.TimeoutExpired:
+                ev(db,name,'ROBOT_REF_FETCH','UNVERIFIED: timeout; using retained published snapshot')
+    if execution.managed(ROOT) and execution.task_tier(r) == execution.L3:
+        execution.consume_l3(db,r['name'],r['attempts']+1)
     attempt = r['attempts'] + 1
     log = LOGS / f"{name}.{attempt}.log"
     rdir = result_dir(name, attempt)
@@ -207,11 +236,16 @@ def run_mechanical(db, r):
     db.execute("UPDATE tasks SET state='RUNNING', attempts=?, started=?, log_path=?, finished=NULL, exit_code=NULL WHERE id=?", (attempt, time.time(), str(log), r['id']))
     if kv_get(db, f'base:{name}:{attempt}') is None:  # an isolated attempt already recorded its own base SHA
         kv_set(db, f'base:{name}:{attempt}', base)
+    dispatch_token=agents.new_attempt_id()
+    kv_set(db,f'dispatch_token:{name}:{attempt}',dispatch_token)
     ev(db, name, 'START', r['cmd'])
     checkpoint(db, f'start {name}')
     with open(log, 'wb') as fh:
-        p = subprocess.Popen(['bash', '-lc', r['cmd']], cwd=dict(r).get('run_cwd') or r['cwd'], stdin=subprocess.DEVNULL, stdout=fh, stderr=subprocess.STDOUT, start_new_session=True,
-                             env=dict(os.environ, NIGHTLY_RESULT_DIR=str(rdir), NIGHTLY_TASK=name, NIGHTLY_ATTEMPT=str(attempt), NIGHTLY_ATTEMPT_ID=str(dict(r).get('attempt_id') or '')))
+        argv = ['bash', '-lc', r['cmd']]
+        if execution.managed(ROOT) and execution.task_tier(r)==execution.ENGINEERING:
+            argv = execution.engineering_sandbox(argv, dict(r).get('run_cwd') or r['cwd'], rdir, writable_run=RUN if r['kind']!='engineering' else None)
+        p = subprocess.Popen(argv, cwd=dict(r).get('run_cwd') or r['cwd'], stdin=subprocess.DEVNULL, stdout=fh, stderr=subprocess.STDOUT, start_new_session=True,
+                             env=dict(os.environ, NIGHTLY_ROOT=str(ROOT), NIGHTLY_RUN=str(RUN), NIGHTLY_DISPATCH_TOKEN=dispatch_token, NIGHTLY_TASK_TIER=execution.task_tier(r), ROS_LOCALHOST_ONLY='1', ROS_DOMAIN_ID='87', DOCKER_HOST='', OMP_NUM_THREADS='1', OPENBLAS_NUM_THREADS='1', NIGHTLY_RESULT_DIR=str(rdir), NIGHTLY_TASK=name, NIGHTLY_ATTEMPT=str(attempt), NIGHTLY_ATTEMPT_ID=str(dict(r).get('attempt_id') or '')))
     db.execute('UPDATE tasks SET pid=? WHERE id=?', (p.pid, r['id']))
     return p, log
 
@@ -530,6 +564,9 @@ def _verify(db, row, path):
         changed = subprocess.run(['git', '-C', cwd, 'diff', '--name-only', f'{base}..{tip}'], capture_output=True, text=True).stdout.split()
         if not changed:
             return False, None, 'attempt produced no change relative to its base SHA'
+        safety_errors=safety_guard.check(cwd,base,tip)
+        if safety_errors:
+            return False,None,'; '.join(safety_errors)
     else:
         if not isinstance(sha, str) or not re.fullmatch(r'[0-9a-f]{40}', sha) or subprocess.run(['git', '-C', cwd, 'cat-file', '-e', sha + '^{commit}'], capture_output=True).returncode != 0:
             return False, None, 'git_sha is not a commit in the task repository'
@@ -564,7 +601,7 @@ def _verify(db, row, path):
     if not argv or not any(argv[:len(a)] == a for a in allow):
         return False, None, f"tests.cmd not allow-listed for orchestrator re-run: {t['cmd'][:60]}"
     item = {'scenario_id': f"engineering:{row['name']}", 'seed': row['attempt_id'], 'verdict': 'UNVERIFIED',
-            'metrics': {'tests_cmd': t['cmd'], 'git_sha': sha, 'branch': row['branch']}, 'safety_violations': 0, 'notes': str(d.get('summary') or '')[:300]}
+            'metrics': {'verification_scope': 'OFFLINE_VERIFIED' if execution.task_tier(row)==execution.ENGINEERING else 'TESTS_VERIFIED_NOT_SIM', 'tests_cmd': t['cmd'], 'git_sha': sha, 'branch': row['branch'], 'sim_archive_run_id': d.get('sim_archive_run_id')}, 'safety_violations': 0, 'notes': str(d.get('summary') or '')[:300]}
     return True, (item, d, argv), 'structurally accepted'
 
 
@@ -719,6 +756,13 @@ def tick(db, cur):
         rc = p.poll()
         if rc is not None:
             finish(db, r, p, log, 'ok' if rc == 0 else 'fail')
+            auth=kv_get(db,'execution_authorization',{})
+            if execution.managed(ROOT) and execution.task_tier(r)==execution.L3 and auth.get('mode')==execution.L3:
+                auth['mode']=execution.ENGINEERING
+                kv_set(db,'execution_authorization',auth)
+                kv_set(db,'execution_mode',execution.ENGINEERING)
+                kv_set(db,'lab_state',execution.STATES[execution.ENGINEERING])
+                checkpoint(db,'bounded L3 run ended; Engineering remains available')
             return None
         sz = log.stat().st_size if log.exists() else 0
         hb = Path(str(log) + '.hb')
@@ -750,7 +794,10 @@ def tick(db, cur):
             r = dict(r) | {'model': sel['model'], 'effort': sel['effort']}
             kv_set(db, f"quota_before:{r['name']}:{r['attempts'] + 1}", (agents.codex_usage() if a == 'codex' else agents.claude_usage()).get('used_pct'))
             ad = agents.ADAPTERS[a]
-            isolate = os.environ.get('NIGHTLY_ISOLATE', '1') != '0' and ad.mode == 'process' and attempts.is_git_repo(r['cwd'] or str(ROOT))
+            isolate = (execution.managed(ROOT) or os.environ.get('NIGHTLY_ISOLATE', '1') != '0') and ad.mode == 'process' and attempts.is_git_repo(r['cwd'] or str(ROOT))
+            if execution.managed(ROOT) and (not isolate or ad.mode!='process'):
+                ev(db,r['name'],'ISOLATION_REFUSED','managed LAB agents require isolated noninteractive process attempts')
+                continue
             if not isolate:
                 fw = agents.foreign_writers(r['cwd'] or str(ROOT), own_sessions(db))
                 if fw:  # an agent we did not start (operator TUI) is already in this worktree: never become a second writer
@@ -795,6 +842,13 @@ def agent_context(db_path_row):
     """Established facts for a fresh agent, read from SQLite (not from a previous agent's last message)."""
     db = connect()
     parts = [store.known_causes_text(db)]
+    if 'engineering_defect_' in db_path_row['name']:
+        sig=db_path_row['name'].split('engineering_defect_',1)[1].split('_recur_',1)[0]
+        try:
+            events=[json.loads(r[0]) for r in db.execute('SELECT payload FROM failure_events WHERE signature=? ORDER BY ts DESC LIMIT 8',(sig,))]
+            parts.append('Failure cluster evidence: '+json.dumps(events,default=str)[:14000])
+        except sqlite3.Error:
+            pass
     c = db.execute('SELECT * FROM eng_checkpoints WHERE task=? ORDER BY id DESC LIMIT 1', (db_path_row['name'],)).fetchone()
     if c:
         parts.append(f"Last checkpoint ({c['source']}, verified={bool(c['verified'])}, git {c['git_sha']}): next={c['next_step']}; unfinished={c['unfinished']}. "
@@ -862,6 +916,10 @@ def revive_agents(db):
 
 def daemon(args):
     db = connect()
+    if execution.managed(ROOT):
+        ok,why=execution.allowed(db,ROOT,execution.ENGINEERING)
+        if not ok:
+            raise SystemExit('daemon refused: '+why)
     lock = open(RUN / 'orchestrator.lock', 'a+')
     try:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)  # single-owner lease
@@ -901,7 +959,7 @@ def main():
     sp = ap.add_subparsers(dest='c', required=True)
     d = sp.add_parser('daemon'); d.add_argument('--poll', type=float, default=2.0); d.add_argument('--keep-alive', action='store_true'); d.add_argument('--max-seconds', type=float, default=0)
     e = sp.add_parser('enqueue'); e.add_argument('name'); e.add_argument('cmd'); e.add_argument('--kind', default='mechanical')
-    e.add_argument('--priority', type=int); e.add_argument('--deps', default='[]'); e.add_argument('--resource'); e.add_argument('--timeout', type=int)
+    e.add_argument('--tier', choices=execution.MODES); e.add_argument('--priority', type=int); e.add_argument('--deps', default='[]'); e.add_argument('--resource'); e.add_argument('--timeout', type=int)
     e.add_argument('--heartbeat', type=int); e.add_argument('--cwd'); e.add_argument('--state'); e.add_argument('--reason'); e.add_argument('--klass'); e.add_argument('--requires-result', action='store_true'); e.add_argument('--model'); e.add_argument('--effort'); e.add_argument('--base-from'); e.add_argument('--task-type'); e.add_argument('--complexity'); e.add_argument('--risk')
     sp.add_parser('status')
     m = sp.add_parser('mark'); m.add_argument('name'); m.add_argument('state'); m.add_argument('--reason', default='')
@@ -924,7 +982,7 @@ def main():
         cmd_status(a)
     elif a.c == 'enqueue':
         db = connect()
-        ok = enqueue(db, a.name, a.cmd, kind=a.kind, priority=a.priority, deps=json.loads(a.deps), resource=a.resource,
+        ok = enqueue(db, a.name, a.cmd, kind=a.kind, execution_tier=a.tier, priority=a.priority, deps=json.loads(a.deps), resource=a.resource,
                      timeout_s=a.timeout, heartbeat_s=a.heartbeat, cwd=a.cwd, state=a.state, reason=a.reason)
         if a.klass:
             db.execute('UPDATE tasks SET klass=? WHERE name=?', (a.klass, a.name))

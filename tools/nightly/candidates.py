@@ -12,7 +12,7 @@ from pathlib import Path
 
 FILE = 'docs/hardware/CANDIDATES.json'
 PRODUCTION_PREFIX = 'ws/src/'
-NOT_PRODUCTION = ('ws/src/maps/main_office/',)      # simulator-only map variant
+NOT_PRODUCTION = ('ws/src/maps/main_office/', 'ws/src/maps/d1_qazbot_20261029/manifest.json')      # simulator-only map variant
 FORBIDDEN = ('digital_twin/', 'tests/', 'tools/nightly/', 'run/')
 
 
@@ -53,6 +53,18 @@ def build(db, task_name, wt, base_sha, result_sha, merge_sha=None, gate=''):
     if not rc:
         raise ValueError('production fix without a VERIFIED root cause (record it with `nq.py root-cause --status VERIFIED`)')
     metrics = json.loads(res['metrics'] or '{}')
+    if metrics.get('verification_scope')=='OFFLINE_VERIFIED':
+        raise ValueError('offline Engineering is not SIM_VERIFIED')
+    import optimization_archive
+    try:
+        proof=db.execute('SELECT payload FROM optimization_runs WHERE run_id=?',(metrics.get('sim_archive_run_id'),)).fetchone()
+        evidence=json.loads(proof['payload']) if proof else {}
+        errors=optimization_archive.failures(db,evidence,Path(wt))
+    except Exception:
+        errors=['missing validated simulation archive']
+        evidence={}
+    if errors or evidence.get('git_sha')!=result_sha or evidence.get('fidelity') not in ('L2','L3'):
+        raise ValueError('production candidate requires matching independently validated simulation evidence')
     return {
         'id': f'cand-{task_name}-{result_sha[:7]}', 'task_id': task_name, 'title': (t['repro'] or task_name)[:120] if t else task_name,
         'root_cause': {'key': rc['key'], 'summary': rc['summary'], 'evidence': rc['evidence']},

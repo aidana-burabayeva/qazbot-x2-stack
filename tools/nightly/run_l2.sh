@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+echo 'Historical harness: not authorized as the current Nightly baseline; use SHA-pinned campaign.py' >&2
+exit 2
 # L2: one scenario through the real Nav2 + P20 adapter + MC/MuJoCo chain (truth localisation, robot goal tolerances 0.20/0.35).
 # usage: run_l2.sh <scenario_id> <scenarios.tsv> ; one fresh sim per scenario (TWIN_START is a launch-time argument). SIM ONLY.
 set -euo pipefail

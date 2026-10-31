@@ -163,11 +163,12 @@ def test_robot_stable_is_the_installed_state_and_origin_main_is_never_used(lab):
     assert kv(w, 'last_robot_processed_sha') == tip and not tasks(w, 'robot_parity_lio_%')
 
 
-def test_hardware_candidate_results_from_robot_stable_become_tasks_and_pointers(lab):
+@pytest.mark.parametrize('outcome',['HW_FAILED','TWIN_MISMATCH'])
+def test_hardware_candidate_results_from_robot_stable_become_tasks_and_pointers(lab,outcome):
     w, remote, e, tmp = lab
     stop(e)
     publish_robot(remote, tmp, 'robot/stable', {
-        'docs/hardware/candidate_results/cand-x-1.json': json.dumps({'id': 'cand-x-1', 'status': 'HW_FAILED', 'task_id': 'x', 'result_sha': 'a' * 40, 'evidence': 'bag:/b/1 sha256:ab'}),
+        'docs/hardware/candidate_results/cand-x-1.json': json.dumps({'id': 'cand-x-1', 'status': outcome, 'task_id': 'x', 'result_sha': 'a' * 40, 'evidence': 'bag:/b/1 sha256:ab'}),
         'docs/hardware/candidate_results/cand-y-2.json': json.dumps({'id': 'cand-y-2', 'status': 'HW_VERIFIED', 'task_id': 'y', 'candidate_sha': 'c' * 40, 'result_sha': 'b' * 40, 'evidence': 'bag'})})
     resume(e)
     t = tasks(w, 'hw_candidate_failed_%')

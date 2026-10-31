@@ -24,6 +24,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import nq  # noqa: E402
 import mergeq  # noqa: E402
+import execution  # noqa: E402
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'operator_skills'))
 import opskills  # noqa: E402
 
@@ -49,6 +50,7 @@ ALLOWED = {
 
 RES = []
 START_HEAD = START_INTEGRATION = None
+MODE = execution.FULL
 
 
 def add(name, status, detail='', **extra):
@@ -108,8 +110,12 @@ def check_git():
     co = mergeq.checked_out_at(ROOT, f'refs/heads/{mergeq.branch_name()}')
     add('git.integration_not_checked_out', 'FAIL' if co else 'PASS',
         f'{mergeq.branch_name()} is checked out in {co}: the merge queue would leave that tree stale' if co else f'{mergeq.branch_name()} is not checked out in any worktree')
+    url=gout('config','--get','remote.origin.url')
+    if not (url.startswith('https://github.com/') or url.startswith('git@github.com:')):
+        add('git.remote_scope','FAIL','origin is not an approved GitHub source; no fetch attempted')
+        return
     rc, o = git('fetch', '--prune', 'origin', timeout=120)
-    add('git.fetch', 'PASS' if rc == 0 else 'FAIL', 'origin fetched' if rc == 0 else f'offline? {o[-100:]}')
+    add('git.fetch', 'PASS' if rc == 0 else ('WARN' if MODE==execution.ENGINEERING else 'FAIL'), 'origin fetched' if rc == 0 else f'offline? {o[-100:]}')
     ih = gout('rev-parse', '-q', '--verify', f'refs/heads/{mergeq.branch_name()}')
     if not ih:
         add('git.integration_branch', 'FAIL', f'{mergeq.branch_name()} missing')
@@ -119,11 +125,11 @@ def check_git():
         ro = gout('rev-parse', '-q', '--verify', f'refs/remotes/origin/{mergeq.branch_name()}')
         if ro and ro != ih:
             anc = git('merge-base', '--is-ancestor', ro, ih)[0] == 0
-            add('git.integration_vs_origin', 'WARN' if anc else 'FAIL', 'local ahead of origin (publishes at stop)' if anc else f'origin {ro[:9]} not an ancestor of local {ih[:9]}: diverged')
+            add('git.integration_vs_origin', 'WARN' if anc or MODE==execution.ENGINEERING else 'FAIL', 'local ahead of origin (publishes at stop)' if anc else f'origin {ro[:9]} not an ancestor of local {ih[:9]}: diverged')
         else:
             add('git.integration_vs_origin', 'PASS', f'{ih[:9]} == origin')
-    dirty = [ln for ln in gout('status', '--porcelain', '-uno').splitlines() if ln.strip()]
-    add('git.tracked_clean', 'FAIL' if dirty else 'PASS', f'{len(dirty)} tracked modification(s): {dirty[:3]}' if dirty else 'no tracked modifications')
+    dirty = [ln for ln in gout('status', '--porcelain').splitlines() if ln.strip()]
+    add('git.tracked_clean', 'FAIL' if dirty else 'PASS', f'{len(dirty)} tracked/untracked modification(s): {dirty[:3]}' if dirty else 'no tracked or untracked modifications')
     add('git.robot_ref', 'PASS' if gout('rev-parse', '-q', '--verify', ROBOT_REF) else 'FAIL', f'{ROBOT_REF} {gout("rev-parse", "--short", ROBOT_REF)}')
 
 
@@ -241,10 +247,38 @@ def run_tests():
     add('tests.regression', 'PASS' if rc == 0 else 'FAIL', o.splitlines()[-1] if o else rc)
 
 
+def vendor_identity():
+    import hashlib
+    vendor=Path(env_file(TW / '.env.lab')['TWIN_VENDOR'])
+    return {name:hashlib.sha256((vendor/name).read_bytes()).hexdigest() for name in
+            ('mc/bin/aima-mc-app-main','sim/bin/aima-sim-app','sim/lib/libaima-sim-module-mujoco.so.0.0.0','sim/lib/libmujoco.so.3.3.7')}
+
+
 def stage_static():
     print('== static')
-    check_role(); check_git(); check_baseline(); nodes = check_contract(); check_p23(); check_ssh_scan(); check_agents(); check_docker(); check_systemd()
+    check_role(); check_git(); check_baseline(); nodes = check_contract();
+    try:
+        ids=vendor_identity();add('vendor.identity','PASS','MC/MuJoCo binary hashes measured',hashes=ids)
+    except OSError as exc:
+        add('vendor.identity','FAIL',str(exc))
+    check_p23(); check_ssh_scan(); check_agents(); check_docker(); check_systemd()
     return nodes
+
+
+def stage_engineering():
+    check_role(); check_git(); check_ssh_scan(); check_agents(); check_systemd()
+    free=shutil.disk_usage(ROOT).free//2**30
+    add('engineering.disk','PASS' if free>=5 else 'FAIL',f'{free} GiB free; existing 5 GiB floor preserved')
+    rc,out=sh(['bwrap','--die-with-parent','--unshare-pid','--unshare-ipc','--ro-bind','/','/',
+               '--proc','/proc','--dev','/dev','--tmpfs','/run','--tmpfs','/tmp','--','true'])
+    add('engineering.namespace_isolation','PASS' if rc==0 else 'FAIL',out or 'read-only host and hidden runtime sockets')
+    rc,out=sh("docker info --format '{{.ServerVersion}}'",timeout=20)
+    add('engineering.docker_optional','PASS' if rc==0 else 'WARN',out[-120:]+' (not required for offline Engineering)')
+    # Source parity is diagnostic here: verified LAB source fixes may intentionally differ from installed robot.
+    rc,out=sh([sys.executable,'tools/twin/verify_robot_baseline.py'])
+    add('engineering.robot_parity','PASS' if rc==0 else 'WARN',out[-150:])
+    rc,out=sh('source /opt/ros/humble/setup.bash 2>/dev/null; python3 -m pytest -q -p no:cacheprovider tests/nightly/test_execution_modes.py tests/nightly/test_labctl.py tests/motion_adapter',timeout=300)
+    add('engineering.basic_tests','PASS' if rc==0 else 'FAIL',out[-220:])
 
 
 # ------------------------------------------------------------------ sim
@@ -384,10 +418,12 @@ def stage_sim(nodes):
     print('== sim (project %s, image tag nightly)' % PROJECT)
     c = env_file(TW / 'scripts/contract/robot.env')
     sh(f'docker ps -aq --filter label=com.docker.compose.project={PROJECT} | xargs -r docker rm -f; docker network rm {PROJECT}_twin 2>/dev/null; true')  # leftovers of a crashed run
-    rc, o = dc('build', 'stack', timeout=1800)
+    rc, o = dc('build', 'sim', 'stack', timeout=1800)
     add('sim.build_stack_image', 'PASS' if rc == 0 else 'FAIL', 'x2-twin-stack:nightly rebuilt' if rc == 0 else o[-200:])
     if rc != 0:
         return
+    sim_rc,sim_id=sh(['docker','image','inspect','x2-twin-sim:nightly','--format','{{.Id}}'])
+    add('sim.official_image_id','PASS' if sim_rc==0 else 'FAIL',sim_id)
     rc, created = sh("docker image inspect -f '{{.Id}} {{.Created}}' x2-twin-stack:nightly")
     add('sim.image_id', 'PASS', created[:90])
     # 73/73 SHA256 inside the image (nav_control.launch.py is patched on purpose by the Dockerfile: it must be the ONLY difference, and only by the two documented hooks)
@@ -448,7 +484,7 @@ def report(kind, started):
     if START_HEAD and (gout('rev-parse', 'HEAD') != START_HEAD or mergeq.integration_head(ROOT) != START_INTEGRATION):
         add('git.changed_during_preflight', 'FAIL', 'Git refs moved during checks; rebuild and recheck')
         verdict = 'FAIL'
-    doc = dict(kind=kind, verdict=verdict, stamp=stamp, started=started, seconds=round(time.time() - started, 1), git_head=START_HEAD or gout('rev-parse', 'HEAD'), code_dirty=bool(gout('status', '--porcelain')),
+    doc = dict(kind=kind, mode=MODE, vendor_identity=next((r.get('hashes') for r in RES if r['name']=='vendor.identity'),{}), images={key:next((r['detail'].split()[0] for r in RES if r['name']==name and r['status']=='PASS' and r['detail'].split()),None) for key,name in (('stack','sim.image_id'),('sim','sim.official_image_id'))}, verdict=verdict, stamp=stamp, started=started, seconds=round(time.time() - started, 1), git_head=START_HEAD or gout('rev-parse', 'HEAD'), code_dirty=bool(gout('status', '--porcelain')),
                integration=START_INTEGRATION or gout('rev-parse', f'refs/heads/{mergeq.branch_name()}'), robot_ref=ROBOT_REF, robot_sha=gout('rev-parse', ROBOT_REF), checks=RES)
     (d / f'{stamp}_{kind}.json').write_text(json.dumps(doc, indent=1, default=str))
     (d / 'latest.json').write_text(json.dumps(doc, indent=1, default=str))
@@ -462,12 +498,14 @@ def report(kind, started):
 
 
 def main():
-    global START_HEAD, START_INTEGRATION
+    global START_HEAD, START_INTEGRATION, MODE
     START_HEAD, START_INTEGRATION = gout('rev-parse', 'HEAD'), mergeq.integration_head(ROOT)
     ap = argparse.ArgumentParser()
     ap.add_argument('stage', choices=('static', 'sim', 'all'))
     ap.add_argument('--tests', action='store_true')
+    ap.add_argument('--mode', choices=execution.MODES, default=execution.FULL)
     a = ap.parse_args()
+    MODE = a.mode
     t0 = time.time()
     try:
         return run_stage(a, t0)
@@ -478,6 +516,9 @@ def main():
 
 
 def run_stage(a, t0):
+    if MODE==execution.ENGINEERING:
+        stage_engineering()
+        return 0 if report(a.stage,t0)=='PASS' else 1
     nodes = stage_static() if a.stage in ('static', 'all') else check_contract()
     if a.stage in ('sim', 'all'):
         fails = [r for r in RES if r['status'] == 'FAIL']
@@ -485,6 +526,9 @@ def run_stage(a, t0):
             add('sim.skipped', 'WARN', 'static FAIL: containers are not started')
         elif nodes:
             stage_sim(nodes)
+    if MODE==execution.L3 and not any(r['status']=='FAIL' for r in RES):
+        rc,out=sh('PYTHONPATH=digital_twin/ws/src/x2_twin_sim python3 -m pytest -q -p no:cacheprovider digital_twin/ws/src/x2_twin_sim/test/test_frame_anchor.py',timeout=60)
+        add('tests.frame_anchor','PASS' if rc==0 else 'FAIL',out[-150:])
     if a.tests:
         if any(r['status'] == 'FAIL' for r in RES):
             add('tests.skipped', 'WARN', 'preflight already failed; regression can be run independently')

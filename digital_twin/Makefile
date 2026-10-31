@@ -78,11 +78,17 @@ lite-up:         ## lightweight mode (virtual MC + kinematic plant, no MuJoCo)
 lite-scenario:   ## the same scenario against the lightweight mode
 	$(COMPOSE) --profile lite run --rm scenario-lite
 
-nightly:         ## regression campaign (campaigns/nightly.tsv), WORKERS parallel isolated lite twins -> results/nightly_<stamp>/summary.json
-	scripts/nightly/run_nightly.sh
+nightly:         ## current SHA-pinned D1/P23 campaign through the existing queue authorization (historical TSV is not automatic)
+	../tools/nightly/enqueue_nightly.sh
 
 results:         ## summarize results/ (PREFIX=run)
 	$(COMPOSE) --profile test run --rm --no-deps scenario ros2 run x2_twin_scenarios summarize $(or $(PREFIX),run)
 
 clean:           ## remove containers, volumes (re-seeds vendor copies) and dangling build cache of this project
 	$(COMPOSE) --profile test --profile lite down -v
+
+# Runtime entrypoints cannot bypass the queue's capabilities. Offline build/test targets remain available.
+.PHONY: runtime-authorized
+runtime-authorized:
+	@python3 ../tools/nightly/execution.py L3_QUALIFICATION
+up scenario scenario-truth scenario-turn scenario-i1 lite-up lite-scenario: runtime-authorized

@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+echo 'Historical harness: not authorized as the current Nightly baseline; use SHA-pinned campaign.py' >&2
+exit 2
 # SIM ONLY. Full Nav2 + P20 adapter + official MC/MuJoCo, truth localisation, one goal with phase recorder.
 #   P20_RUN=<unique name> [GOAL_ARGS="--only-ccw --record-phases"] tests/p20_sim/run_nav2_trace.sh
 # Output: digital_twin/results/<P20_RUN>/ (result.json, trace.json, recorder/{motion.csv,status.jsonl}).

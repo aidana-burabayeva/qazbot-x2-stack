@@ -1,3 +1,9 @@
+# 2026-11-01 — capability-scoped Nightly bootstrap
+
+The global L3-receipt bootstrap deadlock is replaced by ENGINEERING / L3_QUALIFICATION / FULL_NIGHTLY in the existing queue. Read [execution modes](nightly/EXECUTION_MODES.md) and [current evidence](evidence/nightly_modes_20261101/README.md). Engineering uses its own preflight; it cannot certify simulation. The first official MC scope is bounded/stationary and remains UNVERIFIED until real metrics exist. Actual systemd/Docker access is blocked here; no runtime start or real CLI engineering task is claimed. Saved STOPPED_OK/frozen checkpoint retained. Physical X2 untouched. Historical reports below are not current verification.
+
+---
+
 # 2026-11-01 — AIMDK-aligned sensor/runtime qualification
 
 Read [AIMDK fidelity gates](nightly/AIMDK_FIDELITY.md) and [evidence](evidence/aimdk_fidelity_20261101/README.md). Recorded cloud fixtures and source sensor contract corrections implemented. Runtime E2E is NOT READY: Docker/systemd are inaccessible here. A PASS lite doctor is insufficient for unattended start; a current verified L3/E2E receipt is now required. No physical X2 access; existing queue remains frozen.

@@ -11,6 +11,7 @@ import lab
 import nq
 import preflight
 import qualification
+import execution
 
 ROOT, RUN = nq.ROOT, nq.RUN
 REVIEWED_ROBOT = '1212d7eda003022d74c6ecc4a2c745fd48f57c2f'
@@ -41,7 +42,7 @@ def call(*args):
     return subprocess.call(list(args), cwd=ROOT)
 
 
-def prepare_campaign(db):
+def prepare_campaign(db, mode=execution.ENGINEERING):
     """Idempotent names; keep legacy failures and never silently replay them."""
     for name, why in LEGACY.items():
         key = 'bootstrap_review:' + name
@@ -58,26 +59,25 @@ def prepare_campaign(db):
         nq.kv_set(db, 'last_robot_processed_sha', tip)
         nq.kv_set(db, 'last_robot_integrated_sha', tip)
         nq.ev(db, '*', 'BOOTSTRAP_ROBOT_REVIEW', 'Reviewed snapshot files verified on integration; explicit campaign replaces duplicate historical parity/blocker tasks: ' + tip)
-    for name, priority, kind, prompt in CAMPAIGN:
-        made = nq.enqueue(db, name, 'true', kind='engineering', priority=priority, resource='sim', timeout_s=3600, heartbeat_s=900,
-                          repro='--agents=claude,codex ' + prompt + ' Work only in your isolated attempt. Save reproducible commands, hashed evidence and an engineering result using the provided result contract. '
-                          'The orchestrator independently reruns tests and gates the merged tree. Never claim hardware qualification or deploy.')
-        if made:
-            db.execute('UPDATE tasks SET task_type=?, complexity=?, risk=?, requires_result=1 WHERE name=?', (kind, 'high', 'high', name))
-    for name, priority, kind, _prompt in CAMPAIGN[:3]:
-        review = name + '_review'
-        if nq.enqueue(db, review, 'true', kind='engineering', priority=priority + 1, resource='sim', deps=[name],
-                      repro='--agents=codex,claude Independently review ' + name + '. Read the stored result and tracked evidence, rerun the reproduction/regression on its verified SHA; '
-                      'check actual AMCL versus truth, map/frame registration, safety gates and unsupported conclusions. Save a hashed review with verifiable tests. '
-                      'Do not claim hardware qualification. Report missing inputs as UNVERIFIED.'):
-            db.execute('UPDATE tasks SET task_type=?, complexity=?, risk=?, requires_result=1, base_from=? WHERE name=?',
-                       (kind, 'high', 'high', name, review))
-    nq.checkpoint(db, 'labctl campaign prepared (idempotent)')
+    if mode==execution.ENGINEERING:
+        import workflow
+        workflow.enqueue_engineering(db)
+        nq.enqueue(db,'fidelity_audit_'+__import__('time').strftime('%Y%m%d'),'python3 tools/nightly/workflow.py audit --refresh',execution_tier=execution.ENGINEERING,resource='engineering',priority=1,timeout_s=300,heartbeat_s=240)
+        nq.checkpoint(db,'Engineering campaign prepared')
+        return
+    if mode==execution.L3:
+        import campaign
+        campaign.enqueue_current(db,qualification_only=True)
+        return
+    import workflow, campaign
+    workflow.enqueue_engineering(db)
+    campaign.enqueue_current(db,qualification_only=False)
+    nq.checkpoint(db, 'current SHA-pinned Full campaign prepared (idempotent)')
 
 
-def doctor():
+def doctor(mode=execution.ENGINEERING):
     # Uses disposable preflight project only. No agents or daemon are started here.
-    return call(sys.executable, str(ROOT / 'tools/nightly/preflight.py'), 'all', '--tests')
+    return call(sys.executable, str(ROOT / 'tools/nightly/preflight.py'), 'all', '--tests', '--mode', mode)
 
 
 def runtime_qualification_errors(db):
@@ -90,10 +90,15 @@ def runtime_qualification_errors(db):
                                contract['ROBOT_MAP_SHA256'], image('x2-twin-stack:nightly'), image('x2-twin-sim:nightly'))
 
 
-def start():
+def start(mode=execution.ENGINEERING):
     if lab.sh('systemctl --user is-active qazbot-nightly.service')[1].strip() == 'active':
-        print('Daemon already active; no duplicate orchestrator or campaign launched. Use status.')
-        return 0
+        db=nq.connect()
+        same=nq.kv_get(db,'execution_mode')==mode
+        db.close()
+        if same:
+            ok,why=lab.verify_started(timeout=5)
+            print(why)
+            return 0 if ok else 1
     # Sync the control checkout before the image is built. Integration itself must never be checked out.
     if nq.mergeq.checked_out_at(ROOT, 'refs/heads/' + nq.mergeq.branch_name()):
         print('Refused: lab/stable is checked out. Use the separate lab/control checkout.', file=sys.stderr)
@@ -104,7 +109,7 @@ def start():
     if err:
         print(err, file=sys.stderr)
         return 1
-    rc = doctor()
+    rc = doctor(mode)
     if rc:
         print('Preflight failed; no agents, daemon or timer started. See run/nightly/preflight/latest.md.', flush=True)
         return rc
@@ -115,14 +120,15 @@ def start():
         print('Git changed during preflight; start refused. Run start again.', file=sys.stderr)
         return 1
     db = nq.connect()
-    errors = runtime_qualification_errors(db)
+    errors = runtime_qualification_errors(db) if mode==execution.FULL else (qualification.first_l3_errors(report) if mode==execution.L3 else [])
     if errors:
         db.close()
-        print('Autonomous start refused: official L3/runtime E2E is unqualified: ' + ', '.join(errors), file=sys.stderr)
+        print(mode+' start refused: ' + ', '.join(errors), file=sys.stderr)
         return 1
     db.execute('BEGIN IMMEDIATE')
     try:
-        prepare_campaign(db)
+        execution.authorize(db,mode,report,ROOT,nq.mergeq.integration_head(ROOT))
+        prepare_campaign(db,mode)
         db.commit()
     except Exception:
         db.rollback()
@@ -152,6 +158,7 @@ def status():
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('command', choices=('doctor', 'start', 'stop', 'status'))
+    ap.add_argument('--mode',choices=execution.MODES,default=execution.ENGINEERING)
     a = ap.parse_args()
     RUN.mkdir(parents=True, exist_ok=True)
     # Serializes terminal lifecycle commands only; nq.py remains the sole orchestrator.
@@ -163,7 +170,10 @@ def main():
             return 2
         if a.command == 'stop':
             return call(sys.executable, str(ROOT / 'tools/nightly/lab.py'), 'stop', '--no-notify')
-        return {'doctor': doctor, 'start': start, 'status': status}[a.command]()
+        rc={'doctor': lambda:doctor(a.mode), 'start':lambda:start(a.mode), 'status': status}[a.command]()
+        if a.command=='start':
+            (RUN/'last_start_attempt.json').write_text(json.dumps(dict(mode=a.mode,status='START_FAILED' if rc else 'VERIFIED_START',exit_code=rc,ts=__import__('time').time()))+'\n')
+        return rc
 
 
 if __name__ == '__main__':

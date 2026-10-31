@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "id": "d1_p23_amcl_v1",
+  "qualification_scope": "stationary_official_mc",
+  "execution_tier": "L3_QUALIFICATION",
+  "robot_sha": "1212d7eda003022d74c6ecc4a2c745fd48f57c2f",
+  "robot_parameters_sha256": "1140d2146114a14a685c7238f175705dbe6d2deebd50be7780bd6d13202bf5af",
+  "map": "d1_qazbot_20261029",
+  "map_sha256": "72ee4094b394241e7b2761878774efbdd99e93731d7cb52709b2231c3975b354",
+  "motion_adapter": "P23",
+  "localization": "amcl",
+  "scan_fov_deg": 103.0,
+  "fov_calibration": "UNVERIFIED",
+  "sensor_topics": [
+    "/qazbot_lio/scan",
+    "/qazbot_lio/scan_obstacles",
+    "/qazbot_lio/scan_clearing"
+  ],
+  "mc": "official",
+  "seeds": [
+    1
+  ],
+  "duration_s": 30,
+  "max_wall_s": 600,
+  "l3_workers": 1,
+  "optimization_enabled": false,
+  "bayesian_enabled": false,
+  "rl_enabled": false
+}

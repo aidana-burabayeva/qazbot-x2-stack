@@ -1,3 +1,5 @@
+> Current mode policy and default ENGINEERING command: [EXECUTION_MODES.md](EXECUTION_MODES.md). Older global receipt requirements below apply only to FULL_NIGHTLY.
+
 # 2026-11-01 startup gate update
 
 In addition to doctor, `start` requires a current verified official L3/runtime-E2E archive receipt. Lite preflight alone cannot authorize unattended execution. See [AIMDK_FIDELITY.md](AIMDK_FIDELITY.md) for receipt requirements and remaining runtime blockers.
