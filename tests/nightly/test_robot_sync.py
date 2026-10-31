@@ -78,7 +78,7 @@ def test_new_robot_commit_without_any_feedback_file_is_detected_and_creates_task
     assert f'robot_parity_navigation_{tip[:7]}' in names and f'robot_parity_maps_{tip[:7]}' in names
     t = tasks(w, 'robot_parity_navigation_%')[0]
     assert t['kind'] == 'engineering' and t['state'] == 'PENDING' and t['klass'] == 'SIM_THEN_HARDWARE' and 'x2_motion_adapter.py' in t['repro']
-    assert kv(w, 'last_robot_integrated_sha') == tip
+    assert kv(w, 'last_robot_processed_sha') == tip
 
 
 def test_second_resume_is_a_noop_no_duplicates(lab):
@@ -101,7 +101,7 @@ def test_only_new_commits_after_the_last_processed_baseline_are_analysed(lab):
     names = [t['name'] for t in tasks(w, 'robot_parity_%')]
     assert any(n.startswith('robot_parity_lio_') for n in names) and f'robot_parity_navigation_{tip2[:7]}' in names
     assert not any(n == f'robot_parity_lio_{tip2[:7]}' for n in names)                 # lio was not re-reported: only the delta since the checkpoint
-    assert kv(w, 'last_robot_integrated_sha') == tip2
+    assert kv(w, 'last_robot_processed_sha') == tip2
 
 
 def test_blockers_in_robot_handoff_and_feedback_become_priority_tasks(lab):
@@ -133,9 +133,9 @@ def test_failure_mid_processing_does_not_advance_checkpoint_and_retry_is_idempot
     stop(e)
     tip = publish_robot(remote, tmp, 'baseline/x2-robot-20261031', {'ws/src/lio/x.py': 'x\n'})
     r = resume(e, ) if False else subprocess.run([sys.executable, str(LAB), 'resume', '--no-systemd', '--no-start'], capture_output=True, text=True, env=dict(e, NIGHTLY_TEST_FAIL_ROBOT_SYNC='1'))
-    assert 'checkpoint NOT advanced' in r.stdout and kv(w, 'last_robot_integrated_sha') in (None, '')
+    assert 'checkpoint NOT advanced' in r.stdout and kv(w, 'last_robot_processed_sha') in (None, '')
     stop(e); r2 = resume(e)
-    assert kv(w, 'last_robot_integrated_sha') == tip and len(tasks(w, 'robot_parity_lio_%')) == 1        # no duplicate from the failed first pass
+    assert kv(w, 'last_robot_processed_sha') == tip and len(tasks(w, 'robot_parity_lio_%')) == 1        # no duplicate from the failed first pass
 
 
 def test_no_robot_branch_published_is_not_an_error(lab):
@@ -150,3 +150,40 @@ def test_stop_resume_cycle_and_zero_loss_state_unaffected(lab):
     assert stop(e).returncode in (0, 3)
     r = resume(e)
     assert r.returncode == 0 and kv(w, 'frozen') is False and kv(w, 'lab_state') == 'RESUMED_NOT_STARTED'
+
+
+def test_robot_stable_is_the_installed_state_and_origin_main_is_never_used(lab):
+    w, remote, e, tmp = lab
+    stop(e)
+    publish_robot(remote, tmp, 'main', {'ws/src/navigation/x2_motion_adapter.py': 'FROM_MAIN\n'})        # a stale main must not be mistaken for the X2
+    publish_robot(remote, tmp, 'baseline/x2-robot-20261029', {'ws/src/lio/old.py': 'o\n'})
+    tip = publish_robot(remote, tmp, 'robot/stable', {'ws/src/navigation/x2_motion_adapter.py': 'INSTALLED\n'})
+    r = resume(e)
+    assert 'ROBOT-SYNC origin/robot/stable' in r.stdout
+    assert kv(w, 'last_robot_processed_sha') == tip and not tasks(w, 'robot_parity_lio_%')
+
+
+def test_hardware_candidate_results_from_robot_stable_become_tasks_and_pointers(lab):
+    w, remote, e, tmp = lab
+    stop(e)
+    publish_robot(remote, tmp, 'robot/stable', {
+        'docs/hardware/candidate_results/cand-x-1.json': json.dumps({'id': 'cand-x-1', 'status': 'HW_FAILED', 'task_id': 'x', 'result_sha': 'a' * 40, 'evidence': 'bag:/b/1 sha256:ab'}),
+        'docs/hardware/candidate_results/cand-y-2.json': json.dumps({'id': 'cand-y-2', 'status': 'HW_VERIFIED', 'task_id': 'y', 'candidate_sha': 'c' * 40, 'result_sha': 'b' * 40, 'evidence': 'bag'})})
+    resume(e)
+    t = tasks(w, 'hw_candidate_failed_%')
+    assert len(t) == 1 and t[0]['priority'] == 8 and 'bag:/b/1' in t[0]['repro'] and t[0]['task_type'] == 'root_cause_analysis'
+    assert kv(w, 'last_hardware_verified_candidate_sha') == 'c' * 40
+    stop(e); resume(e)
+    assert len(tasks(w, 'hw_candidate_failed_%')) == 1                                              # no duplicate on the second resume
+
+
+def test_stop_publishes_lab_stable_and_writes_all_five_pointers(lab):
+    w, remote, e, tmp = lab
+    g(w, 'branch', 'lab/stable')
+    r = subprocess.run([sys.executable, str(LAB), 'stop', '--no-systemd', '--no-docker', '--no-notify', '--no-tests'], capture_output=True, text=True, env=e)
+    assert r.returncode == 0 and 'PUBLISH lab/stable published' in r.stdout, r.stdout
+    assert g(remote, 'rev-parse', 'lab/stable') == g(w, 'rev-parse', 'lab/stable')
+    ptr = json.loads((w / 'docs/hardware/SYNC_POINTERS.json').read_text())
+    for k in ('last_robot_processed_sha', 'last_robot_snapshot_sha', 'last_lab_published_sha', 'last_lab_reviewed_sha', 'last_hardware_verified_candidate_sha'):
+        assert k in ptr
+    assert kv(w, 'last_lab_published_sha') == g(w, 'rev-parse', 'lab/stable')

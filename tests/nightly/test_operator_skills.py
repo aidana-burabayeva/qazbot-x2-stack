@@ -78,7 +78,7 @@ def test_unlisted_skill_and_user_level_name_conflict_fail(pkg):
     assert r.returncode == 1 and 'conflicts' in r.stdout
 
 
-def publish_update(w, remote, tmp, version='1.1.0', contract=None):
+def publish_update(w, remote, tmp, version='1.2.0', contract=None):
     other = tmp / 'pub'
     subprocess.run(['git', 'clone', '-q', '-b', 'work', str(remote), str(other)], check=True, capture_output=True)
     g(other, 'config', 'user.email', 'p@p'); g(other, 'config', 'user.name', 'p')
@@ -92,7 +92,7 @@ def publish_update(w, remote, tmp, version='1.1.0', contract=None):
 
 def test_update_via_git_ff_only_no_manual_copy(pkg):
     w, remote, tmp = pkg
-    publish_update(w, remote, tmp, '1.1.0')
+    publish_update(w, remote, tmp, '1.2.0')
     s = json.loads(ops(w, 'sync').stdout)
     assert s['verdict'] == 'UPDATE_AVAILABLE' and s['note'].startswith('git merge --ff-only')
     g(w, 'merge', '-q', '--ff-only', 'origin/work')
@@ -101,7 +101,7 @@ def test_update_via_git_ff_only_no_manual_copy(pkg):
 
 def test_update_with_dirty_or_diverged_checkout_is_not_blind(pkg):
     w, remote, tmp = pkg
-    publish_update(w, remote, tmp, '1.1.0')
+    publish_update(w, remote, tmp, '1.2.0')
     (w / '.claude/skills/nightly-stop/SKILL.md').write_text('local edit')
     assert 'do not pull blindly' in json.loads(ops(w, 'sync').stdout)['note']
     g(w, 'checkout', '-q', '--', '.'); (w / 'x.txt').write_text('x'); g(w, 'add', '-A'); g(w, 'commit', '-qm', 'local')

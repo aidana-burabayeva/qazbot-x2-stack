@@ -277,8 +277,34 @@ def run_regression(args):
     return dict(verdict='PASS' if rc == 0 else 'FAIL', summary=last[:200], rc=rc)
 
 
+POINTER_KEYS = ('last_robot_processed_sha', 'last_robot_snapshot_sha', 'last_lab_published_sha', 'last_lab_reviewed_sha', 'last_hardware_verified_candidate_sha')
+
+
+def write_pointers(db):
+    d = {k: nq.kv_get(db, k) for k in POINTER_KEYS}
+    d['stable_heads'] = {'robot/stable': gout('rev-parse', '-q', '--verify', 'refs/remotes/origin/robot/stable'), 'lab/stable': gout('rev-parse', '-q', '--verify', 'refs/heads/lab/stable') or gout('rev-parse', '-q', '--verify', 'refs/remotes/origin/lab/stable')}
+    d['written'] = now_iso()
+    (HW / 'SYNC_POINTERS.json').write_text(json.dumps(d, indent=1) + '\n')
+
+
+def publish_lab_stable(db):
+    """Plain push of lab/stable (never force); the pointer moves only after the remote head equals the local one."""
+    if not gout('rev-parse', '-q', '--verify', 'refs/heads/lab/stable'):
+        return 'lab/stable not present locally'
+    rc, o = git('push', 'origin', 'refs/heads/lab/stable:refs/heads/lab/stable', timeout=120)
+    if rc != 0:
+        return f'lab/stable push failed: {o[-150:]}'
+    local = gout('rev-parse', 'refs/heads/lab/stable')
+    remote = gout('ls-remote', 'origin', 'refs/heads/lab/stable').split()
+    if remote and remote[0] == local:
+        nq.kv_set(db, 'last_lab_published_sha', local)
+        return f'lab/stable published {local[:9]}'
+    return 'lab/stable remote SHA mismatch: pointer not moved'
+
+
 def document(db, g, tests, parked, cstat, units):
     HW.mkdir(parents=True, exist_ok=True)
+    write_pointers(db)
     (HW / 'LAB_TO_ROBOT_HANDOFF.md').write_text(render_handoff(db, g, tests))
     (HW / 'TWIN_FIDELITY_REQUESTS.md').write_text(render_fidelity())
     q = counts(db)
@@ -357,6 +383,8 @@ def cmd_stop(args):
     c = commit(args, g); log.append(f"COMMIT {c.get('commit') and c['commit'][:12]} staged={len(c['staged'])} skipped={c['skipped']}")
     log.append('MERGE n/a: merge queue is P3 (not implemented); the work branch is the integration branch and nothing is auto-merged to main')
     verdict, detail = push_and_verify(args, g); log.append(f'PUSH/VERIFY {verdict} {detail}')
+    if verdict == 'STOPPED_OK' and not args.no_push:
+        log.append('PUBLISH ' + publish_lab_stable(db))
     head = gout('rev-parse', 'HEAD')
     nq.kv_set(db, 'last_lab_stop_sha', head)
     nq.kv_set(db, 'last_stop_ts', time.time())
@@ -394,6 +422,8 @@ def latest_robot_ref():
     ref = os.environ.get('NIGHTLY_ROBOT_REF')
     if ref:
         return ref if rev_ok(ref) else None
+    if rev_ok('origin/robot/stable'):
+        return 'origin/robot/stable'  # the permanent branch for the INSTALLED X2 state (never origin/main)
     out = gout('for-each-ref', '--sort=-committerdate', '--format=%(refname:short)', 'refs/remotes/origin/baseline/x2-robot-*')
     return out.splitlines()[0] if out else None
 
@@ -411,7 +441,7 @@ def robot_sync(db):
     if not ref:
         return ['ROBOT-SYNC no robot baseline ref (origin/baseline/x2-robot-*) found: nothing to analyse (not an error)']
     tip = gout('rev-parse', ref + '^{commit}')
-    last = nq.kv_get(db, 'last_robot_integrated_sha')
+    last = nq.kv_get(db, 'last_robot_processed_sha') or nq.kv_get(db, 'last_robot_integrated_sha')
     if last and tip == last:
         return [f'ROBOT-SYNC {ref} {tip[:9]} already processed']
     valid_last = bool(last) and rev_ok(last)
@@ -457,9 +487,28 @@ def robot_sync(db):
                 db.execute('UPDATE tasks SET klass=?, task_type=? WHERE name=?', ('SIM_THEN_HARDWARE', 'root_cause_analysis', tname))
         if os.environ.get('NIGHTLY_TEST_FAIL_ROBOT_SYNC'):
             raise RuntimeError('injected failure after task creation')
-        nq.kv_set(db, 'last_robot_integrated_sha', tip)  # only after everything above succeeded
+        # hardware outcomes of X2-bound candidates published on robot/stable since the last processed state
+        for rp in gout('diff', '--name-only', '--no-renames', '--diff-filter=AM', base, tip, '--', 'docs/hardware/candidate_results/').split():
+            try:
+                rec = json.loads(gout('show', f'{tip}:{rp}'))
+            except ValueError:
+                continue
+            if rec.get('status') == 'HW_FAILED':
+                tname = f"hw_candidate_failed_{rec['id']}"
+                text = (f"HARDWARE CANDIDATE FAILED on the X2: {rec['id']} (task {rec.get('task_id')}, lab result {str(rec.get('result_sha'))[:9]}). Evidence: {rec.get('evidence')}. "
+                        'The simulation said SIM_VERIFIED, the robot disagreed: reproduce the hardware observation in simulation, find why the twin missed it (fidelity request), fix the cause. Simulation only.')
+                if nq.enqueue(db, tname, 'true', kind='engineering', repro=text, priority=8, state='PENDING'):
+                    made.append(tname)
+                    db.execute('UPDATE tasks SET klass=?, task_type=? WHERE name=?', ('SIM_THEN_HARDWARE', 'root_cause_analysis', tname))
+            elif rec.get('status') == 'HW_VERIFIED':
+                nq.kv_set(db, 'last_hardware_verified_candidate_sha', rec.get('candidate_sha'))
+        has_snapshot = gout('ls-tree', '-r', '--name-only', tip, '--', 'docs/evidence').count('robot_baseline_manifest.json') > 0
+        if has_snapshot:
+            nq.kv_set(db, 'last_robot_snapshot_sha', tip)
+        nq.kv_set(db, 'last_robot_processed_sha', tip)  # only after everything above succeeded
+        nq.kv_set(db, 'last_robot_integrated_sha', tip)  # legacy alias
         nq.kv_set(db, 'last_robot_ref', ref)
-        log.append(f'ROBOT-SYNC created {len(made)} task(s): {made}; checkpoint last_robot_integrated_sha={tip[:9]}')
+        log.append(f'ROBOT-SYNC created {len(made)} task(s): {made}; checkpoint last_robot_processed_sha={tip[:9]}')
     except Exception as e:
         log.append(f'ROBOT-SYNC FAILED ({type(e).__name__}: {e}); checkpoint NOT advanced, will be retried on the next resume')
     return log
@@ -510,6 +559,8 @@ def cmd_resume(args):
         for k in ('last_lab_integrated_sha', 'last_lab_reviewed_sha'):
             if fb.get(k):
                 nq.kv_set(db, 'robot_reported_' + k, fb[k])
+        if fb.get('last_lab_reviewed_sha'):
+            nq.kv_set(db, 'last_lab_reviewed_sha', fb['last_lab_reviewed_sha'])
         log.append(f"FEEDBACK robot reports integrated={str(fb.get('last_lab_integrated_sha'))[:9]} reviewed={str(fb.get('last_lab_reviewed_sha'))[:9]}")
     log.extend(robot_sync(db))
     nq.kv_set(db, 'current_integration_sha', g['head'])

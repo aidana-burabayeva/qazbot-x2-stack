@@ -15,3 +15,4 @@ python3 tools/nightly/lab.py resume
 Правила: не reset/clean/stash/force-push; не ssh и не команды на X2; при `STOPPED_PUBLISH_PENDING` или `STOP_UNVERIFIED` скажи об этом прямо.
 Оператор может запускать то же без Claude: `python3 tools/nightly/lab.py resume`.
 
+V3: Берёт оба stable-хэда: анализирует только НОВЫЙ diff `origin/robot/stable` (установленное состояние X2) от последнего обработанного SHA, читает hardware-результаты кандидатов (`docs/hardware/candidate_results`), ставит блокеры в приоритет. `origin/main` не используется как состояние робота.

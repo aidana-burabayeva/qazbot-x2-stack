@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Minimal merge queue for VERIFIED engineering attempts (SIM ONLY, stdlib only; no new CI platform).
 
-Integrates INTEGRATION_READY attempt branches, one at a time, into a dedicated lab branch (default `lab/integration`, never main / a
+Integrates INTEGRATION_READY attempt branches, one at a time, into the permanent lab branch (default `lab/stable`, never main / a
 robot branch / a branch that is checked out anywhere). For each candidate:
   ownership   the attempt branch tip must still be the SHA that was verified, the task must be COMPLETED+VERIFIED with a stored PASS result;
   merge       `git merge --no-ff` in a throw-away detached worktree cut from the CURRENT integration head (no force, no reset, no rebase);
@@ -20,6 +20,7 @@ import time
 from pathlib import Path
 
 import attempts
+import candidates
 
 SCHEMA = """CREATE TABLE IF NOT EXISTS merge_queue(
   id INTEGER PRIMARY KEY, task TEXT NOT NULL, repo TEXT NOT NULL, branch TEXT NOT NULL, sha TEXT NOT NULL, base_sha TEXT,
@@ -34,7 +35,7 @@ def init(db):
 
 
 def branch_name():
-    b = os.environ.get('NIGHTLY_INTEGRATION_BRANCH', 'lab/integration')
+    b = os.environ.get('NIGHTLY_INTEGRATION_BRANCH', 'lab/stable')
     if not b.startswith('lab/') or b in FORBIDDEN_BRANCHES:
         raise SystemExit(f'refused: integration branch must be under lab/ (got {b}); production and robot branches are never touched')
     return b
@@ -90,6 +91,16 @@ def enqueue(db, run, kv_get, task):
                    (task['name'], task['cwd'], task['branch'], sha, base, time.time(), time.time()))
     except Exception:
         return None
+    return sha
+
+
+def enqueue_manual(db, repo, name, branch, note='operator migration'):
+    """Operator-driven integration of an existing branch (migration). Still merged in a throw-away worktree, gated and CAS-published;
+    no candidate is created (there is no stored attempt result)."""
+    sha = rev(repo, f'refs/heads/{branch}')
+    if not sha:
+        raise SystemExit(f'unknown branch {branch}')
+    db.execute("INSERT OR IGNORE INTO merge_queue(task,repo,branch,sha,base_sha,state,detail,enq_ts,ts) VALUES(?,?,?,?,?,'QUEUED',?,?,?)", (name, str(repo), branch, sha, None, note, time.time(), time.time()))
     return sha
 
 
@@ -177,6 +188,15 @@ def step(db, run, ev=None):
         ev(row['task'], 'MERGE_CONFLICT', json.dumps(files))
         write_state(db, run, repo)
         return True
+    try:  # X2-bound candidate record (production files only); sim-only fixes produce none
+        base = row['base_sha'] or git(repo, 'merge-base', head, row['sha'])[1]
+        ent = candidates.build(db, row['task'], wt, base, row['sha'], gate=' '.join(gate_argv()))
+        if ent and candidates.add(wt, ent):
+            git(wt, 'add', candidates.FILE)
+            git(wt, *IDENT, 'commit', '-q', '-m', f"candidates: {ent['id']} (SIM_VERIFIED, awaiting hardware validation)")
+            ev(row['task'], 'CANDIDATE_RECORDED', ent['id'])
+    except ValueError as e:  # a production fix lacking mandatory data is integrated for the lab but NOT offered to the robot
+        ev(row['task'], 'CANDIDATE_REFUSED', str(e))
     log = Path(run) / 'merge' / f"{row['id']}.gate.log.work"
     JOBS[row['id']] = attempts.VerifyJob(gate_argv(), str(wt), str(log), float(os.environ.get('NIGHTLY_INTEGRATION_GATE_TIMEOUT_S', 1800)),
                                          int(os.environ.get('NIGHTLY_VERIFY_NICE', 10)))

@@ -1,4 +1,4 @@
-"""Merge queue: sequential integration of VERIFIED attempt branches into lab/integration with CAS update, re-gate and evidence."""
+"""Merge queue: sequential integration of VERIFIED attempt branches into lab/stable with CAS update, re-gate and evidence."""
 import importlib
 import json
 import os
@@ -51,7 +51,7 @@ def attempt(repo, nq, db, name, files, verified=True, state='COMPLETED', phase='
     nq.kv_set(db, f'base:{name}:1', {'git_sha': base})
     if verified:
         nq.kv_set(db, f'verified_sha:{name}', sha)
-        db.execute("INSERT INTO results(result_key,run_id,task,attempt,scenario_id,verdict,metrics,status,ts) VALUES(?,?,?,?,?,?,?,?,?)", (f'{name}|1|e', 'r', name, 1, 'e', 'PASS', '{}', 'STORED', time.time()))
+        db.execute("INSERT INTO results(result_key,run_id,task,attempt,scenario_id,verdict,metrics,status,evidence_path,manifest_sha256,ts) VALUES(?,?,?,?,?,?,?,?,?,?,?)", (f'{name}|1|e', 'r', name, 1, 'e', 'PASS', '{"tests_cmd": "pytest -q"}', 'STORED', f'run/nightly/evidence/{name}', 'abc123', time.time()))
     return br, sha
 
 
@@ -77,14 +77,14 @@ def test_two_independent_branches_integrate_sequentially_with_gate_and_state_fil
     assert queue(nq, mq, db, 'a') and queue(nq, mq, db, 'b')
     drain(nq, mq, db)
     assert states(db) == {'a': 'INTEGRATED', 'b': 'INTEGRATED'}
-    head = g(repo, 'rev-parse', 'lab/integration')
+    head = g(repo, 'rev-parse', 'lab/stable')
     files = g(repo, 'ls-tree', '-r', '--name-only', head).split()
     assert 'one.txt' in files and 'two.txt' in files
     assert g(repo, 'rev-parse', 'main') == g(repo, 'rev-list', '--max-parents=0', 'main') or True
     assert g(repo, 'rev-parse', 'main') != head                         # main (production-like) untouched
     st = json.loads((nq.RUN / 'integration_state.json').read_text())
     assert st['head'] == head and [i['state'] for i in st['items']] == ['INTEGRATED', 'INTEGRATED']
-    assert len(g(repo, 'rev-list', '--merges', 'lab/integration').split()) == 2            # real merges, nothing rewritten
+    assert len(g(repo, 'rev-list', '--merges', 'lab/stable').split()) == 2            # real merges, nothing rewritten
 
 
 def test_unverified_or_failed_tasks_are_never_queued(world):
@@ -105,7 +105,7 @@ def test_conflict_is_classified_branch_kept_and_independent_candidate_still_inte
     assert states(db) == {'a': 'INTEGRATED', 'b': 'CONFLICT', 'c': 'INTEGRATED'}
     assert g(repo, 'rev-parse', '--verify', 'attempt/b-1-abc')                        # conflicting branch preserved
     assert 'a.txt' in db.execute("SELECT detail FROM merge_queue WHERE task='b'").fetchone()[0]
-    head = g(repo, 'rev-parse', 'lab/integration')
+    head = g(repo, 'rev-parse', 'lab/stable')
     assert g(repo, 'show', f'{head}:a.txt') == 'from a'                              # nothing half-merged
     assert not list((nq.RUN / 'merge').glob('wt.*'))                                  # temp worktrees cleaned
 
@@ -116,11 +116,11 @@ def test_failing_regression_gate_blocks_integration_keeps_evidence_and_queue_con
     br, sha = attempt(repo, nq, db, 'good', {'g.txt': 'g\n'})
     monkeypatch.setenv('NIGHTLY_INTEGRATION_GATE', 'bash -c "! test -f x.txt"')       # the merged tree of "bad" breaks the gate
     queue(nq, mq, db, 'bad'); queue(nq, mq, db, 'good')
-    before = g(repo, 'rev-parse', 'refs/heads/lab/integration') if subprocess.run(['git', '-C', str(repo), 'rev-parse', '-q', '--verify', 'refs/heads/lab/integration'], capture_output=True).returncode == 0 else None
+    before = g(repo, 'rev-parse', 'refs/heads/lab/stable') if subprocess.run(['git', '-C', str(repo), 'rev-parse', '-q', '--verify', 'refs/heads/lab/stable'], capture_output=True).returncode == 0 else None
     drain(nq, mq, db)
     assert states(db) == {'bad': 'REGRESSION_FAILED', 'good': 'INTEGRATED'}
     assert (nq.RUN / 'merge' / '1.gate.log').exists() and g(repo, 'rev-parse', '--verify', 'attempt/bad-1-abc')
-    assert 'x.txt' not in g(repo, 'ls-tree', '-r', '--name-only', 'lab/integration')
+    assert 'x.txt' not in g(repo, 'ls-tree', '-r', '--name-only', 'lab/stable')
 
 
 def test_branch_moved_after_verification_is_stale_never_integrated(world):
@@ -131,7 +131,7 @@ def test_branch_moved_after_verification_is_stale_never_integrated(world):
     (Path(wt) / 'sneaky.txt').write_text('after verification'); g(wt, 'add', '-A'); g(wt, 'commit', '-qm', 'late edit')
     drain(nq, mq, db)
     assert states(db) == {'a': 'STALE'}
-    assert subprocess.run(['git', '-C', str(repo), 'rev-parse', '-q', '--verify', 'refs/heads/lab/integration'], capture_output=True).stdout.strip() in (b'', g(repo, 'rev-parse', 'main').encode())
+    assert subprocess.run(['git', '-C', str(repo), 'rev-parse', '-q', '--verify', 'refs/heads/lab/stable'], capture_output=True).stdout.strip() in (b'', g(repo, 'rev-parse', 'main').encode())
 
 
 def test_integration_head_moving_during_gate_refuses_cas_and_regates(world, monkeypatch):
@@ -142,18 +142,18 @@ def test_integration_head_moving_during_gate_refuses_cas_and_regates(world, monk
     mq.step(db, nq.RUN)                                                               # merge built, gate running on head H0
     assert states(db) == {'a': 'GATING'}
     other = repo.parent / 'wt_other'
-    g(repo, 'worktree', 'add', '-q', '--detach', str(other), 'lab/integration')
+    g(repo, 'worktree', 'add', '-q', '--detach', str(other), 'lab/stable')
     (other / 'zz.txt').write_text('z'); g(other, 'add', '-A'); g(other, 'commit', '-qm', 'someone else moved the head')
-    g(repo, 'update-ref', 'refs/heads/lab/integration', g(other, 'rev-parse', 'HEAD'))  # head moves while the gate runs
+    g(repo, 'update-ref', 'refs/heads/lab/stable', g(other, 'rev-parse', 'HEAD'))  # head moves while the gate runs
     time.sleep(1.5)
-    moved = g(repo, 'rev-parse', 'lab/integration')
+    moved = g(repo, 'rev-parse', 'lab/stable')
     monkeypatch.setenv('NIGHTLY_INTEGRATION_GATE', 'true')
     mq.step(db, nq.RUN)                                                               # gate done -> CAS refused -> immediately re-gated
     row = db.execute('SELECT state, merge_sha FROM merge_queue').fetchone()
     assert row['state'] == 'GATING' and row['merge_sha'] == moved                     # new gate is built on the NEW head, the stale result was dropped
     drain(nq, mq, db)
     assert states(db) == {'a': 'INTEGRATED'}
-    files = g(repo, 'ls-tree', '-r', '--name-only', 'lab/integration').split()
+    files = g(repo, 'ls-tree', '-r', '--name-only', 'lab/stable').split()
     assert 'zz.txt' in files and 'a2.txt' in files                                    # nothing of the other change was lost
 
 
@@ -184,12 +184,12 @@ def test_publish_is_plain_push_of_the_lab_branch_only(world, tmp_path):
     g(repo, 'remote', 'add', 'origin', str(remote))
     attempt(repo, nq, db, 'a', {'a2.txt': '1'}); queue(nq, mq, db, 'a'); drain(nq, mq, db)
     ok, out = mq.publish(repo)
-    assert ok and subprocess.run(['git', '-C', str(remote), 'rev-parse', 'lab/integration'], capture_output=True, text=True).stdout.strip() == g(repo, 'rev-parse', 'lab/integration')
+    assert ok and subprocess.run(['git', '-C', str(remote), 'rev-parse', 'lab/stable'], capture_output=True, text=True).stdout.strip() == g(repo, 'rev-parse', 'lab/stable')
     assert subprocess.run(['git', '-C', str(remote), 'rev-parse', '-q', '--verify', 'main'], capture_output=True).returncode != 0   # main not pushed
 
 
 def test_end_to_end_verified_attempt_enters_merge_queue_automatically(tmp_path):
-    """Real daemon + stub agent: COMPLETED/VERIFIED -> MERGEQ_QUEUED -> INTEGRATED on lab/integration, main untouched."""
+    """Real daemon + stub agent: COMPLETED/VERIFIED -> MERGEQ_QUEUED -> INTEGRATED on lab/stable, main untouched."""
     root = tmp_path / 'root'; root.mkdir()
     subprocess.run(['git', 'init', '-q', '-b', 'main', str(root)], check=True)
     (root / 'ok.flag').write_text('1'); g(root, 'add', '-A'); g(root, 'commit', '-qm', 'i')
@@ -201,6 +201,6 @@ def test_end_to_end_verified_attempt_enters_merge_queue_automatically(tmp_path):
              NIGHTLY_CODEX_SOCK='/nonexistent', NIGHTLY_CODEX_QUEUE_DB='/nonexistent', NIGHTLY_VERIFY_ALLOW='true', NIGHTLY_INTEGRATION_GATE='test -f ok.flag', NIGHTLY_POLL_S='0')
     subprocess.run([sys.executable, str(NQ), 'enqueue', 'eng', 'x --agents=claude', '--kind', 'engineering', '--cwd', str(root)], env=e, check=True, capture_output=True)
     subprocess.run([sys.executable, str(NQ), 'daemon', '--poll', '0.2', '--max-seconds', '25'], env=e, capture_output=True, timeout=60)
-    head = g(root, 'rev-parse', 'lab/integration')
+    head = g(root, 'rev-parse', 'lab/stable')
     assert 'fix.txt' in g(root, 'ls-tree', '-r', '--name-only', head).split() and g(root, 'rev-parse', 'main') != head
     assert 'fix.txt' not in g(root, 'ls-tree', '-r', '--name-only', 'main')
