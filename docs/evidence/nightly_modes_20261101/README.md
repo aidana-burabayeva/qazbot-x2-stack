@@ -24,3 +24,11 @@ Real daemon/systemd/held lease, genuine Claude/Codex Engineering results, offici
 This execution environment denies `systemctl --user` (bus: Operation not permitted) and Docker socket access; shell Git cannot resolve github.com. [Fresh official-doc attempts](official_docs_attempt.json) timed out. No full L3 receipt exists. Autonomous Engineering must pass its own real systemd preflight from an ordinary operator terminal; Full remains forbidden until runtime evidence exists. The saved queue checkpoint remains frozen/STOPPED_OK; this is not a newly verified live stop. Do not clear results, bags, volumes or old failures to work around disk pressure.
 
 Clean-source doctor/start and merge-gate receipts are appended after the source commit. Source and integration SHAs are recorded in `completion.json`; documentation commits can follow without changing tested source. Physical X2 was not queried or deployed.
+
+## Clean-source acceptance attempt
+
+Source commit `5050ec79a8271836364c2bb1be4a6f3e06219f13` integrated through Merge Queue as `61970ea7652496bd0dd01ba3a57b4d67f095dea6`. [Merged gate](merged_source_gate_170.txt): **170 PASS**, then **73/73** source hashes.
+
+[Clean doctor](doctor_clean.txt) and [actual clean start](start_clean.txt) both returned 1. [Preflight JSON](preflight_clean.json): clean Git, namespace isolation, 73/73 and **105 basic tests PASS**; the three FAIL rows are user-systemd manager/service/timer bus access. Docker is optional WARN in Engineering. No L3 receipt check blocked Engineering. [START_FAILED](last_start_attempt.json), [stored state](status_after_refused_start.json), [unchanged task counts](completion.json). No daemon/provider task/simulation was started. There was therefore no running workload whose shutdown could be newly qualified. Saved STOPPED_OK is historical and frozen.
+
+[Plain push failure](git_push_failure.txt) preserves the exact shell DNS error. Publishing an exact file-tree snapshot to a separate connected GitHub branch does not advance remote lab/stable or claim the normal push succeeded. Local history remains intact.

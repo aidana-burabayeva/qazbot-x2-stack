@@ -1,0 +1,20 @@
+[
+  {
+    "command": [
+      "tools/nightly/labctl.sh",
+      "doctor",
+      "--mode",
+      "ENGINEERING"
+    ],
+    "rc": 1
+  },
+  {
+    "command": [
+      "tools/nightly/labctl.sh",
+      "start",
+      "--mode",
+      "ENGINEERING"
+    ],
+    "rc": 1
+  }
+]

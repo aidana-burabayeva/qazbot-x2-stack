@@ -1,0 +1,24 @@
+  [   PASS   ] role: LAB
+  [   PASS   ] git.control_branch: lab/control
+  [   PASS   ] git.integration_not_checked_out: lab/stable is not checked out in any worktree
+  [   WARN   ] git.fetch: offline? cess 'https://github.com/aidana-burabayeva/qazbot-x2-stack.git/': Could not resolve host: github.com
+  [   PASS   ] git.integration_in_control: integration 61970ea76 contained in control HEAD
+  [   WARN   ] git.integration_vs_origin: local ahead of origin (publishes at stop)
+  [   PASS   ] git.tracked_clean: no tracked or untracked modifications
+  [   PASS   ] git.robot_ref: origin/robot/stable 1212d7e
+  [   PASS   ] isolation.no_ssh_in_lab_chain: 41 lab-chain files scanned: no ssh/scp/robot address/check_robot.sh
+  [   PASS   ] agents.claude: 2.1.316 (Claude Code) authenticated
+  [   PASS   ] agents.codex: codex-cli 0.166.0 authenticated
+  [   FAIL   ] systemd.user_manager: systemctl --user unavailable
+  [   WARN   ] systemd.linger: Failed to connect to bus: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user)
+  [   FAIL   ] systemd.qazbot-nightly.service: Failed to connect to bus: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user) (start enables the daemon first, the timer last)
+  [   FAIL   ] systemd.qazbot-nightly-enqueue.timer: Failed to connect to bus: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user) (start enables the daemon first, the timer last)
+  [   PASS   ] systemd.timer_no_catchup: Persistent=false: enabling the timer cannot trigger a missed nightly
+  [   PASS   ] engineering.disk: 7 GiB free; existing 5 GiB floor preserved
+  [   PASS   ] engineering.namespace_isolation: read-only host and hidden runtime sockets
+  [   WARN   ] engineering.docker_optional: permission denied while trying to connect to the docker API at unix:///var/run/docker.sock (not required for offline Engineering)
+  [   PASS   ] engineering.robot_parity: 73/73 files match captured X2
+  [   PASS   ] engineering.basic_tests: ........................................................................ [ 68%]
+.................................                                        [100%]
+105 passed in 0.36s
+== verdict FAIL {'PASS': 14, 'WARN': 4, 'UNVERIFIED': 0, 'FAIL': 3}  report: /home/adn/QazBot/control_backend_p20_twin02/run/nightly/preflight/20261101T010013_all.md

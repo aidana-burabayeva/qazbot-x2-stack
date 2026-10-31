@@ -1,0 +1,53 @@
+{
+ "lab_state": "STOPPED_OK",
+ "frozen": true,
+ "shas": {
+  "last_lab_stop_sha": "247ab1c6e4be99b6ab438b9e69f599de7b5809b3",
+  "last_robot_integrated_sha": "6e70c0f90665c06dfc704162c9ddc84efce977c1",
+  "current_integration_sha": "5a15b62863ea663a2f7c7de6b3276d212b67f517"
+ },
+ "codex_stop": "STOP_UNVERIFIED",
+ "queue": {
+  "COMPLETED": 32,
+  "NEEDS_APPROVAL": 2,
+  "NEEDS_ENGINEERING": 4
+ },
+ "units": {
+  "qazbot-nightly.service": "Failed to connect to bus: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user)/Failed to connect to bus: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user)",
+  "qazbot-nightly-enqueue.service": "Failed to connect to bus: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user)/Failed to connect to bus: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user)",
+  "qazbot-nightly-enqueue.timer": "Failed to connect to bus: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user)/Failed to connect to bus: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user)"
+ },
+ "docker": [],
+ "git": {
+  "branch": "lab/control",
+  "head": "61970ea7652496bd0dd01ba3a57b4d67f095dea6",
+  "upstream": "",
+  "ahead": null,
+  "behind": null,
+  "dirty": [
+   "?? docs/evidence/nightly_modes_20261101/doctor_clean.txt",
+   "?? docs/evidence/nightly_modes_20261101/last_start_attempt.json",
+   "?? docs/evidence/nightly_modes_20261101/merged_source_gate_170.txt",
+   "?? docs/evidence/nightly_modes_20261101/preflight_clean.json",
+   "?? docs/evidence/nightly_modes_20261101/start_attempts.json",
+   "?? docs/evidence/nightly_modes_20261101/start_clean.txt"
+  ],
+  "worktrees": [
+   "/home/adn/QazBot/control_backend                                                 c1880c3 [feat/digital-twin-nightly]",
+   "/home/adn/QazBot/control_backend_codex_nightly                                   e54067f [nightly/codex-stall-20261030]",
+   "/home/adn/QazBot/control_backend_i1                                              c15dd6c [fix/i1-rpp-collision]",
+   "/home/adn/QazBot/control_backend_p20_twin02                                      61970ea [lab/control]",
+   "/home/adn/QazBot/control_backend_robot_integration                               e2f44be [integration/operator-skills-robot-20261030]",
+   "/home/adn/QazBot/control_backend_tooling                                         e9498cd [tooling/operator-skills-20261030]",
+   "/home/adn/QazBot/robot_data/orchestrator_p13/attempts/nav_frame_fix.1.e4bce3     fdd692a [attempt/nav_frame_fix-1-e4bce3]",
+   "/home/adn/QazBot/robot_data/orchestrator_p13/attempts/nav_frame_fix.2.3cfc8f     ba40df5 [attempt/nav_frame_fix-2-3cfc8f]",
+   "/home/adn/QazBot/robot_data/orchestrator_p13/attempts/nav_frame_repro.1.0e90a7   fdd692a [attempt/nav_frame_repro-1-0e90a7]",
+   "/home/adn/QazBot/robot_data/orchestrator_p13/attempts/nav_frame_review.1.11f5b0  c47ec77 [attempt/nav_frame_review-1-11f5b0]",
+   "/home/adn/QazBot/x2_twin_evidence_20261030                                       fac640f [baseline/x2-robot-20261030]",
+   "/tmp/labint                                                                      3cf878a (detached HEAD)",
+   "/tmp/robotbase                                                                   fac640f (detached HEAD)"
+  ]
+ },
+ "codex_ack": null,
+ "execution_mode": null
+}
