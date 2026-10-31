@@ -1,3 +1,9 @@
+# 2026-11-01 — NIGHTLY-M1 preparation, not milestone completion
+
+[Current evidence](evidence/nightly_m1_20261101/README.md): both ordinary-host CLI challenges passed. Added a minimal trusted-helper invocation correction so capability fingerprinting retains daemon PATH instead of login-shell PATH. Full regression **300 PASS**, existing Merge Queue gate **165 PASS**, robot source **73/73**; source integrated as `ef507af0d12c`. Queue remains **frozen / STOPPED_OK** after completed operator STOP. No daemon/agent resume and no actual accepted AMCL engineering result or independent-review cycle claimed. Older session failures below are historical, not ordinary-host execution status. Physical X2 untouched.
+
+---
+
 # 2026-11-01 — autonomous engineering execution repair
 
 Read [engineering lead policy](nightly/ENGINEERING_LEAD.md) and [evidence](evidence/engineering_lead_20261101/README.md). Historical provider/adapter failures are separated from navigation defects; original attempts are retained. WAL cursor lock reproduced and corrected without increasing busy_timeout. AMCL effective P0, blocked until actual provider execution is qualified. Both real session probes failed; no genuine verified engineering CLI result or live daemon restart claimed. Stored RUNNING_ENGINEERING is historical; systemd access is denied and the observed lease was free. Physical X2 untouched.

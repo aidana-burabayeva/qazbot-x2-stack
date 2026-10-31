@@ -1,0 +1,15 @@
+{
+  "source_integration": "ef507af0d12cb724f46d3b90e44457b710839a71",
+  "source_fix": "17d3951",
+  "merged_gate": "165 PASS; 73/73",
+  "state": {
+    "codex_stop": "STOP_ACKED",
+    "execution_mode": "ENGINEERING",
+    "frozen": true,
+    "lab_state": "STOPPED_OK"
+  },
+  "active_tasks": 0,
+  "m1": "NOT_ACHIEVED: actual engineering Task\u2192Review and next-task transition not yet observed",
+  "host_cli": "Both provider challenges PASS; modified dispatch runtime remains UNVERIFIED",
+  "publication": "normal local-history push to lab/stable still required; separate exact-tree review snapshot is a backup only"
+}
