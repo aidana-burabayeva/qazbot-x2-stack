@@ -34,3 +34,9 @@ Use the existing Merge Queue to integrate the entire reviewed dependency chain f
 [Full regression](regression_300.txt): **300 PASS** in the isolated checkout, `python3 -m pytest -q tests/nightly tests/motion_adapter`. [Source parity](source_parity.txt): **73/73**. The workspace was expanded from sparse after checking that materializing its ~64 MB tracked tree would preserve the 5 GiB free-space floor. No old results or volumes were deleted.
 
 The completed operator stop `56ed44a56cdad89132361c8d005b52dc57ef897a` was merged into this private preparation branch without rewriting history. Later read-only inspection confirmed **STOPPED_OK / STOP_ACKED / frozen=true / 0 active tasks**. STOP remains in force for daemon/agent execution. Integration, if performed, uses the existing Merge Queue under its sole-owner lease and preserves frozen state. The reproducible [merged gate](merged_gate.sh) is stored with the evidence.
+
+## Existing Merge Queue integration
+
+The source/dependency chain was integrated locally as `ef507af0d12cb724f46d3b90e44457b710839a71`. [Merged-tree gate](merged_gate_165.txt): **165 PASS**, **73/73**. The existing single-owner orchestrator lease was held for this finite merge operation; queue remained **frozen / STOPPED_OK**, zero active tasks. Main lab/control was fast-forwarded to integration. Neither daemon nor agents were resumed. Remote lab/stable was not overwritten by an API snapshot; publishing the actual local history remains a normal fast-forward Git push.
+
+NIGHTLY-M1 remains **OPEN** until an operator-authorized host start passes preflight and the actual AMCL→result→independent-review→next-task sequence is stored. Host CLI challenge PASS alone does not establish this.

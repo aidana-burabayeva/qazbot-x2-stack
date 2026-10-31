@@ -1,3 +1,9 @@
+# NIGHTLY-M1 continuation
+
+Read [docs/evidence/nightly_m1_20261101/README.md](docs/evidence/nightly_m1_20261101/README.md). Source integrated through existing Merge Queue; STOP stays frozen until authorized resume. Both host CLI challenges passed, but Task→Result→Review→next-task acceptance is OPEN. Do not call probes an AMCL result. Physical X2 forbidden.
+
+---
+
 # Engineering execution continuation
 
 Read [docs/nightly/ENGINEERING_LEAD.md](docs/nightly/ENGINEERING_LEAD.md). Execution transport/adapter failures are not navigation bugs; require a real sandbox capability before dispatch. AMCL is P0 after recovery. Preserve all attempts. Both session probes failed; no runtime acceptance claimed. Physical X2 forbidden.
