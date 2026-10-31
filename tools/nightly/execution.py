@@ -122,6 +122,10 @@ def engineering_sandbox(argv, worktree, result_dir, writable_run=None):
         raise RuntimeError('Engineering requires tested bubblewrap isolation')
     cmd=[binary,'--die-with-parent','--new-session','--unshare-pid','--unshare-ipc','--cap-drop','ALL',
          '--ro-bind','/','/','--proc','/proc','--dev','/dev','--tmpfs','/run','--tmpfs','/tmp',
+         # /etc/resolv.conf -> /run/systemd/resolve/stub-resolv.conf: without this mount the tmpfs
+         # dangles the symlink and every provider CLI fails name resolution (verified: getent rc=2).
+         # Only the resolver state is exposed; docker.sock and /run/user stay hidden.
+         '--ro-bind-try','/run/systemd/resolve','/run/systemd/resolve',
          '--bind',str(result_dir),str(result_dir)]
     if writable_run is None:
         cmd+=['--bind',str(worktree),str(worktree)]

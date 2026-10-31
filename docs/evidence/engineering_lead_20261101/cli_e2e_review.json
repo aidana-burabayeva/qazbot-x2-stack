@@ -1,0 +1,18 @@
+[
+  {
+    "provider": "claude",
+    "passed": false,
+    "category_review": "SANDBOX_NETWORK",
+    "signal": "eai_again",
+    "original_receipt": "run/nightly/capabilities/capability_claude_5b509bdd295a/receipt.json",
+    "scope": "same execution.engineering_sandbox helper and Agent Adapter; outer Codex session restrictions are additional, not the host systemd environment"
+  },
+  {
+    "provider": "codex",
+    "passed": false,
+    "category_review": "SANDBOX_NETWORK",
+    "signal": "read-only file system",
+    "original_receipt": "run/nightly/capabilities/capability_codex_ec10686ada22/receipt.json",
+    "scope": "same execution.engineering_sandbox helper and Agent Adapter; outer Codex session restrictions are additional, not the host systemd environment"
+  }
+]

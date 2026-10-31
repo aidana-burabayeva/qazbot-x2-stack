@@ -1,3 +1,9 @@
+# 2026-11-01 — autonomous engineering execution repair
+
+Read [engineering lead policy](nightly/ENGINEERING_LEAD.md) and [evidence](evidence/engineering_lead_20261101/README.md). Historical provider/adapter failures are separated from navigation defects; original attempts are retained. WAL cursor lock reproduced and corrected without increasing busy_timeout. AMCL effective P0, blocked until actual provider execution is qualified. Both real session probes failed; no genuine verified engineering CLI result or live daemon restart claimed. Stored RUNNING_ENGINEERING is historical; systemd access is denied and the observed lease was free. Physical X2 untouched.
+
+---
+
 # 2026-11-01 — capability-scoped Nightly bootstrap
 
 The global L3-receipt bootstrap deadlock is replaced by ENGINEERING / L3_QUALIFICATION / FULL_NIGHTLY in the existing queue. Read [execution modes](nightly/EXECUTION_MODES.md) and [current evidence](evidence/nightly_modes_20261101/README.md). Engineering uses its own preflight; it cannot certify simulation. The first official MC scope is bounded/stationary and remains UNVERIFIED until real metrics exist. Actual systemd/Docker access is blocked here; no runtime start or real CLI engineering task is claimed. Saved STOPPED_OK/frozen checkpoint retained. Physical X2 untouched. Historical reports below are not current verification.
@@ -102,6 +108,6 @@ READY spans include blocked intervals; do not report 275.594 s as continuous REA
 | 2026-10-29 21:56-22:00 P20 yaw-rate loop LIVE (adapter 9c05bb34, оператор одобрил) | X2, STAND_DEFAULT | **развёрнут** (DELETE+ADD `sdk_qazbot_nav2_1029a`). Тест 1 CCW 0.5 -> 0.563 рад/с, прерван по drift 0.30 м. Тест 2 (MAX_DRIFT 0.5): CCW 0.5 -> **0.534** рад/с (170 град, u 0.60-0.77); CW 0.5 -> **0.354** (u до 0.85); 90 град CCW: 3.3 с до 5 град, финал **+11.5 град** (обратный доворот); 90 град CW: 4.1 с, финал -4.9 град; дрейф 0.16-0.23 м на поворот. После ходьбы и в goals живьём не проверен. `evidence/nav_session_20261029/calib/p20_yaw_test_*` |
 
 <!-- BEGIN LAB_STOP_TESTS -->
-### Nightly lab regression at stop (2026-10-30T12:04:12+0500)
-- `python3 -m pytest -q -p no:cacheprovider tests/nightly tests/motion_adapter`: **PASS** — 117 passed in 69.66s (0:01:09)
+### Nightly lab regression at stop (2026-11-01T02:11:16+0500)
+- `python3 -m pytest -q -p no:cacheprovider tests/nightly tests/motion_adapter`: **PASS** — 299 passed in 317.22s (0:05:17)
 <!-- END LAB_STOP_TESTS -->

@@ -1,12 +1,13 @@
 {
- "stopped": "2026-10-30T12:04:12+0500",
- "branch": "test/p20-twin02-sim-20261029",
- "head_before_stop_commit": "4c648e3e0ad1f83b54c94d55ec4511065a2d0694",
- "codex_stop": "STOP_UNVERIFIED",
- "last_robot_integrated_sha": "6e70c0f90665c06dfc704162c9ddc84efce977c1",
+ "stopped": "2026-11-01T02:11:16+0500",
+ "branch": "lab/control",
+ "head_before_stop_commit": "e0bfe491ca58c8e915f556bae94b0271a54317eb",
+ "codex_stop": "STOP_ACKED",
+ "last_robot_integrated_sha": "1212d7eda003022d74c6ecc4a2c745fd48f57c2f",
  "queue": {
-  "COMPLETED": 32,
-  "NEEDS_APPROVAL": 2,
-  "NEEDS_ENGINEERING": 4
+  "COMPLETED": 42,
+  "NEEDS_APPROVAL": 16,
+  "NEEDS_ENGINEERING": 7,
+  "NEEDS_HARDWARE": 2
  }
 }

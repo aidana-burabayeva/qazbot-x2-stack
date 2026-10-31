@@ -1,3 +1,4 @@
+import os
 """Capabilities with real SQLite and queue dispatch policy; no actual provider/simulation."""
 import json
 import sqlite3
@@ -109,6 +110,21 @@ def test_engineering_bwrap_hides_docker_and_processes(tmp_path,monkeypatch):
     argv=execution.engineering_sandbox(['codex','exec'],tmp_path,tmp_path/'result')
     assert '--unshare-pid' in argv and '--tmpfs' in argv
     assert '/run' in argv and argv[-2:]==['codex','exec']
+
+
+def test_engineering_bwrap_keeps_dns_but_hides_docker_and_user_bus(tmp_path):
+    import shutil,subprocess
+    if not shutil.which('bwrap'):pytest.skip('no bwrap')
+    (tmp_path/'result').mkdir()
+    probe=('getent hosts localhost >/dev/null && '
+           'test -e /etc/resolv.conf && cat /etc/resolv.conf >/dev/null && '
+           '! test -e /run/docker.sock && ! test -e /var/run/docker.sock.hidden && ! test -d /run/user')
+    argv=execution.engineering_sandbox(['bash','-c',probe],tmp_path,tmp_path/'result')
+    r=subprocess.run(argv,capture_output=True,text=True,timeout=30)
+    assert r.returncode==0,r.stderr
+    if os.path.islink('/etc/resolv.conf') and os.path.isdir('/run/systemd/resolve'):
+        r=subprocess.run(execution.engineering_sandbox(['bash','-c','cat /etc/resolv.conf | grep -q nameserver'],tmp_path,tmp_path/'result'),capture_output=True,text=True,timeout=30)
+        assert r.returncode==0,'resolv.conf dangling inside sandbox'
 
 
 def test_protected_safety_ast_detects_threshold_changes_but_ignores_comments():

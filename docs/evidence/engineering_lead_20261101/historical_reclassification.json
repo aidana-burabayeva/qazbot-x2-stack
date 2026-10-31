@@ -1,0 +1,65 @@
+[
+  {
+    "task": "engineering_amcl_initialpose_v3",
+    "attempt": 1,
+    "previous_state": "NEEDS_ENGINEERING",
+    "previous_reason": "invalid/missing result: result.json missing",
+    "category": "PROVIDER_TRANSPORT",
+    "signature": "293dd76d439fa4ab5a43",
+    "log_sha256": "c502de4d495e4ef37a8709a0bac1c7d7ee49c44eb1a68a05504e5245cf59ecd6"
+  },
+  {
+    "task": "engineering_sensor_contract_v3",
+    "attempt": 1,
+    "previous_state": "NEEDS_ENGINEERING",
+    "previous_reason": "invalid/missing result: result.json missing",
+    "category": "PROVIDER_TRANSPORT",
+    "signature": "293dd76d439fa4ab5a43",
+    "log_sha256": "c4bd1d9b1527483b7a29a97469e05d62765ab17708bf6a914fcef8c9070d5af7"
+  },
+  {
+    "task": "engineering_p23_motion_v3",
+    "attempt": 1,
+    "previous_state": "NEEDS_ENGINEERING",
+    "previous_reason": "invalid/missing result: result.json missing",
+    "category": "PROVIDER_TRANSPORT",
+    "signature": "293dd76d439fa4ab5a43",
+    "log_sha256": "1dfc41f536ba0599ea7a8461147f6286e36f18c234a203fb4263dd5cf0614f0a"
+  },
+  {
+    "task": "engineering_frame_anchor_v3",
+    "attempt": 1,
+    "previous_state": "NEEDS_ENGINEERING",
+    "previous_reason": "invalid/missing result: result.json missing",
+    "category": "PROVIDER_TRANSPORT",
+    "signature": "293dd76d439fa4ab5a43",
+    "log_sha256": "dba189212b13950555233a59e2e42be481813beeff560a3da90f08d1a0623927"
+  },
+  {
+    "task": "engineering_gpu_egl_v3",
+    "attempt": 1,
+    "previous_state": "NEEDS_ENGINEERING",
+    "previous_reason": "invalid/missing result: result.json missing",
+    "category": "PROVIDER_TRANSPORT",
+    "signature": "293dd76d439fa4ab5a43",
+    "log_sha256": "30eb8a29c84a91832a202bea03c5358618462e45c745a49c2586cdfb6a4800ec"
+  },
+  {
+    "task": "engineering_odometry_reset_v3",
+    "attempt": 1,
+    "previous_state": "NEEDS_ENGINEERING",
+    "previous_reason": "invalid/missing result: result.json missing",
+    "category": "PROVIDER_TRANSPORT",
+    "signature": "293dd76d439fa4ab5a43",
+    "log_sha256": "a9b6431e504513ec52c3d516ed6b1c03f89325e2563339a60ed4c39aee619fb1"
+  },
+  {
+    "task": "engineering_defect_f7703543b6a3e62e",
+    "attempt": 1,
+    "previous_state": "NEEDS_ENGINEERING",
+    "previous_reason": "invalid/missing result: result.json missing",
+    "category": "ADAPTER_INVOCATION",
+    "signature": "0954c44a8ff1abd9cdcd",
+    "log_sha256": "d43a5a1c51afc5ef922e6a7317925bc6b4e1bba31ad5da7c9c0709a8b3d4cc81"
+  }
+]

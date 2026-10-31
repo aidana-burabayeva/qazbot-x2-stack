@@ -1,0 +1,33 @@
+{
+  "state": {
+    "codex_stop": "STOP_UNVERIFIED",
+    "execution_mode": "ENGINEERING",
+    "frozen": true,
+    "lab_state": "STOPPING"
+  },
+  "cli_receipts": [
+    {
+      "provider": "codex",
+      "model": "gpt-6.1-sol",
+      "passed": true,
+      "raw_log_sha256": "95838f6e710527f8945e116be10a6193103b7b32f9b54fe89e87e32926e0b300",
+      "receipt": "/home/adn/QazBot/control_backend_p20_twin02/run/nightly/capabilities/capability_codex_fed9935f8d43/receipt.json",
+      "qualification": "HOST_CLI_CHALLENGE_ONLY_NOT_ENGINEERING_RESULT"
+    },
+    {
+      "provider": "claude",
+      "model": "claude-opus-5-5",
+      "passed": true,
+      "raw_log_sha256": "a825b859ccd7be3da57e1c0f07f1129c4e2cadac1b8fd09c8d7fe9481e313f41",
+      "receipt": "/home/adn/QazBot/control_backend_p20_twin02/run/nightly/capabilities/capability_claude_3c3d1041baf9/receipt.json",
+      "qualification": "HOST_CLI_CHALLENGE_ONLY_NOT_ENGINEERING_RESULT"
+    }
+  ],
+  "amcl": {
+    "name": "engineering_amcl_initialpose_v3",
+    "state": "NEEDS_APPROVAL",
+    "attempts": 1,
+    "reason": "LAB_STOP (was PAUSED_AGENT)",
+    "priority": 5
+  }
+}
