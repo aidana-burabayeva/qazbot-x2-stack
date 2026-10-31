@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-01",
+  "method": "web.open",
+  "urls": [
+    "https://x2-aimdk.agibot.com/en/latest/",
+    "https://x2-aimdk.agibot.com/en/latest/about_agibot_X2/sensor_fov.html",
+    "https://x2-aimdk.agibot.com/en/latest/sim_contents.html"
+  ],
+  "result": "Timeout fetching; no fresh document semantic verification claimed",
+  "retained_claims": "tools/nightly/fidelity/claims.json; earlier captured evidence, not per-unit measurements"
+}

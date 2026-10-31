@@ -1,0 +1,25 @@
+{
+  "source_commit": "5050ec79a8271836364c2bb1be4a6f3e06219f13",
+  "source_integration_commit": "61970ea7652496bd0dd01ba3a57b4d67f095dea6",
+  "source_merge_gate": "170 PASS; 73/73 source parity",
+  "tasks_unchanged": [
+    [
+      "COMPLETED",
+      32
+    ],
+    [
+      "NEEDS_APPROVAL",
+      2
+    ],
+    [
+      "NEEDS_ENGINEERING",
+      4
+    ]
+  ],
+  "stored_state": "STOPPED_OK",
+  "frozen": true,
+  "last_start_attempt": "START_FAILED",
+  "runtime": "UNVERIFIED: systemd user bus denied",
+  "robot_ref": "1212d7eda003022d74c6ecc4a2c745fd48f57c2f",
+  "publish": "normal Git push failed DNS; exact final tree to be published to separate GitHub review branch; remote lab/stable publication pending"
+}

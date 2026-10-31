@@ -83,6 +83,13 @@ services:
       TWIN_START: "${TWIN_START:--1.275,-4.825,0.0}"
       LP_NUM_THREADS: "${LP_NUM_THREADS:-1}"
     volumes:
+      - type: bind
+        source: ${NIGHTLY_WORKER_AUTH:-../../run/nightly/worker-not-authorized.json}
+        target: /run/qazbot/worker.json
+        read_only: true
+        bind:
+          create_host_path: false
+      - ${NIGHTLY_LOCK_DIR:-../../run/nightly/l3-locks}:/run/qazbot/locks
       - mc_runtime:/opt/mc
       - sim_runtime:/opt/sim
       - mc_r9_runtime:/opt/mc-r9

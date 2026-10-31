@@ -4,6 +4,9 @@
 #   mc -> sim (robot falls: mc has no torque yet) -> SetMcAction SD (mc accepts it only once HAL topics exist)
 #      -> restart sim only -> robot spawns standing and mc holds it -> SetMcAction LD
 set -Eeuo pipefail
+python3 /opt/twin-sim/check_authorization.py
+exec 9>/run/qazbot/locks/official-mc.lock
+flock -n 9 || { echo 'another official MC worker owns the LAB lease' >&2; exit 2; }
 LOG=/var/log/twin; mkdir -p "$LOG"
 [ "${TWIN_SANDBOX:-}" = 1 ] || { echo "TWIN_SANDBOX!=1: refusing to start" >&2; exit 2; }
 # TWIN_MC=r9: the robot's MC v1.1.0-r9-rc9 (aarch64) under qemu-user, seeded into /opt/mc-r9 by sim-init; default: official x86 mc

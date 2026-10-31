@@ -26,7 +26,7 @@ LABEL org.opencontainers.image.title="x2-twin-sim" \
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && apt-get install -y --no-install-recommends \
       libcurl4 libeigen3-dev libgflags2.2 libgl1 libgl1-mesa-dri libglx-mesa0 libncurses6 liboctomap1.9 libopencv-core4.5d \
-      libscrypt0 libyaml-cpp0.7 mesa-utils xvfb x11-utils procps qemu-user-static libassimp5 libboost-filesystem1.74.0 libpcl-common1.12 python3-yaml python3-pil \
+      libscrypt0 libyaml-cpp0.7 mesa-utils xvfb x11-utils procps util-linux qemu-user-static libassimp5 libboost-filesystem1.74.0 libpcl-common1.12 python3-yaml python3-pil \
       ros-${ROS_DISTRO}-cv-bridge ros-${ROS_DISTRO}-grid-map-msgs ros-${ROS_DISTRO}-grid-map-ros ros-${ROS_DISTRO}-joy \
       ros-${ROS_DISTRO}-rmw-fastrtps-cpp ros-${ROS_DISTRO}-nav-msgs python3-numpy \
  && rm -rf /var/lib/apt/lists/*
