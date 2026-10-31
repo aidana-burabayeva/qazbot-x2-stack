@@ -4,4 +4,5 @@ Description=QazBot nightly: enqueue tonight's campaign (idempotent per date)
 [Service]
 Type=oneshot
 WorkingDirectory=/home/adn/QazBot/control_backend_p20_twin02
+Environment=QAZBOT_LAB=1 TWIN_ENVFILE=.env.lab
 ExecStart=/usr/bin/bash tools/nightly/enqueue_nightly.sh

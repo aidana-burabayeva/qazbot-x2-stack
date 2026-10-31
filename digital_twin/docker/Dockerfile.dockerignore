@@ -3,6 +3,7 @@
 !ws/src
 !candidates/qazbot_mc_turn
 !docker/dds
+!docker/patches
 !docker/entrypoints
 **/__pycache__
 **/*.pyc

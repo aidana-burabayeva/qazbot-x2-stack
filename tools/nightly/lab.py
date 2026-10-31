@@ -27,6 +27,8 @@ import opskills  # noqa: E402
 ROOT, RUN = nq.ROOT, nq.RUN
 HW = ROOT / 'docs' / 'hardware'
 UNITS = ['qazbot-nightly.service', 'qazbot-nightly-enqueue.service', 'qazbot-nightly-enqueue.timer']
+INTEGRATION = 'lab/stable'  # permanent integration branch: only the merge queue moves it, and it is never checked out anywhere
+IDENT = ['-c', 'user.name=qazbot-nightly', '-c', 'user.email=nightly@localhost']
 UNIT_DIR = Path(os.environ.get('NIGHTLY_UNIT_DIR', Path.home() / '.config' / 'systemd' / 'user'))
 ACK = RUN / 'ack' / 'codex_stop.txt'
 CODEX_THREAD = os.environ.get('NIGHTLY_CODEX_SESSION', '01a18872-7bd1-7701-b367-b63e344d449d')
@@ -358,6 +360,8 @@ def push_and_verify(args, g):
     ok_branch = remote.get(f'refs/heads/{br}') == head
     git('fetch', '--prune', 'origin', br, timeout=60)
     docs_ok = git('cat-file', '-e', f'origin/{br}:docs/hardware/LAB_TO_ROBOT_HANDOFF.md')[0] == 0
+    if ok_branch and not gout('rev-parse', '--abbrev-ref', '@{u}'):
+        git('branch', '--set-upstream-to', f'origin/{br}', br)
     if ok_branch and docs_ok:
         return 'STOPPED_OK', f'remote {br}={head[:12]} tag={tag}'
     return 'STOPPED_PUBLISH_PENDING', f'verify failed: branch_ok={ok_branch} docs_ok={docs_ok}'
@@ -514,6 +518,40 @@ def robot_sync(db):
     return log
 
 
+def sync_control(log):
+    """The control checkout (lab/control) carries lab/stable plus operator handoff commits. Bring in what the merge queue integrated since."""
+    if gout('rev-parse', '-q', '--verify', f'refs/heads/{INTEGRATION}') == '':
+        log.append(f'SYNC {INTEGRATION} absent locally: nothing to sync')
+        return None
+    br = gout('rev-parse', '--abbrev-ref', 'HEAD')
+    if br == INTEGRATION:
+        return f'{INTEGRATION} is checked out here: the merge queue would leave this tree stale. Switch: git switch -c lab/control'
+    if git('merge-base', '--is-ancestor', INTEGRATION, 'HEAD')[0] == 0:
+        log.append(f'SYNC control {br} already contains {INTEGRATION} {gout("rev-parse", "--short", INTEGRATION)}')
+        return None
+    if [ln for ln in porcelain() if not ln.startswith('??')]:
+        return f'control checkout has tracked modifications: {INTEGRATION} not merged'
+    rc, o = git(*IDENT, 'merge', '--no-edit', '-m', f'control: sync {INTEGRATION}', INTEGRATION)
+    if rc != 0:
+        git('merge', '--abort')
+        return f'merge of {INTEGRATION} into {br} conflicts: {o[-120:]}'
+    log.append(f'SYNC control {br} <- {INTEGRATION} {gout("rev-parse", "--short", INTEGRATION)}')
+    return None
+
+
+def verify_started(timeout=40):
+    """Daemon is RUNNING only when systemd reports active AND the orchestrator holds its lease (pid alive)."""
+    end = time.time() + timeout
+    while time.time() < end:
+        rc, o = sh('systemctl --user is-active qazbot-nightly.service')
+        lock = nq.RUN / 'orchestrator.lock'
+        pid = lock.read_text().strip() if lock.exists() else ''
+        if o.strip() == 'active' and pid.isdigit() and Path(f'/proc/{pid}').exists():
+            return True, f'qazbot-nightly active, orchestrator pid={pid}'
+        time.sleep(2)
+    return False, f'qazbot-nightly not active within {timeout}s ({sh("systemctl --user is-active qazbot-nightly.service")[1]})'
+
+
 def cmd_resume(args):
     db = nq.connect()
     g0 = git_view()
@@ -534,6 +572,10 @@ def cmd_resume(args):
             log.append(f'SAFE-PULL rc={rc} {o[-120:]}')
             g = git_view()
     log.append(f"GIT {g['branch']} {g['head'][:12]} ahead={g['ahead']} behind={g['behind']} dirty={len(g['dirty'])} divergence={divergence}")
+    sync_err = sync_control(log)
+    if sync_err:
+        divergence = (divergence + '; ' if divergence else '') + sync_err
+    g = git_view()
     # DIFF since the last integrated point (stop sha, else the robot-integrated sha)
     base = nq.kv_get(db, 'last_lab_stop_sha')
     new_tasks = []
@@ -574,7 +616,7 @@ def cmd_resume(args):
     nq.kv_set(db, 'parked', {})
     nq.kv_set(db, 'frozen', False)
     nq.kv_set(db, 'delegated_open', [])
-    nq.kv_set(db, 'lab_state', 'RUNNING' if not args.no_start else 'RESUMED_NOT_STARTED')
+    nq.kv_set(db, 'lab_state', 'STARTING' if not (args.no_start or args.no_systemd) else 'RESUMED_NOT_STARTED')  # RUNNING only after verification
     nq.kv_set(db, 'last_resume_ts', time.time())
     log.append(f'PRIORITIZE restored {restored} parked tasks; frozen=False')
     nq.ev(db, '*', 'RESUME', f'restored={restored} divergence={divergence}')
@@ -590,8 +632,20 @@ def cmd_resume(args):
                 link.unlink()
             link.symlink_to(src)
         sh('systemctl --user daemon-reload')
-        rc, o = sh('systemctl --user enable --now qazbot-nightly.service qazbot-nightly-enqueue.timer')
-        log.append(f'START rc={rc} {o[-120:]} units={ {u: unit_state(u) for u in UNITS} }')
+        rc, o = sh('systemctl --user enable --now qazbot-nightly.service')  # the daemon first: the timer must not fire before it is verified
+        ok, why = verify_started() if rc == 0 else (False, f'enable --now failed rc={rc}: {o[-120:]}')
+        log.append(f'START daemon {"OK" if ok else "FAILED"}: {why}')
+        if ok:
+            rc2, o2 = sh('systemctl --user enable --now qazbot-nightly-enqueue.timer')
+            log.append(f'START timer rc={rc2} {o2[-80:]}')
+            ok = rc2 == 0 and sh('systemctl --user is-active qazbot-nightly-enqueue.timer')[1].strip() == 'active'
+        nq.kv_set(db, 'lab_state', 'RUNNING' if ok else 'START_FAILED')
+        nq.ev(db, '*', 'START_VERIFIED' if ok else 'START_FAILED', why[:200])
+        nq.checkpoint(db, 'lab start verified' if ok else 'lab start failed')
+        log.append(f'units={ {u: unit_state(u) for u in UNITS} }')
+        if not ok:
+            print('\n'.join(log))
+            sys.exit(4)
     print('\n'.join(log))
     print('Physical X2: no motion/SSH/deploy is performed or allowed by the lab; hardware qualification needs a separate operator confirmation.')
 

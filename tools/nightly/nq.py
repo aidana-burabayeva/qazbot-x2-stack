@@ -768,7 +768,7 @@ def tick(db, cur):
             run_cwd, wt = r['cwd'] or str(ROOT), None
             if isolate:
                 bf = r['base_from']
-                base_sha = (kv_get(db, f'verified_sha:{bf}') if bf else None) or attempts.head(run_cwd)
+                base_sha = (kv_get(db, f'verified_sha:{bf}') if bf else None) or mergeq.integration_head(run_cwd)  # fresh lab/stable ref, not the control checkout's HEAD
                 try:
                     wt, branch = attempts.prepare(run_cwd, RUN, r['name'], attempt_n, aid, base_sha)
                 except Exception as e:
