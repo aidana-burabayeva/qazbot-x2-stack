@@ -1,3 +1,9 @@
+# 2026-10-31 — Nav optimization P0
+
+Read [NAV_OPTIMIZATION.md](NAV_OPTIMIZATION.md) and [evidence](../evidence/navopt_p0_20261031/README.md). Native probe and exact patch implemented; live P0 doctor/official MC still UNVERIFIED, automatic optimization disabled. No physical X2 actions.
+
+---
+
 # 2026-10-31 — LABCTL continuation
 
 Terminal entry point and remaining qualification: [LABCTL.md](LABCTL.md). Evidence: [lab_bootstrap_20261031](../evidence/lab_bootstrap_20261031/README.md). Full regression 235 PASS; focused bootstrap 18 PASS. Doctor/start refused on restricted Docker/systemd/GitHub environment; original frozen STOPPED_OK queue preserved. No new live qualification or physical X2 activity.

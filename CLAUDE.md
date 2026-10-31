@@ -1,3 +1,9 @@
+# Current navigation optimization continuation
+
+Read [docs/nightly/NAV_OPTIMIZATION.md](docs/nightly/NAV_OPTIMIZATION.md) and its linked evidence. P0 source fixes/native probe/archive implemented; live doctor and L3 qualification remain UNVERIFIED. Do not enable optimization before real P0 PASS and single-worker official MC baseline. Physical X2 untouched; existing queue remains frozen.
+
+---
+
 # 2026-10-31 — terminal LAB bootstrap
 
 Продолжение инфраструктуры: [docs/nightly/LABCTL.md](docs/nightly/LABCTL.md), evidence [docs/evidence/lab_bootstrap_20261031/README.md](docs/evidence/lab_bootstrap_20261031/README.md). Control checkout — `lab/control`, интеграционная ветка — `lab/stable`, не checkout. Управление: `tools/nightly/labctl.sh doctor|start|status|stop`. Runtime acceptance ещё не завершён: текущая среда блокирует Docker/systemd/GitHub. Не трогать X2 и не объявлять новый SIM PASS по историческим отчётам ниже.

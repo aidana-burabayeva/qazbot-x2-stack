@@ -1,0 +1,12 @@
+{
+  "tasks": {
+    "COMPLETED": 32,
+    "NEEDS_APPROVAL": 2,
+    "NEEDS_ENGINEERING": 4
+  },
+  "state": {
+    "frozen": true,
+    "lab_state": "STOPPED_OK"
+  },
+  "note": "Read-only SQLite snapshot; host runtime state not independently verified."
+}

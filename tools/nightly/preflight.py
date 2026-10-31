@@ -9,6 +9,7 @@ Exit 0 = every check PASS (WARN allowed), 1 = at least one FAIL. A JSON + Markdo
 Status vocabulary: PASS | FAIL | WARN | UNVERIFIED (never promoted to PASS without evidence).
 """
 import argparse
+import importlib.util
 import json
 import math
 import os
@@ -312,58 +313,44 @@ def live_parity(nodes):
     add('live.amcl_p23_profile', 'PASS' if all(got[k] == want[k] for k in want) else 'FAIL', f'got={got} want={want}')
 
 
+def ownership_report_ok(doc, odom_owner='/kinematic_plant'):
+    required = {'map->odom': '/qazbot_d1_map/amcl', 'odom->base_footprint': odom_owner}
+    for edge, owner in required.items():
+        rows = doc.get('owners', {}).get(edge, [])
+        if len(rows) != 1:
+            return False
+        row = rows[0]
+        gid = row.get('gid', '')
+        if (not re.fullmatch('[0-9a-f]{48}', gid) or set(gid) == {'0'} or
+                type(row.get('samples')) is not int or row['samples'] < 3 or row.get('nodes') != [owner]):
+            return False
+    return doc.get('pass') is True
+
+
 def tf_owners():
-    script = r'''python3 - <<'PY'
-import json, time, rclpy
-from rclpy.node import Node
-from tf2_msgs.msg import TFMessage
-from rclpy.qos import QoSProfile, DurabilityPolicy
-rclpy.init(); n = Node('tf_owner_probe'); edges = {}; owners = {}
-import math, os
-from geometry_msgs.msg import PoseWithCovarianceStamped
-x, y, yaw = [float(v) for v in os.environ['TWIN_START'].split(',')]
-ip = n.create_publisher(PoseWithCovarianceStamped, '/qazbot_d1_map/initialpose', 10)
-def cb(m, info):
-    for t in m.transforms:
-        edge = t.header.frame_id + '->' + t.child_frame_id
-        edges[edge] = edges.get(edge, 0) + 1
-        owners.setdefault(edge, set()).add(bytes(info.publisher_gid).hex())
-for topic in ('/tf', '/qazbot_d1_map/tf'):
-    n.create_subscription(TFMessage, topic, cb, 100)
-n.create_subscription(TFMessage, '/tf_static', cb, QoSProfile(depth=100, durability=DurabilityPolicy.TRANSIENT_LOCAL))
-pubs = {}; gids = {}
-m = PoseWithCovarianceStamped(); m.header.frame_id = 'map'
-m.pose.pose.position.x, m.pose.pose.position.y = x, y
-m.pose.pose.orientation.z, m.pose.pose.orientation.w = math.sin(yaw / 2), math.cos(yaw / 2)
-m.pose.covariance[0] = m.pose.covariance[7] = 0.05; m.pose.covariance[35] = 0.05
-t_end = time.time() + 20
-while time.time() < t_end and 'map->odom' not in edges:
-    m.header.stamp = n.get_clock().now().to_msg(); ip.publish(m)
-    rclpy.spin_once(n, timeout_sec=0.5)
-t_end = time.time() + 8
-while time.time() < t_end:
-    rclpy.spin_once(n, timeout_sec=0.2)
-for topic in ('/tf', '/qazbot_d1_map/tf'):
-    for i in n.get_publishers_info_by_topic(topic):
-        gids[bytes(i.endpoint_gid).hex()] = i.node_namespace.rstrip('/') + '/' + i.node_name
-    pubs[topic] = sorted({(i.node_namespace.rstrip('/') + '/' + i.node_name) for i in n.get_publishers_info_by_topic(topic)})
-print('TFJSON' + json.dumps(dict(edges=edges, publishers=pubs, owners={e: sorted(v) for e,v in owners.items()}, gids=gids)))
-PY'''
-    rc, o = in_stack('export TWIN_START=' + env_file(TW / ENVFILE)['TWIN_START'] + '\n' + script, timeout=90)
-    m = re.search(r'TFJSON(.*)', o)
-    if not m:
-        add('tf.owners', 'FAIL', f'probe failed: {o[-150:]}')
-        return
-    d = json.loads(m.group(1))
-    e, pubs = d['edges'], d['publishers']
-    need = {'map->odom': 'amcl', 'odom->base_footprint': 'single odom owner'}
-    missing = [k for k in need if k not in e]
-    add('tf.edges', 'PASS' if not missing else 'FAIL', f'edges={sorted(e)} missing={missing}')
-    amcl_pub = any('amcl' in p for v in pubs.values() for p in v)
-    add('tf.map_odom_owner_amcl', 'PASS' if amcl_pub else 'FAIL', f'publishers={pubs}')
-    owners = {e: [d['gids'].get(g, 'UNKNOWN:' + g) for g in d['owners'].get(e, [])] for e in need}
-    ok = owners == {'map->odom': ['/qazbot_d1_map/amcl'], 'odom->base_footprint': ['/kinematic_plant']}
-    add('tf.single_owner_per_edge', 'PASS' if ok else 'FAIL', f'observed DDS publisher GIDs per TF edge (8s observation): {owners}', owners=owners)
+    binary = '/opt/x2twin/overlay/lib/qazbot_tf_probe/tf_owner_probe'
+    # Actual DDS self-tests use a private topic; a duplicate ROS node name must not hide two GIDs.
+    for case, expected_rc in (('single', 0), ('duplicate', 1), ('same-name', 1), ('missing', 1)):
+        rc, out = in_stack('QAZBOT_SIM=1 ' + binary + ' ' + case, timeout=20)
+        match = re.search(r'TFJSON(.*)', out)
+        doc = json.loads(match.group(1)) if match else {}
+        wanted = case == 'single'
+        good = rc == expected_rc and doc.get('pass') is wanted
+        if case in ('duplicate', 'same-name'):
+            good = good and len(doc.get('owners', {}).get('map->odom', [])) == 2
+        if case == 'missing':
+            good = good and all(not v for v in doc.get('owners', {}).values()) and len(doc.get('owners', {})) == 2
+        add('tf.dds_fixture.' + case, 'PASS' if good else 'FAIL', f'rc={rc} native Humble MessageInfo; {out[-200:]}')
+        if not good:
+            add('tf.owners', 'FAIL', 'native DDS diagnostic self-test failed; ownership not qualified')
+            return
+    start = env_file(TW / ENVFILE)['TWIN_START']
+    import shlex
+    rc, out = in_stack('export QAZBOT_SIM=1 TWIN_ODOM_OWNER=/kinematic_plant TWIN_START=' + shlex.quote(start) + '; ' + binary, timeout=60)
+    match = re.search(r'TFJSON(.*)', out)
+    doc = json.loads(match.group(1)) if match else {}
+    ok = rc == 0 and ownership_report_ok(doc)
+    add('tf.owners', 'PASS' if ok else 'FAIL', 'native per-message DDS GIDs, 28s observation, >=3 samples per edge', observation=doc, error=out[-200:] if not ok else '')
 
 
 def isolation(domain_expected='87'):
@@ -408,8 +395,13 @@ def stage_sim(nodes):
         img = o.splitlines()
         import difflib
         d = [ln for ln in difflib.unified_diff(host, img, lineterm='', n=0) if ln[:1] in '+-' and ln[:3] not in ('+++', '---')]
-        expected = '\n'.join(host).replace("'ROS_LOCALHOST_ONLY':'1'", "'TWIN_SANDBOX':'1'").replace("'obstacle_layer.scan.inf_is_valid': False,", "'obstacle_layer.scan.inf_is_valid': os.environ.get('QAZBOT_I1_INF_VALID') == '1',")
-        ok = '\n'.join(img) == expected
+        spec = importlib.util.spec_from_file_location('nav_control_patch', TW / 'docker/nav_control_patch.py')
+        patch = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(patch)
+        expected = patch.transform((ROOT / 'ws/src/navigation/nav_control.launch.py').read_text())
+        import hashlib
+        hash_rc, hash_out = sh(['docker', 'run', '--rm', '--network', 'none', '--entrypoint', 'sha256sum', 'x2-twin-stack:nightly', '/opt/x2twin/stack/navigation/nav_control.launch.py'])
+        ok = rc == 0 and hash_rc == 0 and bool(hash_out.split()) and hash_out.split()[0] == hashlib.sha256(expected.encode()).hexdigest()
         add('sim.image_patch_is_documented', 'PASS' if ok else 'FAIL', f'{len(d)} changed line(s) in the image copy of nav_control.launch.py (Dockerfile SIM-only hooks: TWIN_SANDBOX guard, I1 inf_is_valid)', diff=d[:8])
     try:
         rc, o = dc('up', '-d', '--wait', '--wait-timeout', '240', 'stack-lite', timeout=330)
