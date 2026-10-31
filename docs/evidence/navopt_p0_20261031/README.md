@@ -13,3 +13,5 @@ OPEN: qualified current L3 runner/baseline, all requested navigation scenarios, 
 All archive test records are synthetic in-memory fixtures, explicitly not navigation or simulator qualification. No test fixture data was inserted into the production queue/archive. No physical X2 actions were performed.
 
 Regression results: **251 PASS** for existing nightly infrastructure and motion adapter plus P0 tests; **39 PASS** in the final focused P0/archive/bootstrap suite. The archive module was added after collection of the full run; its six tests are included in the focused suite. Native executable compilation is verified; DDS fixture execution is not.
+
+Existing Merge Queue independently rebuilt the native executable on the merged tree and passed **122 tests** before CAS integration as 0e5731c7c948. This is source/build verification; it does not execute DDS fixtures or MuJoCo.
