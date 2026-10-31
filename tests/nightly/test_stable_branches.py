@@ -38,6 +38,24 @@ def uni(tmp_path, monkeypatch):
 
 def cause(nq, db, task):
     nq.store.add_root_cause(db, f'rc_{task}', f'root cause of {task}', 'VERIFIED', f'evidence/{task}', task)
+    # Explicit synthetic simulator proof for candidate-lifecycle tests. Never an actual SIM qualification.
+    import hashlib
+    import optimization_archive as archive
+    sha=nq.kv_get(db,'verified_sha:'+task)
+    key=db.execute('SELECT result_key FROM results WHERE task=?',(task,)).fetchone()[0]
+    db.execute('UPDATE results SET git_sha=?,map_sha=? WHERE result_key=?',(sha,'b'*64,key))
+    record=dict(config_id='synthetic-baseline',baseline_id='synthetic-baseline',fidelity='L3',git_sha=sha,
+                map_sha256='b'*64,world_sha256='c'*64,stack_image_digest='sha256:'+'d'*64,simulation_image_digest='sha256:'+'e'*64,
+                ros_version='humble',nav2_version='fixture',mc_version='fixture',scenario_set_sha256='f'*64,seeds=[1],scenarios=['synthetic'],
+                fixed_parameters_sha256='1'*64,safety_contract_sha256='2'*64,controller_parameters={'v':.3},
+                evidence=[{'path':'ok.flag','sha256':hashlib.sha256(b'1\n').hexdigest()}],qualification_status='MC_MUJOCO_QUALIFIED',
+                independent_validation='PASS',result_key=key,hard_failure_flags={k:False for k in archive.FLAGS},
+                metrics=dict(duration_s=10,position_error_m=.1,yaw_error_rad=.1,min_clearance_m=.2,success_rate=1),
+                resource_profile=dict(cpu_peak_percent=100,ram_peak_bytes=1,disk_delta_bytes=1,evidence_bytes=1,rtf_min=1,
+                                      missed_mc_cycles=0,wall_duration_s=10,workers=1,timing_isolation_status='PASS'))
+    rid=archive.record(db,record)
+    db.execute('UPDATE results SET metrics=? WHERE result_key=?',(json.dumps({'tests_cmd':'pytest -q','sim_archive_run_id':rid}),key))
+
 
 
 def cands(repo, ref='lab/stable'):
@@ -96,20 +114,21 @@ def test_candidate_branch_carries_only_production_files_and_a_plan(uni):
         rs.make_candidate(repo, cid, lab_ref='lab/stable', robot_ref='robot/stable')           # never overwritten
 
 
-def test_failed_hardware_candidate_keeps_robot_files_blocks_dependants_and_stays_in_history(uni):
+@pytest.mark.parametrize('outcome',['HW_FAILED','TWIN_MISMATCH'])
+def test_failed_hardware_candidate_keeps_robot_files_blocks_dependants_and_stays_in_history(uni,outcome):
     repo, nq, mq, db = uni
     c1 = prepared(uni)
     attempt(repo, nq, db, 'fix2', {'ws/src/navigation/a.py': 'l1\nl2\nL3\n'}); cause(nq, db, 'fix2'); queue(nq, mq, db, 'fix2'); drain(nq, mq, db)
     c2 = cands(repo)[-1]['id']
     br = rs.make_candidate(repo, c1, lab_ref='lab/stable', robot_ref='robot/stable')['branch']
     before_files = g(repo, 'show', 'robot/stable:ws/src/navigation/a.py')
-    rs.record_result(repo, c1, 'HW_FAILED', 'bag:/x2/bags/run7 sha256:abc')
+    rs.record_result(repo, c1, outcome, 'bag:/x2/bags/run7 sha256:abc')
     assert g(repo, 'show', 'robot/stable:ws/src/navigation/a.py') == before_files                # nothing installed
     rec = json.loads(g(repo, 'show', f'robot/stable:{rs.RESULTS_DIR}/{c1}.json'))
-    assert rec['status'] == 'HW_FAILED' and rec['evidence'].startswith('bag:')
+    assert rec['status'] == outcome and rec['evidence'].startswith('bag:')
     assert g(repo, 'rev-parse', '--verify', br)                                                     # failed candidate branch kept
     eff = {c['id']: c['effective_status'] for c in rs.list_candidates(repo, 'lab/stable', 'robot/stable')}
-    assert eff[c1] == 'HW_FAILED' and eff[c2] == 'SIM_VERIFIED'
+    assert eff[c1] == outcome and eff[c2] == 'SIM_VERIFIED'
     with pytest.raises(rs.StableError, match='not HW_VERIFIED'):
         rs.make_candidate(repo, c2, lab_ref='lab/stable', robot_ref='robot/stable')
 

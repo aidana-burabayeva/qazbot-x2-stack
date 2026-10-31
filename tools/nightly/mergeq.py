@@ -21,6 +21,7 @@ from pathlib import Path
 
 import attempts
 import candidates
+import safety_guard
 
 SCHEMA = """CREATE TABLE IF NOT EXISTS merge_queue(
   id INTEGER PRIMARY KEY, task TEXT NOT NULL, repo TEXT NOT NULL, branch TEXT NOT NULL, sha TEXT NOT NULL, base_sha TEXT,
@@ -98,6 +99,15 @@ def enqueue(db, run, kv_get, task):
     """Only a COMPLETED + VERIFIED task whose verified SHA is still its branch tip with a stored PASS result may be queued."""
     if os.environ.get('NIGHTLY_MERGEQ', '1') == '0' or not task['branch'] or not task['attempt_wt']:
         return None
+    if dict(task).get('review_required'):
+        return None  # producer is not promoted; its independently verified review branch carries the fix
+    producer_name=dict(task).get('base_from')
+    if producer_name:
+        producer=db.execute('SELECT * FROM tasks WHERE name=?',(producer_name,)).fetchone()
+        if producer and dict(producer).get('review_required'):
+            if (producer['state']!='COMPLETED' or producer['phase']!='VERIFIED' or not task['owner'] or
+                    task['owner']==producer['owner']):
+                return None
     sha = kv_get(db, f"verified_sha:{task['name']}")
     ok = db.execute("SELECT 1 FROM results WHERE task=? AND attempt=? AND verdict='PASS' AND status='STORED' LIMIT 1", (task['name'], task['attempts'])).fetchone()
     if not sha or not ok or task['state'] != 'COMPLETED' or task['phase'] != 'VERIFIED':
@@ -212,9 +222,26 @@ def step(db, run, ev=None):
         ev(row['task'], 'MERGE_CONFLICT', json.dumps(files))
         write_state(db, run, repo)
         return True
+    errors=safety_guard.check(wt,head,attempts.head(wt))
+    if errors:
+        _cleanup(repo,str(wt))
+        _set(db,row['id'],'REGRESSION_FAILED','; '.join(errors),wt=None)
+        write_state(db,run,repo)
+        return True
     try:  # X2-bound candidate record (production files only); sim-only fixes produce none
         base = row['base_sha'] or git(repo, 'merge-base', head, row['sha'])[1]
-        ent = candidates.build(db, row['task'], wt, base, row['sha'], gate=' '.join(gate_argv()))
+        candidate_task,candidate_sha=row['task'],row['sha']
+        task=db.execute('SELECT * FROM tasks WHERE name=?',(row['task'],)).fetchone()
+        if task and dict(task).get('base_from'):
+            producer=db.execute('SELECT * FROM tasks WHERE name=?',(task['base_from'],)).fetchone()
+            if producer and dict(producer).get('review_required'):
+                saved=db.execute('SELECT v FROM kv WHERE k=?',('verified_sha:'+producer['name'],)).fetchone()
+                original=db.execute('SELECT v FROM kv WHERE k=?',(f"base:{producer['name']}:{producer['attempts']}",)).fetchone()
+                if saved and original:
+                    candidate_task=producer['name'];candidate_sha=json.loads(saved[0]);base=json.loads(original[0])['git_sha']
+                    if candidates.production_files(wt,candidate_sha,row['sha']):
+                        raise ValueError('review changed production code after simulation evidence; requalification required')
+        ent = candidates.build(db, candidate_task, wt, base, candidate_sha, gate=' '.join(gate_argv()))
         if ent and candidates.add(wt, ent):
             git(wt, 'add', candidates.FILE)
             git(wt, *IDENT, 'commit', '-q', '-m', f"candidates: {ent['id']} (SIM_VERIFIED, awaiting hardware validation)")

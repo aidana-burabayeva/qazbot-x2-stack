@@ -28,10 +28,10 @@ def test_campaign_idempotent_and_no_legacy_retry(db, monkeypatch):
     labctl.nq.enqueue(db, 'verify_worker_kill', 'false', state='NEEDS_ENGINEERING', reason='exit -9')
     for _ in range(2):
         labctl.prepare_campaign(db)
-    assert db.execute('SELECT COUNT(*) FROM tasks').fetchone()[0] == len(labctl.CAMPAIGN) + 3 + 1
+    assert db.execute('SELECT COUNT(*) FROM tasks').fetchone()[0] == 14
     assert db.execute("SELECT state,reason FROM tasks WHERE name='verify_worker_kill'").fetchone()[:] == ('NEEDS_ENGINEERING', 'exit -9')
     assert labctl.nq.kv_get(db, 'last_robot_processed_sha') == labctl.REVIEWED_ROBOT
-    assert db.execute("SELECT name FROM tasks WHERE state='PENDING' ORDER BY priority LIMIT 1").fetchone()[0] == 'lab_p0_amcl_initialpose_v1'
+    assert db.execute("SELECT name FROM tasks WHERE state='PENDING' ORDER BY priority LIMIT 1").fetchone()[0] .startswith('fidelity_audit_')
 
 
 def test_future_robot_snapshot_never_marked_reviewed(db, monkeypatch):
@@ -45,7 +45,7 @@ def test_failed_preflight_does_not_start_or_enqueue(monkeypatch):
     monkeypatch.setattr(labctl.lab, 'sh', lambda *a: (3, 'inactive'))
     monkeypatch.setattr(labctl.nq.mergeq, 'checked_out_at', lambda *a: None)
     monkeypatch.setattr(labctl.lab, 'sync_control', lambda *a: None)
-    monkeypatch.setattr(labctl, 'doctor', lambda: 1)
+    monkeypatch.setattr(labctl, 'doctor', lambda *args: 1)
     monkeypatch.setattr(labctl, 'call', lambda *a: pytest.fail('resume called after failed preflight'))
     monkeypatch.setattr(labctl.nq, 'connect', lambda: pytest.fail('queue modified after failed preflight'))
     assert labctl.start() == 1
@@ -55,13 +55,13 @@ def test_doctor_only_runs_preflight(monkeypatch):
     calls = []
     monkeypatch.setattr(labctl, 'call', lambda *a: calls.append(a) or 0)
     assert labctl.doctor() == 0
-    assert calls == [(sys.executable, str(labctl.ROOT / 'tools/nightly/preflight.py'), 'all', '--tests')]
+    assert calls == [(sys.executable, str(labctl.ROOT / 'tools/nightly/preflight.py'), 'all', '--tests', '--mode', 'ENGINEERING')]
 
 
 def test_integration_checkout_refused(monkeypatch):
     monkeypatch.setattr(labctl.lab, 'sh', lambda *a: (3, 'inactive'))
     monkeypatch.setattr(labctl.nq.mergeq, 'checked_out_at', lambda *a: '/operator')
-    monkeypatch.setattr(labctl, 'doctor', lambda: pytest.fail('unsafe integration checkout'))
+    monkeypatch.setattr(labctl, 'doctor', lambda *args: pytest.fail('unsafe integration checkout'))
     assert labctl.start() == 1
 
 
@@ -83,15 +83,15 @@ def test_start_success_prepares_once_then_existing_resume(tmp_path, db, monkeypa
     monkeypatch.setattr(labctl.lab, 'sh', lambda *a: (3, 'inactive'))
     monkeypatch.setattr(labctl.nq.mergeq, 'checked_out_at', lambda *a: None)
     monkeypatch.setattr(labctl.lab, 'sync_control', lambda *a: None)
-    monkeypatch.setattr(labctl, 'doctor', lambda: 0)
+    monkeypatch.setattr(labctl, 'doctor', lambda *args: 0)
     monkeypatch.setattr(labctl, 'RUN', tmp_path)
     (tmp_path / 'preflight').mkdir()
-    (tmp_path / 'preflight/latest.json').write_text('{"git_head":"head","integration":"integration"}')
+    (tmp_path / 'preflight/latest.json').write_text('{"git_head":"head","integration":"integration","mode":"ENGINEERING","verdict":"PASS","stamp":"test"}')
     monkeypatch.setattr(labctl.lab, 'gout', lambda *a: 'head')
     monkeypatch.setattr(labctl.nq.mergeq, 'integration_head', lambda *a: 'integration')
     monkeypatch.setattr(labctl.nq, 'connect', lambda: db)
     prepared, calls = [], []
-    monkeypatch.setattr(labctl, 'prepare_campaign', lambda db: prepared.append(True))
+    monkeypatch.setattr(labctl, 'prepare_campaign', lambda db,*args: prepared.append(True))
     monkeypatch.setattr(labctl, 'runtime_qualification_errors', lambda db: [])
     monkeypatch.setattr(labctl, 'call', lambda *a: calls.append(a) or 0)
     assert labctl.start() == 0
@@ -103,7 +103,7 @@ def test_start_ref_moved_during_doctor_no_queue_mutation(tmp_path, monkeypatch):
     monkeypatch.setattr(labctl.lab, 'sh', lambda *a: (3, 'inactive'))
     monkeypatch.setattr(labctl.nq.mergeq, 'checked_out_at', lambda *a: None)
     monkeypatch.setattr(labctl.lab, 'sync_control', lambda *a: None)
-    monkeypatch.setattr(labctl, 'doctor', lambda: 0)
+    monkeypatch.setattr(labctl, 'doctor', lambda *args: 0)
     monkeypatch.setattr(labctl, 'RUN', tmp_path)
     (tmp_path / 'preflight').mkdir()
     (tmp_path / 'preflight/latest.json').write_text('{"git_head":"old","integration":"old"}')
@@ -174,14 +174,14 @@ def test_pass_doctor_without_e2e_receipt_cannot_enqueue_or_resume(tmp_path, monk
     monkeypatch.setattr(labctl.lab,'sh',lambda *a:(3,'inactive'))
     monkeypatch.setattr(labctl.nq.mergeq,'checked_out_at',lambda *a:None)
     monkeypatch.setattr(labctl.lab,'sync_control',lambda *a:None)
-    monkeypatch.setattr(labctl,'doctor',lambda:0)
+    monkeypatch.setattr(labctl,'doctor',lambda *args:0)
     monkeypatch.setattr(labctl,'RUN',tmp_path)
     (tmp_path/'preflight').mkdir()
-    (tmp_path/'preflight/latest.json').write_text('{"git_head":"head","integration":"integration"}')
+    (tmp_path/'preflight/latest.json').write_text('{"git_head":"head","integration":"integration","mode":"ENGINEERING","verdict":"PASS","stamp":"test"}')
     monkeypatch.setattr(labctl.lab,'gout',lambda *a:'head')
     monkeypatch.setattr(labctl.nq.mergeq,'integration_head',lambda *a:'integration')
     monkeypatch.setattr(labctl.nq,'connect',lambda:SimpleNamespace(close=lambda:None))
     monkeypatch.setattr(labctl,'runtime_qualification_errors',lambda db:['missing_runtime_e2e_receipt'])
     monkeypatch.setattr(labctl,'prepare_campaign',lambda *a:pytest.fail('unqualified campaign was enqueued'))
     monkeypatch.setattr(labctl,'call',lambda *a:pytest.fail('unqualified daemon was resumed'))
-    assert labctl.start()==1
+    assert labctl.start('FULL_NIGHTLY')==1

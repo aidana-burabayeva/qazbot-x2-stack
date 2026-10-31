@@ -1,0 +1,92 @@
+{
+  "date": "2026-10-31T19:50:48.165229+00:00",
+  "root": "/home/adn/QazBot/control_backend_p20_twin02",
+  "refs": {
+    "HEAD": {
+      "rc": 0,
+      "output": "c015c697122bf209a3ff63d1dcc48845d232318d"
+    },
+    "lab/control": {
+      "rc": 0,
+      "output": "c015c697122bf209a3ff63d1dcc48845d232318d"
+    },
+    "lab/stable": {
+      "rc": 0,
+      "output": "c015c697122bf209a3ff63d1dcc48845d232318d"
+    },
+    "robot/stable": {
+      "rc": 0,
+      "output": "1212d7eda003022d74c6ecc4a2c745fd48f57c2f"
+    },
+    "origin/robot/stable": {
+      "rc": 0,
+      "output": "1212d7eda003022d74c6ecc4a2c745fd48f57c2f"
+    }
+  },
+  "worktrees": {
+    "rc": 0,
+    "output": "/home/adn/QazBot/control_backend                                                 c1880c3 [feat/digital-twin-nightly]\n/home/adn/QazBot/control_backend_codex_nightly                                   e54067f [nightly/codex-stall-20261030]\n/home/adn/QazBot/control_backend_i1                                              c15dd6c [fix/i1-rpp-collision]\n/home/adn/QazBot/control_backend_p20_twin02                                      c015c69 [lab/control]\n/home/adn/QazBot/control_backend_robot_integration                               e2f44be [integration/operator-skills-robot-20261030]\n/home/adn/QazBot/control_backend_tooling                                         e9498cd [tooling/operator-skills-20261030]\n/home/adn/QazBot/robot_data/orchestrator_p13/attempts/nav_frame_fix.1.e4bce3     fdd692a [attempt/nav_frame_fix-1-e4bce3]\n/home/adn/QazBot/robot_data/orchestrator_p13/attempts/nav_frame_fix.2.3cfc8f     ba40df5 [attempt/nav_frame_fix-2-3cfc8f]\n/home/adn/QazBot/robot_data/orchestrator_p13/attempts/nav_frame_repro.1.0e90a7   fdd692a [attempt/nav_frame_repro-1-0e90a7]\n/home/adn/QazBot/robot_data/orchestrator_p13/attempts/nav_frame_review.1.11f5b0  c47ec77 [attempt/nav_frame_review-1-11f5b0]\n/home/adn/QazBot/x2_twin_evidence_20261030                                       fac640f [baseline/x2-robot-20261030]\n/tmp/labint                                                                      3cf878a (detached HEAD)\n/tmp/robotbase                                                                   fac640f (detached HEAD)"
+  },
+  "disk_free_bytes": 7731888128,
+  "tasks": [
+    [
+      "COMPLETED",
+      32
+    ],
+    [
+      "NEEDS_APPROVAL",
+      2
+    ],
+    [
+      "NEEDS_ENGINEERING",
+      4
+    ]
+  ],
+  "kv": [
+    [
+      "current_integration_sha",
+      "\"5a15b62863ea663a2f7c7de6b3276d212b67f517\""
+    ],
+    [
+      "frozen",
+      "true"
+    ],
+    [
+      "lab_state",
+      "\"STOPPED_OK\""
+    ]
+  ],
+  "merge_queue": [
+    [
+      "INTEGRATED",
+      6
+    ]
+  ],
+  "docker": {
+    "rc": 1,
+    "output": "permission denied while trying to connect to the docker API at unix:///var/run/docker.sock"
+  },
+  "systemd": {
+    "rc": 1,
+    "output": "Failed to connect to bus: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user)"
+  },
+  "bubblewrap": {
+    "rc": 0,
+    "output": ""
+  },
+  "packages": {
+    "rc": 0,
+    "output": "ros-humble-nav2-bringup\t1.1.20-1jammy.20260908.021125\nros-humble-rclcpp\t16.0.21-1jammy.20260907.213403\nros-humble-rclpy\t3.3.22-1jammy.20260907.213431"
+  },
+  "cli_versions": {
+    "claude": {
+      "rc": 0,
+      "output": "2.1.316 (Claude Code)"
+    },
+    "codex": {
+      "rc": 0,
+      "output": "codex-cli 0.166.0\nWARNING: proceeding, even though we could not create PATH aliases: Read-only file system (os error 30)"
+    }
+  },
+  "scope": "local environment only; no physical X2 access"
+}

@@ -22,6 +22,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import nq  # noqa: E402
+import execution
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'operator_skills'))
 import opskills  # noqa: E402
 
@@ -122,9 +123,16 @@ def cmd_status(args):
     out = dict(lab_state=st['lab_state'] or 'UNKNOWN', frozen=bool(st['frozen']), shas={k: st[k] for k in ('last_lab_stop_sha', 'last_robot_integrated_sha', 'current_integration_sha')},
                codex_stop=st['codex_stop'], queue=counts(db), units={u: unit_state(u) for u in UNITS}, docker=docker_projects(), git=g,
                codex_ack=ACK.read_text().strip() if ACK.exists() else None)
+    out['execution_mode']=nq.kv_get(db,'execution_mode')
+    if out['lab_state'] in execution.STATES.values():
+        live,detail=verify_started(timeout=2)
+        out['runtime_live']=live;out['runtime_detail']=detail
+        if not live:
+            out['stored_state']=out['lab_state'];out['lab_state']='STOP_UNVERIFIED'
     if args.json:
         print(json.dumps(out, indent=1, default=str))
         return
+    print('mode:',out['execution_mode'])
     print(f"lab: {out['lab_state']}  frozen={out['frozen']}  codex_stop={out['codex_stop']}  ack={out['codex_ack']}")
     print('shas :', out['shas'])
     print('queue:', out['queue'])
@@ -183,8 +191,8 @@ def park_tasks(db):
                 time.sleep(1.5)
         prev = 'PENDING' if r['state'] in ('RUNNING', 'INTERRUPTED', 'VERIFYING') else r['state']
         parked[r['name']] = prev
-        db.execute("UPDATE tasks SET state='NEEDS_APPROVAL', pid=NULL, reason=?, attempts=MAX(attempts-?,0) WHERE id=?",
-                   (f"LAB_STOP (was {r['state']})", 1 if r['state'] == 'RUNNING' else 0, r['id']))
+        db.execute("UPDATE tasks SET state='NEEDS_APPROVAL', pid=NULL, reason=?, attempts=attempts WHERE id=?",
+                   (f"LAB_STOP (was {r['state']})", r['id']))
         nq.ev(db, r['name'], 'PARKED', r['state'])
     nq.kv_set(db, 'parked', parked)
     return parked
@@ -525,7 +533,7 @@ def robot_sync(db):
                 rec = json.loads(gout('show', f'{tip}:{rp}'))
             except ValueError:
                 continue
-            if rec.get('status') == 'HW_FAILED':
+            if rec.get('status') in ('HW_FAILED','TWIN_MISMATCH'):
                 tname = f"hw_candidate_failed_{rec['id']}"
                 text = (f"HARDWARE CANDIDATE FAILED on the X2: {rec['id']} (task {rec.get('task_id')}, lab result {str(rec.get('result_sha'))[:9]}). Evidence: {rec.get('evidence')}. "
                         'The simulation said SIM_VERIFIED, the robot disagreed: reproduce the hardware observation in simulation, find why the twin missed it (fidelity request), fix the cause. Simulation only.')
@@ -594,6 +602,10 @@ def verify_started(timeout=40):
 
 def cmd_resume(args):
     db = nq.connect()
+    if not (args.no_start or args.no_systemd) and execution.managed(ROOT):
+        ok,why=execution.allowed(db,ROOT,execution.ENGINEERING)
+        if not ok:
+            raise SystemExit('resume refused: use labctl start --mode ENGINEERING with a positive preflight: '+why)
     g0 = git_view()
     log = [f"RESTORE state={nq.kv_get(db, 'lab_state')} last_stop={nq.kv_get(db, 'last_lab_stop_sha')} queue={counts(db)}"]
     if not args.no_fetch:
@@ -679,7 +691,7 @@ def cmd_resume(args):
             rc2, o2 = sh('systemctl --user enable --now qazbot-nightly-enqueue.timer')
             log.append(f'START timer rc={rc2} {o2[-80:]}')
             ok = rc2 == 0 and sh('systemctl --user is-active qazbot-nightly-enqueue.timer')[1].strip() == 'active'
-        nq.kv_set(db, 'lab_state', 'RUNNING' if ok else 'START_FAILED')
+        nq.kv_set(db, 'lab_state', execution.STATES.get(nq.kv_get(db,'execution_mode'),'RUNNING') if ok else 'START_FAILED')
         nq.ev(db, '*', 'START_VERIFIED' if ok else 'START_FAILED', why[:200])
         nq.checkpoint(db, 'lab start verified' if ok else 'lab start failed')
         log.append(f'units={ {u: unit_state(u) for u in UNITS} }')

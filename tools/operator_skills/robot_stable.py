@@ -7,7 +7,7 @@
   list      candidates in origin/lab/stable that the robot has not handled yet
   make      robot/candidate/<id> cut from robot/stable carrying ONLY the production files of one candidate (no sim runtime, no test stubs)
   result    record a hardware outcome for a candidate: HW_VERIFIED integrates the verified files into robot/stable (after the installed-state check);
-            HW_FAILED only records the failure + evidence (robot/stable files unchanged, the failure stays in lab history)
+            HW_FAILED/TWIN_MISMATCH only records the failure + evidence (robot/stable files unchanged, the failure stays in lab history)
   snapshot  integrate a captured installed-state snapshot (integration branch) into robot/stable after SHA256 + forbidden-path checks
 
 No command here talks to the robot, deploys, restarts anything or moves it. They only read/write Git.
@@ -175,8 +175,8 @@ def integrate_branch_into_stable(repo, source, robot_branch=ROBOT_STABLE):
 
 def record_result(repo, cid, status, evidence, installed_manifest=None, lab_ref=f'origin/{LAB_STABLE}'):
     """HW_VERIFIED needs the installed-state manifest (path -> sha256 measured on the X2 AFTER the permitted deployment) to equal the candidate files."""
-    if status not in ('HW_VERIFIED', 'HW_FAILED'):
-        raise StableError('status must be HW_VERIFIED or HW_FAILED')
+    if status not in ('HW_VERIFIED', 'HW_FAILED', 'TWIN_MISMATCH'):
+        raise StableError('status must be HW_VERIFIED, HW_FAILED or TWIN_MISMATCH')
     if not evidence:
         raise StableError('hardware evidence reference is required')
     branch = f'robot/candidate/{cid}'

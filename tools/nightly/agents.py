@@ -42,7 +42,11 @@ class Adapter:
             return ''
 
     def prompt(self, task, context):
-        return f"{task['repro']}\n{context}\n{RULES}"
+        scope = ('ENGINEERING ONLY: offline/source/replay/tests/review. No Docker/MuJoCo/MC or live ROS graph. '
+                 'Never label offline tests SIM_VERIFIED. Request L3_QUALIFICATION for runtime evidence; '
+                 'missing hardware facts -> NEEDS_HARDWARE; preserve evidence, then work on an independent issue. '
+                 if dict(task).get('execution_tier') == 'ENGINEERING' else '')
+        return f"{task['repro']}\n{context}\n{scope}{RULES}"
 
     def command(self, task, context, cwd=None, model=None, effort=None, result_dir=None):
         raise NotImplementedError
