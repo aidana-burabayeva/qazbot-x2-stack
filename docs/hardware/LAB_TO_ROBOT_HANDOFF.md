@@ -1,18 +1,18 @@
-<!-- QAZBOT-CONTRACT {"contract_version": 1, "doc": "LAB_TO_ROBOT_HANDOFF", "lab_branch": "lab/control", "lab_sha": "57615780c90e8068e270cf7aa723dd84646cc8cb", "generated": "2026-11-01T01:37:33+0500", "package_version": "1.1.0"} -->
+<!-- QAZBOT-CONTRACT {"contract_version": 1, "doc": "LAB_TO_ROBOT_HANDOFF", "lab_branch": "lab/control", "lab_sha": "e0bfe491ca58c8e915f556bae94b0271a54317eb", "generated": "2026-11-01T02:11:16+0500", "package_version": "1.1.0"} -->
 
 # Lab → Robot handoff
 
-Сгенерировано `tools/nightly/lab.py stop` 2026-11-01T01:37:33+0500. Ручные данные: `docs/hardware/lab_robot_state.json`. Сначала verify SHA ниже через `git ls-remote`.
+Сгенерировано `tools/nightly/lab.py stop` 2026-11-01T02:11:16+0500. Ручные данные: `docs/hardware/lab_robot_state.json`. Сначала verify SHA ниже через `git ls-remote`.
 
 ## Что доступно через Git
 
-- Ветка: `lab/control`, SHA на момент остановки: `57615780c90e8068e270cf7aa723dd84646cc8cb`
+- Ветка: `lab/control`, SHA на момент остановки: `e0bfe491ca58c8e915f556bae94b0271a54317eb`
 - Интеграция с production snapshot (`origin/main`): `6e70c0f90665c06dfc704162c9ddc84efce977c1`
 - Тег остановки ставится после push: `lab-stop/<UTC>` (точный SHA в `docs/hardware/LAB_STATE.json` нельзя записать в тот же коммит; он в теге).
 
 ## Тесты на момент остановки
 
-- Regression: **PASS** — 294 passed in 312.44s (0:05:12)
+- Regression: **PASS** — 299 passed in 317.22s (0:05:17)
 
 ## Классы верификации (контракт: SIM_VERIFIED / HARDWARE_VERIFIED / UNVERIFIED)
 
