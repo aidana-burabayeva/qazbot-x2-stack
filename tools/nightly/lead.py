@@ -61,7 +61,7 @@ def block(db,nq,row,category,signal,evidence):
 
 def navigation_band(task):
     t=dict(task);s=(t['name']+' '+str(t.get('task_type',''))).lower()
-    if any(k in s for k in ('infra_','amcl','initialpose','sensor_contract','localization','trust','tf_','odometry','freshness','collision','t1_','t5_')):return 0
+    if any(k in s for k in ('infra_','execution_probe_','amcl','initialpose','sensor_contract','localization','trust','tf_','odometry','freshness','collision','t1_','t5_')):return 0
     if any(k in s for k in ('p23','controller','costmap','planning','l3','d1_','frame_anchor')):return 1
     if any(k in s for k in ('dynamic','recovery','doorway','dropout')):return 2
     if any(k in s for k in ('gpu','rtf','optimization','bayesian','rl_')):return 3
@@ -183,7 +183,7 @@ def trusted_probe(command):
     import shlex
     try:argv=shlex.split(command)
     except ValueError:return False
-    return _probe_argv(argv)
+    return _probe_argv(argv) and command==' '.join(argv) and (len(argv)==5 or re.fullmatch(r'[A-Za-z0-9_.:/-]+',argv[6]) is not None)
 
 
 def _probe_argv(argv):

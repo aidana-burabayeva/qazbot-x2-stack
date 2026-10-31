@@ -75,12 +75,12 @@ def test_sqlite_cursor_is_not_held_over_dispatch_and_concurrent_commit(tmp_path,
     a=sqlite3.connect(tmp_path/'q.db',isolation_level=None);a.row_factory=sqlite3.Row
     a.execute('PRAGMA journal_mode=WAL');a.executescript(nq.SCHEMA)
     for name in ('a','b'):nq.enqueue(a,name,'true')
-    b=sqlite3.connect(tmp_path/'q.db',isolation_level=None)
+    import subprocess
     pending=nq.ready(a);assert next(pending)['name']=='a'
-    b.execute("INSERT INTO kv VALUES('second-writer','1')")
+    subprocess.run([sys.executable,'-c',"import sqlite3,sys; c=sqlite3.connect(sys.argv[1],isolation_level=None);c.execute(\"INSERT INTO kv VALUES('second-writer','1')\");c.close()",str(tmp_path/'q.db')],check=True)
     a.execute("INSERT INTO kv VALUES('dispatcher','1')")
     assert next(pending)['name']=='b'
-    a.close();b.close()
+    a.close()
 
 
 def test_app_server_available_does_not_authorize_exec_and_probe_is_deduplicated(db,tmp_path,monkeypatch):
@@ -120,3 +120,9 @@ def test_limited_provider_is_not_probed_and_deterministic_work_remains_ready(db,
     monkeypatch.setattr(execution,'managed',lambda root:False)
     nq.enqueue(db,'offline_metric','true')
     assert 'offline_metric' in [r['name'] for r in nq.ready(db)]
+
+
+def test_trusted_probe_cannot_escape_into_parent_shell():
+    assert lead.trusted_probe('python3 tools/nightly/workflow.py capability-probe --provider codex --model gpt-6.1-sol')
+    for bad in ('$(id)','foo;id','`id`','foo\nid'):
+        assert not lead.trusted_probe('python3 tools/nightly/workflow.py capability-probe --provider codex --model '+bad)

@@ -349,6 +349,8 @@ def finish(db, r, p, log, verdict):
             ev(db, name, 'HANDOFF', reason)
     if full['kind']=='engineering':
         category,signal_=lead.classify(tail,rc)
+        if category=='SQLITE_CONCURRENCY' and not any(k in tail for k in ('queue.db','tools/nightly/nq.py')):
+            category='AGENT_EXECUTION'  # a domain test's SQLite assertion is not proof of a queue outage
         if category in lead.INFRA and execution.managed(ROOT):
             lead.block(db,sys.modules[__name__],full,category,signal_,log)
             state,reason='BLOCKED_EXECUTION',category+': '+signal_
@@ -967,7 +969,15 @@ def daemon(args):
     cur, last_revive = None, 0
     t_end = time.time() + args.max_seconds if args.max_seconds else None
     while not stop and not (t_end and time.time() > t_end):
-        cur = tick(db, cur)
+        try:
+            cur = tick(db, cur)
+        except sqlite3.OperationalError as exc:
+            # A locked connection may be unable to write its own diagnosis. Preserve it off-DB.
+            diagnosis=dict(category='SQLITE_CONCURRENCY',error=str(exc),pid=os.getpid(),
+                           connection_in_transaction=db.in_transaction,db=str(DB),
+                           active_task=cur[0]['name'] if cur else None,ts=time.time())
+            (RUN/f'sqlite_failure.{os.getpid()}.{time.time_ns()}.json').write_text(json.dumps(diagnosis,indent=2))
+            raise  # existing systemd lifecycle; no hidden retry or extended busy_timeout
         if time.time() - last_revive > 300:
             revive_agents(db); last_revive = time.time()
         if cur is None and not args.keep_alive and not db.execute("SELECT 1 FROM tasks WHERE state IN ('PENDING','RUNNING','DELEGATED','VERIFYING','PAUSED_LIMIT') LIMIT 1").fetchone() \
