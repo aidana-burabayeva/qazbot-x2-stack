@@ -33,7 +33,7 @@ RUN = Path(os.environ.get('NIGHTLY_RUN', ROOT / 'run' / 'nightly'))
 DB = RUN / 'queue.db'
 LOGS = RUN / 'logs'
 TERMINAL = ('COMPLETED', 'FAILED', 'NEEDS_ENGINEERING', 'NEEDS_APPROVAL', 'NEEDS_HARDWARE')
-LIMIT_RE = re.compile(r'usage limit|rate limit|quota|limit reached|try again at', re.I)
+LIMIT_RE = agents.LIMIT_RE  # single definition (agents.py)
 FORBIDDEN = re.compile(r'\b(ssh|scp|rsync)\b.*(10\.|192\.168|x2|agibot)|ros2 (topic pub|service call).*x2', re.I)
 
 SCHEMA = """
@@ -814,11 +814,21 @@ def handoff_decision(db, full, rc, verdict, tail):
         return None
     owner = full['owner']
     st = kv_get(db, 'agents', {})
-    if cause == 'limit' and owner:  # confirmed by provider text in the log; reset time is not parsed/assumed
-        # reset time is NOT known from a log line: do not invent one. recheck_after is only a bounded probe cadence.
-        st.setdefault(owner, {}).update(status='usage_limited', retry_after=None, reset_known=False,
-                                        recheck_after=time.time() + int(os.environ.get('NIGHTLY_LIMIT_PROBE_S', 1800)))
+    wait_until = None
+    if cause == 'limit' and owner:  # confirmed by provider text in the log
+        official = agents.parse_reset(tail)  # the provider's own "resets 7:10pm (Asia/Almaty)"; None when the message has no explicit time
+        if official:
+            st.setdefault(owner, {}).update(status='usage_limited', retry_after=official, reset_known=True, reset_source='provider message', recheck_after=None)
+        else:  # reset time is NOT known from a log line: do not invent one. recheck_after is only a bounded probe cadence.
+            st.setdefault(owner, {}).update(status='usage_limited', retry_after=None, reset_known=False,
+                                            recheck_after=time.time() + int(os.environ.get('NIGHTLY_LIMIT_PROBE_S', 1800)))
         kv_set(db, 'agents', st)
+        if official and 0 < official - time.time() <= WAIT_RESET_MAX_S and full['priority'] > 10:
+            wait_until = official + 5  # bounded wait for the same agent instead of a handoff (context stays warm, no handoff cost)
+    if wait_until:
+        db.execute('UPDATE tasks SET not_before=?, max_attempts=max_attempts+1 WHERE id=?', (wait_until, full['id']))
+        kv_set(db, f"tried:{full['name']}", [])
+        return 'PAUSED_LIMIT', f"{owner} limit, provider reset in {int(wait_until - time.time())}s (<=60 min): waiting instead of handoff"
     tried = kv_get(db, f"tried:{full['name']}", [])
     now = time.time()
     nh = kv_get(db, f"handoffs:{full['name']}", 0)

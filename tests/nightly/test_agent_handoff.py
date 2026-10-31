@@ -685,3 +685,52 @@ def test_child_agents_do_not_inherit_stdin(env):
     nq(e, 'enqueue', 'eng', 'x --agents=codex', '--kind', 'engineering', '--cwd', str(root))
     daemon(e, 8)
     assert log.read_text().split()[0] == '0'
+
+
+# ---------------------------------------------------------------- first REAL provider limit message (observed 2026-10-31) -> parsed official reset
+
+def real_limit_text(offset_s):
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    t = datetime.fromtimestamp(time.time() + offset_s, ZoneInfo('Asia/Almaty'))
+    return f"You've hit your 5-hour limit · resets {t.hour % 12 or 12}:{t.minute:02d}{'pm' if t.hour >= 12 else 'am'} (Asia/Almaty)"
+
+
+def test_real_claude_limit_message_is_a_limit_not_an_error_and_reset_is_parsed():
+    sys.path.insert(0, str(NQ.parent))
+    import agents
+    msg = real_limit_text(20 * 60)
+    assert agents.classify(1, 'fail', msg) == 'limit'
+    r = agents.parse_reset(msg)
+    assert 18 * 60 < r - time.time() < 22 * 60
+    assert agents.parse_reset('limit reached, try again at 5pm') is None and agents.classify(2, 'fail', 'Traceback: boom') == 'error'
+
+
+def test_real_limit_with_reset_within_60_min_waits_for_same_agent_not_handoff(env):
+    e, root, b, log = env
+    stub(b, 'claude', 'echo "claude" >> "$STUBLOG"; echo "' + real_limit_text(20 * 60) + '"; exit 1\n'); stub(b, 'codex', CODEX_Q)
+    nq(e, 'enqueue', 'eng', 'x --agents=claude,codex', '--kind', 'engineering', '--cwd', str(root))
+    nq(e, 'enqueue', 'mech', 'touch ' + str(root / 'mech.done'))
+    daemon(dict(e, NIGHTLY_CODEX_MODE='exec'), 4)
+    t = task(root)
+    assert t['state'] == 'PAUSED_LIMIT' and 1000 < t['not_before'] - time.time() < 1400 and 'waiting instead of handoff' in t['reason']
+    st = json.loads(q(root, "SELECT v FROM kv WHERE k='agents'")[0]['v'])['claude']
+    assert st['reset_known'] is True and st['reset_source'] == 'provider message' and abs(st['retry_after'] - (time.time() + 20 * 60)) < 120
+    assert task(root, 'mech')['state'] == 'COMPLETED'                                 # the rest of the lab went on
+    assert sum(ln.startswith('claude') for ln in log.read_text().splitlines()) == 1 and not any(ln.startswith('codex') for ln in log.read_text().splitlines())
+
+
+def test_real_limit_with_reset_over_60_min_hands_off_immediately(env):
+    e, root, b, log = env
+    stub(b, 'claude', 'echo "claude" >> "$STUBLOG"; echo "' + real_limit_text(3 * 3600) + '"; exit 1\n'); stub(b, 'codex', CODEX_Q)
+    nq(e, 'enqueue', 'eng', 'x --agents=claude,codex', '--kind', 'engineering', '--cwd', str(root))
+    daemon(dict(e, NIGHTLY_CODEX_MODE='queue'), 4)
+    assert task(root)['state'] == 'DELEGATED' and task(root)['owner'] == 'codex'
+
+
+def test_critical_task_does_not_wait_even_for_a_short_reset(env):
+    e, root, b, log = env
+    stub(b, 'claude', 'echo "claude" >> "$STUBLOG"; echo "' + real_limit_text(10 * 60) + '"; exit 1\n'); stub(b, 'codex', CODEX_Q)
+    nq(e, 'enqueue', 'eng', 'x --agents=claude,codex', '--kind', 'engineering', '--cwd', str(root), '--priority', '5')
+    daemon(dict(e, NIGHTLY_CODEX_MODE='queue'), 4)
+    assert task(root)['state'] == 'DELEGATED'
