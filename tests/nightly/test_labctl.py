@@ -149,3 +149,15 @@ def test_second_daemon_cannot_erase_first_owner_pid(tmp_path):
                            capture_output=True, text=True, env=env, timeout=10)
         assert p.returncode != 0 and 'another orchestrator' in p.stderr
         assert lock.read_text() == '123456'
+
+
+def test_preflight_does_not_use_operator_backend_or_truth_overrides(monkeypatch):
+    monkeypatch.setenv('TWIN_BACKEND', '/foreign/backend')
+    monkeypatch.setenv('TWIN_MAP_DIR', '/foreign/map')
+    monkeypatch.setenv('TWIN_LOCALIZATION', 'truth')
+    seen = []
+    monkeypatch.setattr(preflight, 'sh', lambda argv, **kw: seen.append(kw['env']) or (0, ''))
+    preflight.dc('config')
+    assert seen[0]['TWIN_BACKEND'] == str(preflight.ROOT)
+    assert seen[0]['TWIN_MAP_DIR'] == str(preflight.ROOT / 'ws/src/maps/d1_qazbot_20261029')
+    assert seen[0]['TWIN_LOCALIZATION'] == 'amcl'

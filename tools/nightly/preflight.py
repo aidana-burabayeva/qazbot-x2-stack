@@ -73,7 +73,7 @@ def gout(*a):
 def dc(*a, timeout=900, env=None):
     """docker compose against the lab env file, in its own throw-away project."""
     return sh(['docker', 'compose', '-p', PROJECT, '-f', 'docker/compose.yaml', '--env-file', ENVFILE, *a], timeout=timeout, cwd=TW,
-              env={**env_file(TW / ENVFILE), 'TWIN_BACKEND': str(ROOT), 'TWIN_LOCALIZATION': 'amcl', 'TWIN_VERSION': 'nightly', **(env or {})})
+              env={**env_file(TW / ENVFILE), 'TWIN_BACKEND': str(ROOT), 'TWIN_MAP_DIR': str(ROOT / 'ws/src/maps' / env_file(TW / ENVFILE)['TWIN_MAP']), 'TWIN_LOCALIZATION': 'amcl', 'TWIN_VERSION': 'nightly', **(env or {})})
 
 
 def robot_params():
