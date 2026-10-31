@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # Compare the navigation stack on the physical X2 with the repo tree. READ-ONLY on the robot (find + sha256sum, nothing is written).
 #   scripts/contract/check_robot.sh [ROBOT=agi@192.168.1.72] [ROBOT_SRC=/home/agi/control_backend/ws/src]
+# OPERATOR ONLY: refuses to run when QAZBOT_LAB is set (nightly/lab). Lab comparison against the published baseline: check_published.sh.
 # exit 0 = identical, 1 = differs (files listed), 2 = robot unreachable. Needs key-based ssh (BatchMode, never prompts for a password).
 set -uo pipefail
+[ -z "${QAZBOT_LAB:-}" ] || { echo "refused: OPERATOR-ONLY procedure (ssh to the physical X2); the autonomous lab never runs it"; exit 9; }
 cd "$(dirname "$0")/../.."
 ROBOT=${ROBOT:-agi@192.168.1.72}
 ROBOT_SRC=${ROBOT_SRC:-/home/agi/control_backend/ws/src}

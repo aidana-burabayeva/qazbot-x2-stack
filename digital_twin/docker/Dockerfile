@@ -45,8 +45,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked --mount=type=cache,t
 WORKDIR /ws
 # AgiBot SDK interface definitions (vendor/, mounted as a named build context)
 COPY --from=vendor aimdk_sdk/src/aimdk_msgs /ws/src/aimdk_msgs
-# Smac bounds fix on the pinned upstream tag (the stack refuses to start without it; see candidates/nav2_smac_bounds)
-COPY --from=backend candidates/nav2_smac_bounds/bounds.patch /tmp/bounds.patch
+# Smac bounds fix on the pinned upstream tag (the stack refuses to start without it; tracked at docker/patches/, sha256 0b42ed90...; the old candidates/ dir is gitignored)
+COPY docker/patches/nav2_smac_bounds.patch /tmp/bounds.patch
 RUN git clone -q --depth 1 --branch "${NAV2_TAG}" https://github.com/ros-navigation/navigation2 /tmp/nav2 \
  && [ "$(git -C /tmp/nav2 rev-parse HEAD)" = "${NAV2_COMMIT}" ] \
  && mkdir -p /ws/src/smac_only && cp -r /tmp/nav2/nav2_smac_planner /ws/src/smac_only/ \
@@ -122,13 +122,14 @@ assert s.count(old) == 1, 'turn guard not found'
 open(p, 'w').write(s.replace(old, old.replace("'ROS_LOCALHOST_ONLY':'1'", "'TWIN_SANDBOX':'1'")))
 PY
 # Twin-only I1 switch (QAZBOT_I1_INF_VALID=1): the local costmap's obstacle_layer treats +inf as observed free (NaN stays ignored).
-# Applied to the image copy of nav_control.launch.py; the stack source in control_backend is not touched. Off by default.
+# The X2 code (I1 2d240dbd, installed) already carries `'obstacle_layer.scan.inf_is_valid': False`; only that literal is made env-driven in the
+# image copy, default (env unset/0) is byte-for-byte the robot's value. The stack source in control_backend is not touched.
 RUN python3 - <<'PY'
 p = '/opt/x2twin/stack/navigation/nav_control.launch.py'
 s = open(p).read()
-old = "'obstacle_layer.scan.obstacle_max_range': 3.0, 'obstacle_layer.scan.raytrace_max_range': 3.5})"
-assert s.count(old) == 1, 'obstacle layer params not found'
-new = old[:-2] + ",\n                      'obstacle_layer.scan.inf_is_valid': os.environ.get('QAZBOT_I1_INF_VALID') == '1'})"
+old = "'obstacle_layer.scan.inf_is_valid': False,"
+assert s.count(old) == 1, 'inf_is_valid literal not found'
+new = "'obstacle_layer.scan.inf_is_valid': os.environ.get('QAZBOT_I1_INF_VALID') == '1',"
 open(p, 'w').write(s.replace(old, new))
 PY
 COPY docker/dds/udp_only.xml /etc/qazbot/dds.xml

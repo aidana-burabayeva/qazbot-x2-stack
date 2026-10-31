@@ -768,7 +768,7 @@ def tick(db, cur):
             run_cwd, wt = r['cwd'] or str(ROOT), None
             if isolate:
                 bf = r['base_from']
-                base_sha = (kv_get(db, f'verified_sha:{bf}') if bf else None) or attempts.head(run_cwd)
+                base_sha = (kv_get(db, f'verified_sha:{bf}') if bf else None) or mergeq.integration_head(run_cwd)  # fresh lab/stable ref, not the control checkout's HEAD
                 try:
                     wt, branch = attempts.prepare(run_cwd, RUN, r['name'], attempt_n, aid, base_sha)
                 except Exception as e:
@@ -862,11 +862,12 @@ def revive_agents(db):
 
 def daemon(args):
     db = connect()
-    lock = open(RUN / 'orchestrator.lock', 'w')
+    lock = open(RUN / 'orchestrator.lock', 'a+')
     try:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)  # single-owner lease
     except OSError:
         sys.exit('another orchestrator owns the lease')
+    lock.seek(0); lock.truncate()
     lock.write(str(os.getpid())); lock.flush()
     recover(db)
     agent_probe(db)

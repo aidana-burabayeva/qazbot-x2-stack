@@ -1,0 +1,32 @@
+SYNC control lab/control already contains lab/stable a467c16
+== static
+  [   PASS   ] role: LAB
+  [   PASS   ] git.control_branch: lab/control
+  [   PASS   ] git.integration_not_checked_out: lab/stable is not checked out in any worktree
+  [   FAIL   ] git.fetch: offline? cess 'https://github.com/aidana-burabayeva/qazbot-x2-stack.git/': Could not resolve host: github.com
+  [   PASS   ] git.integration_in_control: integration a467c16eb contained in control HEAD
+  [   PASS   ] git.integration_vs_origin: a467c16eb == origin
+  [   FAIL   ] git.tracked_clean: 7 tracked modification(s): ['M docs/HANDOFF.md', ' M docs/TEST_STATUS.md', ' M tools/nightly/lab.py']
+  [   PASS   ] git.robot_ref: origin/robot/stable 1212d7e
+  [   PASS   ] baseline.integration_sha256: 73/73 integration Git blobs match snapshot
+  [   PASS   ] baseline.published_in_sync: IN SYNC with origin/robot/stable
+  [   PASS   ] baseline.manifest_sha256: 73/73 files match captured X2
+  [   PASS   ] contract.robot_env_vs_snapshot: robot.env xy=0.35 yaw=0.17 sha=72ee4094b394 vs snapshot xy=0.35 yaw=0.17 trust=72ee4094b394
+  [   PASS   ] contract.lab_env: .env.lab: map=d1_qazbot_20261029 xy=0.35 yaw=0.17
+  [   PASS   ] map.host_sha256: ws/src/maps/d1_qazbot_20261029/map.pgm 72ee4094b394241e7b2761878774efbdd99e93731d7cb52709b2231c3975b354
+  [   PASS   ] motion_adapter.p23_host: P23 markers present in ws/src/navigation/x2_motion_adapter.py
+  [   PASS   ] isolation.no_ssh_in_lab_chain: 32 lab-chain files scanned: no ssh/scp/robot address/check_robot.sh
+  [   PASS   ] agents.claude: 2.1.316 (Claude Code) authenticated
+  [   PASS   ] agents.codex: codex-cli 0.166.0 authenticated
+  [   FAIL   ] docker.daemon:  denied while trying to connect to the docker API at unix:///var/run/docker.sock
+  [   WARN   ] host.disk_free_gb: 6 GB free (run_nightly refuses < 5; WARN < 10)
+  [   FAIL   ] docker.no_stray_twin: no twin containers running
+  [   FAIL   ] systemd.user_manager: systemctl --user unavailable
+  [   WARN   ] systemd.linger: Failed to connect to bus: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user)
+  [   FAIL   ] systemd.qazbot-nightly.service: Failed to connect to bus: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user) (start enables the daemon first, the timer last)
+  [   FAIL   ] systemd.qazbot-nightly-enqueue.timer: Failed to connect to bus: Operation not permitted (consider using --machine=<user>@.host --user to connect to bus of other user) (start enables the daemon first, the timer last)
+  [   PASS   ] systemd.timer_no_catchup: Persistent=false: enabling the timer cannot trigger a missed nightly
+  [   WARN   ] sim.skipped: static FAIL: containers are not started
+  [   WARN   ] tests.skipped: preflight already failed; regression can be run independently
+== verdict FAIL {'PASS': 17, 'WARN': 4, 'UNVERIFIED': 0, 'FAIL': 7}  report: /home/adn/QazBot/control_backend_p20_twin02/run/nightly/preflight/20261031T212455_all.md
+Preflight failed; no agents, daemon or timer started. See run/nightly/preflight/latest.md.

@@ -13,7 +13,7 @@ I1_TIMEOUT=${I1_TIMEOUT:-2400}
 STAMP=$(date +%Y%m%d_%H%M%S)
 OUT=results/nightly_$STAMP
 BACKEND=$([ -d ../control_backend/ws ] && echo ../control_backend || echo ..)
-ENVFILE=$(test -f .env && echo .env || echo .env.example)
+ENVFILE=${TWIN_ENVFILE:-$(test -f .env && echo .env || echo .env.example)}   # lab: .env.lab (robot map), set by labctl/systemd
 
 # The twin runs the stack copy baked into the image, not the live tree: bind the verdict to the exact files tested.
 # Image tag `nightly` is separate from `dev`, so rebuilding never changes other twin experiments.
@@ -33,7 +33,7 @@ IMG=$(image_hash)
 [ "$TREE" = "$IMG" ] || { echo "refuse: image stack $IMG != tree $TREE (REBUILD=$REBUILD)"; exit 4; }
 
 . scripts/contract/robot.env
-MAP=${TWIN_MAP:-$(sed -n 's/^TWIN_MAP=//p' "$ENVFILE" | tail -1)}; MAP=${MAP:-first_map_nav2_v3}
+MAP=${TWIN_MAP:-$(sed -n 's/^TWIN_MAP=//p' "$ENVFILE" | tail -1)}; MAP=${MAP:-$ROBOT_MAP}
 MAP_SHA=$(sha256sum "$BACKEND/ws/src/maps/$MAP/map.pgm" | cut -d' ' -f1)
 [ "$MAP_SHA" = "$ROBOT_MAP_SHA256" ] || echo "WARNING: twin map $MAP ($MAP_SHA) is not the robot's $ROBOT_MAP"
 
@@ -52,7 +52,8 @@ mkdir -p "$OUT"
   echo "map_sha256=$MAP_SHA"
   echo "map_matches_robot_trust=$([ "$MAP_SHA" = "$ROBOT_MAP_SHA256" ] && echo yes || echo "NO (robot: $ROBOT_MAP $ROBOT_MAP_SHA256)")"
   echo "workers=$WORKERS"
-  echo "robot_contract=$(ROBOT_CHECK_OUT=$(scripts/contract/check_robot.sh 2>&1); rc=$?; case $rc in 0) echo in_sync ;; 1) echo "DRIFT: $(echo "$ROBOT_CHECK_OUT" | sed -n '3,$p' | tr -d ' \n' | cut -c1-200)" ;; *) echo unreachable ;; esac)"
+  # Git only: the lab never contacts the physical X2 (the operator runs check_robot.sh by hand). Published baseline = origin/robot/stable.
+  echo "robot_contract=$(PUB_OUT=$(scripts/contract/check_published.sh 2>&1); rc=$?; case $rc in 0) echo "in_sync_with_published_${ROBOT_REF}" ;; 1) echo "DRIFT: $(echo "$PUB_OUT" | sed -n '/^DRIFT/,$p' | tr -d ' \n' | cut -c1-200)" ;; *) echo "published_ref_unavailable" ;; esac)"
 } > "$OUT/meta.env"
 
 run_one() {  # name envs

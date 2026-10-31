@@ -55,6 +55,23 @@ def rev(repo, ref):
     return o if rc == 0 else None
 
 
+def checked_out_at(repo, ref):
+    """Worktree path that has `ref` (refs/heads/...) checked out, or None. update-ref on a checked-out branch moves HEAD but not the tree."""
+    out = git(repo, 'worktree', 'list', '--porcelain')[1]
+    path = None
+    for ln in out.splitlines():
+        if ln.startswith('worktree '):
+            path = ln[9:]
+        elif ln.startswith('branch ') and ln[7:] == ref:
+            return path
+    return None
+
+
+def integration_head(repo):
+    """Fresh integration SHA that attempts must start from (the branch ref, never the control checkout's HEAD); HEAD only if the branch does not exist yet."""
+    return rev(repo, f'refs/heads/{branch_name()}') or rev(repo, 'HEAD')
+
+
 def ensure_branch(repo):
     b = branch_name()
     if rev(repo, f'refs/heads/{b}'):
@@ -143,6 +160,13 @@ def step(db, run, ev=None):
         else:
             merge_sha = attempts.head(row['wt'])
             old = row['merge_sha']  # integration head the merge was built on (stored when gating started)
+            co = checked_out_at(repo, f'refs/heads/{b}')
+            if co:  # a checkout of the integration branch would be left with a stale tree/index: refuse, keep the gated merge for a retry
+                _cleanup(repo, row['wt'])
+                _set(db, row['id'], 'QUEUED', f'{b} is checked out in {co}: use a separate control checkout (lab/control); retry', wt=None)
+                ev(row['task'], 'MERGE_REFUSED_CHECKED_OUT', co)
+                write_state(db, run, repo)
+                continue
             rc, o = git(repo, 'update-ref', '-m', f"integrate {row['task']}", f'refs/heads/{b}', merge_sha, old)
             _cleanup(repo, row['wt'])
             if rc != 0:  # head moved while the gate was running: the gate result is stale, never integrate it

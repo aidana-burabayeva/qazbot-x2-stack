@@ -1,3 +1,9 @@
+# 2026-10-31 — terminal LAB bootstrap
+
+Продолжение инфраструктуры: [docs/nightly/LABCTL.md](docs/nightly/LABCTL.md), evidence [docs/evidence/lab_bootstrap_20261031/README.md](docs/evidence/lab_bootstrap_20261031/README.md). Control checkout — `lab/control`, интеграционная ветка — `lab/stable`, не checkout. Управление: `tools/nightly/labctl.sh doctor|start|status|stop`. Runtime acceptance ещё не завершён: текущая среда блокирует Docker/systemd/GitHub. Не трогать X2 и не объявлять новый SIM PASS по историческим отчётам ниже.
+
+---
+
 # Текущая передача Codex → Claude: bounded stall A/B
 
 Ветка `nightly/codex-stall-20261030`, worktree `/home/adn/QazBot/control_backend_codex_nightly`. Читать [docs/nightly/HANDOFF.md](docs/nightly/HANDOFF.md) и [docs/nightly/CODEX_STALL_AB.md](docs/nightly/CODEX_STALL_AB.md). Один A/B выполнен, дальнейшие sim runs по этой задаче не разрешены. B успешен, но causal attribution confounded world/plant registration; не менять production default и не трогать физический X2. Соседний worktree не редактировать.

@@ -10,6 +10,7 @@ Stop is idempotent. Publication state is explicit: STOPPED_OK | STOPPED_PUBLISH_
 is STOP_UNVERIFIED until Codex writes the ack file it was asked to write.
 """
 import argparse
+import fcntl
 import json
 import os
 import re
@@ -27,6 +28,8 @@ import opskills  # noqa: E402
 ROOT, RUN = nq.ROOT, nq.RUN
 HW = ROOT / 'docs' / 'hardware'
 UNITS = ['qazbot-nightly.service', 'qazbot-nightly-enqueue.service', 'qazbot-nightly-enqueue.timer']
+INTEGRATION = 'lab/stable'  # permanent integration branch: only the merge queue moves it, and it is never checked out anywhere
+IDENT = ['-c', 'user.name=qazbot-nightly', '-c', 'user.email=nightly@localhost']
 UNIT_DIR = Path(os.environ.get('NIGHTLY_UNIT_DIR', Path.home() / '.config' / 'systemd' / 'user'))
 ACK = RUN / 'ack' / 'codex_stop.txt'
 CODEX_THREAD = os.environ.get('NIGHTLY_CODEX_SESSION', '01a18872-7bd1-7701-b367-b63e344d449d')
@@ -170,7 +173,7 @@ def park_tasks(db):
                 os.killpg(vp, __import__('signal').SIGKILL)
             except (ProcessLookupError, PermissionError):
                 pass
-    for r in db.execute("SELECT * FROM tasks WHERE state IN ('RUNNING','PENDING','PAUSED_AGENT','INTERRUPTED')").fetchall():
+    for r in db.execute("SELECT * FROM tasks WHERE state IN ('RUNNING','PENDING','PAUSED_AGENT','PAUSED_LIMIT','INTERRUPTED','VERIFYING')").fetchall():
         if r['state'] == 'RUNNING' and r['pid']:
             for sig in ('SIGTERM', 'SIGKILL'):
                 try:
@@ -178,7 +181,7 @@ def park_tasks(db):
                 except (ProcessLookupError, PermissionError):
                     break
                 time.sleep(1.5)
-        prev = 'PENDING' if r['state'] in ('RUNNING', 'INTERRUPTED') else r['state']
+        prev = 'PENDING' if r['state'] in ('RUNNING', 'INTERRUPTED', 'VERIFYING') else r['state']
         parked[r['name']] = prev
         db.execute("UPDATE tasks SET state='NEEDS_APPROVAL', pid=NULL, reason=?, attempts=MAX(attempts-?,0) WHERE id=?",
                    (f"LAB_STOP (was {r['state']})", 1 if r['state'] == 'RUNNING' else 0, r['id']))
@@ -188,12 +191,31 @@ def park_tasks(db):
 
 
 def stop_sim(args):
+    """Stop Compose projects created from this checkout or its isolated attempts."""
     if args.no_docker:
-        return 'skipped'
-    names = docker_projects()
-    if names:
-        sh('docker compose -p x2-twin down', timeout=180)
-    return {'before': names, 'after': docker_projects()}
+        return {'skipped': True}
+    rc, out = sh(['docker', 'ps', '--format', '{{.Label "com.docker.compose.project"}}\t{{.Label "com.docker.compose.project.working_dir"}}'])
+    if rc:
+        return {'error': out, 'remaining': 'UNKNOWN'}
+    projects = set()
+    for ln in out.splitlines():
+        parts = ln.split('\t', 1)
+        if len(parts) != 2 or not parts[0] or not parts[1]:
+            continue
+        try:
+            Path(parts[1]).resolve().relative_to(ROOT.resolve())
+        except ValueError:
+            continue
+        projects.add(parts[0])
+    errors = []
+    for project in sorted(projects):
+        rc, out = sh(['docker', 'compose', '-p', project, '-f', str(ROOT / 'digital_twin/docker/compose.yaml'),
+                      '--env-file', str(ROOT / 'digital_twin/.env.lab'), '--profile', '*', 'down', '--remove-orphans'], timeout=180)
+        if rc:
+            errors.append(f'{project}: {out[-200:]}')
+    rc, out = sh(['docker', 'ps', '--format', '{{.Label "com.docker.compose.project"}}'])
+    remaining = sorted(projects.intersection(out.splitlines())) if rc == 0 else 'UNKNOWN'
+    return {'before': sorted(projects), 'remaining': remaining, 'error': errors or (out if rc else None)}
 
 
 def notify_codex(db, args, sha):
@@ -358,6 +380,8 @@ def push_and_verify(args, g):
     ok_branch = remote.get(f'refs/heads/{br}') == head
     git('fetch', '--prune', 'origin', br, timeout=60)
     docs_ok = git('cat-file', '-e', f'origin/{br}:docs/hardware/LAB_TO_ROBOT_HANDOFF.md')[0] == 0
+    if ok_branch and not gout('rev-parse', '--abbrev-ref', '@{u}'):
+        git('branch', '--set-upstream-to', f'origin/{br}', br)
     if ok_branch and docs_ok:
         return 'STOPPED_OK', f'remote {br}={head[:12]} tag={tag}'
     return 'STOPPED_PUBLISH_PENDING', f'verify failed: branch_ok={ok_branch} docs_ok={docs_ok}'
@@ -373,7 +397,8 @@ def cmd_stop(args):
     if open_deleg:  # a delegated Codex attempt cannot be proven stopped from here: lease kept, never reported as stopped
         nq.kv_set(db, 'delegated_open', open_deleg)
         log.append(f'STOP DELEGATED_OPEN {open_deleg}: Codex attempt(s) not proven ended -> STOP_UNVERIFIED, lease kept')
-    log.append(f'STOP sim {stop_sim(args)}')
+    sim_stop = stop_sim(args)
+    log.append(f'STOP sim {sim_stop}')
     g = git_view()
     log.append(f'STOP codex {notify_codex(db, args, g["head"])}')
     nq.checkpoint(db, 'lab stop'); log.append('CHECKPOINT ok')
@@ -381,10 +406,17 @@ def cmd_stop(args):
     e_, w_, _i = opskills.validate('lab'); log.append(f"VALIDATE operator-skills {'FAIL ' + str(e_) if e_ else 'OK'}")
     document(db, g, tests, parked, codex_ack_status(db), units); log.append('DOCUMENT ok')
     c = commit(args, g); log.append(f"COMMIT {c.get('commit') and c['commit'][:12]} staged={len(c['staged'])} skipped={c['skipped']}")
-    log.append('MERGE n/a: merge queue is P3 (not implemented); the work branch is the integration branch and nothing is auto-merged to main')
+    log.append('MERGE integration is owned by the CAS merge queue; control checkout carries operator handoff')
     verdict, detail = push_and_verify(args, g); log.append(f'PUSH/VERIFY {verdict} {detail}')
+    stop_unverified = sim_stop.get('error') or sim_stop.get('remaining') or any('Failed to connect' in str(v) for v in units.values())
+    if stop_unverified or open_deleg:
+        verdict = 'STOP_UNVERIFIED'
+        log.append('STOP_UNVERIFIED: owned processes/services could not be proven stopped')
     if verdict == 'STOPPED_OK' and not args.no_push:
-        log.append('PUBLISH ' + publish_lab_stable(db))
+        publication = publish_lab_stable(db)
+        log.append('PUBLISH ' + publication)
+        if not publication.startswith('lab/stable published ') and publication != 'lab/stable not present locally':
+            verdict = 'STOPPED_PUBLISH_PENDING'
     head = gout('rev-parse', 'HEAD')
     nq.kv_set(db, 'last_lab_stop_sha', head)
     nq.kv_set(db, 'last_stop_ts', time.time())
@@ -514,6 +546,52 @@ def robot_sync(db):
     return log
 
 
+def sync_control(log):
+    """The control checkout (lab/control) carries lab/stable plus operator handoff commits. Bring in what the merge queue integrated since."""
+    if gout('rev-parse', '-q', '--verify', f'refs/heads/{INTEGRATION}') == '':
+        log.append(f'SYNC {INTEGRATION} absent locally: nothing to sync')
+        return None
+    br = gout('rev-parse', '--abbrev-ref', 'HEAD')
+    if br == INTEGRATION:
+        return f'{INTEGRATION} is checked out here: the merge queue would leave this tree stale. Switch: git switch -c lab/control'
+    if git('merge-base', '--is-ancestor', INTEGRATION, 'HEAD')[0] == 0:
+        log.append(f'SYNC control {br} already contains {INTEGRATION} {gout("rev-parse", "--short", INTEGRATION)}')
+        return None
+    if [ln for ln in porcelain() if not ln.startswith('??')]:
+        return f'control checkout has tracked modifications: {INTEGRATION} not merged'
+    rc, o = git(*IDENT, 'merge', '--no-edit', '-m', f'control: sync {INTEGRATION}', INTEGRATION)
+    if rc != 0:
+        git('merge', '--abort')
+        return f'merge of {INTEGRATION} into {br} conflicts: {o[-120:]}'
+    log.append(f'SYNC control {br} <- {INTEGRATION} {gout("rev-parse", "--short", INTEGRATION)}')
+    return None
+
+
+def verify_started(timeout=40):
+    """Daemon is RUNNING only when systemd reports active AND the orchestrator holds its lease (pid alive)."""
+    end = time.time() + timeout
+    while time.time() < end:
+        rc, o = sh('systemctl --user is-active qazbot-nightly.service')
+        lock = nq.RUN / 'orchestrator.lock'
+        pid = lock.read_text().strip() if lock.exists() else ''
+        held = False
+        if lock.exists():
+            with lock.open('r') as fh:
+                try:
+                    fcntl.flock(fh, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    fcntl.flock(fh, fcntl.LOCK_UN)
+                except BlockingIOError:
+                    held = True
+        try:
+            cmd = Path(f'/proc/{pid}/cmdline').read_bytes() if pid.isdigit() else b''
+        except OSError:
+            cmd = b''
+        if o.strip() == 'active' and held and b'nq.py' in cmd and b'daemon' in cmd:
+            return True, f'qazbot-nightly active, live orchestrator pid={pid}, lease held'
+        time.sleep(2)
+    return False, f'qazbot-nightly not active within {timeout}s ({sh("systemctl --user is-active qazbot-nightly.service")[1]})'
+
+
 def cmd_resume(args):
     db = nq.connect()
     g0 = git_view()
@@ -534,6 +612,10 @@ def cmd_resume(args):
             log.append(f'SAFE-PULL rc={rc} {o[-120:]}')
             g = git_view()
     log.append(f"GIT {g['branch']} {g['head'][:12]} ahead={g['ahead']} behind={g['behind']} dirty={len(g['dirty'])} divergence={divergence}")
+    sync_err = sync_control(log)
+    if sync_err:
+        divergence = (divergence + '; ' if divergence else '') + sync_err
+    g = git_view()
     # DIFF since the last integrated point (stop sha, else the robot-integrated sha)
     base = nq.kv_get(db, 'last_lab_stop_sha')
     new_tasks = []
@@ -574,7 +656,7 @@ def cmd_resume(args):
     nq.kv_set(db, 'parked', {})
     nq.kv_set(db, 'frozen', False)
     nq.kv_set(db, 'delegated_open', [])
-    nq.kv_set(db, 'lab_state', 'RUNNING' if not args.no_start else 'RESUMED_NOT_STARTED')
+    nq.kv_set(db, 'lab_state', 'STARTING' if not (args.no_start or args.no_systemd) else 'RESUMED_NOT_STARTED')  # RUNNING only after verification
     nq.kv_set(db, 'last_resume_ts', time.time())
     log.append(f'PRIORITIZE restored {restored} parked tasks; frozen=False')
     nq.ev(db, '*', 'RESUME', f'restored={restored} divergence={divergence}')
@@ -590,8 +672,24 @@ def cmd_resume(args):
                 link.unlink()
             link.symlink_to(src)
         sh('systemctl --user daemon-reload')
-        rc, o = sh('systemctl --user enable --now qazbot-nightly.service qazbot-nightly-enqueue.timer')
-        log.append(f'START rc={rc} {o[-120:]} units={ {u: unit_state(u) for u in UNITS} }')
+        rc, o = sh('systemctl --user enable --now qazbot-nightly.service')  # the daemon first: the timer must not fire before it is verified
+        ok, why = verify_started() if rc == 0 else (False, f'enable --now failed rc={rc}: {o[-120:]}')
+        log.append(f'START daemon {"OK" if ok else "FAILED"}: {why}')
+        if ok:
+            rc2, o2 = sh('systemctl --user enable --now qazbot-nightly-enqueue.timer')
+            log.append(f'START timer rc={rc2} {o2[-80:]}')
+            ok = rc2 == 0 and sh('systemctl --user is-active qazbot-nightly-enqueue.timer')[1].strip() == 'active'
+        nq.kv_set(db, 'lab_state', 'RUNNING' if ok else 'START_FAILED')
+        nq.ev(db, '*', 'START_VERIFIED' if ok else 'START_FAILED', why[:200])
+        nq.checkpoint(db, 'lab start verified' if ok else 'lab start failed')
+        log.append(f'units={ {u: unit_state(u) for u in UNITS} }')
+        if not ok:
+            sh('systemctl --user disable --now qazbot-nightly-enqueue.timer qazbot-nightly.service')
+            nq.kv_set(db, 'frozen', True)
+            park_tasks(db)
+            nq.checkpoint(db, 'startup failed; frozen and owned tasks parked')
+            print('\n'.join(log))
+            sys.exit(4)
     print('\n'.join(log))
     print('Physical X2: no motion/SSH/deploy is performed or allowed by the lab; hardware qualification needs a separate operator confirmation.')
 

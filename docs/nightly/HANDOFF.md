@@ -1,3 +1,9 @@
+# 2026-10-31 — LABCTL continuation
+
+Terminal entry point and remaining qualification: [LABCTL.md](LABCTL.md). Evidence: [lab_bootstrap_20261031](../evidence/lab_bootstrap_20261031/README.md). Full regression 235 PASS; focused bootstrap 18 PASS. Doctor/start refused on restricted Docker/systemd/GitHub environment; original frozen STOPPED_OK queue preserved. No new live qualification or physical X2 activity.
+
+---
+
 # Codex → Claude: s1_0046 one A/B завершён, 2026-10-30
 
 Работа велась только в `/home/adn/QazBot/control_backend_codex_nightly`, ветка `nightly/codex-stall-20261030`, база b6b2b93. Прочитать [CODEX_STALL_AB.md](CODEX_STALL_AB.md), затем D3 и STATUS. Source-файлы `control_backend_p20_twin02` не редактировались. Shared runtime DB использовалась только через `nq enqueue --resource sim`; физический X2/SSH/deploy не использовались.

@@ -18,7 +18,7 @@ x-stack-build: &stack-build
   dockerfile: docker/Dockerfile
   target: stack
   additional_contexts:
-    vendor: ../vendor
+    vendor: ${TWIN_VENDOR:-../vendor}
     backend: ${TWIN_BACKEND:-../..}   # navigation stack source (read-only use)
 
 networks:
@@ -40,7 +40,7 @@ services:
       context: ..
       dockerfile: docker/sim.Dockerfile
       additional_contexts:
-        vendor: ../vendor
+        vendor: ${TWIN_VENDOR:-../vendor}
     user: "0:0"
     cap_add: [CHOWN, DAC_OVERRIDE, FOWNER]
     entrypoint: ["/bin/sh", "-ec"]
@@ -54,12 +54,12 @@ services:
           seed /vendor/pc1/mc_r9-rc9_aarch64/mc /opt/mc-r9/mc; seed /vendor/pc1/pc1_mc_param_r9-rc3 /opt/mc-r9/param
           chown ${TWIN_UID:-1000}:${TWIN_GID:-1000} /opt/mc-r9; fi; chown ${TWIN_UID:-1000}:${TWIN_GID:-1000} /agibot/data
     volumes:
-      - ../vendor/mc:/vendor/mc:ro
-      - ../vendor/sim:/vendor/sim:ro
+      - ${TWIN_VENDOR:-../vendor}/mc:/vendor/mc:ro
+      - ${TWIN_VENDOR:-../vendor}/sim:/vendor/sim:ro
       - mc_runtime:/opt/mc
       - sim_runtime:/opt/sim
       - mc_r9_runtime:/opt/mc-r9
-      - ../vendor/pc1_mc:/vendor/pc1:ro
+      - ${TWIN_VENDOR:-../vendor}/pc1_mc:/vendor/pc1:ro
       - agibot_data:/agibot/data
     environment: {TWIN_MC: "${TWIN_MC:-official}"}
     networks: [twin]
@@ -86,7 +86,7 @@ services:
       - mc_runtime:/opt/mc
       - sim_runtime:/opt/sim
       - mc_r9_runtime:/opt/mc-r9
-      - ../vendor/pc1_mc:/vendor/pc1:ro
+      - ${TWIN_VENDOR:-../vendor}/pc1_mc:/vendor/pc1:ro
       - agibot_data:/agibot/data
       - sim_logs:/var/log/twin
       - ${TWIN_MAP_DIR:-${TWIN_BACKEND:-../..}/ws/src/maps/${TWIN_MAP:-first_map_nav2_v3}}:/maps/${TWIN_MAP:-first_map_nav2_v3}:ro
@@ -109,7 +109,8 @@ services:
     volumes:
       - ${TWIN_MAP_DIR:-${TWIN_BACKEND:-../..}/ws/src/maps/${TWIN_MAP:-first_map_nav2_v3}}:/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}:ro
     command: ["ros2", "launch", "x2_twin_bringup", "twin.launch.py", "plant:=official", "max_angular:=${MAX_ANGULAR:-0.5}",
-              "map_yaml:=/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}/map.yaml", "start_pose:=${TWIN_START:--1.275,-4.825,0.0}", "localization:=${TWIN_LOCALIZATION:-amcl}", "scan_format:=${TWIN_SCAN_FORMAT:-legacy}", "scan_fov_deg:=${TWIN_SCAN_FOV_DEG:-0}"]
+              "map_yaml:=/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}/map.yaml", "start_pose:=${TWIN_START:--1.275,-4.825,0.0}", "localization:=${TWIN_LOCALIZATION:-amcl}", "scan_format:=${TWIN_SCAN_FORMAT:-legacy}", "scan_fov_deg:=${TWIN_SCAN_FOV_DEG:-0}",
+              "xy_tol:=${TWIN_XY_TOL:-0.10}", "yaw_tol:=${TWIN_YAW_TOL:-0.10}"]
     environment:
       TWIN_LOCALIZATION: "${TWIN_LOCALIZATION:-amcl}"
       QAZBOT_SIM: "1"
@@ -137,7 +138,7 @@ services:
       - ../scripts:/work/scripts
       - ../docs:/work/docs
       - ../results:/results
-      - ../vendor:/work/vendor
+      - ${TWIN_VENDOR:-../vendor}:/work/vendor
       - ../.flake8:/ws/src/twin/.flake8:ro
       - ${TWIN_BACKEND:-../..}/docs/roadmap_v13/evidence:/evidence:ro   # real recorded data of the physical X2 (read-only)
       - ${TWIN_BACKEND:-../..}/ws/src/lio:/backend_lio:ro               # level_bridge.py as on the robot (read-only reference)
@@ -190,7 +191,8 @@ services:
     volumes:
       - ${TWIN_MAP_DIR:-${TWIN_BACKEND:-../..}/ws/src/maps/${TWIN_MAP:-first_map_nav2_v3}}:/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}:ro
     command: ["ros2", "launch", "x2_twin_bringup", "twin.launch.py", "plant:=lite", "max_angular:=${MAX_ANGULAR:-0.5}",
-              "map_yaml:=/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}/map.yaml", "start_pose:=${TWIN_START:--1.275,-4.825,0.0}"]
+              "map_yaml:=/opt/x2twin/stack/maps/${TWIN_MAP:-first_map_nav2_v3}/map.yaml", "start_pose:=${TWIN_START:--1.275,-4.825,0.0}",
+              "xy_tol:=${TWIN_XY_TOL:-0.10}", "yaw_tol:=${TWIN_YAW_TOL:-0.10}"]
     networks: [twin]
     tmpfs: ["/tmp", "/home/twin/.ros"]
     healthcheck:
