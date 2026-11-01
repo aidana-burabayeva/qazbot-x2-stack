@@ -35,9 +35,10 @@ from rclpy.qos import qos_profile_sensor_data, QoSProfile
 from rclpy.serialization import deserialize_message
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import String
+from std_srvs.srv import Empty
 from tf2_msgs.msg import TFMessage
 
-from x2_twin_scenarios.analysis.replay_inputs import read_replay_inputs, shift_input_stamps, t5_steps
+from x2_twin_scenarios.analysis.replay_inputs import read_replay_inputs, seed_refresh_events, shift_input_stamps, t5_steps
 from x2_twin_sim.guards import require_sim_environment  # noqa: E402
 
 STACK = Path(os.environ.get('TWIN_STACK_DIR', '/opt/x2twin/stack'))
@@ -48,6 +49,8 @@ def main():
     ap.add_argument('bag')
     ap.add_argument('name')
     ap.add_argument('--max-seconds', type=float, default=0.0)
+    ap.add_argument('--seed-refresh', action='store_true',
+                    help='emulate the Trust node request_nomotion_update calls after each initialpose (opt-in)')
     ap.add_argument('--results-dir', default=os.environ.get('TWIN_RESULTS_DIR', '/results'))
     args = ap.parse_args()
     require_sim_environment()
@@ -141,6 +144,10 @@ def main():
         delta = now + 500_000_000 - round(t0 * 1e9)
         play0 = time.monotonic() + 0.5
         publishers = {'tf': tf_pub, 'scan': scan_pub, 'initialpose': init_pub}
+        if args.seed_refresh:
+            nomotion = n.create_client(Empty, f'/{ns}/request_nomotion_update')
+            msgs = sorted(msgs + seed_refresh_events(msgs), key=lambda row: row[0])
+            publishers['nomotion'] = type('NoMotion', (), {'publish': staticmethod(lambda _m: nomotion.call_async(Empty.Request()))})
         for ts, kind, m in msgs:
             while time.monotonic() < play0 + (ts - t0):
                 rclpy.spin_once(n, timeout_sec=.002)
