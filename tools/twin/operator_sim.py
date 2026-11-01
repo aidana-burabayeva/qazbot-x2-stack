@@ -440,9 +440,34 @@ def cmd_stop(args):
     return 0
 
 
+def compress_bag(ev):
+    """rosbag2 sqlite3 files -> .db3.gz (lossless; the original hash is verified and recorded) so a session costs ~1/6 of the disk."""
+    import gzip
+    out = []
+    for db in sorted((ev / 'bag').glob('*.db3')):
+        orig = sha256_file(db)
+        gz = Path(str(db) + '.gz')
+        with open(db, 'rb') as src, gzip.open(gz, 'wb', compresslevel=6) as dst:
+            shutil.copyfileobj(src, dst)
+        h = hashlib.sha256()
+        with gzip.open(gz, 'rb') as f:
+            for chunk in iter(lambda: f.read(1 << 20), b''):
+                h.update(chunk)
+        if h.hexdigest() != orig:
+            gz.unlink()
+            raise RuntimeError('lossless gzip verification failed for ' + db.name)
+        out.append(dict(original=db.name, original_sha256=orig, original_bytes=db.stat().st_size, gz=gz.name, gz_bytes=gz.stat().st_size,
+                        lossless_verified=True))
+        db.unlink()
+    if out:
+        (ev / 'bag_gzip.json').write_text(json.dumps(out, indent=1))
+    return out
+
+
 def package_evidence(st):
     """Analyse (tools/twin/operator/analyze_session.py, pure python), then write a sha256 manifest and make the evidence read-only."""
     ev = Path(st['evidence'])
+    compress_bag(ev)
     sys.path.insert(0, str(ROOT / 'tools/twin/operator'))
     import analyze_session
     report = analyze_session.analyze(ev, ROOT / 'ws/src/maps' / MAP / 'map.yaml')
