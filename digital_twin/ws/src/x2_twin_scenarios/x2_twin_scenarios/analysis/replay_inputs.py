@@ -50,6 +50,8 @@ def read_replay_inputs(db, deserialize, message_types, max_seconds=0.):
 
 def shift_input_stamps(kind, msg, delta_ns, time_type):
     """Shift source stamps once by the playback offset; preserve zero seed's 'now'."""
+    if kind == 'nomotion':
+        return
     headers = [tf.header for tf in msg.transforms] if kind == 'tf' else [msg.header]
     for header in headers:
         stamp_ns = header.stamp.sec * 10**9 + header.stamp.nanosec
@@ -75,3 +77,27 @@ def t5_steps(seq, odom_at, seed_times, correction_at):
         jx, jy = correction_at(a, b, tuple(odom_at(tb)))
         out.append((tb, jx, jy))
     return out
+
+
+def seed_refresh_events(msgs, max_attempts=3, min_gap_s=0.6, window_s=6.0):
+    """Planned `request_nomotion_update` calls, mirroring localization_trust_node._update_seed_without_motion.
+
+    After each operator initialpose the node asks AMCL for a measurement update without motion: at most
+    `max_attempts`, >= `min_gap_s` apart, within `window_s` of the seed, each on a NEW scan received after the
+    seed; a newer seed cancels the pending refresh. NOT modelled: stationary/freshness gates, the stop once the first valid
+    post-seed AMCL pose is accepted (so this over-plans), 0.2 s tick quantization, the go2-policy gate, the scan-stamp
+    check and the 1 s outstanding-call wait. Returns [(receipt_time, 'nomotion', None)] on the recording's clock.
+    """
+    seeds = [ts for ts, kind, _ in msgs if kind == 'initialpose']
+    events = []
+    for i, start in enumerate(seeds):
+        end = min(start + window_s, seeds[i + 1] if i + 1 < len(seeds) else float('inf'))
+        attempts, last = 0, float('-inf')
+        for ts, kind, _ in msgs:
+            if kind != 'scan' or ts <= start or ts >= end:
+                continue
+            if attempts >= max_attempts or ts - last < min_gap_s:
+                continue
+            events.append((ts, 'nomotion', None))
+            attempts, last = attempts + 1, ts
+    return events
