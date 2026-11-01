@@ -114,6 +114,6 @@ READY spans include blocked intervals; do not report 275.594 s as continuous REA
 | 2026-10-29 21:56-22:00 P20 yaw-rate loop LIVE (adapter 9c05bb34, оператор одобрил) | X2, STAND_DEFAULT | **развёрнут** (DELETE+ADD `sdk_qazbot_nav2_1029a`). Тест 1 CCW 0.5 -> 0.563 рад/с, прерван по drift 0.30 м. Тест 2 (MAX_DRIFT 0.5): CCW 0.5 -> **0.534** рад/с (170 град, u 0.60-0.77); CW 0.5 -> **0.354** (u до 0.85); 90 град CCW: 3.3 с до 5 град, финал **+11.5 град** (обратный доворот); 90 град CW: 4.1 с, финал -4.9 град; дрейф 0.16-0.23 м на поворот. После ходьбы и в goals живьём не проверен. `evidence/nav_session_20261029/calib/p20_yaw_test_*` |
 
 <!-- BEGIN LAB_STOP_TESTS -->
-### Nightly lab regression at stop (2026-11-01T02:56:56+0500)
-- `python3 -m pytest -q -p no:cacheprovider tests/nightly tests/motion_adapter`: **PASS** — 303 passed in 326.14s (0:05:26)
+### Nightly lab regression at stop (2026-11-01T08:07:00+0500)
+- `python3 -m pytest -q -p no:cacheprovider tests/nightly tests/motion_adapter`: **PASS** — 303 passed in 331.29s (0:05:31)
 <!-- END LAB_STOP_TESTS -->
