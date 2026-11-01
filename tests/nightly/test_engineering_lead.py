@@ -237,3 +237,38 @@ def test_result_file_alone_or_other_untracked_files_still_rejected(db,tmp_path):
     own.write_text(json.dumps(dict(task='t',attempt=1,attempt_id='aid',summary='s',tests=dict(cmd='python3 -m pytest -q x'),files=[dict(path='.qazbot/other.json')])))
     ok,_,why=nq._verify(db,row,own)
     assert not ok and 'not changed' in why
+
+
+def test_fingerprint_does_not_depend_on_shell_path(tmp_path,monkeypatch):
+    """A manual capability-probe from an interactive shell must qualify the same capability the service-style daemon looks up."""
+    from pathlib import Path
+    home=tmp_path;(home/'.claude').mkdir();(home/'.codex').mkdir()
+    (home/'.claude/settings.json').write_text('{}');(home/'.codex/config.toml').write_text('a=1');(home/'.codex/auth.json').write_text('{}')
+    monkeypatch.setattr(Path,'home',classmethod(lambda cls:home));monkeypatch.setenv('HOME',str(home))
+    monkeypatch.setenv('PATH','/usr/local/bin:/usr/bin:/bin:/home/adn/.local/bin')
+    service=[lead.fingerprint(p,'m') for p in ('claude','codex')]
+    monkeypatch.setenv('PATH','/home/adn/.local/bin:/home/adn/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin')
+    assert [lead.fingerprint(p,'m') for p in ('claude','codex')]==service
+
+
+def test_requalification_is_not_blocked_by_an_old_probe_task_with_the_same_name(db,monkeypatch):
+    """Observed live: stored capability fp != current fp, but the probe task named for the current fp had already COMPLETED, so
+    enqueue() was a no-op and 4 engineering tasks waited 'for a probe' for 30+ minutes. Bounded re-probe instead."""
+    monkeypatch.setattr(lead,'fingerprint',lambda *a:'facts')
+    base='execution_probe_claude_facts'
+    nq.enqueue(db,base,'true',kind='mechanical');db.execute("UPDATE tasks SET state='COMPLETED' WHERE name=?",(base,))
+    nq.kv_set(db,'execution_capability:claude:m',dict(fingerprint='other',status='EXEC_VERIFIED',ts=1))
+    names=lambda:sorted(r[0] for r in db.execute("SELECT name FROM tasks WHERE name LIKE 'execution_probe_%'"))
+    lead.ensure_probe(db,nq,'claude','m')
+    assert names()==[base,base+'_r1']
+    db.execute("UPDATE tasks SET state='COMPLETED' WHERE name=?",(base+'_r1',));lead.ensure_probe(db,nq,'claude','m')
+    db.execute("UPDATE tasks SET state='COMPLETED' WHERE name=?",(base+'_r2',));lead.ensure_probe(db,nq,'claude','m')
+    assert names()==[base,base+'_r1',base+'_r2']                                 # bounded: never an endless probe loop
+    nq.kv_set(db,'execution_capability:claude:m',dict(fingerprint='facts',status='EXEC_VERIFIED',ts=2));lead.ensure_probe(db,nq,'claude','m')
+    assert len(names())==3                                                       # matching capability: nothing new
+
+
+def test_pending_probe_for_current_facts_is_not_duplicated(db,monkeypatch):
+    monkeypatch.setattr(lead,'fingerprint',lambda *a:'facts')
+    lead.ensure_probe(db,nq,'codex','m');lead.ensure_probe(db,nq,'codex','m')
+    assert db.execute("SELECT count(*) FROM tasks WHERE name LIKE 'execution_probe_%'").fetchone()[0]==1

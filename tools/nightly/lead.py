@@ -175,7 +175,8 @@ def fingerprint(provider,model):
     for path in paths:
         try:st=path.stat();metadata.append((str(path),st.st_size,st.st_mtime_ns))
         except OSError:metadata.append((str(path),'missing'))
-    env={k:os.environ.get(k) for k in ('HOME','PATH','HTTP_PROXY','HTTPS_PROXY','ALL_PROXY','NO_PROXY')}
+    # not PATH: the resolved binary path is already in `metadata`, and an interactive shell's PATH differs from the service's
+    env={k:os.environ.get(k) for k in ('HOME','HTTP_PROXY','HTTPS_PROXY','ALL_PROXY','NO_PROXY')}
     return hashlib.sha256(json.dumps((provider,model,metadata,env),sort_keys=True).encode()).hexdigest()[:20]
 
 
@@ -183,7 +184,15 @@ def ensure_probe(db,nq,provider,model):
     """One diagnostic per changed execution facts, not a periodic retry/watchdog."""
     import shlex
     fp=fingerprint(provider,model)
-    name='execution_probe_'+provider+'_'+fp
+    base='execution_probe_'+provider+'_'+fp
+    name=base
+    # enqueue() is idempotent by name: if the probe for exactly these facts already finished but the stored capability still does not
+    # match (e.g. it was overwritten by an out-of-band probe), requalify again - at most twice, never a loop.
+    cap=nq.kv_get(db,'execution_capability:'+provider+':'+str(model),{})
+    row=db.execute('SELECT state FROM tasks WHERE name=?',(base,)).fetchone()
+    if row and row[0] in ('COMPLETED','FAILED','NEEDS_ENGINEERING') and cap.get('fingerprint')!=fp:
+        used=db.execute("SELECT COUNT(*) FROM tasks WHERE name LIKE ? ESCAPE '\\'",(base.replace('_','\\_')+'\\_r%',)).fetchone()[0]
+        if used<2:name=f'{base}_r{used+1}'
     cmd='python3 tools/nightly/workflow.py capability-probe --provider '+provider
     if model:cmd+=' --model '+shlex.quote(model)
     nq.enqueue(db,name,cmd,kind='mechanical',execution_tier='ENGINEERING',priority=0,resource='engineering',max_attempts=1,
