@@ -1,3 +1,18 @@
+# 2026-11-01 — AMCL initialpose attempt 4, offline only
+
+[Evidence and exact scope](evidence/amcl_initialpose_v3_attempt4_20261101/README.md).
+Original readers: **14 FAIL before source changes**, losing 4+1 archived operator
+seeds. Original clock alignment: **2 FAIL**, erasing a declared 300 ms delay.
+Candidate and Trust regressions: **107 PASS, 2 deselected, 0 skipped**;
+two existing NumPy warnings. Frozen originals are re-executed to retain causal
+controls. Archived callback replay covers 4+1 seed epochs without a ROS graph.
+Historical warning-free criterion remains **FAIL**, five future-TF warnings
+(8.475–34.303 ms). Actual AMCL/CDR/DDS replay and runtime root cause:
+**UNVERIFIED**, complete scan/odom recording missing in attempt.
+**L3_QUALIFICATION requested; no SIM_VERIFIED.** Orchestrator acceptance pending.
+
+---
+
 # 2026-11-01 — NIGHTLY-M1 preparation, not milestone completion
 
 [Current evidence](evidence/nightly_m1_20261101/README.md): both ordinary-host CLI challenges passed. Added a minimal trusted-helper invocation correction so capability fingerprinting retains daemon PATH instead of login-shell PATH. Full regression **300 PASS**, existing Merge Queue gate **165 PASS**, robot source **73/73**; source integrated as `ef507af0d12c`. Queue remains **frozen / STOPPED_OK** after completed operator STOP. No daemon/agent resume and no actual accepted AMCL engineering result or independent-review cycle claimed. Older session failures below are historical, not ordinary-host execution status. Physical X2 untouched.

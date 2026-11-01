@@ -1,0 +1,40 @@
+{
+  "status": "completed",
+  "bag": "bag",
+  "map": "first_map_nav2_v3",
+  "initialpose_count": 2,
+  "duration_s": 213.1,
+  "thresholds": {
+    "jump_xy_max": 0.1,
+    "jump_yaw_max": 0.1
+  },
+  "recorded": {
+    "updates": 8,
+    "max_step_xy": 0.07298198753718942,
+    "max_step_yaw": 0.014909925066428187,
+    "p95_step_xy": 0.07298198753718942,
+    "t5_trips": 0,
+    "first_trip_s": null
+  },
+  "replay": {
+    "updates": 5,
+    "max_step_xy": 0.06351375442974531,
+    "max_step_yaw": 0.020446028417769213,
+    "p95_step_xy": 0.06351375442974531,
+    "t5_trips": 0,
+    "first_trip_s": null
+  },
+  "pose_vs_recording": {
+    "n": 5,
+    "xy_median": 0.07417927464789578,
+    "xy_p95": 0.08548409363772404,
+    "xy_max": 0.08548409363772404,
+    "yaw_median": 0.012472835297495877,
+    "yaw_p95": 0.019421128092009354,
+    "yaw_max": 0.019421128092009354
+  },
+  "shutdown": {
+    "amcl": 0
+  },
+  "scope": "recorded scan + odom->base_footprint -> REAL AMCL (production parameters); recorded AMCL output used only as reference; domain 87"
+}

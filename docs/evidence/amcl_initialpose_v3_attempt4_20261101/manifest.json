@@ -1,0 +1,110 @@
+{
+  "date": "2026-11-01",
+  "base_git": "0c652f824773cf85d70040fd1b25c08a6ecae00c",
+  "candidate_state": "UNVERIFIED_PENDING_ORCHESTRATOR",
+  "self_and_ignored_result_control_file_excluded_from_hashes": true,
+  "files": [
+    {
+      "path": "CLAUDE.md",
+      "sha256": "cab17ad385160c9d752e5ee7f107c1bbe821419d5bb8181e693f1c0c9bf31874",
+      "bytes": 6889,
+      "role": "attempt artifact"
+    },
+    {
+      "path": "digital_twin/ws/src/x2_twin_scenarios/x2_twin_scenarios/analysis/replay_amcl.py",
+      "sha256": "1e9fbd48d98c005aeea28603b52d5ac6ebaa3c9a053a8ed7392a545bb3d15ba8",
+      "bytes": 10343,
+      "role": "attempt artifact"
+    },
+    {
+      "path": "digital_twin/ws/src/x2_twin_scenarios/x2_twin_scenarios/analysis/replay_inputs.py",
+      "sha256": "8c619b452cd930f13223ec706f7e07457bb935d43f88aa31b7541ffd4c1892c1",
+      "bytes": 2707,
+      "role": "attempt artifact"
+    },
+    {
+      "path": "docs/HANDOFF.md",
+      "sha256": "638d5e29379a10b423e24c356c7c3be2126e642b6a3fde342470cd57b69dfa69",
+      "bytes": 51216,
+      "role": "attempt artifact"
+    },
+    {
+      "path": "docs/TEST_STATUS.md",
+      "sha256": "45a1f8fa4f4b86add5ed71d5e4803f7a92e02fddef5a03e6c40d4f9627108427",
+      "bytes": 16875,
+      "role": "attempt artifact"
+    },
+    {
+      "path": "docs/evidence/amcl_initialpose_v3_attempt4_20261101/README.md",
+      "sha256": "8d83519539585d243bd64deb7bc94e34cea291b6da10360e6d41cfc884299e2b",
+      "bytes": 5908,
+      "role": "attempt artifact"
+    },
+    {
+      "path": "docs/evidence/amcl_initialpose_v3_attempt4_20261101/after_fix.txt",
+      "sha256": "068d7ac8f167c25340a79740700ec40b8c1459448bf4e7dc3c98117392c952d2",
+      "bytes": 821,
+      "role": "attempt artifact"
+    },
+    {
+      "path": "docs/evidence/amcl_initialpose_v3_attempt4_20261101/baseline_readers.json",
+      "sha256": "d6d1108fe2af6609b72b99035b2172c046bfa96544e763db5e19a2b3f8201924",
+      "bytes": 6462,
+      "role": "attempt artifact"
+    },
+    {
+      "path": "docs/evidence/amcl_initialpose_v3_attempt4_20261101/before_fix.txt",
+      "sha256": "8e2ba5f727a5758aad35ebabbca3e431ef5731520838e5a1609921db045a91dd",
+      "bytes": 24285,
+      "role": "attempt artifact"
+    },
+    {
+      "path": "docs/evidence/amcl_initialpose_v3_attempt4_20261101/saved_episodes.json",
+      "sha256": "926eb53949f0f6680e391c19a2ad5ef0048a9f46a10dc4ad0047ba87cd455c6b",
+      "bytes": 14756,
+      "role": "attempt artifact"
+    },
+    {
+      "path": "docs/evidence/amcl_initialpose_v3_attempt4_20261101/source_age_before_fix.txt",
+      "sha256": "da5a7aaa7a532b844f7a5d0ea12ba00df654135034b095fbb62b423f7d3c4510",
+      "bytes": 4191,
+      "role": "attempt artifact"
+    },
+    {
+      "path": "docs/evidence/i1_deploy_2d240dbd/localization.log.gz",
+      "sha256": "c0833b188a648ca3c34b9fbeb13ba3cc45198fb8ba1ab7658ce799fd1bb81e9c",
+      "bytes": 179267,
+      "role": "unchanged archived input"
+    },
+    {
+      "path": "docs/evidence/i1_deploy_2d240dbd/passive_observer.jsonl.gz",
+      "sha256": "be2fd080774a4b7c59ff6b7c5a32a9dac4dee61208915d45ba881d972cb5566d",
+      "bytes": 631402,
+      "role": "unchanged archived input"
+    },
+    {
+      "path": "docs/evidence/t5live1_localization_20261028.log.gz",
+      "sha256": "decaceae2e48d7e81e656050a20735ed88e4539d4c3e0708b5c50072dc7d1e2b",
+      "bytes": 22825,
+      "role": "unchanged archived input"
+    },
+    {
+      "path": "docs/evidence/t5live1_observer_20261028.jsonl.gz",
+      "sha256": "b277a6a65aaec27ff447fb39934fb87ec34956bbeaa738df3784b2a441833bb9",
+      "bytes": 297147,
+      "role": "unchanged archived input"
+    },
+    {
+      "path": "tests/localization/test_amcl_replay_inputs.py",
+      "sha256": "28cfae67f258dff310c9335b9707482e7775f547e94fdd07a8009665c8111081",
+      "bytes": 14728,
+      "role": "attempt artifact"
+    },
+    {
+      "path": "tools/twin/replay_amcl.py",
+      "sha256": "0fae29d6e1d22c0b66c0be96590d413008cccbdbf26801376b2cf2c0ba3be66e",
+      "bytes": 9829,
+      "role": "attempt artifact"
+    }
+  ]
+}

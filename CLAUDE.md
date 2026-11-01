@@ -1,3 +1,13 @@
+# Current AMCL offline attempt
+
+Read [AGENTS.md](AGENTS.md), [HANDOFF](docs/HANDOFF.md) and
+[attempt evidence](docs/evidence/amcl_initialpose_v3_attempt4_20261101/README.md).
+Replay-input candidate: 107 offline PASS; original runtime cause UNVERIFIED.
+No network/ROS/runtime/robot access. Orchestrator commits and verifies this
+isolated attempt; L3_QUALIFICATION and cross-provider review remain pending.
+
+---
+
 # NIGHTLY-M1 continuation
 
 Read [docs/evidence/nightly_m1_20261101/README.md](docs/evidence/nightly_m1_20261101/README.md). Source integrated through existing Merge Queue; STOP stays frozen until authorized resume. Both host CLI challenges passed, but Task→Result→Review→next-task acceptance is OPEN. Do not call probes an AMCL result. Physical X2 forbidden.

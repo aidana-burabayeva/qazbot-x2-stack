@@ -1,0 +1,334 @@
+FFFFFFFFFFFFFF                                                           [100%]
+=================================== FAILURES ===================================
+___________ test_archived_operator_seeds_preserved[four-seeds-host] ____________
+
+entrypoint = PosixPath('/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/engineering_amcl_initialpose_v3.4.5deaca/tools/twin/replay_amcl.py')
+archive = PosixPath('/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/engineering_amcl_initialpose_v3.4.5deaca/docs/evidence/t5live1_observer_20261028.jsonl.gz')
+tmp_path = PosixPath('/tmp/pytest-of-adn/pytest-1/test_archived_operator_seeds_p0')
+
+    @pytest.mark.parametrize('entrypoint', ENTRYPOINTS, ids=['host', 'packaged'])
+    @pytest.mark.parametrize('archive', ARCHIVES, ids=['four-seeds', 'passive-seed'])
+    def test_archived_operator_seeds_preserved(entrypoint, archive, tmp_path):
+        seeds = archived_seeds(archive)
+        assert len(seeds) == (4 if archive == ARCHIVES[0] else 1)
+        env = run_reader(entrypoint.read_text(), tmp_path, seeds)
+>       assert_preserved(env, seeds)
+
+tests/localization/test_amcl_replay_inputs.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+env = {'LaserScan': <class 'object'>, 'PoseWithCovarianceStamped': <class 'object'>, 'STACK': PosixPath('/tmp/pytest-of-adn/pytest-1/test_archived_operator_seeds_p0/ws/src'), 'String': <class 'object'>, ...}
+seeds = [{'kind': 'initialpose', 'value': {'header': {'frame_id': 'map', 'stamp': {'nanosec': 405768239, 'sec': 1793175594}}, ...3877817356206}, 'position': {'x': -6.911571025848389, 'y': 5.640671730041504, 'z': 0.0}}}}, 'wall': 1793175632.076934}]
+
+    def assert_preserved(env, seeds):
+        actual = [(ts, msg) for ts, kind, msg in env['msgs'] if kind == 'initialpose']
+>       assert len(actual) == len(seeds), 'replay dropped recorded operator initialpose/reseeds'
+E       AssertionError: replay dropped recorded operator initialpose/reseeds
+E       assert 0 == 4
+E        +  where 0 = len([])
+E        +  and   4 = len([{'kind': 'initialpose', 'value': {'header': {'frame_id': 'map', 'stamp': {'nanosec': 405768239, 'sec': 1793175594}}, ...3877817356206}, 'position': {'x': -6.911571025848389, 'y': 5.640671730041504, 'z': 0.0}}}}, 'wall': 1793175632.076934}])
+
+tests/localization/test_amcl_replay_inputs.py:109: AssertionError
+_________ test_archived_operator_seeds_preserved[four-seeds-packaged] __________
+
+entrypoint = PosixPath('/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/engineering_amcl_initialpose_v3.4.5deaca/digital_twin/ws/src/x2_twin_scenarios/x2_twin_scenarios/analysis/replay_amcl.py')
+archive = PosixPath('/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/engineering_amcl_initialpose_v3.4.5deaca/docs/evidence/t5live1_observer_20261028.jsonl.gz')
+tmp_path = PosixPath('/tmp/pytest-of-adn/pytest-1/test_archived_operator_seeds_p1')
+
+    @pytest.mark.parametrize('entrypoint', ENTRYPOINTS, ids=['host', 'packaged'])
+    @pytest.mark.parametrize('archive', ARCHIVES, ids=['four-seeds', 'passive-seed'])
+    def test_archived_operator_seeds_preserved(entrypoint, archive, tmp_path):
+        seeds = archived_seeds(archive)
+        assert len(seeds) == (4 if archive == ARCHIVES[0] else 1)
+        env = run_reader(entrypoint.read_text(), tmp_path, seeds)
+>       assert_preserved(env, seeds)
+
+tests/localization/test_amcl_replay_inputs.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+env = {'LaserScan': <class 'object'>, 'PoseWithCovarianceStamped': <class 'object'>, 'STACK': PosixPath('/tmp/pytest-of-adn/pytest-1/test_archived_operator_seeds_p1/ws/src'), 'String': <class 'object'>, ...}
+seeds = [{'kind': 'initialpose', 'value': {'header': {'frame_id': 'map', 'stamp': {'nanosec': 405768239, 'sec': 1793175594}}, ...3877817356206}, 'position': {'x': -6.911571025848389, 'y': 5.640671730041504, 'z': 0.0}}}}, 'wall': 1793175632.076934}]
+
+    def assert_preserved(env, seeds):
+        actual = [(ts, msg) for ts, kind, msg in env['msgs'] if kind == 'initialpose']
+>       assert len(actual) == len(seeds), 'replay dropped recorded operator initialpose/reseeds'
+E       AssertionError: replay dropped recorded operator initialpose/reseeds
+E       assert 0 == 4
+E        +  where 0 = len([])
+E        +  and   4 = len([{'kind': 'initialpose', 'value': {'header': {'frame_id': 'map', 'stamp': {'nanosec': 405768239, 'sec': 1793175594}}, ...3877817356206}, 'position': {'x': -6.911571025848389, 'y': 5.640671730041504, 'z': 0.0}}}}, 'wall': 1793175632.076934}])
+
+tests/localization/test_amcl_replay_inputs.py:109: AssertionError
+__________ test_archived_operator_seeds_preserved[passive-seed-host] ___________
+
+entrypoint = PosixPath('/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/engineering_amcl_initialpose_v3.4.5deaca/tools/twin/replay_amcl.py')
+archive = PosixPath('/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/engineering_amcl_initialpose_v3.4.5deaca/docs/evidence/i1_deploy_2d240dbd/passive_observer.jsonl.gz')
+tmp_path = PosixPath('/tmp/pytest-of-adn/pytest-1/test_archived_operator_seeds_p2')
+
+    @pytest.mark.parametrize('entrypoint', ENTRYPOINTS, ids=['host', 'packaged'])
+    @pytest.mark.parametrize('archive', ARCHIVES, ids=['four-seeds', 'passive-seed'])
+    def test_archived_operator_seeds_preserved(entrypoint, archive, tmp_path):
+        seeds = archived_seeds(archive)
+        assert len(seeds) == (4 if archive == ARCHIVES[0] else 1)
+        env = run_reader(entrypoint.read_text(), tmp_path, seeds)
+>       assert_preserved(env, seeds)
+
+tests/localization/test_amcl_replay_inputs.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+env = {'LaserScan': <class 'object'>, 'PoseWithCovarianceStamped': <class 'object'>, 'STACK': PosixPath('/tmp/pytest-of-adn/pytest-1/test_archived_operator_seeds_p2/ws/src'), 'String': <class 'object'>, ...}
+seeds = [{'kind': 'initialpose', 'value': {'header': {'frame_id': 'map', 'stamp': {'nanosec': 63348309, 'sec': 1793184583}}, '...5024038865415}, 'position': {'x': -6.925945281982422, 'y': 5.633972644805908, 'z': 0.0}}}}, 'wall': 1793184584.810895}]
+
+    def assert_preserved(env, seeds):
+        actual = [(ts, msg) for ts, kind, msg in env['msgs'] if kind == 'initialpose']
+>       assert len(actual) == len(seeds), 'replay dropped recorded operator initialpose/reseeds'
+E       AssertionError: replay dropped recorded operator initialpose/reseeds
+E       assert 0 == 1
+E        +  where 0 = len([])
+E        +  and   1 = len([{'kind': 'initialpose', 'value': {'header': {'frame_id': 'map', 'stamp': {'nanosec': 63348309, 'sec': 1793184583}}, '...5024038865415}, 'position': {'x': -6.925945281982422, 'y': 5.633972644805908, 'z': 0.0}}}}, 'wall': 1793184584.810895}])
+
+tests/localization/test_amcl_replay_inputs.py:109: AssertionError
+________ test_archived_operator_seeds_preserved[passive-seed-packaged] _________
+
+entrypoint = PosixPath('/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/engineering_amcl_initialpose_v3.4.5deaca/digital_twin/ws/src/x2_twin_scenarios/x2_twin_scenarios/analysis/replay_amcl.py')
+archive = PosixPath('/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/engineering_amcl_initialpose_v3.4.5deaca/docs/evidence/i1_deploy_2d240dbd/passive_observer.jsonl.gz')
+tmp_path = PosixPath('/tmp/pytest-of-adn/pytest-1/test_archived_operator_seeds_p3')
+
+    @pytest.mark.parametrize('entrypoint', ENTRYPOINTS, ids=['host', 'packaged'])
+    @pytest.mark.parametrize('archive', ARCHIVES, ids=['four-seeds', 'passive-seed'])
+    def test_archived_operator_seeds_preserved(entrypoint, archive, tmp_path):
+        seeds = archived_seeds(archive)
+        assert len(seeds) == (4 if archive == ARCHIVES[0] else 1)
+        env = run_reader(entrypoint.read_text(), tmp_path, seeds)
+>       assert_preserved(env, seeds)
+
+tests/localization/test_amcl_replay_inputs.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+env = {'LaserScan': <class 'object'>, 'PoseWithCovarianceStamped': <class 'object'>, 'STACK': PosixPath('/tmp/pytest-of-adn/pytest-1/test_archived_operator_seeds_p3/ws/src'), 'String': <class 'object'>, ...}
+seeds = [{'kind': 'initialpose', 'value': {'header': {'frame_id': 'map', 'stamp': {'nanosec': 63348309, 'sec': 1793184583}}, '...5024038865415}, 'position': {'x': -6.925945281982422, 'y': 5.633972644805908, 'z': 0.0}}}}, 'wall': 1793184584.810895}]
+
+    def assert_preserved(env, seeds):
+        actual = [(ts, msg) for ts, kind, msg in env['msgs'] if kind == 'initialpose']
+>       assert len(actual) == len(seeds), 'replay dropped recorded operator initialpose/reseeds'
+E       AssertionError: replay dropped recorded operator initialpose/reseeds
+E       assert 0 == 1
+E        +  where 0 = len([])
+E        +  and   1 = len([{'kind': 'initialpose', 'value': {'header': {'frame_id': 'map', 'stamp': {'nanosec': 63348309, 'sec': 1793184583}}, '...5024038865415}, 'position': {'x': -6.925945281982422, 'y': 5.633972644805908, 'z': 0.0}}}}, 'wall': 1793184584.810895}])
+
+tests/localization/test_amcl_replay_inputs.py:109: AssertionError
+_______ test_seed_inputs_independent_of_recorded_amcl_output[None-host] ________
+
+entrypoint = PosixPath('/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/engineering_amcl_initialpose_v3.4.5deaca/tools/twin/replay_amcl.py')
+reference_x = None
+tmp_path = PosixPath('/tmp/pytest-of-adn/pytest-1/test_seed_inputs_independent_o0')
+
+    @pytest.mark.parametrize('entrypoint', ENTRYPOINTS, ids=['host', 'packaged'])
+    @pytest.mark.parametrize('reference_x', [None, -900., 900.])
+    def test_seed_inputs_independent_of_recorded_amcl_output(entrypoint, reference_x, tmp_path):
+        seeds = archived_seeds(ARCHIVES[0])
+>       env = run_reader(entrypoint.read_text(), tmp_path, seeds, reference_x=reference_x)
+
+tests/localization/test_amcl_replay_inputs.py:128: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/localization/test_amcl_replay_inputs.py:102: in run_reader
+    exec(compile(reader_source(source), '<actual replay reader>', 'exec'), env)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+>   ???
+E   IndexError: list index out of range
+
+<actual replay reader>:47: IndexError
+_____ test_seed_inputs_independent_of_recorded_amcl_output[None-packaged] ______
+
+entrypoint = PosixPath('/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/engineering_amcl_initialpose_v3.4.5deaca/digital_twin/ws/src/x2_twin_scenarios/x2_twin_scenarios/analysis/replay_amcl.py')
+reference_x = None
+tmp_path = PosixPath('/tmp/pytest-of-adn/pytest-1/test_seed_inputs_independent_o1')
+
+    @pytest.mark.parametrize('entrypoint', ENTRYPOINTS, ids=['host', 'packaged'])
+    @pytest.mark.parametrize('reference_x', [None, -900., 900.])
+    def test_seed_inputs_independent_of_recorded_amcl_output(entrypoint, reference_x, tmp_path):
+        seeds = archived_seeds(ARCHIVES[0])
+>       env = run_reader(entrypoint.read_text(), tmp_path, seeds, reference_x=reference_x)
+
+tests/localization/test_amcl_replay_inputs.py:128: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/localization/test_amcl_replay_inputs.py:102: in run_reader
+    exec(compile(reader_source(source), '<actual replay reader>', 'exec'), env)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+>   ???
+E   IndexError: list index out of range
+
+<actual replay reader>:45: IndexError
+______ test_seed_inputs_independent_of_recorded_amcl_output[-900.0-host] _______
+
+entrypoint = PosixPath('/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/engineering_amcl_initialpose_v3.4.5deaca/tools/twin/replay_amcl.py')
+reference_x = -900.0
+tmp_path = PosixPath('/tmp/pytest-of-adn/pytest-1/test_seed_inputs_independent_o2')
+
+    @pytest.mark.parametrize('entrypoint', ENTRYPOINTS, ids=['host', 'packaged'])
+    @pytest.mark.parametrize('reference_x', [None, -900., 900.])
+    def test_seed_inputs_independent_of_recorded_amcl_output(entrypoint, reference_x, tmp_path):
+        seeds = archived_seeds(ARCHIVES[0])
+        env = run_reader(entrypoint.read_text(), tmp_path, seeds, reference_x=reference_x)
+>       assert_preserved(env, seeds)
+
+tests/localization/test_amcl_replay_inputs.py:129: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+env = {'LaserScan': <class 'object'>, 'PoseWithCovarianceStamped': <class 'object'>, 'STACK': PosixPath('/tmp/pytest-of-adn/pytest-1/test_seed_inputs_independent_o2/ws/src'), 'String': <class 'object'>, ...}
+seeds = [{'kind': 'initialpose', 'value': {'header': {'frame_id': 'map', 'stamp': {'nanosec': 405768239, 'sec': 1793175594}}, ...3877817356206}, 'position': {'x': -6.911571025848389, 'y': 5.640671730041504, 'z': 0.0}}}}, 'wall': 1793175632.076934}]
+
+    def assert_preserved(env, seeds):
+        actual = [(ts, msg) for ts, kind, msg in env['msgs'] if kind == 'initialpose']
+>       assert len(actual) == len(seeds), 'replay dropped recorded operator initialpose/reseeds'
+E       AssertionError: replay dropped recorded operator initialpose/reseeds
+E       assert 0 == 4
+E        +  where 0 = len([])
+E        +  and   4 = len([{'kind': 'initialpose', 'value': {'header': {'frame_id': 'map', 'stamp': {'nanosec': 405768239, 'sec': 1793175594}}, ...3877817356206}, 'position': {'x': -6.911571025848389, 'y': 5.640671730041504, 'z': 0.0}}}}, 'wall': 1793175632.076934}])
+
+tests/localization/test_amcl_replay_inputs.py:109: AssertionError
+____ test_seed_inputs_independent_of_recorded_amcl_output[-900.0-packaged] _____
+
+entrypoint = PosixPath('/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/engineering_amcl_initialpose_v3.4.5deaca/digital_twin/ws/src/x2_twin_scenarios/x2_twin_scenarios/analysis/replay_amcl.py')
+reference_x = -900.0
+tmp_path = PosixPath('/tmp/pytest-of-adn/pytest-1/test_seed_inputs_independent_o3')
+
+    @pytest.mark.parametrize('entrypoint', ENTRYPOINTS, ids=['host', 'packaged'])
+    @pytest.mark.parametrize('reference_x', [None, -900., 900.])
+    def test_seed_inputs_independent_of_recorded_amcl_output(entrypoint, reference_x, tmp_path):
+        seeds = archived_seeds(ARCHIVES[0])
+        env = run_reader(entrypoint.read_text(), tmp_path, seeds, reference_x=reference_x)
+>       assert_preserved(env, seeds)
+
+tests/localization/test_amcl_replay_inputs.py:129: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+env = {'LaserScan': <class 'object'>, 'PoseWithCovarianceStamped': <class 'object'>, 'STACK': PosixPath('/tmp/pytest-of-adn/pytest-1/test_seed_inputs_independent_o3/ws/src'), 'String': <class 'object'>, ...}
+seeds = [{'kind': 'initialpose', 'value': {'header': {'frame_id': 'map', 'stamp': {'nanosec': 405768239, 'sec': 1793175594}}, ...3877817356206}, 'position': {'x': -6.911571025848389, 'y': 5.640671730041504, 'z': 0.0}}}}, 'wall': 1793175632.076934}]
+
+    def assert_preserved(env, seeds):
+        actual = [(ts, msg) for ts, kind, msg in env['msgs'] if kind == 'initialpose']
+>       assert len(actual) == len(seeds), 'replay dropped recorded operator initialpose/reseeds'
+E       AssertionError: replay dropped recorded operator initialpose/reseeds
+E       assert 0 == 4
+E        +  where 0 = len([])
+E        +  and   4 = len([{'kind': 'initialpose', 'value': {'header': {'frame_id': 'map', 'stamp': {'nanosec': 405768239, 'sec': 1793175594}}, ...3877817356206}, 'position': {'x': -6.911571025848389, 'y': 5.640671730041504, 'z': 0.0}}}}, 'wall': 1793175632.076934}])
+
+tests/localization/test_amcl_replay_inputs.py:109: AssertionError
+_______ test_seed_inputs_independent_of_recorded_amcl_output[900.0-host] _______
+
+entrypoint = PosixPath('/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/engineering_amcl_initialpose_v3.4.5deaca/tools/twin/replay_amcl.py')
+reference_x = 900.0
+tmp_path = PosixPath('/tmp/pytest-of-adn/pytest-1/test_seed_inputs_independent_o4')
+
+    @pytest.mark.parametrize('entrypoint', ENTRYPOINTS, ids=['host', 'packaged'])
+    @pytest.mark.parametrize('reference_x', [None, -900., 900.])
+    def test_seed_inputs_independent_of_recorded_amcl_output(entrypoint, reference_x, tmp_path):
+        seeds = archived_seeds(ARCHIVES[0])
+        env = run_reader(entrypoint.read_text(), tmp_path, seeds, reference_x=reference_x)
+>       assert_preserved(env, seeds)
+
+tests/localization/test_amcl_replay_inputs.py:129: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+env = {'LaserScan': <class 'object'>, 'PoseWithCovarianceStamped': <class 'object'>, 'STACK': PosixPath('/tmp/pytest-of-adn/pytest-1/test_seed_inputs_independent_o4/ws/src'), 'String': <class 'object'>, ...}
+seeds = [{'kind': 'initialpose', 'value': {'header': {'frame_id': 'map', 'stamp': {'nanosec': 405768239, 'sec': 1793175594}}, ...3877817356206}, 'position': {'x': -6.911571025848389, 'y': 5.640671730041504, 'z': 0.0}}}}, 'wall': 1793175632.076934}]
+
+    def assert_preserved(env, seeds):
+        actual = [(ts, msg) for ts, kind, msg in env['msgs'] if kind == 'initialpose']
+>       assert len(actual) == len(seeds), 'replay dropped recorded operator initialpose/reseeds'
+E       AssertionError: replay dropped recorded operator initialpose/reseeds
+E       assert 0 == 4
+E        +  where 0 = len([])
+E        +  and   4 = len([{'kind': 'initialpose', 'value': {'header': {'frame_id': 'map', 'stamp': {'nanosec': 405768239, 'sec': 1793175594}}, ...3877817356206}, 'position': {'x': -6.911571025848389, 'y': 5.640671730041504, 'z': 0.0}}}}, 'wall': 1793175632.076934}])
+
+tests/localization/test_amcl_replay_inputs.py:109: AssertionError
+_____ test_seed_inputs_independent_of_recorded_amcl_output[900.0-packaged] _____
+
+entrypoint = PosixPath('/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/engineering_amcl_initialpose_v3.4.5deaca/digital_twin/ws/src/x2_twin_scenarios/x2_twin_scenarios/analysis/replay_amcl.py')
+reference_x = 900.0
+tmp_path = PosixPath('/tmp/pytest-of-adn/pytest-1/test_seed_inputs_independent_o5')
+
+    @pytest.mark.parametrize('entrypoint', ENTRYPOINTS, ids=['host', 'packaged'])
+    @pytest.mark.parametrize('reference_x', [None, -900., 900.])
+    def test_seed_inputs_independent_of_recorded_amcl_output(entrypoint, reference_x, tmp_path):
+        seeds = archived_seeds(ARCHIVES[0])
+        env = run_reader(entrypoint.read_text(), tmp_path, seeds, reference_x=reference_x)
+>       assert_preserved(env, seeds)
+
+tests/localization/test_amcl_replay_inputs.py:129: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+env = {'LaserScan': <class 'object'>, 'PoseWithCovarianceStamped': <class 'object'>, 'STACK': PosixPath('/tmp/pytest-of-adn/pytest-1/test_seed_inputs_independent_o5/ws/src'), 'String': <class 'object'>, ...}
+seeds = [{'kind': 'initialpose', 'value': {'header': {'frame_id': 'map', 'stamp': {'nanosec': 405768239, 'sec': 1793175594}}, ...3877817356206}, 'position': {'x': -6.911571025848389, 'y': 5.640671730041504, 'z': 0.0}}}}, 'wall': 1793175632.076934}]
+
+    def assert_preserved(env, seeds):
+        actual = [(ts, msg) for ts, kind, msg in env['msgs'] if kind == 'initialpose']
+>       assert len(actual) == len(seeds), 'replay dropped recorded operator initialpose/reseeds'
+E       AssertionError: replay dropped recorded operator initialpose/reseeds
+E       assert 0 == 4
+E        +  where 0 = len([])
+E        +  and   4 = len([{'kind': 'initialpose', 'value': {'header': {'frame_id': 'map', 'stamp': {'nanosec': 405768239, 'sec': 1793175594}}, ...3877817356206}, 'position': {'x': -6.911571025848389, 'y': 5.640671730041504, 'z': 0.0}}}}, 'wall': 1793175632.076934}])
+
+tests/localization/test_amcl_replay_inputs.py:109: AssertionError
+___________________ test_missing_operator_seed_refused[host] ___________________
+
+entrypoint = PosixPath('/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/engineering_amcl_initialpose_v3.4.5deaca/tools/twin/replay_amcl.py')
+tmp_path = PosixPath('/tmp/pytest-of-adn/pytest-1/test_missing_operator_seed_ref0')
+
+    @pytest.mark.parametrize('entrypoint', ENTRYPOINTS, ids=['host', 'packaged'])
+    def test_missing_operator_seed_refused(entrypoint, tmp_path):
+>       with pytest.raises(ValueError, match='recorded initialpose'):
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/localization/test_amcl_replay_inputs.py:136: Failed
+_________________ test_missing_operator_seed_refused[packaged] _________________
+
+entrypoint = PosixPath('/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/engineering_amcl_initialpose_v3.4.5deaca/digital_twin/ws/src/x2_twin_scenarios/x2_twin_scenarios/analysis/replay_amcl.py')
+tmp_path = PosixPath('/tmp/pytest-of-adn/pytest-1/test_missing_operator_seed_ref1')
+
+    @pytest.mark.parametrize('entrypoint', ENTRYPOINTS, ids=['host', 'packaged'])
+    def test_missing_operator_seed_refused(entrypoint, tmp_path):
+>       with pytest.raises(ValueError, match='recorded initialpose'):
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/localization/test_amcl_replay_inputs.py:136: Failed
+____________________ test_window_without_seed_refused[host] ____________________
+
+entrypoint = PosixPath('/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/engineering_amcl_initialpose_v3.4.5deaca/tools/twin/replay_amcl.py')
+tmp_path = PosixPath('/tmp/pytest-of-adn/pytest-1/test_window_without_seed_refus0')
+
+    @pytest.mark.parametrize('entrypoint', ENTRYPOINTS, ids=['host', 'packaged'])
+    def test_window_without_seed_refused(entrypoint, tmp_path):
+>       with pytest.raises(ValueError, match='recorded initialpose'):
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/localization/test_amcl_replay_inputs.py:142: Failed
+__________________ test_window_without_seed_refused[packaged] __________________
+
+entrypoint = PosixPath('/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/engineering_amcl_initialpose_v3.4.5deaca/digital_twin/ws/src/x2_twin_scenarios/x2_twin_scenarios/analysis/replay_amcl.py')
+tmp_path = PosixPath('/tmp/pytest-of-adn/pytest-1/test_window_without_seed_refus1')
+
+    @pytest.mark.parametrize('entrypoint', ENTRYPOINTS, ids=['host', 'packaged'])
+    def test_window_without_seed_refused(entrypoint, tmp_path):
+>       with pytest.raises(ValueError, match='recorded initialpose'):
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/localization/test_amcl_replay_inputs.py:142: Failed
+=========================== short test summary info ============================
+FAILED tests/localization/test_amcl_replay_inputs.py::test_archived_operator_seeds_preserved[four-seeds-host]
+FAILED tests/localization/test_amcl_replay_inputs.py::test_archived_operator_seeds_preserved[four-seeds-packaged]
+FAILED tests/localization/test_amcl_replay_inputs.py::test_archived_operator_seeds_preserved[passive-seed-host]
+FAILED tests/localization/test_amcl_replay_inputs.py::test_archived_operator_seeds_preserved[passive-seed-packaged]
+FAILED tests/localization/test_amcl_replay_inputs.py::test_seed_inputs_independent_of_recorded_amcl_output[None-host]
+FAILED tests/localization/test_amcl_replay_inputs.py::test_seed_inputs_independent_of_recorded_amcl_output[None-packaged]
+FAILED tests/localization/test_amcl_replay_inputs.py::test_seed_inputs_independent_of_recorded_amcl_output[-900.0-host]
+FAILED tests/localization/test_amcl_replay_inputs.py::test_seed_inputs_independent_of_recorded_amcl_output[-900.0-packaged]
+FAILED tests/localization/test_amcl_replay_inputs.py::test_seed_inputs_independent_of_recorded_amcl_output[900.0-host]
+FAILED tests/localization/test_amcl_replay_inputs.py::test_seed_inputs_independent_of_recorded_amcl_output[900.0-packaged]
+FAILED tests/localization/test_amcl_replay_inputs.py::test_missing_operator_seed_refused[host]
+FAILED tests/localization/test_amcl_replay_inputs.py::test_missing_operator_seed_refused[packaged]
+FAILED tests/localization/test_amcl_replay_inputs.py::test_window_without_seed_refused[host]
+FAILED tests/localization/test_amcl_replay_inputs.py::test_window_without_seed_refused[packaged]
+14 failed in 1.57s

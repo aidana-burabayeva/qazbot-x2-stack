@@ -491,7 +491,7 @@ def result_contract(name, attempt, aid, rdir, cwd, isolated=False):
         return token, (f'[{token}] You work ONLY in your own git worktree {cwd} (a branch cut for this attempt). Do not commit: the orchestrator commits and hashes for you. '
                        f'When finished write the file {cwd}/.qazbot/results/{name}.{attempt}.json containing JSON with: task="{name}", attempt={attempt}, attempt_id="{aid}", '
                        'summary, tests={cmd} where cmd is the pytest command that proves the work (the orchestrator re-runs it; allowed: `python3 -m pytest ...`), '
-                       'files=[{path}] listing every file you changed or created (relative paths, no symlinks), root_causes=[{key, summary, status, evidence}] (optional). '
+                       'files=[{path}] listing every file you changed or created, EXCLUDING this result file itself (relative paths, no symlinks), root_causes=[{key, summary, status, evidence}] (optional). '
                        'Without that file the work is not accepted. Never contact any robot or network service.')
     return token, (f'[{token}] Delivery of this message is not completion. Work in your OWN worktree. When finished, write engineering_result.json to {rdir} '
                    f'(or, if that path is not writable, to {cwd}/.qazbot/results/{name}.{attempt}.json) with: task="{name}", attempt={attempt}, attempt_id="{aid}", '
@@ -616,6 +616,11 @@ def _verify(db, row, path):
     files = d.get('files')
     if not isinstance(files, list) or not files:
         return False, None, 'files[] must be a non-empty list: result is not bound to artefacts'
+    if isolated:  # the result file is created by the agent under .qazbot/ (never committed): it cannot be an artefact of itself
+        own = f".qazbot/results/{row['name']}.{row['attempts']}.json"
+        files = [f for f in files if not (isinstance(f, dict) and f.get('path') == own)]
+        if not files:
+            return False, None, 'files[] must name at least one artefact besides the result file'
     for f in files:
         if not isinstance(f, dict):
             return False, None, 'files[] entry is not an object'
