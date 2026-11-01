@@ -1,0 +1,85 @@
+# OPERATOR interactive session. Used ONLY by tools/twin/operator_sim.py:
+#   docker compose -p x2-operator -f docker/compose.yaml -f docker/compose.operator.yaml --env-file <session env> up -d ...
+#
+# Separate from Nightly/L3 (project x2tq-*, network *_twin, domain 87):
+#   * own compose project (containers, internal network, volumes), ROS_DOMAIN_ID 88, UDP-only DDS on an INTERNAL docker network
+#     (no route to the LAN/robot/internet, nothing published);
+#   * the sim container still demands a bounded OPERATOR_SIM capsule (docker/sim/check_authorization.py) and takes the SAME
+#     official-mc.lock as the L3 worker, so two official MC instances can never run at once;
+#   * RViz/panel/recorder are separate containers; the session evidence directory is the only writable host mount.
+name: x2-operator
+
+x-op: &op
+  init: true
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  restart: "no"
+  networks: [twin]
+
+services:
+  sim:
+    image: x2-twin-sim:${OPERATOR_SIM_TAG:-operator}
+    environment:
+      ROS_DOMAIN_ID: "88"
+      DISPLAY: "${OPERATOR_DISPLAY:-}"
+      XAUTHORITY: ""
+    volumes:
+      - ${OPERATOR_X11_DIR}:/tmp/.X11-unix
+
+  stack:
+    image: x2-twin-stack:${OPERATOR_STACK_TAG:-nightly}
+    environment:
+      ROS_DOMAIN_ID: "88"
+    volumes:
+      - ${OPERATOR_SNAPSHOT_DIR}/operator:/opt/operator:ro
+
+  panel:
+    <<: *op
+    image: x2-twin-stack:${TWIN_VERSION:-nightly}
+    depends_on:
+      stack: {condition: service_healthy}
+    environment: {ROS_DOMAIN_ID: "88", TWIN_MAP: "${TWIN_MAP}"}
+    command: ["bash", "-lc", "source /opt/ros/humble/setup.bash; source /opt/x2twin/overlay/setup.bash; export QAZBOT_SIM=1; exec python3 /opt/operator/operator_panel.py --map-yaml /opt/x2twin/stack/maps/${TWIN_MAP}/map.yaml --out /results"]
+    volumes:
+      - ${OPERATOR_SNAPSHOT_DIR}/operator:/opt/operator:ro
+      - ${OPERATOR_EVIDENCE_DIR}:/results
+      - ${TWIN_MAP_DIR}:/opt/x2twin/stack/maps/${TWIN_MAP}:ro
+    cpus: 1
+    mem_limit: 1g
+    tmpfs: ["/tmp", "/home/twin/.ros"]
+
+  recorder:
+    <<: *op
+    image: x2-twin-stack:${TWIN_VERSION:-nightly}
+    depends_on:
+      stack: {condition: service_healthy}
+    environment: {ROS_DOMAIN_ID: "88"}
+    stop_grace_period: 40s
+    command: ["bash", "-lc", "source /opt/ros/humble/setup.bash; source /opt/x2twin/overlay/setup.bash; exec python3 /opt/operator/record_session.py --out /results/bag"]
+    volumes:
+      - ${OPERATOR_SNAPSHOT_DIR}/operator:/opt/operator:ro
+      - ${OPERATOR_EVIDENCE_DIR}:/results
+    cpus: 1
+    mem_limit: 2g
+    tmpfs: ["/tmp", "/home/twin/.ros"]
+
+  rviz:
+    <<: *op
+    profiles: ["gui"]
+    image: x2-twin-operator-rviz:${TWIN_VERSION:-nightly}
+    build:
+      context: ..
+      dockerfile: docker/operator-rviz.Dockerfile
+    depends_on:
+      stack: {condition: service_healthy}
+    environment:
+      ROS_DOMAIN_ID: "88"
+      DISPLAY: "${OPERATOR_DISPLAY:-}"
+      XAUTHORITY: ""
+    command: ["bash", "-lc", "source /opt/ros/humble/setup.bash; mkdir -p $$XDG_RUNTIME_DIR; chmod 700 $$XDG_RUNTIME_DIR; exec rviz2 -d /opt/operator/operator.rviz --ros-args -r /tf:=/qazbot_d1_map/tf -r /tf_static:=/qazbot_d1_map/tf_static"]
+    volumes:
+      - ${OPERATOR_SNAPSHOT_DIR}/operator:/opt/operator:ro
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    cpus: 2
+    mem_limit: 3g
+    tmpfs: ["/tmp"]
