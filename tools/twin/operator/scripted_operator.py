@@ -119,8 +119,10 @@ def main():
             elif cmd == 'ready':
                 T = float(s[i + 1])
                 ok = op.wait(lambda: bool(op.trust.get('ready')) and bool(op.trust.get('motion_ok')), T)
-                log.append(dict(step='ready', ok=ok, after_s=round(time.time() - t0, 1), reasons=op.trust.get('reasons'),
-                                metrics=op.trust.get('metrics'), coordinator_ready=op.coord.get('ready')))
+                trust_after = round(time.time() - t0, 1)
+                coord_ok = op.wait(lambda: bool(op.coord.get('ready')), 60) if ok else False     # the Goal Coordinator needs a moment after READY
+                log.append(dict(step='ready', ok=ok, after_s=trust_after, reasons=op.trust.get('reasons'), metrics=op.trust.get('metrics'),
+                                coordinator_ready=coord_ok, coordinator_ready_after_s=round(time.time() - t0, 1)))
                 i += 2
             elif cmd == 'goal':
                 x, y, yaw = (float(v) for v in s[i + 1:i + 4])
