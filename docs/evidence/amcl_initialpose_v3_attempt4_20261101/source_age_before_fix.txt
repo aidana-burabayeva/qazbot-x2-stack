@@ -1,0 +1,60 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_______ test_actual_dispatch_preserves_seed_age_order_and_spacing[host] ________
+
+entrypoint = PosixPath('/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/engineering_amcl_initialpose_v3.4.5deaca/tools/twin/replay_amcl.py')
+tmp_path = PosixPath('/tmp/pytest-of-adn/pytest-4/test_actual_dispatch_preserves0')
+
+    @pytest.mark.parametrize('entrypoint', ENTRYPOINTS, ids=['host', 'packaged'])
+    def test_actual_dispatch_preserves_seed_age_order_and_spacing(entrypoint, tmp_path):
+        from x2_twin_scenarios.analysis.replay_inputs import shift_input_stamps
+        source = entrypoint.read_text()
+        env = run_reader(source, tmp_path, archived_seeds(ARCHIVES[0]), first_stamp_delay_ns=300_000_000)
+        before = deepcopy(env['msgs'])
+        clock = NS(now=0.)
+        published = []
+        def publisher(kind):
+            return NS(publish=lambda msg: published.append((clock.now, kind, deepcopy(msg))))
+        env.update(n=NS(get_clock=lambda: NS(now=lambda: NS(nanoseconds=50_000_000_000))),
+                   time=NS(monotonic=lambda: clock.now),
+                   rclpy=NS(spin_once=lambda *a, **kw: setattr(clock, 'now', clock.now + .002)),
+                   Time=NS, shift_input_stamps=shift_input_stamps,
+                   tf_pub=publisher('tf'), scan_pub=publisher('scan'), init_pub=publisher('initialpose'))
+        exec(compile(playback_statements(source), '<actual playback loop>', 'exec'), env)
+        expected_delta = 50_500_000_000 - round(env['t0'] * 1e9)
+>       assert env['delta'] == expected_delta, 'align receive clock, preserving recorded source age'
+E       AssertionError: align receive clock, preserving recorded source age
+E       assert -1793175544926644992 == -1793175545226644992
+
+tests/localization/test_amcl_replay_inputs.py:201: AssertionError
+_____ test_actual_dispatch_preserves_seed_age_order_and_spacing[packaged] ______
+
+entrypoint = PosixPath('/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/engineering_amcl_initialpose_v3.4.5deaca/digital_twin/ws/src/x2_twin_scenarios/x2_twin_scenarios/analysis/replay_amcl.py')
+tmp_path = PosixPath('/tmp/pytest-of-adn/pytest-4/test_actual_dispatch_preserves1')
+
+    @pytest.mark.parametrize('entrypoint', ENTRYPOINTS, ids=['host', 'packaged'])
+    def test_actual_dispatch_preserves_seed_age_order_and_spacing(entrypoint, tmp_path):
+        from x2_twin_scenarios.analysis.replay_inputs import shift_input_stamps
+        source = entrypoint.read_text()
+        env = run_reader(source, tmp_path, archived_seeds(ARCHIVES[0]), first_stamp_delay_ns=300_000_000)
+        before = deepcopy(env['msgs'])
+        clock = NS(now=0.)
+        published = []
+        def publisher(kind):
+            return NS(publish=lambda msg: published.append((clock.now, kind, deepcopy(msg))))
+        env.update(n=NS(get_clock=lambda: NS(now=lambda: NS(nanoseconds=50_000_000_000))),
+                   time=NS(monotonic=lambda: clock.now),
+                   rclpy=NS(spin_once=lambda *a, **kw: setattr(clock, 'now', clock.now + .002)),
+                   Time=NS, shift_input_stamps=shift_input_stamps,
+                   tf_pub=publisher('tf'), scan_pub=publisher('scan'), init_pub=publisher('initialpose'))
+        exec(compile(playback_statements(source), '<actual playback loop>', 'exec'), env)
+        expected_delta = 50_500_000_000 - round(env['t0'] * 1e9)
+>       assert env['delta'] == expected_delta, 'align receive clock, preserving recorded source age'
+E       AssertionError: align receive clock, preserving recorded source age
+E       assert -1793175544926644992 == -1793175545226644992
+
+tests/localization/test_amcl_replay_inputs.py:201: AssertionError
+=========================== short test summary info ============================
+FAILED tests/localization/test_amcl_replay_inputs.py::test_actual_dispatch_preserves_seed_age_order_and_spacing[host]
+FAILED tests/localization/test_amcl_replay_inputs.py::test_actual_dispatch_preserves_seed_age_order_and_spacing[packaged]
+2 failed, 19 deselected in 0.29s

@@ -1,0 +1,10 @@
+........................................................................ [ 67%]
+...................................                                      [100%]
+=============================== warnings summary ===============================
+tests/loc_trust/test_ready_motion.py::ReadyMotion::test_gap_without_jump_keeps_ready
+tests/loc_trust/test_ready_motion.py::ReadyMotion::test_jump_during_nan_tf_gap_clears_ready_at_first_fresh_tick
+  /home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/engineering_amcl_initialpose_v3.4.5deaca/tests/loc_trust/../../ws/src/navigation/loc_trust.py:194: RuntimeWarning: invalid value encountered in cast
+    j = np.floor((pts[:, 0] - self.ox) / self.res).astype(int)
+
+-- Docs: https://docs.pytest.org/en/stable/warnings.html
+107 passed, 2 deselected, 2 warnings in 6.31s
