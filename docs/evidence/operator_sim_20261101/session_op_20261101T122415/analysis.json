@@ -1,0 +1,693 @@
+{
+  "trace_rows": 14351,
+  "events": 84,
+  "seeds": [
+    {
+      "t": 1793518085.3992188,
+      "pose": [
+        -8.344,
+        -1.213,
+        -2.145
+      ],
+      "truth": [
+        -8.369816464806586,
+        -1.22701336804344,
+        -2.052008006129107
+      ],
+      "diag": {
+        "verdict": "FITS",
+        "seed_score": 0.474,
+        "trust_hit_min_abs": 0.35,
+        "best_nearby_score": 0.912,
+        "best_offset": [
+          -0.1,
+          -0.1,
+          5.7
+        ],
+        "scans_used": 4,
+        "text": "seed fits the scan (score 0.47 >= 0.35)"
+      },
+      "ready_after_s": 0.36,
+      "seed_error_vs_truth_m": 0.029
+    },
+    {
+      "t": 1793518581.2580955,
+      "pose": [
+        -9.5,
+        -6.5,
+        0.0
+      ],
+      "truth": [
+        -12.854742924651159,
+        -4.417277668593666,
+        -2.7610803454805763
+      ],
+      "diag": {
+        "verdict": "DOES_NOT_FIT",
+        "seed_score": 0.07,
+        "trust_hit_min_abs": 0.35,
+        "best_nearby_score": 0.192,
+        "best_offset": [
+          1.0,
+          1.0,
+          5.7
+        ],
+        "scans_used": 5,
+        "text": "SEED DOES NOT FIT THE SCAN: score 0.07 < 0.35; best nearby pose is +1.00 m, +1.00 m, +6 deg away (score 0.19). Trust will not go READY until AMCL converges; consider re-placing the pose."
+      },
+      "ready_after_s": 0.1,
+      "seed_error_vs_truth_m": 3.949
+    },
+    {
+      "t": 1793518749.0590804,
+      "pose": [
+        -12.857,
+        -4.424,
+        -2.75
+      ],
+      "truth": [
+        -12.857486225768234,
+        -4.423313834903171,
+        -2.713715450791985
+      ],
+      "diag": {
+        "verdict": "FITS",
+        "seed_score": 0.372,
+        "trust_hit_min_abs": 0.35,
+        "best_nearby_score": 0.898,
+        "best_offset": [
+          -0.1,
+          -0.0,
+          2.9
+        ],
+        "scans_used": 6,
+        "text": "seed fits the scan (score 0.37 >= 0.35)"
+      },
+      "ready_after_s": 0.1,
+      "seed_error_vs_truth_m": 0.001
+    }
+  ],
+  "trust": {
+    "changes": 8,
+    "not_ready_events": 4,
+    "reasons": [
+      "T1_tf_stale",
+      "T8_map_unseen",
+      "not_ready:awaiting_initialpose_and_amcl"
+    ],
+    "t5_jump_events": []
+  },
+  "goals": [
+    {
+      "t": 1793518138.6603255,
+      "goal": [
+        -13.0,
+        -4.5,
+        3.14
+      ],
+      "start_truth": [
+        -8.443174868980245,
+        -3.140582449216409,
+        -1.5321970555098643
+      ],
+      "trust_ready_at_goal": true,
+      "nav2_outcome": "SUCCEEDED",
+      "duration_s": 11.5,
+      "path_length_m": 4.61,
+      "final_truth": [
+        -12.846755203439047,
+        -4.405830863899847,
+        -3.0679420789976666
+      ],
+      "final_distance_to_goal_m": 0.18,
+      "expected_reject_by_inflation": false,
+      "reached_within_tolerance": true,
+      "min_clearance_m": 0.105,
+      "min_clearance_note": "truth pose to nearest occupied map cell minus robot_radius 0.454; MuJoCo contact forces are not published",
+      "stalls": []
+    },
+    {
+      "t": 1793518446.709498,
+      "goal": [
+        -4.7,
+        -6.93,
+        0.0
+      ],
+      "start_truth": [
+        -12.847828920977454,
+        -4.403832273013701,
+        -2.7745750728657392
+      ],
+      "trust_ready_at_goal": true,
+      "nav2_outcome": "ABORTED",
+      "duration_s": 76.0,
+      "path_length_m": 0.17,
+      "final_truth": [
+        -12.851895110518232,
+        -4.410348688544873,
+        -2.849800441685102
+      ],
+      "final_distance_to_goal_m": 8.532,
+      "expected_reject_by_inflation": false,
+      "reached_within_tolerance": false,
+      "min_clearance_m": 0.784,
+      "min_clearance_note": "truth pose to nearest occupied map cell minus robot_radius 0.454; MuJoCo contact forces are not published",
+      "stalls": [
+        {
+          "t": 1793518447.1554453,
+          "duration_s": 15.0,
+          "truth": [
+            -12.84044387700846,
+            -4.403793392719972,
+            -2.8277999240338927
+          ],
+          "kind": "ANGULAR_NO_YAW",
+          "distance_to_goal_m": 8.52,
+          "clearance_m": 0.784,
+          "cmd_nav": [
+            0.0,
+            0.0,
+            0.2296750557812839
+          ],
+          "cmd_auth": [
+            0.0,
+            0.0,
+            0.2296750557812839
+          ],
+          "mc_cmd": [
+            0.0,
+            0.0,
+            0.25
+          ],
+          "amcl": [
+            -12.92755360924571,
+            -4.476197517292259,
+            -2.803222476854751,
+            0.04520172689004198,
+            0.013169090364307579,
+            0.002993097245135359
+          ]
+        },
+        {
+          "t": 1793518462.3554714,
+          "duration_s": 45.0,
+          "truth": [
+            -12.887382915162929,
+            -4.416016713617736,
+            -2.804038052796175
+          ],
+          "kind": "LINEAR_NO_MOTION",
+          "distance_to_goal_m": 8.56,
+          "clearance_m": 0.855,
+          "cmd_nav": [
+            0.0,
+            0.0,
+            0.4057210088691967
+          ],
+          "cmd_auth": [
+            0.0,
+            0.0,
+            0.24999999999999994
+          ],
+          "mc_cmd": [
+            0.0,
+            0.0,
+            0.19999999999999996
+          ],
+          "amcl": [
+            -12.92755360924571,
+            -4.476197517292259,
+            -2.803222476854751,
+            0.04520172689004198,
+            0.013169090364307579,
+            0.002993097245135359
+          ]
+        },
+        {
+          "t": 1793518507.7554367,
+          "duration_s": 14.4,
+          "truth": [
+            -12.867406610345482,
+            -4.430930328583783,
+            -2.583333198464414
+          ],
+          "kind": "ANGULAR_NO_YAW",
+          "distance_to_goal_m": 8.54,
+          "clearance_m": 0.855,
+          "cmd_nav": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "cmd_auth": [
+            0.0,
+            0.0,
+            0.198555223005437
+          ],
+          "mc_cmd": [
+            0.0,
+            0.0,
+            0.273555223005437
+          ],
+          "amcl": [
+            -12.96945830486665,
+            -4.501343902278949,
+            -2.602483137876315,
+            0.03919828957964455,
+            0.009487223390340915,
+            0.0036996869164323837
+          ]
+        }
+      ]
+    },
+    {
+      "t": 1793518545.7170458,
+      "goal": [
+        -8.4,
+        -3.3,
+        -1.57
+      ],
+      "start_truth": [
+        -12.85213543445757,
+        -4.408264036518344,
+        -2.7907558119843023
+      ],
+      "trust_ready_at_goal": true,
+      "nav2_outcome": "CANCELED",
+      "duration_s": 4.1,
+      "path_length_m": 0.08,
+      "final_truth": [
+        -12.8549428882053,
+        -4.418104126203868,
+        -2.831759995044637
+      ],
+      "final_distance_to_goal_m": 4.593,
+      "expected_reject_by_inflation": false,
+      "reached_within_tolerance": false,
+      "min_clearance_m": 0.784,
+      "min_clearance_note": "truth pose to nearest occupied map cell minus robot_radius 0.454; MuJoCo contact forces are not published",
+      "stalls": []
+    },
+    {
+      "t": 1793518614.7176104,
+      "goal": [
+        -8.4,
+        -3.3,
+        -1.57
+      ],
+      "start_truth": [
+        -12.854899545956318,
+        -4.4162280825850235,
+        -2.73352824948899
+      ],
+      "trust_ready_at_goal": true,
+      "nav2_outcome": "CANCELED",
+      "duration_s": 21.1,
+      "path_length_m": 0.1,
+      "final_truth": [
+        -12.857106309553487,
+        -4.42679659725714,
+        -2.787712119542477
+      ],
+      "final_distance_to_goal_m": 4.597,
+      "expected_reject_by_inflation": false,
+      "reached_within_tolerance": false,
+      "min_clearance_m": 0.784,
+      "min_clearance_note": "truth pose to nearest occupied map cell minus robot_radius 0.454; MuJoCo contact forces are not published",
+      "stalls": [
+        {
+          "t": 1793518615.1555047,
+          "duration_s": 15.0,
+          "truth": [
+            -12.854900830388562,
+            -4.416219525068062,
+            -2.733325640750092
+          ],
+          "kind": "ANGULAR_NO_YAW",
+          "distance_to_goal_m": 4.59,
+          "clearance_m": 0.819,
+          "cmd_nav": [
+            0.0,
+            0.0,
+            0.5
+          ],
+          "cmd_auth": [
+            0.0,
+            0.0,
+            0.3
+          ],
+          "mc_cmd": [
+            0.0,
+            0.0,
+            0.25
+          ],
+          "amcl": [
+            -9.479103818760748,
+            -6.475860532165014,
+            0.0017488910853154845,
+            0.2395900087100813,
+            0.24160003376261585,
+            0.0675374724723717
+          ]
+        },
+        {
+          "t": 1793518630.2555394,
+          "duration_s": 5.6,
+          "truth": [
+            -12.893298358785643,
+            -4.425665338317016,
+            -2.758623935239597
+          ],
+          "kind": "ANGULAR_NO_YAW",
+          "distance_to_goal_m": 4.63,
+          "clearance_m": 0.855,
+          "cmd_nav": [
+            0.0,
+            0.0,
+            0.37771284741585803
+          ],
+          "cmd_auth": [
+            0.0,
+            0.0,
+            0.27499999999999997
+          ],
+          "mc_cmd": [
+            0.0,
+            0.0,
+            0.22499999999999998
+          ],
+          "amcl": [
+            -9.479103818760748,
+            -6.475860532165014,
+            0.0017488910853154845,
+            0.2395900087100813,
+            0.24160003376261585,
+            0.0675374724723717
+          ]
+        }
+      ]
+    },
+    {
+      "t": 1793518750.2176516,
+      "goal": [
+        -10.9,
+        -4.5,
+        -2.0
+      ],
+      "start_truth": [
+        -12.857487759232209,
+        -4.423305940838315,
+        -2.713624727228643
+      ],
+      "trust_ready_at_goal": true,
+      "nav2_outcome": "ABORTED",
+      "duration_s": 75.9,
+      "path_length_m": 0.14,
+      "final_truth": [
+        -12.860607076327966,
+        -4.428445627627088,
+        -2.7923027087958827
+      ],
+      "final_distance_to_goal_m": 1.962,
+      "expected_reject_by_inflation": false,
+      "reached_within_tolerance": false,
+      "min_clearance_m": 0.819,
+      "min_clearance_note": "truth pose to nearest occupied map cell minus robot_radius 0.454; MuJoCo contact forces are not published",
+      "stalls": [
+        {
+          "t": 1793518751.7555647,
+          "duration_s": 13.8,
+          "truth": [
+            -12.845905276856161,
+            -4.412813146234948,
+            -2.7176296900529304
+          ],
+          "kind": "ANGULAR_NO_YAW",
+          "distance_to_goal_m": 1.95,
+          "clearance_m": 0.819,
+          "cmd_nav": [
+            0.0,
+            0.0,
+            0.5
+          ],
+          "cmd_auth": [
+            0.0,
+            0.0,
+            0.5
+          ],
+          "mc_cmd": [
+            0.0,
+            0.0,
+            0.5
+          ],
+          "amcl": [
+            -12.832466855685157,
+            -4.480559151515382,
+            -2.7559920557713253,
+            0.23558168467829432,
+            0.1064501152486379,
+            0.042881553944718744
+          ]
+        },
+        {
+          "t": 1793518765.7555418,
+          "duration_s": 45.0,
+          "truth": [
+            -12.894849762537806,
+            -4.435874880395512,
+            -2.7487205022603107
+          ],
+          "kind": "LINEAR_NO_MOTION",
+          "distance_to_goal_m": 2.0,
+          "clearance_m": 0.855,
+          "cmd_nav": [
+            0.0,
+            0.0,
+            0.40393856746353207
+          ],
+          "cmd_auth": [
+            0.0,
+            0.0,
+            0.24999999999999994
+          ],
+          "mc_cmd": [
+            0.0,
+            0.0,
+            0.19999999999999996
+          ],
+          "amcl": [
+            -12.842473470132044,
+            -4.485234717794258,
+            -2.7067456110197425,
+            0.21501727068539367,
+            0.06847835258795598,
+            0.02929231382170713
+          ]
+        },
+        {
+          "t": 1793518811.0555327,
+          "duration_s": 14.6,
+          "truth": [
+            -12.874589505254727,
+            -4.449987243503831,
+            -2.5241400277151147
+          ],
+          "kind": "ANGULAR_NO_YAW",
+          "distance_to_goal_m": 1.98,
+          "clearance_m": 0.855,
+          "cmd_nav": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "cmd_auth": [
+            0.0,
+            0.0,
+            0.3484736592557532
+          ],
+          "mc_cmd": [
+            0.0,
+            0.0,
+            0.4234736592557532
+          ],
+          "amcl": [
+            -12.915212916864233,
+            -4.527088368973443,
+            -2.5223246093503864,
+            0.1774008085297396,
+            0.01610134891823023,
+            0.007409140328630575
+          ]
+        }
+      ]
+    },
+    {
+      "t": 1793519013.650714,
+      "goal": [
+        -10.9,
+        -4.5,
+        -2.0
+      ],
+      "start_truth": [
+        -12.86122520656659,
+        -4.425101005051327,
+        -2.6780190187621247
+      ],
+      "trust_ready_at_goal": true,
+      "nav2_outcome": "NO_TERMINAL_STATUS",
+      "duration_s": 381.9,
+      "path_length_m": 0.0,
+      "final_truth": [
+        -12.86122520656659,
+        -4.425101005051327,
+        -2.6780190187621247
+      ],
+      "final_distance_to_goal_m": 1.963,
+      "expected_reject_by_inflation": false,
+      "reached_within_tolerance": false,
+      "min_clearance_m": 0.855,
+      "min_clearance_note": "truth pose to nearest occupied map cell minus robot_radius 0.454; MuJoCo contact forces are not published",
+      "stalls": []
+    }
+  ],
+  "motion": {
+    "max_speed_mps": 0.486,
+    "mean_speed_when_busy": 0.03
+  },
+  "trust_admitted_misfitting_seed": [
+    {
+      "pose": [
+        -9.5,
+        -6.5,
+        0.0
+      ],
+      "seed_score": 0.07,
+      "ready_after_s": 0.1
+    }
+  ],
+  "nightly_feedback": {
+    "component": "navigation_stall",
+    "nav2_action_outcome": "ABORTED",
+    "error": "operator session stall: commanded motion but speed < 0.03 m/s for 15.0 s at truth (-12.84, -4.40), 8.52 m from goal, clearance 0.784 m",
+    "stalls": [
+      {
+        "t": 1793518447.1554453,
+        "duration_s": 15.0,
+        "truth": [
+          -12.84044387700846,
+          -4.403793392719972,
+          -2.8277999240338927
+        ],
+        "kind": "ANGULAR_NO_YAW",
+        "distance_to_goal_m": 8.52,
+        "clearance_m": 0.784,
+        "cmd_nav": [
+          0.0,
+          0.0,
+          0.2296750557812839
+        ],
+        "cmd_auth": [
+          0.0,
+          0.0,
+          0.2296750557812839
+        ],
+        "mc_cmd": [
+          0.0,
+          0.0,
+          0.25
+        ],
+        "amcl": [
+          -12.92755360924571,
+          -4.476197517292259,
+          -2.803222476854751,
+          0.04520172689004198,
+          0.013169090364307579,
+          0.002993097245135359
+        ]
+      },
+      {
+        "t": 1793518462.3554714,
+        "duration_s": 45.0,
+        "truth": [
+          -12.887382915162929,
+          -4.416016713617736,
+          -2.804038052796175
+        ],
+        "kind": "LINEAR_NO_MOTION",
+        "distance_to_goal_m": 8.56,
+        "clearance_m": 0.855,
+        "cmd_nav": [
+          0.0,
+          0.0,
+          0.4057210088691967
+        ],
+        "cmd_auth": [
+          0.0,
+          0.0,
+          0.24999999999999994
+        ],
+        "mc_cmd": [
+          0.0,
+          0.0,
+          0.19999999999999996
+        ],
+        "amcl": [
+          -12.92755360924571,
+          -4.476197517292259,
+          -2.803222476854751,
+          0.04520172689004198,
+          0.013169090364307579,
+          0.002993097245135359
+        ]
+      },
+      {
+        "t": 1793518507.7554367,
+        "duration_s": 14.4,
+        "truth": [
+          -12.867406610345482,
+          -4.430930328583783,
+          -2.583333198464414
+        ],
+        "kind": "ANGULAR_NO_YAW",
+        "distance_to_goal_m": 8.54,
+        "clearance_m": 0.855,
+        "cmd_nav": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "cmd_auth": [
+          0.0,
+          0.0,
+          0.198555223005437
+        ],
+        "mc_cmd": [
+          0.0,
+          0.0,
+          0.273555223005437
+        ],
+        "amcl": [
+          -12.96945830486665,
+          -4.501343902278949,
+          -2.602483137876315,
+          0.03919828957964455,
+          0.009487223390340915,
+          0.0036996869164323837
+        ]
+      }
+    ]
+  },
+  "summary": {
+    "seeds": 3,
+    "seeds_not_fitting": 1,
+    "goals": 6,
+    "goals_succeeded": 1,
+    "goals_canceled": 2,
+    "stalls": 8
+  },
+  "session_id": "op_20261101T122415",
+  "scope": "OPERATOR_INTERACTIVE",
+  "verification": "UNVERIFIED_OPERATOR_SESSION",
+  "qualifies": false,
+  "source_manifest": "/home/adn/QazBot/control_backend_p20_twin02/run/operator/op_20261101T122415/snapshot/manifest.json"
+}

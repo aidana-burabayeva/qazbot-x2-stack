@@ -1,0 +1,30 @@
+{
+ "map": "/home/adn/QazBot/control_backend_operator/ws/src/maps/d1_qazbot_20261029/map.yaml",
+ "start_map": [
+  -8.344,
+  -1.213,
+  -2.145
+ ],
+ "door_center_map": [
+  -6.485,
+  -6.934
+ ],
+ "world_manifest": {
+  "rectangles": 2867,
+  "blocked_cells": 13712,
+  "coverage_exact": true,
+  "image_sha256": "72ee4094b394241e7b2761878774efbdd99e93731d7cb52709b2231c3975b354"
+ },
+ "window_m": 2.5,
+ "raster_points": 250000,
+ "cells_mismatching_map_vs_mujoco": 0,
+ "door_width_map_m": 0.805,
+ "door_width_mujoco_m": 0.805,
+ "door_axis_deg_map": 90,
+ "robot_width_m": 0.712,
+ "side_margin_m": 0.047,
+ "geometry_consistent": true,
+ "passable_by_width": true,
+ "note": "unknown map cells are NOT solid in MuJoCo (world.py) but are obstacles for the synthetic scan; check the door neighbourhood for unknown cells",
+ "unknown_cells_in_window_samples": 2855
+}

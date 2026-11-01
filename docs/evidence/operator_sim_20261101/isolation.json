@@ -1,0 +1,33 @@
+{
+ "nightly_daemon": "active",
+ "nightly_queue": "COMPLETED|57 NEEDS_APPROVAL|2 NEEDS_ENGINEERING|9 NEEDS_HARDWARE|2 PAUSED_LIMIT|3 PENDING|3",
+ "nightly_running": "none at this instant",
+ "dds_probe_other_network_sees_operator_topics": "0",
+ "dds_positive_control_same_network_topics": "46",
+ "egress": [
+  "NO_ROUTE",
+  "NO_DNS",
+  "ROBOT_NO_ROUTE"
+ ],
+ "network": "true bridge containers=5",
+ "containers": [
+  "x2-operator-recorder-1 net=x2-operator_twin ports=",
+  "x2-operator-panel-1 net=x2-operator_twin ports=",
+  "x2-operator-rviz-1 net=x2-operator_twin ports=",
+  "x2-operator-stack-1 net=x2-operator_twin ports=",
+  "x2-operator-sim-1 net=x2-operator_twin ports="
+ ],
+ "hostcfg": [
+  "/x2-operator-recorder-1 host_net=false priv=false",
+  "/x2-operator-panel-1 host_net=false priv=false",
+  "/x2-operator-rviz-1 host_net=false priv=false",
+  "/x2-operator-stack-1 host_net=false priv=false",
+  "/x2-operator-sim-1 host_net=false priv=false"
+ ],
+ "mc_lease_while_session_runs": "FREE",
+ "second_start": [
+  "[ FAIL ] mc.exclusive: official MC already running: [['x2-operator-sim-1', 'x2-twin-sim:operator', 'x2-operator']]",
+  "  [ FAIL ] session.single: session op_20261101T125227 is running",
+  "REFUSED: preflight failed; nothing was started."
+ ]
+}

@@ -2,7 +2,7 @@
 """Operator-driven digital twin session: RViz 2D Pose Estimate -> READY -> 2D Goal Pose -> motion of the X2 in official MC + MuJoCo.
 
     tools/twin/operator_sim.sh start [--start-pose X,Y,YAW] [--mujoco-gui] [--no-rviz] [--hours H]
-    tools/twin/operator_sim.sh status | cancel | resume
+    tools/twin/operator_sim.sh status | cancel | resume | register
     tools/twin/operator_sim.sh stop
 
 Safety model (see docs/OPERATOR_SIM.md):
@@ -303,6 +303,8 @@ def cmd_start(args):
         failure_logs(state)
         cleanup(state)
         return 1
+    ok, reg, out = register_adapter(state)
+    print(f'== adapter registration in the official MC: {reg}' + ('' if ok else ' (run: operator_sim.sh register)'))
     state['status'] = 'RUNNING'
     save_state(state)
     print(INSTRUCTIONS.format(sid=session_id, evidence=evidence, hours=args.hours))
@@ -347,6 +349,34 @@ def cmd_cancel(args):
     rc, out = sh_exec(st, 'panel', 'ros2 service call /qazbot_d1_map/goal_coordinator/stop std_srvs/srv/Trigger', timeout=30)
     print(out[-400:])
     return rc
+
+
+def register_adapter(st):
+    """One explicit MC registration of the motion adapter (the stack never registers by itself). It is NOT a localization step:
+    the initial pose stays the operator's."""
+    rc, out = sh_exec(st, 'panel', 'ros2 service call /qazbot_d1_map/motion_adapter/register std_srvs/srv/Trigger', timeout=40)
+    live = Path(st['evidence']) / 'live_status.json'
+    end = time.time() + 40
+    reg = None
+    while time.time() < end:
+        try:
+            reg = (json.loads(live.read_text()).get('adapter') or {}).get('registration')
+        except (OSError, ValueError):
+            reg = None
+        if reg in ('registered', 'failed'):
+            break
+        time.sleep(1)
+    return reg == 'registered', reg, out[-200:]
+
+
+def cmd_register(args):
+    st = load_state()
+    if not st or st.get('status') != 'RUNNING':
+        print('no running operator session')
+        return 1
+    ok, reg, out = register_adapter(st)
+    print('registration:', reg, '' if ok else out)
+    return 0 if ok else 1
 
 
 def cmd_resume(args):
@@ -462,7 +492,7 @@ def main(argv=None):
     s.add_argument('--hours', type=float, default=4.0)
     s.add_argument('--authorize', default='', help='exact operator phrase for non-interactive start')
     s.set_defaults(fn=cmd_start)
-    for name, fn in (('status', cmd_status), ('cancel', cmd_cancel), ('resume', cmd_resume), ('build-rviz', cmd_build_rviz)):
+    for name, fn in (('status', cmd_status), ('cancel', cmd_cancel), ('resume', cmd_resume), ('register', cmd_register), ('build-rviz', cmd_build_rviz)):
         sub.add_parser(name).set_defaults(fn=fn)
     t = sub.add_parser('stop')
     t.add_argument('--no-handoff', action='store_true')
