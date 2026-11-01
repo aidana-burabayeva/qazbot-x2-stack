@@ -136,9 +136,11 @@ def main():
                 done = ('SUCCEEDED', 'CANCELED', 'ABORTED')
                 # only goals that are new in this call, or were still running when it started, count
                 relevant = lambda: [v for k, v in op.nav.items() if k not in initial or initial[k] not in done]
-                term = lambda: any(v[0] in done for v in relevant())
+                last_of = lambda: max(relevant(), key=lambda v: v[1])[0] if relevant() else None
+                # a terminal status counts only for the LATEST goal status and once the coordinator is idle again
+                term = lambda: last_of() in done and not op.coord.get('busy') and any(v[0] == 'EXECUTING' for v in relevant()) or (last_of() in done and op.coord.get('busy') is False and time.time() - t0 > 3)
                 ok = op.wait(term, T, 0.5)
-                last = max(relevant(), key=lambda v: v[1])[0] if relevant() else None
+                last = last_of()
                 log.append(dict(step='finish', terminal=ok, status=last, truth=op.truth, after_s=round(time.time() - t0, 1)))
                 i += 2
             elif cmd == 'cancel':

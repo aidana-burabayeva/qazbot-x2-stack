@@ -7,9 +7,9 @@
     "ws/src/x2_twin_bringup/config/twin.yaml": "21c4102db9e02f9a20d75a2b04ab76e033e3693713cc46149bc16a0eff7ca66a"
   },
   "compose_project": "x2-operator",
-  "created": 1793519947.2231183,
+  "created": 1793520715.514309,
   "git_dirty": [],
-  "git_sha": "42bf9c78b5706d8c5860bb951e266a4b4c8712a5",
+  "git_sha": "fb22ae91bb29490b28b1e12afbd7def828105a6e",
   "images": {
     "x2-twin-operator-rviz": "sha256:69a58e9f4febc988f5d482afa5162eac00544dc29316632093e9fde942bf27a2",
     "x2-twin-sim": "sha256:659210d110e8167fe5c7bdc039e62f4c7bab4f1612e68362299036c37b136944",
@@ -27,10 +27,10 @@
     "yaml_sha256": "c86aa2aaefbefcaa2ddee994572cf6d13dd777b37b8e070de947f7685be43c1b"
   },
   "mujoco_gui": false,
-  "operator_scripts_tree_sha256": "a12d38e5b661e9c0e7471c88350d5e9d4a5f9de4e254a6bf123ecdde24335a12",
+  "operator_scripts_tree_sha256": "0531995edf663a81970f69b737f5a8c491908170043c9808320255b14f4cfedb",
   "ros_domain_id": 87,
   "rviz": true,
-  "session_id": "op_20261101T125906",
+  "session_id": "op_20261101T131154",
   "stack_source_in_image_sha256": "c0a4ed9167c06be44b5ce56fe8995304ac9a321375716084a142ba145b574051",
   "start_pose": [
     -8.344,
