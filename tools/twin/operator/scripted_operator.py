@@ -145,7 +145,7 @@ def main():
                 log.append(dict(step='cancel', result=op.trigger(NS + '/goal_coordinator/stop')))
                 i += 1
             elif cmd == 'resume':
-                log.append(dict(step='resume', result=op.trigger(NS + '/goal_coordinator/resume')))
+                log.append(dict(step='resume', adapter=op.trigger(NS + '/motion_adapter/resume'), coordinator=op.trigger(NS + '/goal_coordinator/resume')))
                 i += 1
             elif cmd == 'sleep':
                 op.spin(float(s[i + 1]))

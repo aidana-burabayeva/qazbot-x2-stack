@@ -350,13 +350,16 @@ def cmd_cancel(args):
 
 
 def cmd_resume(args):
-    """After `cancel`/a safety stop the Goal Coordinator stays latched until the operator clears it (new goals are rejected meanwhile)."""
+    """After `cancel` or a safety stop the adapter/coordinator stay latched until the operator clears them (new goals are rejected meanwhile)."""
     st = load_state()
     if not st or st.get('status') != 'RUNNING':
         print('no running operator session')
         return 1
-    rc, out = sh_exec(st, 'panel', 'ros2 service call /qazbot_d1_map/goal_coordinator/resume std_srvs/srv/Trigger', timeout=30)
-    print(out[-400:])
+    rc = 0
+    for name in ('motion_adapter', 'goal_coordinator'):         # adapter latch (e.g. mc_state_stale) first, then the coordinator latch
+        rc2, out = sh_exec(st, 'panel', f'ros2 service call /qazbot_d1_map/{name}/resume std_srvs/srv/Trigger', timeout=30)
+        print(name + ':', out[-220:].replace('\n', ' '))
+        rc = rc or rc2
     return rc
 
 

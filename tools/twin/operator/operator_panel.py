@@ -205,7 +205,7 @@ class Panel(Node):
         mk.ns, mk.id, mk.type, mk.action = 'operator_panel', 1, Marker.TEXT_VIEW_FACING, Marker.ADD
         mk.pose.position.x, mk.pose.position.y, mk.pose.position.z = ref[0], ref[1] + 1.4, 1.8
         mk.pose.orientation.w = 1.0
-        mk.scale.z = 0.35
+        mk.scale.z = 0.6
         ready = bool(self.trust.get('ready'))
         mk.color.r, mk.color.g, mk.color.b, mk.color.a = (0.2, 1.0, 0.2, 1.0) if ready else (1.0, 0.75, 0.1, 1.0)
         if self.seed and self.seed['diag'] and self.seed['diag']['verdict'] == 'DOES_NOT_FIT':
