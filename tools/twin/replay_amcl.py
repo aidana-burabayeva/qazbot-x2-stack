@@ -42,9 +42,9 @@ from tf2_msgs.msg import TFMessage
 
 root = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(root / 'digital_twin/ws/src/x2_twin_scenarios'))
-from x2_twin_scenarios.analysis.replay_inputs import read_replay_inputs, shift_input_stamps
+from x2_twin_scenarios.analysis.replay_inputs import read_replay_inputs, shift_input_stamps, t5_steps
 sys.path.insert(0, str(root / 'ws/src/navigation'))
-from loc_trust import TrustConfig  # noqa: E402
+from loc_trust import TrustConfig, TrustEvaluator  # noqa: E402
 
 ap = argparse.ArgumentParser()
 ap.add_argument('bag')
@@ -174,10 +174,9 @@ finally:
     cfg = TrustConfig()
 
     def steps(seq):
-        out_ = []
-        for (ta, a), (tb, b) in zip(seq, seq[1:]):
-            out_.append((tb, math.hypot(b[0] - a[0], b[1] - a[1]), abs(wrap(b[2] - a[2]))))
-        return out_
+        # Trust-node T5 semantics: robot displacement at the current odom pose; each operator seed starts a new epoch
+        return t5_steps(seq, lambda t: odom_at(t + t0), [ts - t0 for ts, kind, _ in msgs if kind == 'initialpose'],
+                        TrustEvaluator.correction_at)
 
     def summary(seq):
         st = steps(seq)

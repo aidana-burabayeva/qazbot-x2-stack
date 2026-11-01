@@ -57,3 +57,21 @@ def shift_input_stamps(kind, msg, delta_ns, time_type):
             continue
         shifted = stamp_ns + delta_ns
         header.stamp = time_type(sec=shifted // 10**9, nanosec=shifted % 10**9)
+
+
+def t5_steps(seq, odom_at, seed_times, correction_at):
+    """T5 steps exactly as the Trust node defines them (loc_trust.TrustEvaluator).
+
+    seq: [(t, (x, y, yaw))] distinct map->odom samples; odom_at(t) -> odom->base pose at t;
+    seed_times: operator initialpose times in the same time base. Each step is the ROBOT displacement in the map
+    (correction_at), not the raw transform translation. An operator seed begins a new correction epoch
+    (TrustEvaluator.relocalize): the first update after a seed has no predecessor and is not a T5 step.
+    """
+    seeds = sorted(seed_times)
+    out = []
+    for (ta, a), (tb, b) in zip(seq, seq[1:]):
+        if any(ta < s <= tb for s in seeds):
+            continue
+        jx, jy = correction_at(a, b, tuple(odom_at(tb)))
+        out.append((tb, jx, jy))
+    return out
