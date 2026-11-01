@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && rm -rf /var/lib/apt/lists/* \
  && groupadd -g 1000 twin && useradd -m -u 1000 -g 1000 -s /bin/bash twin
 COPY docker/dds/udp_only.xml /etc/qazbot/dds.xml
-ENV ROS_DOMAIN_ID=88 RMW_IMPLEMENTATION=rmw_fastrtps_cpp FASTRTPS_DEFAULT_PROFILES_FILE=/etc/qazbot/dds.xml \
+ENV ROS_DOMAIN_ID=87 RMW_IMPLEMENTATION=rmw_fastrtps_cpp FASTRTPS_DEFAULT_PROFILES_FILE=/etc/qazbot/dds.xml \
     LIBGL_ALWAYS_SOFTWARE=1 QT_X11_NO_MITSHM=1 XDG_RUNTIME_DIR=/tmp/runtime-twin
 USER twin
 WORKDIR /home/twin

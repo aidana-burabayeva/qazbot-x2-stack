@@ -10,7 +10,7 @@ Safety model (see docs/OPERATOR_SIM.md):
   * a separate, explicitly operator-confirmed capsule (mode OPERATOR_SIM, scope interactive_operator_mc, qualifies=false, <= 8 h).
     It never touches the Nightly queue authorization (queue.db is not opened for writing except the evidence hand-off through the
     existing workflow.feedback entry), never yields SIM_VERIFIED and never opens L3/FULL_NIGHTLY.
-  * separate compose project (x2-operator), ROS domain 88, evidence directory and GUI containers; the official MC is arbitrated with
+  * separate compose project (x2-operator, private internal network, ROS domain 87 as the twin requires), evidence directory and GUI containers; the official MC is arbitrated with
     Nightly L3 by the same official-mc.lock inside the sim container.
 """
 import argparse
@@ -34,7 +34,8 @@ PROJECT = 'x2-operator'
 MAP = 'd1_qazbot_20261029'
 PHRASE = 'I AUTHORIZE ONE OPERATOR SIMULATION SESSION'
 STATE = RUN / 'state.json'
-MIN_MEM_GIB, MIN_DISK_GIB, MAX_HOURS = 24, 10, 8
+MIN_MEM_GIB, MAX_HOURS = 24, 8
+NIGHTLY_DISK_FLOOR_GIB, EVIDENCE_GIB, VOLUME_SEED_GIB = 5.0, 1.0, 1.5   # Nightly's own floor must survive an operator session
 SIM_TAG = os.environ.get('OPERATOR_SIM_TAG', 'operator')
 STACK_TAG = os.environ.get('OPERATOR_STACK_TAG', 'nightly')
 LIMITS = dict(SIM_CPUS='4', SIM_MEM='8g', STACK_CPUS='4', STACK_MEM='6g')
@@ -83,14 +84,20 @@ def parse_pose(text):
     return x, y, yaw
 
 
-def check_resources(meminfo='/proc/meminfo', disk_path=None, need_mem=MIN_MEM_GIB, need_disk=MIN_DISK_GIB):
+def check_resources(meminfo='/proc/meminfo', disk_path=None, need_mem=MIN_MEM_GIB, need_disk=None):
     """Pure helper so tests can drive it. Returns [(name, status, detail)]."""
     out = []
     mem = {k: int(v.split()[0]) for k, v in (ln.split(':', 1) for ln in Path(meminfo).read_text().splitlines())}
     avail = mem['MemAvailable'] / 2**20
     out.append(('resources.ram', 'PASS' if avail >= need_mem else 'FAIL', f'{avail:.1f} GiB available, need {need_mem} GiB (containers capped at 20 GiB)'))
-    disk = shutil.disk_usage(disk_path or RUN.parent if (disk_path or RUN.parent).exists() else Path('/')).free / 2**30
-    out.append(('resources.disk', 'PASS' if disk >= need_disk else 'FAIL', f'{disk:.1f} GiB free, need {need_disk} GiB'))
+    if need_disk is None:
+        seeded = run(['docker', 'volume', 'inspect', f'{PROJECT}_mc_runtime'])[0] == 0
+        need_disk = NIGHTLY_DISK_FLOOR_GIB + EVIDENCE_GIB + (0 if seeded else VOLUME_SEED_GIB)
+    base = Path(disk_path) if disk_path else RUN.parent
+    disk = shutil.disk_usage(base if base.exists() else Path('/')).free / 2**30
+    out.append(('resources.disk', 'PASS' if disk >= need_disk else 'FAIL',
+                f'{disk:.1f} GiB free, need {need_disk:.1f} GiB (Nightly floor {NIGHTLY_DISK_FLOOR_GIB:.0f} + evidence {EVIDENCE_GIB:.0f}'
+                f'{"" if need_disk < NIGHTLY_DISK_FLOOR_GIB + EVIDENCE_GIB + 0.1 else " + volume seed " + str(VOLUME_SEED_GIB)})'))
     load = os.getloadavg()[0]
     cores = os.cpu_count() or 1
     out.append(('resources.cpu', 'PASS' if load <= cores - 6 else 'FAIL', f'load1 {load:.1f} on {cores} cores; sim+stack+gui need ~10'))
@@ -219,7 +226,7 @@ def make_snapshot(sdir, session_id, start_pose, extra):
         map=dict(name=MAP, pgm_sha256=sha256_file(mp / 'map.pgm'), yaml_sha256=sha256_file(mp / 'map.yaml')),
         images=images, stack_source_in_image_sha256=baked.split()[0] if baked else None,
         vendor={n: sha256_file(vendor / n) for n in ('mc/bin/aima-mc-app-main', 'sim/bin/aima-sim-app')},
-        operator_scripts_tree_sha256=tree_sha(ops), ros_domain_id=88, compose_project=PROJECT, limits=LIMITS, **extra)
+        operator_scripts_tree_sha256=tree_sha(ops), ros_domain_id=87, compose_project=PROJECT, limits=LIMITS, **extra)
     (sdir / 'manifest.json').write_text(json.dumps(manifest, indent=2, sort_keys=True))
     for p in list(sdir.rglob('*')):
         if p.is_file():
@@ -284,6 +291,7 @@ def cmd_start(args):
         print('FAILED: official MC/stack startup:\n' + out[-1500:])
         state['status'] = 'FAILED_START'
         save_state(state)
+        failure_logs(state)
         cleanup(state)
         return 1
     rc, out = dc(state, 'up', '-d', '--no-build', 'panel', 'recorder', *(['rviz'] if state['rviz'] else []))
@@ -292,6 +300,7 @@ def cmd_start(args):
         print('FAILED: operator containers:\n' + out[-1500:])
         state['status'] = 'FAILED_START'
         save_state(state)
+        failure_logs(state)
         cleanup(state)
         return 1
     state['status'] = 'RUNNING'
@@ -308,6 +317,16 @@ OPERATOR SESSION {sid} IS RUNNING  (simulation only; official MC + MuJoCo; no ph
   4. Watch the X2 move (RViz, and MuJoCo if --mujoco-gui). Cancel: operator_sim.sh cancel.   Stop the session: operator_sim.sh stop
   Evidence (live): {evidence}   Session limit: {hours} h.
 """
+
+
+def failure_logs(state):
+    """A failed start must leave its evidence: container logs and health state are saved before the project is torn down."""
+    ev = Path(state['evidence'])
+    ev.joinpath('failed_start_logs.txt').write_text(dc(state, 'logs', '--no-color', timeout=90)[1])
+    ev.joinpath('failed_start_ps.txt').write_text(dc(state, 'ps', '-a', timeout=30)[1])
+    for svc in ('sim', 'stack'):
+        rc, text = run(['docker', 'inspect', f'{PROJECT}-{svc}-1', '--format', '{{json .State.Health}}'])
+        ev.joinpath(f'failed_start_health_{svc}.json').write_text(text)
 
 
 def cleanup(state):
