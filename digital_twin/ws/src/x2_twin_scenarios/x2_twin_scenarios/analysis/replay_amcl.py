@@ -37,7 +37,7 @@ from sensor_msgs.msg import LaserScan
 from std_msgs.msg import String
 from tf2_msgs.msg import TFMessage
 
-from x2_twin_scenarios.analysis.replay_inputs import read_replay_inputs, shift_input_stamps
+from x2_twin_scenarios.analysis.replay_inputs import read_replay_inputs, shift_input_stamps, t5_steps
 from x2_twin_sim.guards import require_sim_environment  # noqa: E402
 
 STACK = Path(os.environ.get('TWIN_STACK_DIR', '/opt/x2twin/stack'))
@@ -52,7 +52,7 @@ def main():
     args = ap.parse_args()
     require_sim_environment()
     sys.path.insert(0, str(STACK / 'navigation'))
-    from loc_trust import TrustConfig  # noqa: E402  (thresholds come from the stack itself)
+    from loc_trust import TrustConfig, TrustEvaluator  # noqa: E402  (thresholds come from the stack itself)
     bag = Path(args.bag)
     out = Path(args.results_dir) / args.name
     if out.exists():
@@ -167,10 +167,9 @@ def main():
         cfg = TrustConfig()
 
         def steps(seq):
-            out_ = []
-            for (ta, a), (tb, b) in zip(seq, seq[1:]):
-                out_.append((tb, math.hypot(b[0] - a[0], b[1] - a[1]), abs(wrap(b[2] - a[2]))))
-            return out_
+            # Trust-node T5 semantics: robot displacement at the current odom pose; each operator seed starts a new epoch
+            return t5_steps(seq, lambda t: odom_at(t + t0), [ts - t0 for ts, kind, _ in msgs if kind == 'initialpose'],
+                            TrustEvaluator.correction_at)
 
         def summary(seq):
             st = steps(seq)
