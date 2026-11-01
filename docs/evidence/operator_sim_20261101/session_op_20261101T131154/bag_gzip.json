@@ -1,0 +1,10 @@
+[
+ {
+  "original": "bag_0.db3",
+  "original_sha256": "17ad62c0b4245eb2b409b538bae24f6b6eecd9f13e7e2dfedbd6fe3269b80ab6",
+  "original_bytes": 177979392,
+  "gz": "bag_0.db3.gz",
+  "gz_bytes": 29079759,
+  "lossless_verified": true
+ }
+]

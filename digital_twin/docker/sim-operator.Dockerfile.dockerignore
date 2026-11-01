@@ -1,0 +1,3 @@
+*
+!docker/sim/check_authorization.py
+!docker/sim/sim_supervisor.sh

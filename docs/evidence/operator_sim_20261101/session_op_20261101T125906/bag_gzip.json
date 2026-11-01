@@ -1,0 +1,9 @@
+{
+ "original": "bag_0.db3",
+ "original_sha256": "dc927123122ce818d64ee989aff83981523e7e60c5c624e3fa657df399f40cd4",
+ "original_bytes": 251166720,
+ "gz": "bag_0.db3.gz",
+ "gz_sha256": "05c13d4699b7cea595d8846868ba3ee677217003a637e703ee9fb9a98402431f",
+ "gz_bytes": 39608737,
+ "lossless_verified": true
+}
