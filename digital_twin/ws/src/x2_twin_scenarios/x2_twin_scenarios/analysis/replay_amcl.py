@@ -7,8 +7,9 @@ Authoritative publisher per level (no double publishing):
     they are read from the bag only as the reference to compare the re-run against.
 Header stamps are shifted by one constant (so AMCL runs on the normal wall clock, use_sim_time=false, exactly as in
 production); order, spacing, frame_id and values are untouched. Pacing follows the bag's receive times (1x).
-The replayed AMCL is seeded with the pose the robot's AMCL had at the first recorded map->odom, with the RViz default
-covariance, i.e. what the operator did. Randomness: AMCL's particle filter; run-to-run spread is reported by --repeat.
+Every recorded /initialpose is replayed at its recorded receive time with its original header, pose and covariance.
+A selected window without an operator seed is refused. AMCL output is never used to construct an input seed.
+Randomness: AMCL's particle filter; this entrypoint runs one replay.
 
 Usage: replay_amcl.py BAG_DIR RESULT_NAME [--max-seconds N]
 Compares: step statistics (T5 semantics, loc_trust.TrustConfig thresholds) and pose disagreement against the recording.
@@ -36,6 +37,7 @@ from sensor_msgs.msg import LaserScan
 from std_msgs.msg import String
 from tf2_msgs.msg import TFMessage
 
+from x2_twin_scenarios.analysis.replay_inputs import read_replay_inputs, shift_input_stamps
 from x2_twin_sim.guards import require_sim_environment  # noqa: E402
 
 STACK = Path(os.environ.get('TWIN_STACK_DIR', '/opt/x2twin/stack'))
@@ -77,42 +79,16 @@ def main():
         'select data from messages where topic_id=? order by timestamp desc limit 1', (tid[status_topic],)).fetchone()[0]), String).data)
     map_dir = next(d for d in (STACK / 'maps').iterdir()
                    if (d / 'manifest.json').exists() and json.load(open(d / 'manifest.json'))['pgm_sha256'] == last_status['map_sha256'])
-    msgs = []          # (bag_ts_s, kind, msg)
-    odom_base, rec_map_odom = [], []
-    for kind, topic in (('tf', tf_topic), ('scan', scan_topic)):
-        cls = TFMessage if kind == 'tf' else LaserScan
-        for ts, data in db.execute('select timestamp, data from messages where topic_id=? order by timestamp', (tid[topic],)):
-            m = deserialize_message(bytes(data), cls)
-            if kind == 'tf':
-                keep = [t for t in m.transforms if (t.header.frame_id, t.child_frame_id) == ('odom', 'base_footprint')]
-                for t in m.transforms:
-                    if (t.header.frame_id, t.child_frame_id) == ('map', 'odom'):
-                        tr = t.transform.translation
-                        p = (tr.x, tr.y, yaw_of(t.transform.rotation))
-                        if not rec_map_odom or rec_map_odom[-1][1] != p:
-                            rec_map_odom.append((ts / 1e9, p))              # one sample per distinct recorded AMCL update
-                for t in keep:
-                    tr = t.transform.translation
-                    odom_base.append((ts / 1e9, (tr.x, tr.y, yaw_of(t.transform.rotation))))
-                if keep:
-                    m.transforms = keep                                     # the recorded map->odom is NOT replayed
-                    msgs.append((ts / 1e9, kind, m))
-            else:
-                msgs.append((ts / 1e9, kind, m))
-    msgs.sort(key=lambda x: x[0])
-    t0 = msgs[0][0]
-    if args.max_seconds:
-        msgs = [x for x in msgs if x[0] - t0 <= args.max_seconds]
-    t_end = msgs[-1][0]
+    msgs, odom_base, rec_map_odom = read_replay_inputs(
+        db, deserialize_message,
+        {'tf': TFMessage, 'scan': LaserScan, 'initialpose': PoseWithCovarianceStamped}, args.max_seconds)
+    t0, t_end = msgs[0][0], msgs[-1][0]
     ob_t = [t for t, _ in odom_base]
 
     def odom_at(t):                                         # nearest recorded odom->base sample (<= 20 ms at the recorded rate)
         i = min(range(max(bisect.bisect_left(ob_t, t) - 1, 0), min(bisect.bisect_left(ob_t, t) + 1, len(ob_t))),
                 key=lambda k: abs(ob_t[k] - t))
         return odom_base[i][1]
-
-    # seed = the recorded robot pose at the first recorded map->odom
-    seed = compose(rec_map_odom[0][1], odom_at(rec_map_odom[0][0]))
 
     # ---------------------------------------------------------------- run
     procs, logs = [], []
@@ -144,10 +120,6 @@ def main():
         logs.append(f)
         procs.append((name, subprocess.Popen(cmd, stdout=f, stderr=subprocess.STDOUT, start_new_session=True)))
 
-    def shift(stamp, d):
-        ns_total = stamp.sec * 10**9 + stamp.nanosec + d
-        return Time(sec=ns_total // 10**9, nanosec=ns_total % 10**9)
-
     result = {}
     try:
         start('amcl', ['ros2', 'launch', 'x2_twin_bringup', 'amcl.launch.py', f'map_yaml:={map_dir / "map.yaml"}'])
@@ -164,30 +136,16 @@ def main():
                 break
             spin(.5)
         spin(1.0)
-        ip = PoseWithCovarianceStamped()
-        ip.header.frame_id = 'map'
-        ip.header.stamp = n.get_clock().now().to_msg()
-        ip.pose.pose.position.x, ip.pose.pose.position.y = seed[0], seed[1]
-        ip.pose.pose.orientation.z, ip.pose.pose.orientation.w = math.sin(seed[2] / 2), math.cos(seed[2] / 2)
-        ip.pose.covariance[0] = ip.pose.covariance[7] = 0.25
-        ip.pose.covariance[35] = 0.06853891945200942
-        init_pub.publish(ip)
-        spin(1.0)
-        # constant stamp shift: first replayed header stamp -> now (+0.5 s)
-        first_hdr = (msgs[0][2].transforms[0].header.stamp if msgs[0][1] == 'tf' else msgs[0][2].header.stamp)
+        # Align receive times, retaining source-stamp age (including delayed seeds/scans).
         now = n.get_clock().now().nanoseconds
-        delta = now + 500_000_000 - (first_hdr.sec * 10**9 + first_hdr.nanosec)
+        delta = now + 500_000_000 - round(t0 * 1e9)
         play0 = time.monotonic() + 0.5
+        publishers = {'tf': tf_pub, 'scan': scan_pub, 'initialpose': init_pub}
         for ts, kind, m in msgs:
             while time.monotonic() < play0 + (ts - t0):
                 rclpy.spin_once(n, timeout_sec=.002)
-            if kind == 'tf':
-                for t in m.transforms:
-                    t.header.stamp = shift(t.header.stamp, delta)
-                tf_pub.publish(m)
-            else:
-                m.header.stamp = shift(m.header.stamp, delta)
-                scan_pub.publish(m)
+            shift_input_stamps(kind, m, delta, Time)
+            publishers[kind].publish(m)
         spin(3.0)
         result['status'] = 'completed'
     except BaseException as e:                              # noqa: BLE001 - recorded, then re-raised after cleanup
@@ -235,7 +193,7 @@ def main():
                 diffs.append((math.hypot(mine_at[0] - ref[0], mine_at[1] - ref[1]), abs(wrap(mine_at[2] - ref[2]))))
         dd = sorted(d[0] for d in diffs) or [0.0]
         dy = sorted(d[1] for d in diffs) or [0.0]
-        result.update(bag=str(bag.name), map=map_dir.name, seed=seed, duration_s=round(t_end - t0, 1),
+        result.update(bag=str(bag.name), map=map_dir.name, initialpose_count=sum(kind == 'initialpose' for _, kind, _ in msgs), duration_s=round(t_end - t0, 1),
                       thresholds=dict(jump_xy_max=cfg.jump_xy_max, jump_yaw_max=cfg.jump_yaw_max),
                       recorded=summary(rec), replay=summary(rep),
                       pose_vs_recording=dict(n=len(diffs), xy_median=dd[len(dd) // 2], xy_p95=dd[int(len(dd) * .95)], xy_max=dd[-1],
