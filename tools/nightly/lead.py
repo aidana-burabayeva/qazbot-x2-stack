@@ -104,6 +104,17 @@ def order(db,rows):
     return ordered
 
 
+def claude_final_text(text):
+    """Final assistant text from `claude -p --output-format stream-json`; None unless the last result event succeeded."""
+    final=None
+    for line in text.splitlines():
+        try:event=json.loads(line)
+        except ValueError:continue
+        if isinstance(event,dict) and event.get('type')=='result':final=event
+    if not final or final.get('is_error') or final.get('subtype')!='success':return None
+    return str(final.get('result','')).strip()
+
+
 def probe(nq,provider,model=None):
     """Explicit, finite capability qualification. Never inferred from quota/app-server/version."""
     import os
@@ -136,7 +147,7 @@ def probe(nq,provider,model=None):
             try:events.append(json.loads(line))
             except ValueError:pass
         passed=rc==0 and any(e.get('type')=='turn.completed' for e in events) and any(e.get('type')=='item.completed' and e.get('item',{}).get('type')=='agent_message' and e['item'].get('text','').strip()==marker for e in events)
-    else:passed=rc==0 and text.strip()==marker
+    else:passed=rc==0 and claude_final_text(text)==marker
     category,detail=('EXECUTION_OK','verified assistant output') if passed else classify(text,rc)
     observe(db,provider,category,detail,log,model=model,source_sha=sha,success=passed)
     nq.kv_set(db,'execution_capability:'+provider+':'+str(model),dict(fingerprint=fingerprint(provider,model),status='EXEC_VERIFIED' if passed else 'BLOCKED',ts=time.time(),evidence=str(log)))
