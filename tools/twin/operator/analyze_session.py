@@ -135,8 +135,8 @@ def analyze(ev_dir, map_yaml=None):
                  path_length_m=round(path_len, 2), final_truth=final,
                  final_distance_to_goal_m=round(math.hypot(final[0] - g['goal'][0], final[1] - g['goal'][1]), 3) if final else None)
         d['expected_reject_by_inflation'] = False
-        if map_yaml and d['nav2_outcome'] == 'ABORTED' and d['path_length_m'] < 0.5 and g.get('start_truth'):
-            d['expected_reject_by_inflation'] = not reachable(map_yaml, g['start_truth'][:2], g['goal'][:2])
+        if map_yaml and d['nav2_outcome'] == 'ABORTED' and d['path_length_m'] < 0.5 and g.get('truth'):
+            d['expected_reject_by_inflation'] = not reachable(map_yaml, g['truth'][:2], g['goal'][:2])
             if d['expected_reject_by_inflation']:
                 d['nav2_outcome_class'] = 'SAFE_REJECT'
                 d['nav2_outcome_note'] = f'goal unreachable for a disc of radius {ROBOT_RADIUS} m (a doorway narrower than {2 * ROBOT_RADIUS:.3f} m): expected planner refusal, not a defect'
@@ -177,7 +177,8 @@ def analyze(ev_dir, map_yaml=None):
     for g in out:
         if g['stalls']:
             s = g['stalls'][0]
-            fb = dict(component='navigation_stall', nav2_action_outcome=g['nav2_outcome'] if g['nav2_outcome'] not in ('SUCCEEDED',) else None,
+            outcome = 'SAFE_REJECT' if g.get('expected_reject_by_inflation') else (g['nav2_outcome'] if g['nav2_outcome'] not in ('SUCCEEDED', 'CANCELED') else None)
+            fb = dict(component='navigation_stall', nav2_action_outcome=outcome,
                       error=(f"operator session stall: commanded motion but speed < {STALL_SPEED} m/s for {s['duration_s']} s at truth "
                              f"({s['truth'][0]:.2f}, {s['truth'][1]:.2f}), {s['distance_to_goal_m']} m from goal, clearance {s['clearance_m']} m"),
                       stalls=g['stalls'])

@@ -8,8 +8,8 @@
 Safety model (see docs/OPERATOR_SIM.md):
   * simulation only. No SSH, no physical-robot address, no host-network container: the compose network is `internal`.
   * a separate, explicitly operator-confirmed capsule (mode OPERATOR_SIM, scope interactive_operator_mc, qualifies=false, <= 8 h).
-    It never touches the Nightly queue authorization (queue.db is not opened for writing except the evidence hand-off through the
-    existing workflow.feedback entry), never yields SIM_VERIFIED and never opens L3/FULL_NIGHTLY.
+    It never touches the Nightly queue authorization (the only contact with Nightly is the evidence hand-off through the existing
+    workflow feedback entry), never yields SIM_VERIFIED and never opens L3/FULL_NIGHTLY.
   * separate compose project (x2-operator, private internal network, ROS domain 87 as the twin requires), evidence directory and GUI containers; the official MC is arbitrated with
     Nightly L3 by the same official-mc.lock inside the sim container.
 """
