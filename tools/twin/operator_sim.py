@@ -2,7 +2,7 @@
 """Operator-driven digital twin session: RViz 2D Pose Estimate -> READY -> 2D Goal Pose -> motion of the X2 in official MC + MuJoCo.
 
     tools/twin/operator_sim.sh start [--start-pose X,Y,YAW] [--mujoco-gui] [--no-rviz] [--hours H]
-    tools/twin/operator_sim.sh status
+    tools/twin/operator_sim.sh status | cancel | resume
     tools/twin/operator_sim.sh stop
 
 Safety model (see docs/OPERATOR_SIM.md):
@@ -314,7 +314,7 @@ OPERATOR SESSION {sid} IS RUNNING  (simulation only; official MC + MuJoCo; no ph
   1. RViz: tool "2D Pose Estimate" -> click+drag the robot's pose on the D1 map. Nothing is seeded for you.
   2. Wait until the panel (top-left text in RViz) shows  TRUST: READY  (a seed that does not fit the scan is flagged there).
   3. RViz: tool "2D Goal Pose" (-> /qazbot_d1_map/goal_pose, handled by the Goal Coordinator exactly as on the X2) -> click a goal.
-  4. Watch the X2 move (RViz, and MuJoCo if --mujoco-gui). Cancel: operator_sim.sh cancel.   Stop the session: operator_sim.sh stop
+  4. Watch the X2 move (RViz, and MuJoCo if --mujoco-gui). Cancel: operator_sim.sh cancel (then `resume` before the next goal).   Stop the session: operator_sim.sh stop
   Evidence (live): {evidence}   Session limit: {hours} h.
 """
 
@@ -345,6 +345,17 @@ def cmd_cancel(args):
         print('no running operator session')
         return 1
     rc, out = sh_exec(st, 'panel', 'ros2 service call /qazbot_d1_map/goal_coordinator/stop std_srvs/srv/Trigger', timeout=30)
+    print(out[-400:])
+    return rc
+
+
+def cmd_resume(args):
+    """After `cancel`/a safety stop the Goal Coordinator stays latched until the operator clears it (new goals are rejected meanwhile)."""
+    st = load_state()
+    if not st or st.get('status') != 'RUNNING':
+        print('no running operator session')
+        return 1
+    rc, out = sh_exec(st, 'panel', 'ros2 service call /qazbot_d1_map/goal_coordinator/resume std_srvs/srv/Trigger', timeout=30)
     print(out[-400:])
     return rc
 
@@ -448,7 +459,7 @@ def main(argv=None):
     s.add_argument('--hours', type=float, default=4.0)
     s.add_argument('--authorize', default='', help='exact operator phrase for non-interactive start')
     s.set_defaults(fn=cmd_start)
-    for name, fn in (('status', cmd_status), ('cancel', cmd_cancel), ('build-rviz', cmd_build_rviz)):
+    for name, fn in (('status', cmd_status), ('cancel', cmd_cancel), ('resume', cmd_resume), ('build-rviz', cmd_build_rviz)):
         sub.add_parser(name).set_defaults(fn=fn)
     t = sub.add_parser('stop')
     t.add_argument('--no-handoff', action='store_true')

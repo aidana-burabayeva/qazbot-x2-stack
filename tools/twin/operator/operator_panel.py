@@ -165,7 +165,7 @@ class Panel(Node):
                          text=(f'seed fits the scan (score {sc:.2f} >= {self.cfg.hit_min_abs})' if fits else
                                f'SEED DOES NOT FIT THE SCAN: score {sc:.2f} < {self.cfg.hit_min_abs}; best nearby pose is '
                                f'{dx:+.2f} m, {dy:+.2f} m, {math.degrees(dth):+.0f} deg away (score {amb["best"]:.2f}). '
-                               'Trust will not go READY until AMCL converges; consider re-placing the pose.'))
+                               'WARNING: the go2 Trust policy does NOT gate READY on scan fit, so READY can still be shown for this pose; re-place it.'))
         self.event('SEED_DIAG', **s['diag'])
 
     # ----------------------------------------------------------------------------------------- periodic
