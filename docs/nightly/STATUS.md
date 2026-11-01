@@ -72,10 +72,10 @@ A воспроизвёл другой stall, а измеренная привя�
 Лаборатория остановлена по указанию пользователя: демон и таймер отключены, cron удалены, sim-контейнеры остановлены, очередь припаркована, Codex получил OPERATOR STOP. Физический робот доступен; подготовка — docs/nightly/HANDOFF.md. Незакрыто: реальное срабатывание таймера 01:00 (UNVERIFIED), перезагрузка ПК (NEEDS_APPROVAL), реальный лимит Claude (не наступал; проверена только маршрутизация DRILL), успешный `make nightly` end-to-end (build падал: vendor/DNS), причина L2-stall, L2 doorway_crossing_out, квалификация на образе x2-twin-stack:p20, frame contract. Фазы B,C,D — готовы; E,F — частично; G — малый пилот; GPU/RL — не начаты.
 
 <!-- BEGIN LAB_STOP -->
-## LAB STOP 2026-11-01T12:00:21+0500
-- HEAD `0005f9084d4a` (lab/control); очередь {'COMPLETED': 57, 'NEEDS_APPROVAL': 4, 'NEEDS_ENGINEERING': 9, 'NEEDS_HARDWARE': 2}; запаркованных задач 2.
+## LAB STOP 2026-11-01T13:32:55+0500
+- HEAD `21ce2a9f9b98` (lab/control); очередь {'COMPLETED': 57, 'NEEDS_APPROVAL': 10, 'NEEDS_ENGINEERING': 9, 'NEEDS_HARDWARE': 2}; запаркованных задач 8.
 - Codex: STOP_ACKED. Units: {'qazbot-nightly.service': 'inactive/Failed to get unit file state for qazbot-nightly.service: No such file or directory', 'qazbot-nightly-enqueue.service': 'inactive/Failed to get unit file state for qazbot-nightly-enqueue.service: No such file or directory', 'qazbot-nightly-enqueue.timer': 'inactive/Failed to get unit file state for qazbot-nightly-enqueue.timer: No such file or directory'}.
-- Regression: PASS (305 passed in 328.67s (0:05:28)).
+- Regression: PASS (305 passed in 327.86s (0:05:27)).
 - Не контролируется отсюда: открытые TUI Claude/Codex, session-only /loop cron и /goal hook открытых сессий.
 - Возобновление: `python3 tools/nightly/lab.py resume` (`/nightly-resume`).
 <!-- END LAB_STOP -->
