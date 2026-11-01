@@ -163,7 +163,7 @@ def test_capability_helper_preserves_daemon_environment_without_login_shell(db,t
         seen.update(argv=argv,env=kwargs['env']);return Child()
     monkeypatch.setattr(subprocess,'Popen',launch)
     cmd='python3 tools/nightly/workflow.py capability-probe --provider codex --model gpt-6.1-sol'
-    nq.enqueue(db,'probe',cmd,execution_tier='ENGINEERING')
+    nq.enqueue(db,'probe',cmd,execution_tier='ENGINEERING',branch='attempt/t-1')
     row=db.execute("SELECT * FROM tasks WHERE name='probe'").fetchone()
     nq.run_mechanical(db,row)
     assert seen['argv']==[sys.executable,str(tmp_path/'tools/nightly/workflow.py'),'capability-probe','--provider','codex','--model','gpt-6.1-sol']
@@ -206,3 +206,34 @@ def test_probe_pending_candidate_is_not_parked_until_other_providers_reset(db,tm
     assert 'probe' in sel['reason']
     nq.kv_set(db,'execution_capability:claude:m2',dict(fingerprint='facts',status='EXEC_VERIFIED',ts=100))
     assert nq.select_agent(db,row)['agent']=='claude'
+
+
+def _attempt_repo(tmp_path, db, listed):
+    import subprocess
+    g=lambda *a:subprocess.run(['git','-C',str(tmp_path),*a],check=True,capture_output=True,text=True).stdout.strip()
+    g('init','-q');g('config','user.email','a@b');g('config','user.name','t')
+    (tmp_path/'a.txt').write_text('a');g('add','.');g('commit','-qm','base');base=g('rev-parse','HEAD')
+    (tmp_path/'fix.txt').write_text('fix');g('add','fix.txt');g('commit','-qm','attempt')   # .qazbot is never committed
+    own=tmp_path/'.qazbot/results/t.1.json';own.parent.mkdir(parents=True)
+    nq.kv_set(db,'base:t:1',{'git_sha':base})
+    row=dict(name='t',attempts=1,attempt_id='aid',attempt_wt=str(tmp_path),cwd=str(tmp_path),execution_tier='ENGINEERING',branch='attempt/t-1')
+    own.write_text(json.dumps(dict(task='t',attempt=1,attempt_id='aid',summary='s',tests=dict(cmd='python3 -m pytest -q x'),files=[dict(path=p) for p in listed])))
+    return row,own
+
+
+def test_result_file_listing_itself_is_accepted_if_a_real_artefact_is_also_listed(db,tmp_path):
+    """6 attempts (Codex rc 0, real analysis) were rejected 'file not changed by this attempt: .qazbot/results/<task>.<n>.json'."""
+    row,own=_attempt_repo(tmp_path,db,['fix.txt','.qazbot/results/t.1.json'])
+    ok,_,why=nq._verify(db,row,own)
+    assert ok,why
+
+
+def test_result_file_alone_or_other_untracked_files_still_rejected(db,tmp_path):
+    row,own=_attempt_repo(tmp_path,db,['.qazbot/results/t.1.json'])
+    ok,_,why=nq._verify(db,row,own)
+    assert not ok and 'besides the result file' in why
+    (tmp_path/'.qazbot/other.json').write_text('{}')
+    row,own=_attempt_repo.__wrapped__ if False else (row,own)
+    own.write_text(json.dumps(dict(task='t',attempt=1,attempt_id='aid',summary='s',tests=dict(cmd='python3 -m pytest -q x'),files=[dict(path='.qazbot/other.json')])))
+    ok,_,why=nq._verify(db,row,own)
+    assert not ok and 'not changed' in why
