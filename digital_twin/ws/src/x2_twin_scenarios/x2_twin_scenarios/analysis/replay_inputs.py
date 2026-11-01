@@ -84,8 +84,9 @@ def seed_refresh_events(msgs, max_attempts=3, min_gap_s=0.6, window_s=6.0):
 
     After each operator initialpose the node asks AMCL for a measurement update without motion: at most
     `max_attempts`, >= `min_gap_s` apart, within `window_s` of the seed, each on a NEW scan received after the
-    seed; a newer seed cancels the pending refresh. The node's stationary/freshness gates are not modelled
-    (commissioning is stationary). Returns [(receipt_time, 'nomotion', None)] on the recording's clock.
+    seed; a newer seed cancels the pending refresh. NOT modelled: stationary/freshness gates, the stop once the first valid
+    post-seed AMCL pose is accepted (so this over-plans), 0.2 s tick quantization, the go2-policy gate, the scan-stamp
+    check and the 1 s outstanding-call wait. Returns [(receipt_time, 'nomotion', None)] on the recording's clock.
     """
     seeds = [ts for ts, kind, _ in msgs if kind == 'initialpose']
     events = []
