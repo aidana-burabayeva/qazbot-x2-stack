@@ -1,0 +1,237 @@
+udp_20261028 recorded_only 21.1s
+udp_20261028 S1_front_0deg_0.75m 19.5s
+udp_20261028 S2_left_+49deg_0.8m 19.6s
+udp_20261028 S3_right_-55deg_0.65m 17.5s
+udp_20261028 S4_low_0deg_0.8m_h0.25 19.8s
+udp_20261028 S5_tall_overhang_0deg_0.6m_z1.0-1.7 15.8s
+udp_20261028 S6_side_chair_+49deg_0.8m_static 18.8s
+udp_20261028 S7_person_leaves_into_blind 18.6s
+udp_20261028 S9_D04_right_-52deg_0.5m_transient 17.3s
+udp_20261028 S10_D04_left_+48deg_0.55m_transient 18.8s
+udp_20261028 S8_blind_seed_absence_not_free 19.0s
+replay_dense_01 recorded_only 28.2s
+replay_dense_01 S1_front_0deg_0.75m 28.2s
+replay_dense_01 S2_left_+49deg_0.8m 28.1s
+replay_dense_01 S3_right_-55deg_0.65m 24.9s
+replay_dense_01 S4_low_0deg_0.8m_h0.25 28.6s
+replay_dense_01 S5_tall_overhang_0deg_0.6m_z1.0-1.7 22.8s
+replay_dense_01 S6_side_chair_+49deg_0.8m_static 27.6s
+replay_dense_01 S7_person_leaves_into_blind 27.6s
+replay_dense_01 S9_D04_right_-52deg_0.5m_transient 25.1s
+replay_dense_01 S10_D04_left_+48deg_0.55m_transient 27.4s
+replay_dense_01 S8_blind_seed_absence_not_free 27.8s
+replay_portable_01 recorded_only 37.0s
+replay_portable_01 S1_front_0deg_0.75m 37.0s
+replay_portable_01 S2_left_+49deg_0.8m 37.1s
+replay_portable_01 S3_right_-55deg_0.65m 32.9s
+replay_portable_01 S4_low_0deg_0.8m_h0.25 37.8s
+replay_portable_01 S5_tall_overhang_0deg_0.6m_z1.0-1.7 28.8s
+replay_portable_01 S6_side_chair_+49deg_0.8m_static 36.4s
+replay_portable_01 S7_person_leaves_into_blind 36.5s
+replay_portable_01 S9_D04_right_-52deg_0.5m_transient 34.1s
+replay_portable_01 S10_D04_left_+48deg_0.55m_transient 37.0s
+replay_portable_01 S8_blind_seed_absence_not_free 37.3s
+replay_dense_controlled_01 recorded_only 37.3s
+replay_dense_controlled_01 S1_front_0deg_0.75m 37.1s
+replay_dense_controlled_01 S2_left_+49deg_0.8m 37.2s
+replay_dense_controlled_01 S3_right_-55deg_0.65m 33.0s
+replay_dense_controlled_01 S4_low_0deg_0.8m_h0.25 37.7s
+replay_dense_controlled_01 S5_tall_overhang_0deg_0.6m_z1.0-1.7 28.8s
+replay_dense_controlled_01 S6_side_chair_+49deg_0.8m_static 36.9s
+replay_dense_controlled_01 S7_person_leaves_into_blind 37.0s
+replay_dense_controlled_01 S9_D04_right_-52deg_0.5m_transient 34.4s
+replay_dense_controlled_01 S10_D04_left_+48deg_0.55m_transient 37.2s
+replay_dense_controlled_01 S8_blind_seed_absence_not_free 37.5s
+{
+ "meta": {
+  "running_sha256": "c817a5ed503386be742fa7b6fdab2b3209bdefaf42be799d2a130cd198f9369b",
+  "candidate_sha256": "c880d3c8f66eed3c58eecb1db23024a37fd6d877704d6d779cac61906f75abef",
+  "bags": {
+   "udp_20261028": {
+    "db": "/home/agi/control_backend/docs/evidence/i1_cloud_registered_udp_20261028_092700Z/i1_cloud_registered_udp_20261028_092700Z_0.db3",
+    "frames": 37,
+    "level_source": "imu",
+    "floor_z": -0.968718537678692
+   },
+   "replay_dense_01": {
+    "db": "/home/agi/control_backend/logs/replay_dense_01/bag/bag_0.db3",
+    "frames": 53,
+    "level_source": "floor_fit",
+    "floor_z": -0.9728916372377255
+   },
+   "replay_portable_01": {
+    "db": "/home/agi/control_backend/logs/replay_portable_01/bag/bag_0.db3",
+    "frames": 68,
+    "level_source": "floor_fit",
+    "floor_z": -0.9716441855584241
+   },
+   "replay_dense_controlled_01": {
+    "db": "/home/agi/control_backend/logs/replay_dense_controlled_01/bag/bag_0.db3",
+    "frames": 68,
+    "level_source": "floor_fit",
+    "floor_z": -0.9716441855584241
+   }
+  },
+  "coverage": {
+   "udp_20261028": {
+    "0.45-1.0m": {
+     "all_min_max_p05_p995": [
+      -54.45,
+      54.46,
+      -51.79,
+      51.57
+     ],
+     "band_min_max_p05_p995": null,
+     "n_all": 36272,
+     "n_band": 0,
+     "band_outside_old_fov": 0
+    },
+    "1.0-2.0m": {
+     "all_min_max_p05_p995": [
+      -57.07,
+      55.55,
+      -54.47,
+      52.57
+     ],
+     "band_min_max_p05_p995": null,
+     "n_all": 81307,
+     "n_band": 0,
+     "band_outside_old_fov": 0
+    },
+    "2.0-3.5m": {
+     "all_min_max_p05_p995": [
+      -50.83,
+      51.07,
+      -48.71,
+      48.81
+     ],
+     "band_min_max_p05_p995": [
+      -45.79,
+      -32.51,
+      -45.73,
+      -32.59
+     ],
+     "n_all": 75399,
+     "n_band": 6634,
+     "band_outside_old_fov": 0
+    },
+    "3.5-8.0m": {
+     "all_min_max_p05_p995": [
+      -47.86,
+      47.25,
+      -45.59,
+      45.2
+     ],
+     "band_min_max_p05_p995": [
+      -44.23,
+      44.26,
+      -43.02,
+      44.18
+     ],
+     "n_all": 94733,
+     "n_band": 17164,
+     "band_outside_old_fov": 0
+    },
+    "lidar_imu_offset_m": 0.019801480290199288,
+    "floor_z_rel_imu": -0.968718537678692
+   },
+   "replay_dense_01": {
+    "0.45-1.0m": {
+     "all_min_max_p05_p995": [
+      -54.49,
+      54.32,
+      -51.93,
+      51.66
+     ],
+     "band_min_max_p05_p995": null,
+     "n_all": 52327,
+     "n_band": 0,
+     "band_outside_old_fov": 0
+    },
+    "1.0-2.0m": {
+     "all_min_max_p05_p995": [
+      -57.73,
+      55.75,
+      -54.57,
+      52.82
+     ],
+     "band_min_max_p05_p995": [
+      -42.12,
+      -35.69,
+      -41.77,
+      -35.74
+     ],
+     "n_all": 114960,
+     "n_band": 2604,
+     "band_outside_old_fov": 0
+    },
+    "2.0-3.5m": {
+     "all_min_max_p05_p995": [
+      -50.42,
+      50.88,
+      -48.44,
+      48.53
+     ],
+     "band_min_max_p05_p995": [
+      -45.81,
+      -26.57,
+      -45.49,
+      -27.04
+     ],
+     "n_all": 118992,
+     "n_band": 17359,
+     "band_outside_old_fov": 0
+    },
+    "3.5-8.0m": {
+     "all_min_max_p05_p995": [
+      -47.92,
+      48.13,
+      -45.77,
+      45.78
+     ],
+     "band_min_max_p05_p995": [
+      -41.51,
+      44.29,
+      -36.42,
+      43.65
+     ],
+     "n_all": 127378,
+     "n_band": 22247,
+     "band_outside_old_fov": 0
+    },
+    "lidar_imu_offset_m": 0.019801480290199288,
+    "floor_z_rel_imu": -0.9728916372377255
+   },
+   "replay_portable_01": {
+    "0.45-1.0m": {
+     "all_min_max_p05_p995": [
+      -54.56,
+      54.32,
+      -51.89,
+      51.64
+     ],
+     "band_min_max_p05_p995": null,
+     "n_all": 67118,
+     "n_band": 0,
+     "band_outside_old_fov": 0
+    },
+    "1.0-2.0m": {
+     "all_min_max_p05_p995": [
+      -57.12,
+      55.76,
+      -54.58,
+      52.83
+     ],
+     "band_min_max_p05_p995": [
+      -42.31,
+      -35.53,
+      -41.77,
+      -35.73
+     ],
+     "n_all": 147457,
+     "n_band": 3354,
+     "band_outside_old_fov": 0
+    },
+    "2.0-3.5m": {
+     "all_min_max_p05_p995": [
+      -50.4

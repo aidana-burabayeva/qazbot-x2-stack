@@ -10,4 +10,4 @@
 
 ## Записи
 
-(нет)
+- 2026-11-02 X2 — D-04 candidate C: **UNVERIFIED** на железе (OFFLINE_VERIFIED, V1 PASS), **NEEDS_APPROVAL** для статичной квалификации. D-05: **NEEDS_HARDWARE** (калибровка 0.10–0.60). Детали: docs/engineering/d04_d05_20261102/README.md. Production X2 не изменялся.
