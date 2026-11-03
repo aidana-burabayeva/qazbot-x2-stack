@@ -11,7 +11,7 @@ import types
 import numpy as np
 import pytest
 
-from replay_d04 import CANDIDATE, RUNNING, load_bridge, stub_node
+from replay_d04 import CANDIDATE, RUNNING, load_bridge, stub_node, bridge_class
 
 C = load_bridge(CANDIDATE, 'lb_candidate_t')
 A = load_bridge(RUNNING, 'lb_running_t')
@@ -161,7 +161,7 @@ def _run_on_cloud(mod, q_level):
     s = stub_node(mod)
     s.R_lv = np.eye(3)
     s.poses = {100 * 10**9: (0.0, 0.0, 0.0, np.zeros(3))}
-    mod.LevelBridge.on_cloud(s, _cloud_msg(q_level))
+    bridge_class(mod).on_cloud(s, _cloud_msg(q_level))
     from sensor_msgs_py import point_cloud2 as pc2
     rd = lambda m: pc2.read_points_numpy(m, field_names=('x', 'y', 'z')).astype(float)
     return rd(s.pub_obstacles.msg), rd(s.pub_clearing.msg)
@@ -188,8 +188,12 @@ def test_node_every_marked_edge_bearing_has_a_clearing_ray_in_candidate():
 # --- candidate scope guard --------------------------------------------------------------------
 def test_candidate_changes_only_clearing_endpoints():
     ta, tc = ast.parse(open(RUNNING).read()), ast.parse(open(CANDIDATE).read())
-    da = {getattr(n, 'name', ast.dump(n)[:60]): ast.dump(n) for n in ta.body}
-    dc = {getattr(n, 'name', ast.dump(n)[:60]): ast.dump(n) for n in tc.body}
+    # Normalize the rename only; the archived candidate retains the historical name.
+    def normalize(s):
+        return (s.replace('X2LioPlanarBridge', 'LevelBridge')
+                 .replace('x2_lio_planar_bridge', 'level_bridge')) if s is not None else None
+    da = {normalize(getattr(n, 'name', ast.dump(n)[:60])): normalize(ast.dump(n)) for n in ta.body}
+    dc = {normalize(getattr(n, 'name', ast.dump(n)[:60])): normalize(ast.dump(n)) for n in tc.body}
     changed = {k for k in da.keys() | dc.keys() if da.get(k) != dc.get(k)}
     assert changed == {'clearing_endpoints'}
 

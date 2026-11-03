@@ -1,6 +1,6 @@
 """Raw chest-LiDAR -> 2D LaserScan WITHOUT FAST-LIO (A/B experiment, P16 20261029-raw-scan-ab).
 
-Same output geometry as level_bridge.py's /qazbot_lio/scan, but built straight from the HAL cloud:
+Same output geometry as x2_lio_planar_bridge.py's /qazbot_lio/scan, but built straight from the HAL cloud:
   * input  /aima/hal/sensor/lidar_chest_front/lidar_pointcloud (frame lidar_chest_front, ~10 Hz,
     fields x y z intensity ring timestamp; timestamp = float64 ns after header.stamp, 0..~95 ms);
   * extrinsic lidar_chest_front -> lidar_imu_chest_front: x2.yaml extrinsic_R/extrinsic_T (= inverse of
@@ -8,9 +8,9 @@ Same output geometry as level_bridge.py's /qazbot_lio/scan, but built straight f
   * attitude + short-term motion: /aima/mc/leg_odometry (MC estimator, ~150 Hz, pose of
     lidar_imu_chest_front in the gravity-levelled leg_odom). Used ONLY for (a) roll/pitch levelling and
     (b) per-point deskew inside one sweep (relative pose over <=0.1 s); its absolute x/y/yaw are not used;
-  * base_footprint = level_bridge's definition: the LiDAR IMU projected on the floor, yaw = heading of the
+  * base_footprint = x2_lio_planar_bridge's definition: the LiDAR IMU projected on the floor, yaw = heading of the
     LiDAR forward axis, so a later switch keeps AMCL laser pose / Trust frames valid;
-  * slice = level_bridge's Z_MIN/Z_MAX/FLOOR_MARGIN_PER_M relative to the IMU, 1440 bins, range_max param.
+  * slice = x2_lio_planar_bridge's Z_MIN/Z_MAX/FLOOR_MARGIN_PER_M relative to the IMU, 1440 bins, range_max param.
 Publishes only under /qazbot_raw/ (scan, scan_obstacles, scan_clearing, optional scan_low). No TF, no odom.
 
 CPU: the cloud and pose subscriptions are raw (no deserialisation of skipped clouds); the 150 Hz pose stream
@@ -34,7 +34,7 @@ from sensor_msgs.msg import Imu, LaserScan, PointCloud2
 from sensor_msgs_py import point_cloud2 as pc2
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import level_bridge as lb  # noqa: E402  (pure functions + constants; no node is created on import)
+import x2_lio_planar_bridge as lb  # noqa: E402  (pure functions + constants; no node is created on import)
 
 CLOUD_TOPIC = '/aima/hal/sensor/lidar_chest_front/lidar_pointcloud'
 POSE_TOPIC = '/aima/mc/leg_odometry'
@@ -119,7 +119,7 @@ class PoseHistory:
 
 
 def slice_scan(Q, z_min, z_max, margin, range_min, range_max):
-    """level_bridge.on_cloud's slice/binning on points already in base_footprint (z rel. IMU)."""
+    """x2_lio_planar_bridge.on_cloud's slice/binning on points already in base_footprint (z rel. IMU)."""
     flat = np.hypot(Q[:, 0], Q[:, 1])
     S = Q[(Q[:, 2] > z_min + margin * flat) & (Q[:, 2] < z_max)]
     r = np.hypot(S[:, 0], S[:, 1])
@@ -257,7 +257,7 @@ class RawScanBridge(Node):
         self.pub_scan.publish(scan)
         self.pub_obs.publish(pc2.create_cloud_xyz32(scan.header, obstacles.tolist()))
         if self.clearing:
-            # clearing_endpoints uses level_bridge's module constants Z_MIN/Z_MAX (same defaults as here).
+            # clearing_endpoints uses x2_lio_planar_bridge's module constants Z_MIN/Z_MAX (same defaults as here).
             clr = lb.clearing_endpoints(Q, 0.0, self.range_max)
             self.pub_clr.publish(pc2.create_cloud_xyz32(scan.header, clr.tolist()))
         if self.low:

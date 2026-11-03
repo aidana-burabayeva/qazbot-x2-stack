@@ -3,7 +3,7 @@
   * ws/src/lio/native_odom_bridge.py on the trial06 fixture (in-place 67 deg turn whose LIO drifted 1.77 m):
     TF odom->base_footprint and /qazbot_native/odom, source stamps, decimation, guards (stale, future, non-finite,
     origin jump, foreign frame, stamp back), mode / rate refusal;
-  * ws/src/lio/level_bridge.py publish_tf:=false: no TF publisher at all, /odom_level and /scan identical;
+  * ws/src/lio/x2_lio_planar_bridge.py publish_tf:=false: no TF publisher at all, /odom_level and /scan identical;
   * single owner of odom->base_footprint: localization.launch.py for odom_source lio / native_imu / refused values,
     and tools/stack/odom_owner_probe.py verdict logic.
 
@@ -324,13 +324,13 @@ class Bridge(unittest.TestCase):
         self.assertGreaterEqual(s_of(new[0].header) - (t - 5.0), no.TWIST_BASELINE_S)
 
 
-class LevelBridgePublishTf(unittest.TestCase):
-    """publish_tf:=false: level_bridge has no TF publisher; /odom_level and /scan are identical to publish_tf:=true."""
+class X2LioPlanarBridgePublishTf(unittest.TestCase):
+    """publish_tf:=false: x2_lio_planar_bridge has no TF publisher; /odom_level and /scan are identical to publish_tf:=true."""
 
     @classmethod
     def setUpClass(cls):
         cls.rclpy, cls.Odometry, cls.Parameter = ros()
-        import level_bridge as lb
+        import x2_lio_planar_bridge as lb
         cls.lb = lb
 
     def run_bridge(self, publish_tf):
@@ -338,8 +338,8 @@ class LevelBridgePublishTf(unittest.TestCase):
         from sensor_msgs.msg import Imu
         from sensor_msgs_py import point_cloud2 as pc2
         from std_msgs.msg import Header
-        node = self.lb.LevelBridge(parameter_overrides=[self.Parameter('publish_tf', value=publish_tf)],
-                                   cli_args=['--ros-args', '-r', f'__node:=test_level_bridge_{publish_tf}'.lower()])
+        node = self.lb.X2LioPlanarBridge(parameter_overrides=[self.Parameter('publish_tf', value=publish_tf)],
+                                   cli_args=['--ros-args', '-r', f'__node:=test_x2_lio_planar_bridge_{publish_tf}'.lower()])
         self.addCleanup(node.destroy_node)
         out = dict(tf=[], odom=[], scan=[])
         if node.tf is not None:
@@ -439,7 +439,7 @@ class SingleOwnerLaunch(unittest.TestCase):
         own = []
         for _, cmd in procs:
             script = os.path.basename(cmd[1]) if len(cmd) > 1 else ''
-            if script in ('level_bridge.py', 'native_odom_bridge.py'):
+            if script in ('x2_lio_planar_bridge.py', 'native_odom_bridge.py'):
                 pt = [cmd[i + 1] for i, c in enumerate(cmd[:-1]) if c == '-p' and cmd[i + 1].startswith('publish_tf:=')]
                 self.assertLessEqual(len(pt), 1)
                 self.assertIn('/tf:=/qazbot_d1_map/tf', cmd)
@@ -447,18 +447,18 @@ class SingleOwnerLaunch(unittest.TestCase):
                     own.append(script)
         return own
 
-    def test_lio_default_single_owner_level_bridge(self):
+    def test_lio_default_single_owner_x2_lio_planar_bridge(self):
         ld = self.mod.generate_launch_description()
         default = next(e for e in ld.entities if getattr(e, 'name', None) == 'odom_source')
         self.assertEqual(self.perform(self.LaunchContext(), default.default_value), 'lio')
         procs = self.processes('lio')
-        self.assertEqual(self.owners(procs), ['level_bridge.py'])
+        self.assertEqual(self.owners(procs), ['x2_lio_planar_bridge.py'])
         self.assertFalse(any('native_odom_bridge.py' in ' '.join(c) for _, c in procs))
 
     def test_native_imu_single_owner_native_bridge(self):
         procs = self.processes('native_imu')
         self.assertEqual(self.owners(procs), ['native_odom_bridge.py'])
-        lb = next(c for _, c in procs if c[1].endswith('level_bridge.py'))
+        lb = next(c for _, c in procs if c[1].endswith('x2_lio_planar_bridge.py'))
         self.assertIn('publish_tf:=false', lb)
         self.assertIn('/scan:=/qazbot_lio/scan', lb)            # scan + odom_level still produced
         self.assertIn('/odom_level:=/qazbot_lio/odom_level', lb)
@@ -519,9 +519,9 @@ class JumpGuardGap(unittest.TestCase):
 
 class OwnerProbeLogic(unittest.TestCase):
     def test_graph_owners(self):
-        self.assertEqual(probe.graph_owners(['/qazbot_d1_map/amcl', '/qazbot_level_bridge']), ['lio'])
+        self.assertEqual(probe.graph_owners(['/qazbot_d1_map/amcl', '/qazbot_x2_lio_planar_bridge']), ['lio'])
         self.assertEqual(probe.graph_owners(['/qazbot_native_odom_bridge', '/qazbot_d1_map/amcl']), ['native_imu'])
-        self.assertEqual(probe.graph_owners(['/qazbot_native_odom_bridge', '/qazbot_level_bridge']),
+        self.assertEqual(probe.graph_owners(['/qazbot_native_odom_bridge', '/qazbot_x2_lio_planar_bridge']),
                          ['lio', 'native_imu'])
 
     def test_match_and_verdict(self):

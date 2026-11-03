@@ -115,9 +115,9 @@ def level_rotation(up):
     return np.vstack([x, np.cross(z, x), z])
 
 
-class LevelBridge(Node):
+class X2LioPlanarBridge(Node):
     def __init__(self, **kwargs):          # kwargs: rclpy Node options (tests: parameter_overrides)
-        super().__init__('level_bridge', **kwargs)
+        super().__init__('x2_lio_planar_bridge', **kwargs)
         self.acc, self.t_acc0, self.R_lv, self.R_wb = [], None, None, None
         self.poses = {}            # stamp ns -> (x, y, yaw, p_lv)
         self.track = deque()       # (t s, x, y, yaw) for the twist baseline
@@ -265,7 +265,7 @@ class LevelBridge(Node):
 
 def main():
     rclpy.init()
-    node = LevelBridge()
+    node = X2LioPlanarBridge()
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:

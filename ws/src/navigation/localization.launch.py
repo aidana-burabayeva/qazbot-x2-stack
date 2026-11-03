@@ -1,9 +1,9 @@
 """X2 independent LIO + map_server + AMCL. No command publisher or MC calls.
 
 odom_source (reports/20261027-native-odom-nav2-design.md 3.6) selects the ONE owner of TF odom->base_footprint:
-  lio (default)  level_bridge (FAST-LIO pose), exactly as before; the native bridge is not started.
+  lio (default)  x2_lio_planar_bridge (FAST-LIO pose), exactly as before; the native bridge is not started.
   native_imu     native_odom_bridge (MC /aima/mc/leg_odometry, same base_footprint = LiDAR-IMU footprint);
-                 level_bridge runs with publish_tf:=false and still publishes /qazbot_lio/scan and
+                 x2_lio_planar_bridge runs with publish_tf:=false and still publishes /qazbot_lio/scan and
                  /qazbot_lio/odom_level unchanged. Consumers of the odometry topic must then use /qazbot_native/odom
                  (run_nav_full.sh QAZBOT_ODOM_TOPIC, trust -p odom_topic; tools/stack/stack_up.sh does both).
   Anything else (native_base: step 2, scan not yet in a base_link frame) is refused.
@@ -47,8 +47,8 @@ class TasksetPrefix(Substitution):
 ODOM_SOURCES = ('lio', 'native_imu')
 
 
-class LevelBridgePublishTf(Substitution):
-    """'true' when level_bridge owns odom->base_footprint (odom_source lio), 'false' for native_imu; refuses any
+class X2LioPlanarBridgePublishTf(Substitution):
+    """'true' when x2_lio_planar_bridge owns odom->base_footprint (odom_source lio), 'false' for native_imu; refuses any
     other source so a typo can never start zero or two TF owners."""
 
     def __init__(self, source):
@@ -91,8 +91,8 @@ def generate_launch_description():
         DeclareLaunchArgument('native_leg_topic', default_value='/aima/mc/leg_odometry'),
         ExecuteProcess(cmd=[LaunchConfiguration('lio_binary')] + lio_args, output='screen',
                        prefix=TasksetPrefix(LaunchConfiguration('lio_cpus'))),
-        ExecuteProcess(cmd=['python3', os.path.join(root, 'lio', 'level_bridge.py'), '--ros-args',
-                            '-r', '__node:=qazbot_level_bridge',
+        ExecuteProcess(cmd=['python3', os.path.join(root, 'lio', 'x2_lio_planar_bridge.py'), '--ros-args',
+                            '-r', '__node:=qazbot_x2_lio_planar_bridge',
                             '-r', '/Odometry:=/qazbot_lio/odometry',
                             '-r', '/cloud_registered:=/qazbot_lio/cloud_registered',
                             '-r', '/scan:=/qazbot_lio/scan',
@@ -100,7 +100,7 @@ def generate_launch_description():
                             '-r', '/tf:=/qazbot_d1_map/tf',
                             '-r', '/tf_static:=/qazbot_d1_map/tf_static',
                             '-p', 'range_max:=8.0', '-p', 'scan_every:=2',
-                            '-p', ['publish_tf:=', LevelBridgePublishTf(LaunchConfiguration('odom_source'))]],
+                            '-p', ['publish_tf:=', X2LioPlanarBridgePublishTf(LaunchConfiguration('odom_source'))]],
                        output='screen'),
         Node(package='nav2_map_server', executable='map_server', namespace=ns,
              name='map_server', output='screen', remappings=tf_remaps,

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Read-only check: exactly ONE owner of TF odom->base_footprint on /qazbot_d1_map/tf (subscribe/graph only).
 
-Graph: nodes publishing /qazbot_d1_map/tf among the two possible owners (level_bridge, native_odom_bridge; with
-odom_source:=native_imu level_bridge creates no TF publisher at all).
+Graph: nodes publishing /qazbot_d1_map/tf among the two possible owners (x2_lio_planar_bridge, native_odom_bridge; with
+odom_source:=native_imu x2_lio_planar_bridge creates no TF publisher at all).
 Data: every odom->base_footprint TF sample over D seconds is matched by stamp with the odometry message of each
 candidate (/qazbot_lio/odom_level, /qazbot_native/odom: the owner publishes TF and odometry from the same sample, same
 stamp and pose). A single owner means one candidate explains (almost) all TF samples and the other none.
@@ -12,7 +12,7 @@ import json
 import sys
 import time
 
-OWNERS = {'/qazbot_level_bridge': 'lio', '/qazbot_native_odom_bridge': 'native_imu'}
+OWNERS = {'/qazbot_x2_lio_planar_bridge': 'lio', '/qazbot_native_odom_bridge': 'native_imu'}
 ODOM_TOPICS = {'lio': '/qazbot_lio/odom_level', 'native_imu': '/qazbot_native/odom'}
 TF_TOPIC = '/qazbot_d1_map/tf'
 POSE_TOL = 1e-6

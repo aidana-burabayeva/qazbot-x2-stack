@@ -3,7 +3,7 @@
 # docs/X2_QUICKSTART_BRINGUP_RU.md). NO motion: adapter live=false, no MC registration, no initialpose, no goals.
 # Usage: tools/stack/stack_up.sh [TAG]      (TAG default: date; logs/pids: logs/<stage>_<TAG>.{log,pid})
 # Each stage waits for its own "ready" log line (not a blind sleep) and aborts the sequence on failure.
-# QAZBOT_ODOM_SOURCE=lio (default) | native_imu: owner of odom->base_footprint (FAST-LIO via level_bridge, or MC leg
+# QAZBOT_ODOM_SOURCE=lio (default) | native_imu: owner of odom->base_footprint (FAST-LIO via x2_lio_planar_bridge, or MC leg
 # odometry via native_odom_bridge; design reports/20261027-native-odom-nav2-design.md 3.6). Passed to localization
 # (odom_source), trust (odom_source, odom_topic) and Nav2 (QAZBOT_ODOM_TOPIC). After a source change: new 2D Pose
 # Estimate and a new anchor -- a READY/anchor obtained on one source is not carried to the other.
@@ -25,7 +25,7 @@ TAG="${1:-$(date +%Y%m%d_%H%M%S)}"
 BIN=/home/agi/control_backend/candidates/fast_lio_portable/install/fast_lio/lib/fast_lio/fastlio_mapping
 MAP=/home/agi/control_backend/ws/src/maps/first_map_nav2_v3/map.yaml
 MAP_SHA=f6032f75ffd386361993a4b4864cf0816713fc27f6d037c88d929ae5d48562fb
-PATTERN='fastlio_mapping|level_bridge|native_odom_bridge|nav2_amcl/amcl|map_server|planner_server|controller_server|bt_navigator|velocity_smoother|lifecycle_manager|goal_coordinator|x2_motion_adapter|localization_trust'
+PATTERN='fastlio_mapping|x2_lio_planar_bridge|native_odom_bridge|nav2_amcl/amcl|map_server|planner_server|controller_server|bt_navigator|velocity_smoother|lifecycle_manager|goal_coordinator|x2_motion_adapter|localization_trust'
 
 die() { echo "STACK_UP FAILED: $*" >&2; echo "stop what started: tools/stack/stack_down.sh $TAG" >&2; exit 1; }
 
@@ -49,12 +49,12 @@ echo "$TAG" > "$LOGS/stack_last_tag"
 echo "odom source: $QAZBOT_ODOM_SOURCE (odometry topic $ODOM_TOPIC)"
 cd "$NAV" || die "no $NAV"
 
-# 1. localization: FAST-LIO (CPUs 5,6) + level_bridge + map_server + AMCL; seed disabled (nonexistent file)
+# 1. localization: FAST-LIO (CPUs 5,6) + x2_lio_planar_bridge + map_server + AMCL; seed disabled (nonexistent file)
 python3 detach.py "localization_$TAG" bash run_localization.sh lio_binary:=$BIN map_yaml:=$MAP lio_cpus:=5,6 \
   seed_pose_file:=/nonexistent/qazbot_seed_disabled.json odom_source:=$QAZBOT_ODOM_SOURCE || die "detach localization"
 wait_log "$LOGS/localization_$TAG.log" 'Managed nodes are active' 'malformed|exited with code|Traceback|process has died' 90 \
   || die "localization not active (log $LOGS/localization_$TAG.log)"
-grep -q 'levelled' "$LOGS/localization_$TAG.log" || die "level_bridge did not level (robot must STAND)"
+grep -q 'levelled' "$LOGS/localization_$TAG.log" || die "x2_lio_planar_bridge did not level (robot must STAND)"
 if [ "$QAZBOT_ODOM_SOURCE" = native_imu ]; then
   wait_log "$LOGS/localization_$TAG.log" 'native_odom_bridge started: mode=native_imu publish_tf=True' \
     'Traceback|LATCHED' 30 || die "native_odom_bridge not started (log $LOGS/localization_$TAG.log)"

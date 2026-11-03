@@ -36,8 +36,10 @@ sys.path.insert(0, HERE)
 import costmap_emul as ce  # noqa: E402
 
 ROOT = '/home/agi/control_backend'
-RUNNING = f'{ROOT}/ws/src/lio/level_bridge.py'
-CANDIDATE = f'{ROOT}/candidates/d04/level_bridge.py'
+RUNNING = f'{ROOT}/ws/src/lio/x2_lio_planar_bridge.py'
+CANDIDATE = (f'{ROOT}/docs/engineering/d04_d05_20261102/candidate/level_bridge.py'
+             if os.path.isfile(f'{ROOT}/docs/engineering/d04_d05_20261102/candidate/level_bridge.py')
+             else f'{ROOT}/candidates/d04/level_bridge.py')
 EXTRINSICS = f'{ROOT}/logs/x2_extrinsics.json'
 # Effective params (P1 report: live get_parameters == /home/agi/.ros/log/qazbot_ctl_t9htg14z.yaml)
 LAUNCH_RANGE_MAX = 8.0          # level_bridge range_max:=8.0
@@ -73,6 +75,11 @@ BAGS = {
     'replay_dense_controlled_01': dict(db=f'{ROOT}/logs/replay_dense_controlled_01/bag/bag_0.db3',
                                        cloud='/cloud_registered', odom='/Odometry', imu=None),
 }
+
+
+def bridge_class(mod):
+    """Support the immutable archived D-04 candidate with its historical class name."""
+    return getattr(mod, 'X2LioPlanarBridge', None) or mod.LevelBridge
 
 
 def load_bridge(path, name):
@@ -150,7 +157,7 @@ def bridge_obstacles(mod, R_lv, odom_msg, cloud_msg):
     """scan_obstacles xyz the bridge (module `mod`) would publish for this odom+cloud pair, or None."""
     s = stub_node(mod)
     s.R_lv = R_lv
-    mod.LevelBridge.on_odom(s, odom_msg)
+    bridge_class(mod).on_odom(s, odom_msg)
     s.pub_obstacles.msg = None
     mod.LevelBridge.on_cloud(s, cloud_msg)
     return None if s.pub_obstacles.msg is None else cloud_xyz(s.pub_obstacles.msg)
@@ -252,7 +259,7 @@ def prepare(bagname, level='auto', n_fit=20):
             if probe.R_lv is not None:
                 break
             if t == b['odom']:
-                A.LevelBridge.on_odom(probe, m)
+                bridge_class(A).on_odom(probe, m)
             elif t == b['imu']:
                 A.LevelBridge.on_imu(probe, m)
         R0 = probe.R_lv
@@ -383,7 +390,7 @@ class SplitVariant:
         s.poses = {fr['key']: fr['pose']}
         s.pub_obstacles.msg = s.pub_clearing.msg = None
         t0 = time.perf_counter()
-        self.mod.LevelBridge.on_cloud(s, msg)
+        bridge_class(self.mod).on_cloud(s, msg)
         dt = time.perf_counter() - t0
         pose = global_pose(fr)
         org = (pose[0], pose[1], 0.0)

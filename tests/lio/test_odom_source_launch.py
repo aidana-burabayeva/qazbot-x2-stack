@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Runtime single-owner check of localization.launch.py odom_source (roadmap v12 M0a), isolated domain only.
 
-Starts the REAL launch file (level_bridge, map_server, AMCL, lifecycle manager, and for native_imu the native bridge)
+Starts the REAL launch file (x2_lio_planar_bridge, map_server, AMCL, lifecycle manager, and for native_imu the native bridge)
 with a stub in place of the FAST-LIO binary (a shell that sleeps; no LiDAR, no MC) and then:
-  * graph: exactly one node publishes TF on /qazbot_d1_map/tf among level_bridge / native_odom_bridge, and it is the
-    one odom_source selects (level_bridge has no TF publisher at all in native_imu);
+  * graph: exactly one node publishes TF on /qazbot_d1_map/tf among x2_lio_planar_bridge / native_odom_bridge, and it is the
+    one odom_source selects (x2_lio_planar_bridge has no TF publisher at all in native_imu);
   * native_imu data: recorded trial06 leg odometry (re-stamped to the current clock by this feeder, as a recorder
     replay would) is published on a TEST topic (native_leg_topic:=/qazbot_test/leg_odometry -- never /aima/*); every
     odom->base_footprint TF sample then equals a /qazbot_native/odom sample (tools/stack/odom_owner_probe.py verdict),
@@ -104,7 +104,7 @@ class OdomSourceLaunch(unittest.TestCase):
     def test_lio(self):
         p, log = self.launch('lio')
         # amcl is the last staggered node of the localization set: all TF owner candidates have started by then
-        self.wait_nodes({'/qazbot_level_bridge', '/qazbot_d1_map/amcl', '/qazbot_d1_map/lifecycle_manager_localization'}, p)
+        self.wait_nodes({'/qazbot_x2_lio_planar_bridge', '/qazbot_d1_map/amcl', '/qazbot_d1_map/lifecycle_manager_localization'}, p)
         self.spin(1.0)
         self.assertEqual(probe.graph_owners(self.tf_publishers()), ['lio'], self.tf_publishers())
         names = {n for n, _ in self.node.get_node_names_and_namespaces()}
@@ -115,13 +115,13 @@ class OdomSourceLaunch(unittest.TestCase):
         from rclpy.qos import QoSProfile, ReliabilityPolicy, qos_profile_sensor_data
         from tf2_msgs.msg import TFMessage
         p, log = self.launch('native_imu')
-        self.wait_nodes({'/qazbot_level_bridge', '/qazbot_native_odom_bridge', '/qazbot_d1_map/amcl'}, p)
+        self.wait_nodes({'/qazbot_x2_lio_planar_bridge', '/qazbot_native_odom_bridge', '/qazbot_d1_map/amcl'}, p)
         self.spin(1.0)
         pubs = self.tf_publishers()
         self.assertEqual(probe.graph_owners(pubs), ['native_imu'], pubs)
-        self.assertNotIn('/qazbot_level_bridge', pubs)
-        # level_bridge still publishes the scan and odom_level topics
-        lb = {t for t, _ in self.node.get_publisher_names_and_types_by_node('qazbot_level_bridge', '/')}
+        self.assertNotIn('/qazbot_x2_lio_planar_bridge', pubs)
+        # x2_lio_planar_bridge still publishes the scan and odom_level topics
+        lb = {t for t, _ in self.node.get_publisher_names_and_types_by_node('qazbot_x2_lio_planar_bridge', '/')}
         self.assertTrue({'/qazbot_lio/scan', '/qazbot_lio/odom_level'} <= lb, lb)
 
         tf, odom = {}, {}
