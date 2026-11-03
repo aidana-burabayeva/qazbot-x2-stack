@@ -1,0 +1,2 @@
+data: '{"state": "idle", "reason": "driver_not_armed", "latch": "", "live": false, "mode": "dry_run", "dry_run": true, "mc_source": "rc", "trusted": false, "registration": "dry_run", "registration_error": "", "sdk_service_ready": false, "motion_armed": false, "ready": false, "foreign_publishers": [], "counters": {"saturated": 0, "rejected": 0, "latched": 0, "published": 0}}'
+---

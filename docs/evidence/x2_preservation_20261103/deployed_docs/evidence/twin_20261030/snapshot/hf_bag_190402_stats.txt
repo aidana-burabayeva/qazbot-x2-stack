@@ -1,0 +1,9 @@
+# bag bags/twin_hf_190402
+# topic | type | count | rate_hz | bytes/msg | KiB/s | stamp lag (recv - header) p50/p95/max s
+/aima/hal/imu/torso/state | sensor_msgs/msg/Imu | 66030 | 437.99 | 324 | 138.58 | 0.000/0.016/0.619
+/aima/hal/joint/leg/state | aimdk_msgs/msg/JointStateArray | 66246 | 437.29 | 712 | 304.05 | 0.000/0.016/0.616
+/aima/hal/sensor/lidar_chest_front/imu | sensor_msgs/msg/Imu | 28759 | 187.17 | 340 | 62.15 | 0.001/0.044/0.622
+
+# TF edges: parent -> child | topics | count | rate_hz | lag p50/p95/max s (recv - stamp) | last transform xyz,qxyzw
+
+# samples

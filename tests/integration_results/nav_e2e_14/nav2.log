@@ -1,0 +1,258 @@
+[INFO] [launch]: All log files can be found below /home/agi/.ros/log/2026-10-21-18-28-32-279107-agi-240801
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [controller_server-1]: process started with pid [240812]
+[controller_server-1] [INFO] [1792578512.494273332] [qazbot_e2e.nav2.controller_server]: 
+[controller_server-1] 	controller_server lifecycle node launched. 
+[controller_server-1] 	Waiting on external lifecycle transitions to activate
+[controller_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-1] [INFO] [1792578512.498080683] [qazbot_e2e.nav2.controller_server]: Creating controller server
+[controller_server-1] [INFO] [1792578512.516497485] [qazbot_e2e.nav2.local_costmap.local_costmap]: 
+[controller_server-1] 	local_costmap lifecycle node launched. 
+[controller_server-1] 	Waiting on external lifecycle transitions to activate
+[controller_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-1] [INFO] [1792578512.517579727] [qazbot_e2e.nav2.local_costmap.local_costmap]: Creating Costmap
+[INFO] [velocity_smoother-2]: process started with pid [240831]
+[velocity_smoother-2] [INFO] [1792578513.096522137] [qazbot_e2e.nav2.velocity_smoother]: 
+[velocity_smoother-2] 	velocity_smoother lifecycle node launched. 
+[velocity_smoother-2] 	Waiting on external lifecycle transitions to activate
+[velocity_smoother-2] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [planner_server-3]: process started with pid [240847]
+[planner_server-3] [INFO] [1792578513.692375338] [qazbot_e2e.nav2.planner_server]: 
+[planner_server-3] 	planner_server lifecycle node launched. 
+[planner_server-3] 	Waiting on external lifecycle transitions to activate
+[planner_server-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[planner_server-3] [INFO] [1792578513.694342068] [qazbot_e2e.nav2.planner_server]: Creating
+[planner_server-3] [INFO] [1792578513.711785524] [qazbot_e2e.nav2.global_costmap.global_costmap]: 
+[planner_server-3] 	global_costmap lifecycle node launched. 
+[planner_server-3] 	Waiting on external lifecycle transitions to activate
+[planner_server-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[planner_server-3] [INFO] [1792578513.712767929] [qazbot_e2e.nav2.global_costmap.global_costmap]: Creating Costmap
+[INFO] [bt_navigator-4]: process started with pid [240872]
+[bt_navigator-4] [INFO] [1792578514.328814938] [qazbot_e2e.nav2.bt_navigator]: 
+[bt_navigator-4] 	bt_navigator lifecycle node launched. 
+[bt_navigator-4] 	Waiting on external lifecycle transitions to activate
+[bt_navigator-4] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[bt_navigator-4] [INFO] [1792578514.329035347] [qazbot_e2e.nav2.bt_navigator]: Creating
+[INFO] [lifecycle_manager-5]: process started with pid [240889]
+[lifecycle_manager-5] [INFO] [1792578514.889838263] [qazbot_e2e.nav2.lifecycle_manager_navigation]: Creating
+[lifecycle_manager-5] [INFO] [1792578514.896649562] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[INFO] [python3-6]: process started with pid [240920]
+[lifecycle_manager-5] [INFO] [1792578517.699777122] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mStarting managed nodes bringup...[0m[0m
+[lifecycle_manager-5] [INFO] [1792578517.699870975] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mConfiguring controller_server[0m[0m
+[controller_server-1] [INFO] [1792578517.700713128] [qazbot_e2e.nav2.controller_server]: Configuring controller interface
+[controller_server-1] [INFO] [1792578517.700964609] [qazbot_e2e.nav2.controller_server]: getting goal checker plugins..
+[controller_server-1] [INFO] [1792578517.701106813] [qazbot_e2e.nav2.controller_server]: Controller frequency set to 20.0000Hz
+[controller_server-1] [INFO] [1792578517.701166747] [qazbot_e2e.nav2.local_costmap.local_costmap]: Configuring
+[controller_server-1] [INFO] [1792578517.713630912] [qazbot_e2e.nav2.local_costmap.local_costmap]: Using plugin "obstacle_layer"
+[controller_server-1] [INFO] [1792578517.719208389] [qazbot_e2e.nav2.local_costmap.local_costmap]: Subscribed to Topics: scan
+[controller_server-1] [INFO] [1792578517.724586991] [qazbot_e2e.nav2.local_costmap.local_costmap]: Initialized plugin "obstacle_layer"
+[controller_server-1] [INFO] [1792578517.724659789] [qazbot_e2e.nav2.local_costmap.local_costmap]: Using plugin "inflation_layer"
+[controller_server-1] [INFO] [1792578517.725266876] [qazbot_e2e.nav2.local_costmap.local_costmap]: Initialized plugin "inflation_layer"
+[controller_server-1] [INFO] [1792578517.749568056] [qazbot_e2e.nav2.controller_server]: Created progress_checker : progress_checker of type nav2_controller::SimpleProgressChecker
+[controller_server-1] [INFO] [1792578517.750733975] [qazbot_e2e.nav2.controller_server]: Created goal checker : goal_checker of type nav2_controller::SimpleGoalChecker
+[controller_server-1] [INFO] [1792578517.751085966] [qazbot_e2e.nav2.controller_server]: Controller Server has goal_checker  goal checkers available.
+[controller_server-1] [INFO] [1792578517.752165456] [qazbot_e2e.nav2.controller_server]: Created controller : FollowPath of type nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[controller_server-1] [INFO] [1792578517.764042469] [qazbot_e2e.nav2.controller_server]: Controller Server has FollowPath  controllers available.
+[lifecycle_manager-5] [INFO] [1792578517.782415877] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mConfiguring velocity_smoother[0m[0m
+[velocity_smoother-2] [INFO] [1792578517.782954390] [qazbot_e2e.nav2.velocity_smoother]: Configuring velocity smoother
+[lifecycle_manager-5] [INFO] [1792578517.790499588] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mConfiguring planner_server[0m[0m
+[planner_server-3] [INFO] [1792578517.791213456] [qazbot_e2e.nav2.planner_server]: Configuring
+[planner_server-3] [INFO] [1792578517.791289422] [qazbot_e2e.nav2.global_costmap.global_costmap]: Configuring
+[planner_server-3] [INFO] [1792578517.813233995] [qazbot_e2e.nav2.global_costmap.global_costmap]: Using plugin "static_layer"
+[planner_server-3] [INFO] [1792578517.819121928] [qazbot_e2e.nav2.global_costmap.global_costmap]: Subscribing to the map topic (/qazbot_e2e/map) with transient local durability
+[planner_server-3] [INFO] [1792578517.822499434] [qazbot_e2e.nav2.global_costmap.global_costmap]: Initialized plugin "static_layer"
+[planner_server-3] [INFO] [1792578517.822575495] [qazbot_e2e.nav2.global_costmap.global_costmap]: Using plugin "inflation_layer"
+[planner_server-3] [INFO] [1792578517.824322199] [qazbot_e2e.nav2.global_costmap.global_costmap]: Initialized plugin "inflation_layer"
+[planner_server-3] [INFO] [1792578517.850752087] [qazbot_e2e.nav2.global_costmap.global_costmap]: StaticLayer: Resizing costmap to 438 X 415 at 0.050000 m/pix
+[planner_server-3] [INFO] [1792578517.860493448] [qazbot_e2e.nav2.planner_server]: Created global planner plugin GridBased of type nav2_smac_planner/SmacPlanner2D
+[planner_server-3] [INFO] [1792578517.860620164] [qazbot_e2e.nav2.planner_server]: Configuring GridBased of type SmacPlanner2D
+[planner_server-3] [INFO] [1792578517.864717586] [qazbot_e2e.nav2.planner_server]: Configured plugin GridBased of type SmacPlanner2D with tolerance 0.00, maximum iterations 1000000, max on approach iterations 1000, and not allowing unknown traversal.
+[planner_server-3] [INFO] [1792578517.864799632] [qazbot_e2e.nav2.planner_server]: Planner Server has GridBased  planners available.
+[lifecycle_manager-5] [INFO] [1792578517.888060808] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mConfiguring bt_navigator[0m[0m
+[bt_navigator-4] [INFO] [1792578517.888648344] [qazbot_e2e.nav2.bt_navigator]: Configuring
+[lifecycle_manager-5] [INFO] [1792578518.053207827] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mActivating controller_server[0m[0m
+[controller_server-1] [INFO] [1792578518.053896320] [qazbot_e2e.nav2.controller_server]: Activating
+[controller_server-1] [INFO] [1792578518.053986653] [qazbot_e2e.nav2.local_costmap.local_costmap]: Activating
+[controller_server-1] [INFO] [1792578518.054013724] [qazbot_e2e.nav2.local_costmap.local_costmap]: Checking transform
+[controller_server-1] [INFO] [1792578518.054219159] [qazbot_e2e.nav2.local_costmap.local_costmap]: start
+[controller_server-1] [INFO] [1792578518.256084386] [qazbot_e2e.nav2.controller_server]: Activating controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[controller_server-1] [INFO] [1792578518.256189055] [qazbot_e2e.nav2.controller_server]: Creating bond (controller_server) to lifecycle manager.
+[lifecycle_manager-5] [INFO] [1792578518.369939866] [qazbot_e2e.nav2.lifecycle_manager_navigation]: Server controller_server connected with bond.
+[lifecycle_manager-5] [INFO] [1792578518.370036791] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mActivating velocity_smoother[0m[0m
+[velocity_smoother-2] [INFO] [1792578518.370561097] [qazbot_e2e.nav2.velocity_smoother]: Activating
+[velocity_smoother-2] [INFO] [1792578518.370666502] [qazbot_e2e.nav2.velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
+[lifecycle_manager-5] [INFO] [1792578518.481230936] [qazbot_e2e.nav2.lifecycle_manager_navigation]: Server velocity_smoother connected with bond.
+[lifecycle_manager-5] [INFO] [1792578518.481319382] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mActivating planner_server[0m[0m
+[planner_server-3] [INFO] [1792578518.481826728] [qazbot_e2e.nav2.planner_server]: Activating
+[planner_server-3] [INFO] [1792578518.481902918] [qazbot_e2e.nav2.global_costmap.global_costmap]: Activating
+[planner_server-3] [INFO] [1792578518.481927013] [qazbot_e2e.nav2.global_costmap.global_costmap]: Checking transform
+[planner_server-3] [INFO] [1792578518.482111072] [qazbot_e2e.nav2.global_costmap.global_costmap]: start
+[planner_server-3] [INFO] [1792578518.732283531] [qazbot_e2e.nav2.planner_server]: Activating plugin GridBased of type SmacPlanner2D
+[planner_server-3] [INFO] [1792578518.735083902] [qazbot_e2e.nav2.planner_server]: Creating bond (planner_server) to lifecycle manager.
+[lifecycle_manager-5] [INFO] [1792578518.846815441] [qazbot_e2e.nav2.lifecycle_manager_navigation]: Server planner_server connected with bond.
+[lifecycle_manager-5] [INFO] [1792578518.846961933] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mActivating bt_navigator[0m[0m
+[bt_navigator-4] [INFO] [1792578518.847841173] [qazbot_e2e.nav2.bt_navigator]: Activating
+[bt_navigator-4] [INFO] [1792578518.881291042] [qazbot_e2e.nav2.bt_navigator]: Creating bond (bt_navigator) to lifecycle manager.
+[lifecycle_manager-5] [INFO] [1792578518.993468809] [qazbot_e2e.nav2.lifecycle_manager_navigation]: Server bt_navigator connected with bond.
+[lifecycle_manager-5] [INFO] [1792578518.993550726] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mManaged nodes are active[0m[0m
+[lifecycle_manager-5] [INFO] [1792578518.993572870] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mCreating bond timer...[0m[0m
+[bt_navigator-4] [INFO] [1792578519.867080521] [qazbot_e2e.nav2.bt_navigator]: Begin navigating from current location (-1.27, -6.38) to (0.23, -6.38)
+[controller_server-1] [INFO] [1792578519.888591704] [qazbot_e2e.nav2.controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1792578526.240870770] [qazbot_e2e.nav2.controller_server]: Reached the goal!
+[bt_navigator-4] [INFO] [1792578526.277651679] [qazbot_e2e.nav2.bt_navigator]: Goal succeeded
+[bt_navigator-4] [INFO] [1792578527.667025997] [qazbot_e2e.nav2.bt_navigator]: Begin navigating from current location (-1.27, -6.38) to (-1.27, -6.38)
+[controller_server-1] [INFO] [1792578527.689338362] [qazbot_e2e.nav2.controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1792578532.190340643] [qazbot_e2e.nav2.controller_server]: Reached the goal!
+[bt_navigator-4] [INFO] [1792578532.228726716] [qazbot_e2e.nav2.bt_navigator]: Goal succeeded
+[bt_navigator-4] [INFO] [1792578533.466056562] [qazbot_e2e.nav2.bt_navigator]: Begin navigating from current location (-1.27, -6.38) to (-1.27, -6.38)
+[controller_server-1] [INFO] [1792578533.478689918] [qazbot_e2e.nav2.controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1792578533.478980790] [qazbot_e2e.nav2.controller_server]: Reached the goal!
+[bt_navigator-4] [INFO] [1792578533.516843643] [qazbot_e2e.nav2.bt_navigator]: Goal succeeded
+[bt_navigator-4] [INFO] [1792578534.863311765] [qazbot_e2e.nav2.bt_navigator]: Begin navigating from current location (-1.27, -6.38) to (0.42, -6.38)
+[controller_server-1] [INFO] [1792578534.879003911] [qazbot_e2e.nav2.controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1792578535.529220528] [qazbot_e2e.nav2.controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1792578535.529328877] [qazbot_e2e.nav2.controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-4] [INFO] [1792578535.529624517] [qazbot_e2e.nav2.bt_navigator]: [navigate_to_pose] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-4] [INFO] [1792578535.529850655] [qazbot_e2e.nav2.bt_navigator]: Goal canceled
+[bt_navigator-4] [INFO] [1792578537.865028081] [qazbot_e2e.nav2.bt_navigator]: Begin navigating from current location (-1.27, -6.38) to (0.42, -6.38)
+[controller_server-1] [INFO] [1792578537.878181864] [qazbot_e2e.nav2.controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1792578538.678455757] [qazbot_e2e.nav2.controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1792578538.678668199] [qazbot_e2e.nav2.controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-4] [INFO] [1792578538.679387859] [qazbot_e2e.nav2.bt_navigator]: [navigate_to_pose] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-4] [INFO] [1792578538.679701995] [qazbot_e2e.nav2.bt_navigator]: Goal canceled
+[python3-6] [WARN] [1792578539.536097873] [qazbot_e2e.goal_coordinator]: Goal rejected: busy=False latched=True trust=True zero=True nav2_ready=True
+[bt_navigator-4] [INFO] [1792578540.663245331] [qazbot_e2e.nav2.bt_navigator]: Begin navigating from current location (-1.27, -6.38) to (-0.78, -6.38)
+[controller_server-1] [INFO] [1792578540.674238597] [qazbot_e2e.nav2.controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1792578543.726458387] [qazbot_e2e.nav2.controller_server]: Reached the goal!
+[bt_navigator-4] [INFO] [1792578543.763702261] [qazbot_e2e.nav2.bt_navigator]: Goal succeeded
+[bt_navigator-4] [INFO] [1792578544.464646284] [qazbot_e2e.nav2.bt_navigator]: Begin navigating from current location (-1.27, -6.38) to (0.42, -6.38)
+[controller_server-1] [INFO] [1792578544.485813565] [qazbot_e2e.nav2.controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1792578545.686023978] [qazbot_e2e.nav2.controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1792578545.686125927] [qazbot_e2e.nav2.controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-4] [INFO] [1792578545.686468158] [qazbot_e2e.nav2.bt_navigator]: [navigate_to_pose] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-4] [INFO] [1792578545.686691448] [qazbot_e2e.nav2.bt_navigator]: Goal canceled
+[bt_navigator-4] [INFO] [1792578547.065550421] [qazbot_e2e.nav2.bt_navigator]: Begin navigating from current location (-1.27, -6.38) to (0.42, -6.38)
+[controller_server-1] [INFO] [1792578547.087309965] [qazbot_e2e.nav2.controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1792578548.287525910] [qazbot_e2e.nav2.controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1792578548.287639347] [qazbot_e2e.nav2.controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-4] [INFO] [1792578548.288588889] [qazbot_e2e.nav2.bt_navigator]: [navigate_to_pose] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-4] [INFO] [1792578548.288832978] [qazbot_e2e.nav2.bt_navigator]: Goal canceled
+[bt_navigator-4] [INFO] [1792578549.664330249] [qazbot_e2e.nav2.bt_navigator]: Begin navigating from current location (-1.27, -6.38) to (0.42, -6.38)
+[controller_server-1] [INFO] [1792578549.685867255] [qazbot_e2e.nav2.controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1792578550.336085710] [qazbot_e2e.nav2.controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1792578550.336226698] [qazbot_e2e.nav2.controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-4] [INFO] [1792578550.338068951] [qazbot_e2e.nav2.bt_navigator]: [navigate_to_pose] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-4] [INFO] [1792578550.338339376] [qazbot_e2e.nav2.bt_navigator]: Goal canceled
+[bt_navigator-4] [INFO] [1792578552.066078081] [qazbot_e2e.nav2.bt_navigator]: Begin navigating from current location (-1.27, -6.38) to (99.00, 99.00)
+[planner_server-3] [WARN] [1792578552.067059974] [qazbot_e2e.nav2.planner_server]: GridBased plugin failed to plan calculation to (99.00, 99.00): "Goal pose is outside the costmap"
+[planner_server-3] [WARN] [1792578552.067142372] [qazbot_e2e.nav2.planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[bt_navigator-4] [WARN] [1792578552.097430914] [qazbot_e2e.nav2.bt_navigator]: [navigate_to_pose] [ActionServer] Aborting handle.
+[bt_navigator-4] [ERROR] [1792578552.098233100] [qazbot_e2e.nav2.bt_navigator]: Goal failed
+[bt_navigator-4] [INFO] [1792578552.665137974] [qazbot_e2e.nav2.bt_navigator]: Begin navigating from current location (-1.27, -6.38) to (-8.15, -6.38)
+[planner_server-3] [WARN] [1792578552.667375701] [qazbot_e2e.nav2.planner_server]: GridBased plugin failed to plan calculation to (-8.15, -6.38): "Goal pose is outside the costmap"
+[planner_server-3] [WARN] [1792578552.667473618] [qazbot_e2e.nav2.planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[bt_navigator-4] [WARN] [1792578552.695561314] [qazbot_e2e.nav2.bt_navigator]: [navigate_to_pose] [ActionServer] Aborting handle.
+[bt_navigator-4] [ERROR] [1792578552.696371594] [qazbot_e2e.nav2.bt_navigator]: Goal failed
+[bt_navigator-4] [INFO] [1792578553.067920890] [qazbot_e2e.nav2.bt_navigator]: Begin navigating from current location (-1.27, -6.38) to (13.75, -6.38)
+[planner_server-3] [WARN] [1792578553.068951036] [qazbot_e2e.nav2.planner_server]: GridBased: failed to create plan, invalid use: Failed to compute path, goal is occupied with no tolerance..
+[planner_server-3] [WARN] [1792578553.069035225] [qazbot_e2e.nav2.planner_server]: Planning algorithm GridBased failed to generate a valid path to (13.75, -6.38)
+[planner_server-3] [WARN] [1792578553.069060313] [qazbot_e2e.nav2.planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[bt_navigator-4] [WARN] [1792578553.088226092] [qazbot_e2e.nav2.bt_navigator]: [navigate_to_pose] [ActionServer] Aborting handle.
+[bt_navigator-4] [ERROR] [1792578553.088924535] [qazbot_e2e.nav2.bt_navigator]: Goal failed
+[bt_navigator-4] [INFO] [1792578553.464150383] [qazbot_e2e.nav2.bt_navigator]: Begin navigating from current location (-1.27, -6.38) to (0.00, -11.50)
+[planner_server-3] [WARN] [1792578553.464967703] [qazbot_e2e.nav2.planner_server]: GridBased plugin failed to plan calculation to (0.00, -11.50): "Goal pose is outside the costmap"
+[planner_server-3] [WARN] [1792578553.465060437] [qazbot_e2e.nav2.planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[bt_navigator-4] [WARN] [1792578553.494336952] [qazbot_e2e.nav2.bt_navigator]: [navigate_to_pose] [ActionServer] Aborting handle.
+[bt_navigator-4] [ERROR] [1792578553.494648847] [qazbot_e2e.nav2.bt_navigator]: Goal failed
+[bt_navigator-4] [INFO] [1792578553.864549898] [qazbot_e2e.nav2.bt_navigator]: Begin navigating from current location (-1.27, -6.38) to (0.00, 9.25)
+[planner_server-3] [WARN] [1792578553.866356951] [qazbot_e2e.nav2.planner_server]: GridBased: failed to create plan, invalid use: Failed to compute path, goal is occupied with no tolerance..
+[planner_server-3] [WARN] [1792578553.867738192] [qazbot_e2e.nav2.planner_server]: Planning algorithm GridBased failed to generate a valid path to (0.00, 9.25)
+[planner_server-3] [WARN] [1792578553.868573656] [qazbot_e2e.nav2.planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[bt_navigator-4] [WARN] [1792578553.895696057] [qazbot_e2e.nav2.bt_navigator]: [navigate_to_pose] [ActionServer] Aborting handle.
+[bt_navigator-4] [ERROR] [1792578553.897112049] [qazbot_e2e.nav2.bt_navigator]: Goal failed
+[bt_navigator-4] [INFO] [1792578554.265760496] [qazbot_e2e.nav2.bt_navigator]: Begin navigating from current location (-1.27, -6.38) to (1.43, -5.88)
+[planner_server-3] [WARN] [1792578554.266988110] [qazbot_e2e.nav2.planner_server]: GridBased: failed to create plan, invalid use: Failed to compute path, goal is occupied with no tolerance..
+[planner_server-3] [WARN] [1792578554.267086188] [qazbot_e2e.nav2.planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.43, -5.88)
+[planner_server-3] [WARN] [1792578554.267115499] [qazbot_e2e.nav2.planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[bt_navigator-4] [WARN] [1792578554.285983945] [qazbot_e2e.nav2.bt_navigator]: [navigate_to_pose] [ActionServer] Aborting handle.
+[bt_navigator-4] [ERROR] [1792578554.286823539] [qazbot_e2e.nav2.bt_navigator]: Goal failed
+[bt_navigator-4] [INFO] [1792578555.667781394] [qazbot_e2e.nav2.bt_navigator]: Begin navigating from current location (-1.27, -6.38) to (0.42, -6.38)
+[controller_server-1] [INFO] [1792578555.680035799] [qazbot_e2e.nav2.controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [WARN] [1792578557.730657218] [qazbot_e2e.nav2.controller_server]: RegulatedPurePursuitController detected collision ahead!
+[controller_server-1] [WARN] [1792578557.780556967] [qazbot_e2e.nav2.controller_server]: RegulatedPurePursuitController detected collision ahead!
+[controller_server-1] [WARN] [1792578557.830664198] [qazbot_e2e.nav2.controller_server]: RegulatedPurePursuitController detected collision ahead!
+[controller_server-1] [WARN] [1792578557.880726022] [qazbot_e2e.nav2.controller_server]: RegulatedPurePursuitController detected collision ahead!
+[controller_server-1] [WARN] [1792578557.930594987] [qazbot_e2e.nav2.controller_server]: RegulatedPurePursuitController detected collision ahead!
+[controller_server-1] [WARN] [1792578557.980516912] [qazbot_e2e.nav2.controller_server]: RegulatedPurePursuitController detected collision ahead!
+[controller_server-1] [ERROR] [1792578557.980630860] [qazbot_e2e.nav2.controller_server]: Controller patience exceeded
+[controller_server-1] [WARN] [1792578557.980705962] [qazbot_e2e.nav2.controller_server]: [follow_path] [ActionServer] Aborting handle.
+[bt_navigator-4] [WARN] [1792578558.009044653] [qazbot_e2e.nav2.bt_navigator]: [navigate_to_pose] [ActionServer] Aborting handle.
+[bt_navigator-4] [ERROR] [1792578558.009437922] [qazbot_e2e.nav2.bt_navigator]: Goal failed
+[python3-6] [INFO] [1792578559.464607686] [qazbot_e2e.goal_coordinator]: Goal Pose accepted
+[bt_navigator-4] [INFO] [1792578559.467171070] [qazbot_e2e.nav2.bt_navigator]: Begin navigating from current location (-1.27, -6.38) to (-0.78, -6.38)
+[controller_server-1] [INFO] [1792578559.488830591] [qazbot_e2e.nav2.controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1792578562.539352829] [qazbot_e2e.nav2.controller_server]: Reached the goal!
+[bt_navigator-4] [INFO] [1792578562.577649777] [qazbot_e2e.nav2.bt_navigator]: Goal succeeded
+[bt_navigator-4] [INFO] [1792578563.864050122] [qazbot_e2e.nav2.bt_navigator]: Begin navigating from current location (-1.27, -6.38) to (0.42, -6.38)
+[controller_server-1] [INFO] [1792578563.876267420] [qazbot_e2e.nav2.controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1792578564.526558759] [qazbot_e2e.nav2.controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-1] [INFO] [1792578564.526657508] [qazbot_e2e.nav2.controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-4] [INFO] [1792578564.526963996] [qazbot_e2e.nav2.bt_navigator]: [navigate_to_pose] [ActionServer] Client requested to cancel the goal. Cancelling.
+[bt_navigator-4] [INFO] [1792578564.527458639] [qazbot_e2e.nav2.bt_navigator]: Goal canceled
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[INFO] [python3-6]: sending signal 'SIGINT' to process[python3-6]
+[INFO] [lifecycle_manager-5]: sending signal 'SIGINT' to process[lifecycle_manager-5]
+[INFO] [bt_navigator-4]: sending signal 'SIGINT' to process[bt_navigator-4]
+[INFO] [planner_server-3]: sending signal 'SIGINT' to process[planner_server-3]
+[INFO] [velocity_smoother-2]: sending signal 'SIGINT' to process[velocity_smoother-2]
+[INFO] [controller_server-1]: sending signal 'SIGINT' to process[controller_server-1]
+[lifecycle_manager-5] [INFO] [1792578565.761629291] [rclcpp]: signal_handler(signum=2)
+[lifecycle_manager-5] [INFO] [1792578565.762049024] [qazbot_e2e.nav2.lifecycle_manager_navigation]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_navigation)
+[lifecycle_manager-5] [INFO] [1792578565.762152093] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mTerminating bond timer...[0m[0m
+[bt_navigator-4] [INFO] [1792578565.769113825] [rclcpp]: signal_handler(signum=2)
+[bt_navigator-4] [INFO] [1792578565.769411672] [qazbot_e2e.nav2.bt_navigator]: Running Nav2 LifecycleNode rcl preshutdown (bt_navigator)
+[bt_navigator-4] [INFO] [1792578565.769550869] [qazbot_e2e.nav2.bt_navigator]: Deactivating
+[bt_navigator-4] [INFO] [1792578565.769587252] [qazbot_e2e.nav2.bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
+[planner_server-3] [INFO] [1792578565.772383656] [rclcpp]: signal_handler(signum=2)
+[planner_server-3] [INFO] [1792578565.772510373] [qazbot_e2e.nav2.planner_server]: Running Nav2 LifecycleNode rcl preshutdown (planner_server)
+[planner_server-3] [INFO] [1792578565.772625218] [qazbot_e2e.nav2.planner_server]: Deactivating
+[planner_server-3] [INFO] [1792578565.772674048] [qazbot_e2e.nav2.global_costmap.global_costmap]: Deactivating
+[velocity_smoother-2] [INFO] [1792578565.774404433] [rclcpp]: signal_handler(signum=2)
+[velocity_smoother-2] [INFO] [1792578565.774661578] [qazbot_e2e.nav2.velocity_smoother]: Running Nav2 LifecycleNode rcl preshutdown (velocity_smoother)
+[velocity_smoother-2] [INFO] [1792578565.774793095] [qazbot_e2e.nav2.velocity_smoother]: Deactivating
+[velocity_smoother-2] [INFO] [1792578565.774834950] [qazbot_e2e.nav2.velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[controller_server-1] [INFO] [1792578565.778261129] [rclcpp]: signal_handler(signum=2)
+[controller_server-1] [INFO] [1792578565.778439204] [qazbot_e2e.nav2.controller_server]: Running Nav2 LifecycleNode rcl preshutdown (controller_server)
+[controller_server-1] [INFO] [1792578565.778552481] [qazbot_e2e.nav2.controller_server]: Deactivating
+[controller_server-1] [INFO] [1792578565.778583680] [qazbot_e2e.nav2.controller_server]: Deactivating controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[controller_server-1] [INFO] [1792578565.778618687] [qazbot_e2e.nav2.local_costmap.local_costmap]: Deactivating
+[bt_navigator-4] [INFO] [1792578565.780529964] [qazbot_e2e.nav2.bt_navigator]: Cleaning up
+[velocity_smoother-2] [INFO] [1792578565.785357993] [qazbot_e2e.nav2.velocity_smoother]: Cleaning up
+[velocity_smoother-2] [INFO] [1792578565.785498853] [qazbot_e2e.nav2.velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[velocity_smoother-2] [INFO] [1792578565.793437006] [qazbot_e2e.nav2.velocity_smoother]: Destroying
+[lifecycle_manager-5] [INFO] [1792578565.841244897] [qazbot_e2e.nav2.lifecycle_manager_navigation]: Destroying lifecycle_manager_navigation
+[controller_server-1] [INFO] [1792578565.855162632] [qazbot_e2e.nav2.controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[controller_server-1] [INFO] [1792578565.867768179] [qazbot_e2e.nav2.controller_server]: Cleaning up
+[controller_server-1] [INFO] [1792578565.867843441] [qazbot_e2e.nav2.controller_server]: Cleaning up controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[controller_server-1] [INFO] [1792578565.868030732] [qazbot_e2e.nav2.local_costmap.local_costmap]: Cleaning up
+[planner_server-3] [INFO] [1792578565.882440038] [qazbot_e2e.nav2.planner_server]: Deactivating plugin GridBased of type SmacPlanner2D
+[planner_server-3] [INFO] [1792578565.882530276] [qazbot_e2e.nav2.planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[planner_server-3] [INFO] [1792578565.892953450] [qazbot_e2e.nav2.planner_server]: Cleaning up
+[planner_server-3] [INFO] [1792578565.902962395] [qazbot_e2e.nav2.global_costmap.global_costmap]: Cleaning up
+[controller_server-1] [INFO] [1792578565.894355812] [qazbot_e2e.nav2.controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[controller_server-1] [INFO] [1792578565.904633070] [qazbot_e2e.nav2.local_costmap.local_costmap]: Destroying
+[INFO] [velocity_smoother-2]: process has finished cleanly [pid 240831]
+[planner_server-3] [INFO] [1792578565.924571859] [qazbot_e2e.nav2.planner_server]: Cleaning up plugin GridBased of type SmacPlanner2D
+[planner_server-3] [INFO] [1792578565.924836811] [qazbot_e2e.nav2.planner_server]: Destroying plugin GridBased of type SmacPlanner2D
+[controller_server-1] [INFO] [1792578565.930784810] [qazbot_e2e.nav2.controller_server]: Destroying
+[planner_server-3] [INFO] [1792578565.930833033] [qazbot_e2e.nav2.planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[planner_server-3] [INFO] [1792578565.942445455] [qazbot_e2e.nav2.global_costmap.global_costmap]: Destroying
+[bt_navigator-4] [INFO] [1792578565.967655397] [qazbot_e2e.nav2.bt_navigator]: Completed Cleaning up
+[bt_navigator-4] [INFO] [1792578565.967776450] [qazbot_e2e.nav2.bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
+[planner_server-3] [INFO] [1792578565.968085305] [qazbot_e2e.nav2.planner_server]: Destroying
+[bt_navigator-4] [INFO] [1792578565.982227355] [qazbot_e2e.nav2.bt_navigator]: Destroying
+[INFO] [lifecycle_manager-5]: process has finished cleanly [pid 240889]
+[INFO] [controller_server-1]: process has finished cleanly [pid 240812]
+[INFO] [planner_server-3]: process has finished cleanly [pid 240847]
+[INFO] [bt_navigator-4]: process has finished cleanly [pid 240872]
+[INFO] [python3-6]: process has finished cleanly [pid 240920]

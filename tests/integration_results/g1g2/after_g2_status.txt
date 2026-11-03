@@ -1,0 +1,135 @@
+{"state": "idle", "reason": "driver_not_armed", "latch": "", "live": true, "mode": "live", "dry_run": false, "mc_source": "rc", "trusted": true, "registration": "registered", "registration_error": "", "sdk_service_ready": true, "motion_armed": false, "ready": true, "foreign_publishers": [], "counters": {"saturated": 0, "rejected": 0, "latched": 0, "published": 0}}
+---
+
+Type: aimdk_msgs/msg/McLocomotionVelocity
+
+Publisher count: 5
+
+Node name: motion_adapter
+Node namespace: /qazbot_d1_map
+Topic type: aimdk_msgs/msg/McLocomotionVelocity
+Endpoint type: PUBLISHER
+GID: 01.0f.88.1b.9d.07.3c.cd.00.00.00.00.00.00.21.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: aimrt_planning_planning_node4590
+Node namespace: /
+Topic type: aimdk_msgs/msg/McLocomotionVelocity
+Endpoint type: PUBLISHER
+GID: 01.0f.88.1b.ee.11.a7.f3.00.00.00.00.00.02.aa.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: TRANSIENT_LOCAL
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: soc0_rc3123
+Node namespace: /
+Topic type: aimdk_msgs/msg/McLocomotionVelocity
+Endpoint type: PUBLISHER
+GID: 01.0f.ab.07.33.0c.45.e3.00.00.00.00.00.00.19.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: TRANSIENT_LOCAL
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: app_proxy
+Node namespace: /
+Topic type: aimdk_msgs/msg/McLocomotionVelocity
+Endpoint type: PUBLISHER
+GID: 01.0f.ab.07.4b.0f.bd.63.00.00.00.00.00.00.34.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: soc2_interaction_slave1592
+Node namespace: /
+Topic type: aimdk_msgs/msg/McLocomotionVelocity
+Endpoint type: PUBLISHER
+GID: 01.0f.f6.0a.38.06.68.72.00.00.00.00.00.00.25.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: TRANSIENT_LOCAL
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 4
+
+Node name: soc1_drp_ros2_node2866
+Node namespace: /
+Topic type: aimdk_msgs/msg/McLocomotionVelocity
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.88.1b.32.0b.b9.4f.00.00.00.00.00.00.23.04.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: soc0_drp_ros2_node2089
+Node namespace: /
+Topic type: aimdk_msgs/msg/McLocomotionVelocity
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.ab.07.29.08.66.d6.00.00.00.00.00.00.20.04.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: mc_ros2_node3117
+Node namespace: /
+Topic type: aimdk_msgs/msg/McLocomotionVelocity
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.ab.07.2d.0c.3b.ee.00.00.00.00.00.00.23.04.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: soc2_drp_ros2_node2831
+Node namespace: /
+Topic type: aimdk_msgs/msg/McLocomotionVelocity
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.f6.0a.0f.0b.d7.ae.00.00.00.00.00.00.23.04.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+

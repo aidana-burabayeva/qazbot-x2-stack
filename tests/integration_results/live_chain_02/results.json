@@ -1,0 +1,61 @@
+{
+  "checks": [
+    {
+      "name": "adapter_is_live",
+      "ok": true,
+      "detail": {
+        "state": "idle",
+        "reason": "registration_not_requested",
+        "latch": "",
+        "live": true,
+        "mode": "live",
+        "dry_run": false,
+        "mc_source": "",
+        "trusted": false,
+        "registration": "not_requested",
+        "registration_error": "",
+        "sdk_service_ready": true,
+        "motion_armed": false,
+        "ready": false,
+        "foreign_publishers": [
+          "graph_unobserved"
+        ],
+        "counters": {
+          "saturated": 0,
+          "rejected": 0,
+          "latched": 0,
+          "published": 0
+        }
+      }
+    },
+    {
+      "name": "registration_not_automatic",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "no_MC_velocity_endpoint_before_registration",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "twin_mc_is_only_common_state_publisher",
+      "ok": false,
+      "detail": [
+        "loc_mc_emulator",
+        "virtual_mc"
+      ]
+    }
+  ],
+  "failed": [
+    "twin_mc_is_only_common_state_publisher"
+  ],
+  "shutdown": {
+    "adapter": 0,
+    "trust": 0,
+    "virtual_mc": 0,
+    "model": 0
+  },
+  "max_angular": 0.5,
+  "scope": "real coordinator/trust/Nav2/adapter(live) + Virtual MC (aimdk_msgs interface) + LocSim plant; emulated AMCL; domain 87"
+}

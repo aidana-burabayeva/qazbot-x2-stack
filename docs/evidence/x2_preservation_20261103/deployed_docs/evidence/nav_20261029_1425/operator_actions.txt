@@ -1,0 +1,35 @@
+1793255203 14:26:43 P15 preflight: no QazBot procs; HAL em PID 2810 alive; lidar 8.6-10 Hz; MC source='' action=PASSIVE_DEFAULT (NOT rc/STAND_DEFAULT as expected)
+1793255207 14:26:47 aima em stop-app perception (authorized 2026-10-28 vendor camera/perception/drp/webrtc)
+1793255210 14:26:50 aima em stop-app orbbec_camera (authorized 2026-10-28 vendor camera/perception/drp/webrtc)
+1793255219 14:26:59 aima em stop-app hal_camera (authorized 2026-10-28 vendor camera/perception/drp/webrtc)
+1793255231 14:27:11 aima em stop-app drp (authorized 2026-10-28 vendor camera/perception/drp/webrtc)
+1793255233 14:27:13 aima em stop-app lx_webrtc_app (authorized 2026-10-28 vendor camera/perception/drp/webrtc)
+1793255264 14:27:44 start.sh (localization+Trust T5 0.25)
+1793255287 14:28:07 start_nav.sh QAZBOT_SOURCE_NAME=sdk_qazbot_nav2_1029a REGISTER=1 (ADD gated on adapter idle/not_requested/mc_source rc)
+1793255325 14:28:45 record_goal.sh (mcap, no PointCloud2)
+1793255451 14:30:51 start_nav.sh result: nav_full active 14:29:52; adapter live PID 17061; MC ADD NOT sent (gate: adapter mc_source='' , MC action PASSIVE_DEFAULT, not rc/STAND_DEFAULT). No DELETE sent.
+1793255390 14:29:50 EXTERNAL initialpose received by AMCL (-6.231 5.258 -1.344) — NOT sent by agent (operator/RViz). Trust: ready=true but diag T2_covariance/T3_particles/T4_scan_score, sigma_xy 0.69, second_mode 0.93.
+1793255451 14:30:51 recorder goal_bag_mcap_142845 PID 18033 alive; ~100% CPU, ~1.3 MB/s. Not stopped (needs operator permission).
+1793255495 orchestrator: recorder 18033 stopped (107% CPU); light recorder (no global /tf, IMU, joints) pid 21215
+1793256108 orchestrator: adapter register (1029a) after operator RC stand
+1793256345 orchestrator: native_odom_bridge LATCHED (leg odom origin reset at stand-up 14:31:44) -> restart localization+Trust via start_loc.sh
+1793257329 orchestrator: status_logger.py 2 Hz started
+1793264881 orchestrator: BT keep-path fallback + global clear recovery x4 (P17), restart nav_full
+1793265150 orchestrator: global static_layer footprint_clearing True (start in lethal space), restart nav_full
+1793265873 orchestrator: P18 real X2 polygon footprint (local+global costmaps) replaces circle robot_radius, restart nav_full (no goals sent). Robot moved by RC (mc_source=rc) 1793265789-804 during restart, not by Nav2.
+1793267904 operator: T5 allowed up to 1 m -> jump_xy_max 1.0 / jump_yaw_max 0.5; restart Trust
+1793268648 orchestrator: goal_checker yaw_goal_tolerance -> 0.35 rad live (final in-place alignment stalled; MC turn deadband)
+1793269001 operator-requested: clear local+global costmap before retry
+1793269026 orchestrator: global planner clearance: Smac cost_travel_multiplier 4.0, global inflation cost_scaling 3.0->1.5; restart nav_full
+1793269434 orchestrator: yaw_goal_tolerance 3.15 (final heading ignored) — final in-place alignment stalls in MC
+1793270023 18:33:43 P19: goal_checker.yaw_goal_tolerance 3.15 -> 0.35 live + start_nav.sh/restart_gc.sh yaw_tol:=0.35; adapter turn-stall kick code staged (NOT restarted)
+1793270453 18:40:53 P19 operator-approved in-place turn calibration p19_turn_calib.py (w 0.2..1.0 CW/CCW, 6 s, 2 s rest) via cmd_vel_authorized->adapter
+1793270526 18:42:06 P19 calibration ABORTED by criterion 'translated >0.3 m' (cumulative 0.306 m from start) during CCW 0.6 step at 3.5 s; 0.8/1.0 NOT run; zeros sent
+1793270931 18:48:51 P19 operator-approved calibration part 2 p19_turn_calib2.py (CCW 0.8/1.0 from stand; walk 0.3 m/s 1 s -> CCW 0.6 / kick / CW 0.6) via cmd_vel_authorized->adapter
+1793271202 18:53:22 P19 operator-approved DIRECT MC A/B p19_mc_direct.py (source sdk_qazbot_calib_direct prio 30 ADD/DELETE; CCW then CW 0.2..0.6, 10 s, 3 s zero)
+1793271355 18:55:55 P19 part2 done (no abort); direct MC A/B aborted at CCW 0.6 (per-step translation >0.3 m), CW ramp NOT run; DELETE sdk_qazbot_calib_direct code 0, but MC still reports it as input_source (sticky) -> adapter ready=false foreign_sdk_source_active until another source (RC) takes over
+1793277239 orchestrator: restart localization+Trust after operator stand (odom latch)
+1793281630 orchestrator: switched to D1 map Qazbot_29.10 (load_map + Trust restart; scripts updated .pre_d1map)
+1793281700 orchestrator: D1 map.yaml free_thresh 0.25->0.196 (unknown 205 was loaded as FREE); reloaded + Trust restart
+1793282163 operator-approved: P20 yaw-loop adapter deploy + live yaw test
+1793282327 operator OK: yaw test rerun MAX_DRIFT 0.5

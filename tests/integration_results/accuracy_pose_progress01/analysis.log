@@ -1,0 +1,44 @@
+{
+  "name": "accuracy_pose_progress01",
+  "state": "complete",
+  "legs": [
+    {
+      "leg": "outbound",
+      "finish_state": "settling",
+      "duration_s": 94.71525526046753,
+      "true_goal_error": {
+        "xy_m": 0.059040465677333134,
+        "yaw_rad": 0.024759293539017735
+      },
+      "estimated_goal_error": {
+        "xy_m": 0.11581207398456878,
+        "yaw_rad": 0.024688425427079604
+      },
+      "localization_error": {
+        "xy_m": 0.1029381367147249,
+        "yaw_rad": 7.086811193812714e-05
+      },
+      "localization_xy_p95_m": 0.1266575515851215,
+      "estimated_xy_within_10cm_at_finish": false
+    },
+    {
+      "leg": "return",
+      "finish_state": "settling_return",
+      "duration_s": 40.90336322784424,
+      "true_goal_error": {
+        "xy_m": 0.04850119859628094,
+        "yaw_rad": 0.0178276083753379
+      },
+      "estimated_goal_error": {
+        "xy_m": 0.04506515508968793,
+        "yaw_rad": 0.03158960368680663
+      },
+      "localization_error": {
+        "xy_m": 0.03203056091614453,
+        "yaw_rad": 0.013761995311468732
+      },
+      "localization_xy_p95_m": 0.13444263647112892,
+      "estimated_xy_within_10cm_at_finish": true
+    }
+  ]
+}

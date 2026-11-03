@@ -1,0 +1,8 @@
+[0.373s] WARNING:colcon.colcon_ros.prefix_path.ament:The path '/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble' in the environment variable AMENT_PREFIX_PATH doesn't contain any 'local_setup.*' files.
+[0.373s] WARNING:colcon.colcon_ros.prefix_path.ament:The path '/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble' in the environment variable AMENT_PREFIX_PATH doesn't contain any 'local_setup.*' files.
+[0.373s] WARNING:colcon.colcon_ros.prefix_path.ament:The path '/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble' in the environment variable AMENT_PREFIX_PATH doesn't contain any 'local_setup.*' files.
+[0.373s] WARNING:colcon.colcon_ros.prefix_path.ament:The path '/home/agi/control_backend/runtime/fast_lio' in the environment variable AMENT_PREFIX_PATH doesn't contain any 'local_setup.*' files.
+Starting >>> nav2_lifecycle_manager
+Finished <<< nav2_lifecycle_manager [40.1s]
+
+Summary: 1 package finished [40.4s]

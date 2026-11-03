@@ -1,0 +1,133 @@
+controller_server: active [3]
+velocity_smoother: active [3]
+planner_server: active [3]
+bt_navigator: active [3]
+--- actions
+/qazbot_d1_map/nav2/compute_path_through_poses
+/qazbot_d1_map/nav2/compute_path_to_pose
+/qazbot_d1_map/nav2/follow_path
+/qazbot_d1_map/nav2/navigate_through_poses
+/qazbot_d1_map/nav2/navigate_to_pose
+/qazbot_d1_map/navigate_to_pose
+--- action info
+Traceback (most recent call last):
+  File "/opt/ros/humble/bin/ros2", line 33, in <module>
+    sys.exit(load_entry_point('ros2cli==0.18.13', 'console_scripts', 'ros2')())
+  File "/opt/ros/humble/lib/python3.10/site-packages/ros2cli/cli.py", line 91, in main
+    rc = extension.main(parser=parser, args=args)
+  File "/opt/ros/humble/lib/python3.10/site-packages/ros2action/command/action.py", line 37, in main
+    return extension.main(args=args)
+  File "/opt/ros/humble/lib/python3.10/site-packages/ros2action/verb/info.py", line 40, in main
+    action_clients, action_servers = get_action_clients_and_servers(
+  File "/opt/ros/humble/lib/python3.10/site-packages/ros2action/api/__init__.py", line 40, in get_action_clients_and_servers
+    client_names_and_types = node.get_action_client_names_and_types_by_node(
+  File "/usr/lib/python3.10/xmlrpc/client.py", line 1122, in __call__
+    return self.__send(self.__name, args)
+  File "/usr/lib/python3.10/xmlrpc/client.py", line 1464, in __request
+    response = self.__transport.request(
+  File "/usr/lib/python3.10/xmlrpc/client.py", line 1166, in request
+    return self.single_request(host, handler, request_body, verbose)
+  File "/usr/lib/python3.10/xmlrpc/client.py", line 1182, in single_request
+    return self.parse_response(resp)
+  File "/usr/lib/python3.10/xmlrpc/client.py", line 1354, in parse_response
+    return u.close()
+  File "/usr/lib/python3.10/xmlrpc/client.py", line 668, in close
+    raise Fault(**self._stack[0])
+xmlrpc.client.Fault: <Fault 1: "<class 'rclpy._rclpy_pybind11.RCLError'>:Failed to get action client names and type: error not set">
+--- GC status
+{"busy": false, "latched": false, "gate": false, "fault": "", "source_zero": true, "trusted": false, "driver_ready": false, "driver_mode": "live", "ready": false, "child_uuid": null}
+--- adapter status
+{"state": "idle", "reason": "driver_not_armed", "latch": "", "live": true, "mode": "live", "dry_run": false, "mc_source": "rc", "trusted": true, "registration": "registered", "registration_error": "", "sdk_service_ready": true, "motion_armed": false, "ready": true, "foreign_publishers": [], "counters": {"saturated": 0, "rejected": 0, "latched": 0, "published": 0}}
+--- trust
+A message was lost!!!
+--- info /qazbot_d1_map/cmd_vel
+Publisher count: 1
+Node name: velocity_smoother
+Node namespace: /qazbot_d1_map/nav2
+Endpoint type: PUBLISHER
+  Reliability: RELIABLE
+Subscription count: 1
+Node name: goal_coordinator
+Node namespace: /qazbot_d1_map
+Endpoint type: SUBSCRIPTION
+  Reliability: RELIABLE
+--- info /qazbot_d1_map/cmd_vel_authorized
+Publisher count: 1
+Node name: goal_coordinator
+Node namespace: /qazbot_d1_map
+Endpoint type: PUBLISHER
+  Reliability: RELIABLE
+Subscription count: 1
+Node name: motion_adapter
+Node namespace: /qazbot_d1_map
+Endpoint type: SUBSCRIPTION
+  Reliability: RELIABLE
+--- info /aima/mc/locomotion/velocity
+Publisher count: 5
+Node name: motion_adapter
+Node namespace: /qazbot_d1_map
+Endpoint type: PUBLISHER
+  Reliability: BEST_EFFORT
+Node name: aimrt_planning_planning_node4787
+Node namespace: /
+Endpoint type: PUBLISHER
+  Reliability: RELIABLE
+Node name: soc0_rc3207
+Node namespace: /
+Endpoint type: PUBLISHER
+  Reliability: BEST_EFFORT
+Node name: app_proxy
+Node namespace: /
+Endpoint type: PUBLISHER
+  Reliability: BEST_EFFORT
+Node name: soc2_interaction_slave1630
+Node namespace: /
+Endpoint type: PUBLISHER
+  Reliability: BEST_EFFORT
+Subscription count: 4
+Node name: soc1_drp_ros2_node2950
+Node namespace: /
+Endpoint type: SUBSCRIPTION
+  Reliability: BEST_EFFORT
+Node name: soc0_drp_ros2_node2159
+Node namespace: /
+Endpoint type: SUBSCRIPTION
+  Reliability: BEST_EFFORT
+Node name: mc_ros2_node3201
+Node namespace: /
+Endpoint type: SUBSCRIPTION
+  Reliability: BEST_EFFORT
+Node name: soc2_drp_ros2_node2873
+Node namespace: /
+Endpoint type: SUBSCRIPTION
+  Reliability: BEST_EFFORT
+--- info /qazbot_d1_map/goal_pose
+Publisher count: 1
+Node name: rviz
+Node namespace: /qazbot_d1_map
+Endpoint type: PUBLISHER
+  Reliability: RELIABLE
+Subscription count: 2
+Node name: goal_coordinator
+Node namespace: /qazbot_d1_map
+Endpoint type: SUBSCRIPTION
+  Reliability: RELIABLE
+Node name: rviz
+Node namespace: /qazbot_d1_map
+Endpoint type: SUBSCRIPTION
+  Reliability: RELIABLE
+--- info /qazbot_d1_map/nav2/goal_pose
+Publisher count: 0
+Subscription count: 1
+Node name: bt_navigator
+Node namespace: /qazbot_d1_map/nav2
+Endpoint type: SUBSCRIPTION
+  Reliability: BEST_EFFORT
+--- tf publishers
+--- MC state
+input_source:
+  name: rc
+  priority: 80
+--
+  action_desc: STAND_DEFAULT
+  status:

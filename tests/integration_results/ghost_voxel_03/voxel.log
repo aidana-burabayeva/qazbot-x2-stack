@@ -1,0 +1,40 @@
+[INFO] [1793021335.539275779] [ghost_voxel.controller_server]: 
+	controller_server lifecycle node launched. 
+	Waiting on external lifecycle transitions to activate
+	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [1793021335.543036410] [ghost_voxel.controller_server]: Creating controller server
+[INFO] [1793021335.547767576] [ghost_voxel.local_costmap.local_costmap]: 
+	local_costmap lifecycle node launched. 
+	Waiting on external lifecycle transitions to activate
+	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [1793021335.548282602] [ghost_voxel.local_costmap.local_costmap]: Creating Costmap
+[INFO] [1793021338.239930698] [ghost_voxel.controller_server]: Configuring controller interface
+[INFO] [1793021338.240113961] [ghost_voxel.controller_server]: getting goal checker plugins..
+[INFO] [1793021338.240207704] [ghost_voxel.controller_server]: Controller frequency set to 20.0000Hz
+[INFO] [1793021338.240241906] [ghost_voxel.local_costmap.local_costmap]: Configuring
+[INFO] [1793021338.245196442] [ghost_voxel.local_costmap.local_costmap]: Using plugin "obstacles"
+[INFO] [1793021338.249493746] [ghost_voxel.local_costmap.local_costmap]: Subscribed to Topics: marks rays
+[INFO] [1793021338.254181043] [ghost_voxel.local_costmap.local_costmap]: Initialized plugin "obstacles"
+[INFO] [1793021338.262612927] [ghost_voxel.controller_server]: Created progress_checker : progress_checker of type nav2_controller::SimpleProgressChecker
+[INFO] [1793021338.263014552] [ghost_voxel.controller_server]: Created goal checker : goal_checker of type nav2_controller::SimpleGoalChecker
+[INFO] [1793021338.263169647] [ghost_voxel.controller_server]: Controller Server has goal_checker  goal checkers available.
+[INFO] [1793021338.263689703] [ghost_voxel.controller_server]: Created controller : FollowPath of type nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[INFO] [1793021338.266085750] [ghost_voxel.controller_server]: Controller Server has FollowPath  controllers available.
+[INFO] [1793021338.317578588] [ghost_voxel.controller_server]: Activating
+[INFO] [1793021338.317665221] [ghost_voxel.local_costmap.local_costmap]: Activating
+[INFO] [1793021338.317686763] [ghost_voxel.local_costmap.local_costmap]: Checking transform
+[INFO] [1793021338.317817192] [ghost_voxel.local_costmap.local_costmap]: start
+[INFO] [1793021338.419003537] [ghost_voxel.controller_server]: Activating controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[INFO] [1793021338.419055613] [ghost_voxel.controller_server]: Creating bond (controller_server) to lifecycle manager.
+[INFO] [1793021356.174640494] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[INFO] [1793021356.174772458] [ghost_voxel.controller_server]: Running Nav2 LifecycleNode rcl preshutdown (controller_server)
+[INFO] [1793021356.174926390] [ghost_voxel.controller_server]: Deactivating
+[INFO] [1793021356.174949884] [ghost_voxel.controller_server]: Deactivating controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[INFO] [1793021356.175101805] [ghost_voxel.local_costmap.local_costmap]: Deactivating
+[INFO] [1793021356.218006321] [ghost_voxel.controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[INFO] [1793021356.228225179] [ghost_voxel.controller_server]: Cleaning up
+[INFO] [1793021356.228280286] [ghost_voxel.controller_server]: Cleaning up controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[INFO] [1793021356.228326364] [ghost_voxel.local_costmap.local_costmap]: Cleaning up
+[INFO] [1793021356.238164760] [ghost_voxel.controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[INFO] [1793021356.240620584] [ghost_voxel.local_costmap.local_costmap]: Destroying
+[INFO] [1793021356.244633988] [ghost_voxel.controller_server]: Destroying

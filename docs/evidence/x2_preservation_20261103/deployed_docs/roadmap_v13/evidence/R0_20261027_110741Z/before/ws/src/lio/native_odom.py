@@ -1,0 +1,404 @@
+"""Native (MC leg odometry) odometry in the level_bridge base_footprint convention -- pure math, no ROS.
+
+/aima/mc/leg_odometry is the pose of lidar_imu_chest_front (the LiDAR's own IMU, the point FAST-LIO tracks) in
+leg_odom, which is gravity-levelled (z within 2.2 deg of the level_bridge up, 20261027). The `native_imu` footprint
+is therefore the SAME physical frame level_bridge publishes as base_footprint, with R_lv = I:
+  * (x, y) = IMU position in leg_odom, z kept for Odometry only;
+  * yaw    = heading of the LiDAR forward axis (LIDAR_FWD_IN_IMU) projected on the leg_odom floor.
+Origins and headings of leg_odom and the LIO odom differ, so the two are compared by SE2 increments only.
+
+Used by native_odom_compare.py (passive: /qazbot_native/compare/* only, never TF) and by
+tests/lio/test_native_odom.py on the trial06 fixture. Times are unix seconds (header stamps; PTP-synchronised).
+
+  SourceGuard   per-input checks: frame ids, finite/unit pose (latched), stamp from the future (dropped), stamp back
+                (accepted, caller clears its baselines), optional origin-reset JumpGuard (latched), age.
+  Twist0p3      level_bridge twist: pose difference over a 0.3 s baseline, in the child frame.
+  Decimator     source-stamped decimation (~rate Hz long-run, source stamps, monotonic).
+  Compare       native interpolated (never extrapolated) at every LIO stamp; SE2 increment residuals over 1 s and
+                10 s, cumulative path/yaw, standstill noise, and the LIO-plausibility diagnostic (LIO planar speed
+                above a threshold while native is standing still).
+"""
+import bisect
+import math
+from collections import deque
+
+#: LiDAR forward (x) in lidar_imu_chest_front; identical to level_bridge.LIDAR_FWD_IN_IMU (test-checked).
+LIDAR_FWD_IN_IMU = (-0.003843965609489519, 0.0008810920694298785, -0.9999922237723444)
+NATIVE_FRAME, NATIVE_CHILD = 'leg_odom', 'lidar_imu_chest_front'      # /aima/mc/leg_odometry
+LIO_FRAME, LIO_CHILD = 'odom', 'base_footprint'                       # /qazbot_lio/odom_level (level_bridge)
+NATIVE_MAX_AGE = 0.2       # leg odometry 139-168 Hz, stamp age p50 6.5 ms under stack load (20261027)
+LIO_MAX_AGE = 0.5          # loc_trust odom_max_age_s; LIO 10 Hz, stamp age p50 37 ms, p99 up to 0.45 s under load
+MAX_FUTURE = 0.2           # a stamp this far ahead of now is a clock fault: dropped
+#: Origin reset (O2): a silent leg_odom origin shift would reach AMCL as a teleport. Per sample (6 ms apart).
+JUMP_M, JUMP_M_PER_S, JUMP_RAD = 0.05, 1.5, 0.3
+#: dt cap of the position bound (M0a decision 20261027): without it the bound grows with the stamp gap, so an origin
+#: reset after a long stream gap (MC restart: e.g. 3 s gap -> 4.55 m allowed) passed silently. Leg odometry runs at
+#: 139-168 Hz (trial06 stamp gaps p50 6 ms, max 14 ms); a gap beyond NATIVE_MAX_AGE (0.2 s) already means the stream
+#: was stale and output paused. Capped bound 0.05 + 1.5 * 0.2 = 0.35 m, i.e. > 1 s of motion at the Nav2 limit
+#: 0.3 m/s (max_linear) and > 1.4 s at the fastest trial06 footprint speed 0.24 m/s. After a gap the stream resumes if
+#: the new pose is within that bound of the last one (robot stood / moved little), otherwise it is latched.
+JUMP_MAX_DT = NATIVE_MAX_AGE
+MIN_FWD_XY = 0.5           # |LiDAR forward projected on the floor|: below this (>60 deg pitch) the yaw is undefined
+TWIST_BASELINE_S = 0.3     # level_bridge.TWIST_BASELINE_S
+MAX_PENDING = 50           # LIO samples (5 s at 10 Hz) waiting for native coverage
+MAX_INTERP_GAP = 0.05      # native samples bracketing a LIO stamp must be closer than this (no bridging of gaps)
+NATIVE_KEEP_S = 4.0        # native history for interpolation and the standstill window (LIO lags 40-450 ms)
+WINDOWS = (1.0, 10.0)      # increment residual windows, s
+WINDOW_SLACK = 1.5         # a window pair is used when W <= dt <= W * WINDOW_SLACK
+STILL_NOISE_S = 5.0        # standstill noise (std x, y, yaw) over this window
+#: LIO-plausibility diagnostic (lio-drift diagnosis 20261027, step 2): FAST-LIO carried ~0.3 m/s of lateral
+#: velocity while the robot stood (trial06). Experimental; not wired into trust.
+PLAUS_WINDOW_S = 1.0
+PLAUS_LIO_SPEED = 0.05     # m/s over the window (endpoint); trial06 stationary pre-command max 0.048
+NATIVE_STILL_M = 0.01      # native IMU footprint within this of its window-end position ...
+NATIVE_STILL_RAD = 0.02    # ... and heading for the whole window = standing
+PLAUS_HOLD_S = 0.3         # the condition must hold this long before the flag rises
+
+
+def finite_pose(stamp, t7):
+    """True when stamp, position and quaternion are finite and the quaternion is unit (|q| within 1 +- 0.01)."""
+    if not all(math.isfinite(v) for v in (stamp, *t7)):
+        return False
+    return abs(math.sqrt(sum(v * v for v in t7[3:7])) - 1.0) <= 0.01
+
+
+def quat_to_rot(qx, qy, qz, qw):
+    x, y, z, w = qx, qy, qz, qw
+    return ((1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)),
+            (2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)),
+            (2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)))
+
+
+def imu_footprint_yaw(q):
+    """(yaw, |forward_xy|): heading of the LiDAR forward axis of the IMU orientation q = (qx, qy, qz, qw) projected
+    on the xy plane of its (levelled) world -- level_bridge on_odom with R_lv = I."""
+    R = quat_to_rot(*q)
+    f = [sum(R[i][k] * LIDAR_FWD_IN_IMU[k] for k in range(3)) for i in range(3)]
+    return math.atan2(f[1], f[0]), math.hypot(f[0], f[1])
+
+
+def planar_yaw(q):
+    """Yaw of a quaternion (level_bridge odom_level carries yaw only)."""
+    x, y, z, w = q
+    return math.atan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z))
+
+
+def wrap(a):
+    return math.atan2(math.sin(a), math.cos(a))
+
+
+def se2_increment(a, b):
+    """Pose b relative to pose a, a/b = (x, y, yaw): (dx, dy) in a's axes, dyaw (unwrapped yaws subtract)."""
+    c, s = math.cos(a[2]), math.sin(a[2])
+    dx, dy = b[0] - a[0], b[1] - a[1]
+    return c * dx + s * dy, -s * dx + c * dy, b[2] - a[2]
+
+
+def cov_planar(cov):
+    """Odometry pose covariance for the footprint: x/y/z and roll/pitch/yaw variances of the leg covariance
+    (isotropic, 20261027: var xy 7.1e-4, z 1.4e-4, rot 7.3e-5); off-diagonals dropped."""
+    out = [0.0] * 36
+    for i in range(6):
+        out[i * 7] = float(cov[i * 7])
+    return out
+
+
+class JumpGuard:
+    """Origin reset: |dp| > JUMP_M + JUMP_M_PER_S * dt or |dyaw| > JUMP_RAD between consecutive samples. dt is
+    clamped to [0, max_dt]: a stamp step back cannot open the position bound, and neither can a long stream gap."""
+
+    def __init__(self, m=JUMP_M, m_per_s=JUMP_M_PER_S, rad=JUMP_RAD, max_dt=JUMP_MAX_DT):
+        self.m, self.m_per_s, self.rad, self.max_dt, self.prev = m, m_per_s, rad, max_dt, None
+
+    def check(self, stamp, x, y, yaw):
+        reason = ''
+        if self.prev is not None:
+            t0, x0, y0, yaw0 = self.prev
+            d, dyaw = math.hypot(x - x0, y - y0), abs(wrap(yaw - yaw0))
+            gap = stamp - t0
+            if d > self.m + self.m_per_s * min(max(0.0, gap), self.max_dt):
+                reason = f'origin_reset:dp={d:.3f}m' + (f',gap={gap:.3f}s' if gap > self.max_dt else '')
+            elif dyaw > self.rad:
+                reason = f'origin_reset:dyaw={dyaw:.3f}rad'
+        self.prev = (stamp, x, y, yaw)
+        return reason
+
+
+class SourceGuard:
+    """Checks for one odometry input. add() -> 'ok' | 'stamp_back' (accepted; the caller clears its baselines) |
+    a drop reason: 'foreign_frame', 'non_finite', 'tilt', 'future', 'duplicate', 'origin_reset', 'latched'.
+    non_finite and origin_reset latch (no output until restart); fault(now) says why the source is unusable."""
+
+    def __init__(self, frame, child, yaw_fn, max_age, jump=None, max_future=MAX_FUTURE):
+        self.frame, self.child, self.yaw_fn, self.max_age, self.jump = frame, child, yaw_fn, max_age, jump
+        self.max_future = max_future
+        self.latched = ''              # first non-finite input or origin reset; never clears
+        self.stamp, self.pose = float('-inf'), None      # pose: (stamp, x, y, z, yaw_unwrapped)
+        self.counts = dict(ok=0, stamp_back=0, foreign_frame=0, non_finite=0, tilt=0, future=0, duplicate=0,
+                           origin_reset=0, latched=0)
+        self.last_drop = ''
+
+    def _drop(self, why, detail=''):
+        self.counts[why] += 1
+        self.last_drop = why + (':' + detail if detail else '')
+        return why
+
+    def add(self, stamp, frame, child, t7, now):
+        if self.latched:
+            return self._drop('latched')
+        if (frame.lstrip('/'), child.lstrip('/')) != (self.frame, self.child):
+            return self._drop('foreign_frame', f'{frame}->{child}')
+        if not finite_pose(stamp, t7):
+            self.latched = 'non_finite'
+            return self._drop('non_finite')
+        yaw, fwd = self.yaw_fn(t7[3:7])
+        if fwd < MIN_FWD_XY:
+            return self._drop('tilt', f'{fwd:.2f}')
+        if stamp - now > self.max_future:
+            return self._drop('future', f'{stamp - now:.3f}s')
+        if stamp == self.stamp:
+            return self._drop('duplicate')
+        x, y, z = t7[0], t7[1], t7[2]
+        if self.jump is not None:
+            reason = self.jump.check(stamp, x, y, yaw)
+            if reason:
+                self.latched = reason
+                return self._drop('origin_reset', reason)
+        if self.pose is not None:
+            prev = self.pose[4]
+            yaw = prev + wrap(yaw - prev)
+        back = stamp < self.stamp
+        self.stamp, self.pose = stamp, (stamp, x, y, z, yaw)
+        self.counts['stamp_back' if back else 'ok'] += 1
+        return 'stamp_back' if back else 'ok'
+
+    def fault(self, now):
+        """'' or why the newest pose must not be used at `now`."""
+        if self.latched:
+            return self.latched
+        if self.pose is None:
+            return 'no_data'
+        if now - self.stamp > self.max_age:
+            return 'stale'
+        return ''
+
+
+def native_guard(max_age=NATIVE_MAX_AGE):
+    return SourceGuard(NATIVE_FRAME, NATIVE_CHILD, imu_footprint_yaw, max_age, jump=JumpGuard())
+
+
+def lio_guard(max_age=LIO_MAX_AGE):
+    return SourceGuard(LIO_FRAME, LIO_CHILD, lambda q: (planar_yaw(q), 1.0), max_age)
+
+
+class Twist0p3:
+    """level_bridge twist: (vx, vy, wz) in the child frame from the pose difference over TWIST_BASELINE_S; None
+    until the baseline is full (publish no Odometry rather than a zero twist)."""
+
+    def __init__(self, baseline=TWIST_BASELINE_S):
+        self.baseline, self.track = baseline, deque()
+
+    def clear(self):
+        self.track.clear()
+
+    def add(self, stamp, x, y, yaw):
+        self.track.append((stamp, x, y, yaw))
+        while len(self.track) > 1 and stamp - self.track[1][0] >= self.baseline:
+            self.track.popleft()
+        t0, x0, y0, yaw0 = self.track[0]
+        dt = stamp - t0
+        if dt < self.baseline:
+            return None
+        dx, dy = x - x0, y - y0
+        c, s = math.cos(-yaw), math.sin(-yaw)
+        return (c * dx - s * dy) / dt, (s * dx + c * dy) / dt, wrap(yaw - yaw0) / dt
+
+
+class Decimator:
+    """due(stamp): True for the samples to publish, ~rate Hz long-run, on source stamps (never re-stamped). After a
+    gap or a stamp step back the phase restarts at that sample."""
+
+    def __init__(self, rate_hz):
+        self.period, self.next = 1.0 / rate_hz, None
+
+    def due(self, stamp):
+        if self.next is None or stamp < self.next - self.period or stamp >= self.next + self.period:
+            self.next = stamp + self.period
+            return True
+        if stamp >= self.next:
+            self.next += self.period
+            return True
+        return False
+
+
+class Compare:
+    """Native IMU footprint vs LIO base_footprint, by increments. add_native() every accepted native sample,
+    add_lio() every accepted LIO sample (returns the rows completed: LIO samples whose stamp the native history now
+    covers). clear() after a stamp step back of either source. Row keys: see ROW_KEYS."""
+
+    ROW_KEYS = ('t', 'nx', 'ny', 'nyaw', 'lx', 'ly', 'lyaw', 'res1_d', 'res1_yaw', 'res10_d', 'res10_yaw',
+                'n1_d', 'l1_d', 'lio_speed', 'native_still', 'plaus_cond', 'lio_implausible')
+
+    def __init__(self, windows=WINDOWS, plaus_speed=PLAUS_LIO_SPEED, still_m=NATIVE_STILL_M,
+                 still_rad=NATIVE_STILL_RAD, hold_s=PLAUS_HOLD_S, plaus_window=PLAUS_WINDOW_S):
+        self.windows, self.plaus_speed, self.still_m, self.still_rad = windows, plaus_speed, still_m, still_rad
+        self.hold_s, self.plaus_window = hold_s, plaus_window
+        self.nt, self.nv = [], []          # native stamps / (x, y, yaw_unwrapped)
+        self.pending = deque()             # LIO samples waiting for native coverage
+        self.pairs = deque()               # (t, (nx, ny, nyaw), (lx, ly, lyaw))
+        self.counts = dict(pairs=0, lio_before_native=0, lio_native_gap=0, lio_wait_overflow=0, cleared=0)
+        self.stats = {w: dict(n=0, sq_d=0.0, sq_yaw=0.0, max_d=0.0, max_yaw=0.0) for w in windows}
+        self.cum = dict(native_path=0.0, lio_path=0.0, native_yaw=0.0, lio_yaw=0.0)
+        self.plaus = dict(since=None, flag=False, rises=0, first_rise=None, flagged_s=0.0, last_t=None,
+                          max_speed_still=0.0)
+        self.last = None
+
+    def clear(self):
+        self.nt, self.nv = [], []
+        self.pending.clear()
+        self.pairs.clear()
+        self.plaus.update(since=None, flag=False, last_t=None)
+        self.counts['cleared'] += 1
+
+    def add_native(self, t, x, y, yaw):
+        self.nt.append(t)
+        self.nv.append((x, y, yaw))
+        if len(self.nt) > 2000 and t - self.nt[1000] > NATIVE_KEEP_S:
+            k = bisect.bisect_left(self.nt, t - NATIVE_KEEP_S)
+            del self.nt[:k], self.nv[:k]
+
+    def interp(self, t):
+        """Native (x, y, yaw) at t; 'wait' when t is newer than the newest native sample, None when uncovered."""
+        if not self.nt or t > self.nt[-1]:
+            return 'wait'
+        k = bisect.bisect_left(self.nt, t)
+        if self.nt[k] == t:
+            return self.nv[k]
+        if k == 0:
+            self.counts['lio_before_native'] += 1
+            return None
+        t0, t1 = self.nt[k - 1], self.nt[k]
+        if t1 - t0 > MAX_INTERP_GAP:
+            self.counts['lio_native_gap'] += 1
+            return None
+        a, b, u = self.nv[k - 1], self.nv[k], (t - t0) / (t1 - t0)
+        return tuple(a[i] + u * (b[i] - a[i]) for i in range(3))
+
+    def native_still(self, t0, t1, end):
+        """True when every native sample in [t0, t1] is within still_m / still_rad of `end` (native at t1); None when
+        the history does not cover t0."""
+        if not self.nt or self.nt[0] > t0:
+            return None
+        k0, k1 = bisect.bisect_left(self.nt, t0), bisect.bisect_right(self.nt, t1)
+        for x, y, yaw in self.nv[k0:k1]:
+            if math.hypot(x - end[0], y - end[1]) > self.still_m or abs(yaw - end[2]) > self.still_rad:
+                return False
+        return True
+
+    def add_lio(self, t, x, y, yaw):
+        self.pending.append((t, (x, y, yaw)))
+        while len(self.pending) > MAX_PENDING:             # native stopped: do not grow without bound
+            self.pending.popleft()
+            self.counts['lio_wait_overflow'] += 1
+        rows = []
+        while self.pending:
+            n = self.interp(self.pending[0][0])
+            if n == 'wait':
+                break
+            lt, lp = self.pending.popleft()
+            if n is not None:
+                rows.append(self._pair(lt, n, lp))
+        return rows
+
+    def _newest_before(self, tmax):
+        """Newest pair with stamp <= tmax (pairs are oldest first, <= ~16 s at 10 Hz)."""
+        best = None
+        for p in self.pairs:
+            if p[0] <= tmax:
+                best = p
+            else:
+                break
+        return best
+
+    def _pair(self, t, n, lp):
+        row = dict(t=t, nx=n[0], ny=n[1], nyaw=n[2], lx=lp[0], ly=lp[1], lyaw=lp[2])
+        if self.pairs:
+            _, pn, pl = self.pairs[-1]
+            self.cum['native_path'] += math.hypot(n[0] - pn[0], n[1] - pn[1])
+            self.cum['lio_path'] += math.hypot(lp[0] - pl[0], lp[1] - pl[1])
+            self.cum['native_yaw'] += n[2] - pn[2]
+            self.cum['lio_yaw'] += lp[2] - pl[2]
+        self.pairs.append((t, n, lp))
+        while self.pairs and t - self.pairs[0][0] > max(self.windows) * WINDOW_SLACK + 0.5:
+            self.pairs.popleft()
+        self.counts['pairs'] += 1
+        for w in self.windows:
+            key = 'res%g' % w
+            p = self._newest_before(t - w)
+            if p is None or t - p[0] > w * WINDOW_SLACK:
+                row[key + '_d'], row[key + '_yaw'] = None, None
+                continue
+            dn, dl = se2_increment(p[1], n), se2_increment(p[2], lp)
+            d, dyaw = math.hypot(dn[0] - dl[0], dn[1] - dl[1]), dn[2] - dl[2]
+            row[key + '_d'], row[key + '_yaw'] = d, dyaw
+            s = self.stats[w]
+            s['n'] += 1
+            s['sq_d'] += d * d
+            s['sq_yaw'] += dyaw * dyaw
+            s['max_d'], s['max_yaw'] = max(s['max_d'], d), max(s['max_yaw'], abs(dyaw))
+            if w == self.plaus_window:
+                row['n1_d'], row['l1_d'] = math.hypot(dn[0], dn[1]), math.hypot(dl[0], dl[1])
+        self._plausibility(row)
+        self.last = row
+        return row
+
+    def _plausibility(self, row):
+        t, pl = row['t'], self.plaus
+        p = self._newest_before(t - self.plaus_window)
+        speed = still = None
+        if p is not None and t - p[0] <= self.plaus_window * WINDOW_SLACK:
+            speed = math.hypot(row['lx'] - p[2][0], row['ly'] - p[2][1]) / (t - p[0])
+            still = self.native_still(p[0], t, (row['nx'], row['ny'], row['nyaw']))
+        cond = bool(still) and speed is not None and speed > self.plaus_speed
+        if still and speed is not None:
+            pl['max_speed_still'] = max(pl['max_speed_still'], speed)
+        if cond:
+            pl['since'] = t if pl['since'] is None else pl['since']
+            flag = t - pl['since'] >= self.hold_s
+        else:
+            pl['since'], flag = None, False
+        if flag and not pl['flag']:
+            pl['rises'] += 1
+            pl['first_rise'] = t if pl['first_rise'] is None else pl['first_rise']
+        if flag and pl['flag'] and pl['last_t'] is not None:
+            pl['flagged_s'] += t - pl['last_t']
+        pl['flag'], pl['last_t'] = flag, t
+        row.update(lio_speed=speed, native_still=still, plaus_cond=cond, lio_implausible=flag)
+        row.setdefault('n1_d', None)
+        row.setdefault('l1_d', None)
+
+    def still_noise(self, now, span=STILL_NOISE_S):
+        """Standstill noise over the last `span` s of pairs: std of x, y, yaw for native and LIO (None if < 5 pairs)."""
+        sel = [p for p in self.pairs if now - p[0] <= span]
+        if len(sel) < 5:
+            return None
+        out = {}
+        for name, i in (('native', 1), ('lio', 2)):
+            for j, ax in enumerate(('x', 'y', 'yaw')):
+                v = [p[i][j] for p in sel]
+                m = sum(v) / len(v)
+                out[f'{name}_std_{ax}'] = math.sqrt(sum((a - m) ** 2 for a in v) / len(v))
+        return out
+
+    def summary(self):
+        res = {}
+        for w, s in self.stats.items():
+            n = s['n']
+            res['%gs' % w] = dict(n=n, rms_d=math.sqrt(s['sq_d'] / n) if n else None, max_d=s['max_d'] if n else None,
+                                  rms_yaw=math.sqrt(s['sq_yaw'] / n) if n else None,
+                                  max_yaw=s['max_yaw'] if n else None)
+        pl = self.plaus
+        return dict(counts=dict(self.counts), residuals=res, cumulative=dict(self.cum),
+                    plausibility=dict(flag=pl['flag'], rises=pl['rises'], first_rise=pl['first_rise'],
+                                      flagged_s=pl['flagged_s'], max_lio_speed_while_native_still=pl['max_speed_still'],
+                                      threshold=self.plaus_speed, hold_s=self.hold_s))

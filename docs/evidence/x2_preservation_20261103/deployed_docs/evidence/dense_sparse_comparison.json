@@ -1,0 +1,17 @@
+{
+  "common_odometry_stamps": 90,
+  "max_abs_pose_component_difference": 0.022845628097536857,
+  "dense_scan_count": 48,
+  "sparse_scan_count": 53,
+  "dense_finite_min_median_max": [
+    203,
+    209,
+    219
+  ],
+  "sparse_finite_min_median_max": [
+    121,
+    138,
+    152
+  ],
+  "interpretation": "Estimator equality and ray counts only; no claim of map localization or hardware precision"
+}

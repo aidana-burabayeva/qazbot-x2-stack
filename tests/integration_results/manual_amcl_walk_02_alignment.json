@@ -1,0 +1,31 @@
+{
+  "scope": "Diagnostic endpoints vs D1 occupied cells; approximate bag-time TF association; not synchronized residuals, not physical accuracy or trust acceptance.",
+  "snapshots": [
+    {
+      "stamp_s": 1792582098.511001,
+      "approx_map_pose": [
+        1.681823464528546,
+        -6.805623070034243,
+        1.9979506144466677
+      ],
+      "rays": 180,
+      "fraction_within_10cm": 0.3611111111111111,
+      "fraction_within_25cm": 0.6111111111111112,
+      "median_distance_m": 0.16919572339080924,
+      "p95_distance_m": 1.4326548781894404
+    },
+    {
+      "stamp_s": 1792582148.311762,
+      "approx_map_pose": [
+        1.7037644287016311,
+        -6.787960208229093,
+        1.9326957009683687
+      ],
+      "rays": 184,
+      "fraction_within_10cm": 0.40217391304347827,
+      "fraction_within_25cm": 0.6304347826086957,
+      "median_distance_m": 0.15000000000000002,
+      "p95_distance_m": 1.4326548781894404
+    }
+  ]
+}

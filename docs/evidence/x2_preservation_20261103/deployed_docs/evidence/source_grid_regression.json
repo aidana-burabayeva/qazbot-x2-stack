@@ -1,0 +1,10 @@
+{
+  "cells": 181770,
+  "source_grid_sha256": "efec50e832f1caf5280115ca7b70774de10097f5e0ca6d03120774797b038204",
+  "source_counts": {
+    "-1": 139414,
+    "0": 39347,
+    "100": 3009
+  },
+  "pixel_geometry_unchanged": true
+}

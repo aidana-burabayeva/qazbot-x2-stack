@@ -1,0 +1,271 @@
+{
+  "t_real": 1793104247.3805163,
+  "duration_s": 899.6986950900027,
+  "state": {
+    "adapter": {
+      "state": "idle",
+      "reason": "driver_not_armed",
+      "latch": "",
+      "live": true,
+      "mode": "live",
+      "dry_run": false,
+      "mc_source": "sdk_qazbot_v13_s4a_1127",
+      "trusted": true,
+      "registration": "registered",
+      "registration_error": "",
+      "sdk_service_ready": true,
+      "motion_armed": false,
+      "ready": true,
+      "foreign_publishers": [],
+      "counters": {
+        "saturated": 0,
+        "rejected": 1,
+        "latched": 4,
+        "published": 209
+      }
+    },
+    "native_status": {
+      "t": 1793104247.1295834,
+      "mode": "native_imu",
+      "publish_tf": true,
+      "publish_rate_hz": 30.0,
+      "frames": [
+        "odom",
+        "base_footprint"
+      ],
+      "rates_hz": {
+        "leg": 169.0,
+        "accepted": 169.0,
+        "tf": 30.0,
+        "odom": 30.0,
+        "withheld_stale": 0.0
+      },
+      "messages": {
+        "leg": 816341,
+        "accepted": 816341,
+        "tf": 147659,
+        "odom": 147449,
+        "withheld_stale": 3
+      },
+      "age_s": 0.0102,
+      "last_published_age_s": 0.0302,
+      "fault": "",
+      "latched": "",
+      "guard": {
+        "ok": 816341,
+        "stamp_back": 0,
+        "foreign_frame": 0,
+        "non_finite": 0,
+        "tilt": 0,
+        "future": 0,
+        "duplicate": 0,
+        "origin_reset": 0,
+        "latched": 0,
+        "invalid_stamp": 0
+      },
+      "last_drop": ""
+    },
+    "trust": {
+      "trusted": true,
+      "ready": true,
+      "motion_ok": true,
+      "reasons": [],
+      "diagnostics": [
+        "T2_covariance",
+        "T3_particles",
+        "T4_no_baseline",
+        "T6_no_anchor"
+      ],
+      "metrics": {
+        "sigma_xy": 0.49387242608539134,
+        "sigma_yaw": 0.25875604234549554,
+        "cloud_std": 0.3147987509903865,
+        "second_mode_weight": 0.5349999999999996,
+        "scan_score": 0.36313305817808095,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      },
+      "admission_policy": "go2",
+      "initialized": true,
+      "ready_cause": "",
+      "anchor": false,
+      "baseline": null,
+      "moving": false,
+      "map_sha256": "f6032f75ffd386361993a4b4864cf0816713fc27f6d037c88d929ae5d48562fb",
+      "map_ok": "",
+      "odom_source": "native_imu",
+      "odom_topic": "/qazbot_native/odom",
+      "stamp_rejections": {
+        "scan": {
+          "count": 3,
+          "source": 0.09517467,
+          "previous": 1793103852.6105378,
+          "ros_now": 1793103854.285948,
+          "allowed_future": 0.0
+        },
+        "map": {
+          "count": 1,
+          "source": 1793103547.8489249,
+          "previous": 1793103548.011105,
+          "ros_now": 1793103547.1019857,
+          "allowed_future": 1.0
+        }
+      },
+      "input_callbacks": {
+        "_tf": {
+          "count": 53164,
+          "duration_s": 0.00022924099903320894,
+          "max_duration_s": 0.10631822999857832,
+          "received": 21844.305874364
+        },
+        "_amcl": {
+          "count": 10,
+          "duration_s": 0.00023772199710947461,
+          "max_duration_s": 0.0013662019991897978,
+          "received": 21084.482678642
+        },
+        "_odom": {
+          "count": 44736,
+          "duration_s": 5.446200157166459e-05,
+          "max_duration_s": 0.29160464300002786,
+          "received": 21844.30705666
+        },
+        "_scan": {
+          "count": 7633,
+          "duration_s": 0.0003540360012266319,
+          "max_duration_s": 0.16463613900123164,
+          "received": 21844.27236459
+        },
+        "_map": {
+          "count": 1,
+          "duration_s": 0.0005917579983361065,
+          "max_duration_s": 0.0005917579983361065,
+          "received": 20299.586950073
+        },
+        "_initialpose": {
+          "count": 3,
+          "duration_s": 0.003525759999320144,
+          "max_duration_s": 0.003525759999320144,
+          "received": 21071.398568704
+        },
+        "_cloud": {
+          "count": 9,
+          "duration_s": 0.0054695520011591725,
+          "max_duration_s": 0.006890114997077035,
+          "received": 21084.475265046
+        }
+      },
+      "input_ages": {
+        "scan": 0.10629310633521527,
+        "odom": 0.0186066720270901,
+        "odom_msg": 0.018621391209308058,
+        "map": 0.04353234600057476
+      },
+      "scan_frame": "base_footprint",
+      "scan_frame_rejections": 0,
+      "scan_points": 180,
+      "experimental": {
+        "degenerate_budget_m": 0.0,
+        "frozen_window_s": 1.0
+      }
+    },
+    "coordinator": {
+      "busy": false,
+      "latched": false,
+      "gate": false,
+      "fault": "",
+      "source_zero": true,
+      "trusted": true,
+      "driver_ready": true,
+      "driver_mode": "live",
+      "ready": true,
+      "child_uuid": null
+    },
+    "amcl": {
+      "stamp": 1793103487.210271,
+      "frame": "map",
+      "pose": [
+        -6.271093776818235,
+        3.1560598445732935,
+        -1.51078636837398
+      ]
+    },
+    "mc": {
+      "source": "sdk_qazbot_v13_s4a_1127",
+      "body": 1,
+      "fsm": 4,
+      "action": "STAND_DEFAULT"
+    },
+    "initialpose": {
+      "stamp": 1793103466.79332,
+      "frame": "map",
+      "pose": [
+        -6.505683422088623,
+        4.43340539932251,
+        -1.4340291463384889
+      ]
+    },
+    "goal_pose": {
+      "stamp": 1793103476.0911775,
+      "frame": "map",
+      "pose": [
+        -6.160717487335205,
+        2.5494956970214844,
+        -0.7420677618615765
+      ]
+    }
+  },
+  "status_receive_ages_s": {
+    "adapter": 0.3743552890009596,
+    "native_status": 0.24969891300133895,
+    "trust": 0.05876014800014673,
+    "coordinator": 0.19778966800004127,
+    "amcl": 760.0329327250001,
+    "mc": 0.05365539400008856,
+    "initialpose": 772.9680186149999,
+    "goal_pose": 763.6773798550021
+  },
+  "odom": {
+    "native": {
+      "stamp": 1793104247.3334513,
+      "frame": "odom",
+      "child": "base_footprint",
+      "xy": [
+        -2.7391811177769236,
+        -0.7206469323535806
+      ],
+      "speed": 0.00031709312572278587,
+      "yaw_rate": 4.029882627378663e-06
+    },
+    "lio": {
+      "stamp": 1793104247.31281,
+      "frame": "odom",
+      "child": "base_footprint",
+      "xy": [
+        -0.16380919544483027,
+        -2.7175776097531945
+      ],
+      "speed": 0.02713761057638532,
+      "yaw_rate": 0.004674687643623573
+    }
+  },
+  "tf_edges": {
+    "odom->base_footprint": 1793104247.3693414,
+    "map->odom": 1793104248.211684
+  },
+  "odom_age_p50_p95_p99_max_s": {
+    "native": [
+      0.01534736156463623,
+      0.03853281736373902,
+      0.054853091239929194,
+      0.07030224800109863
+    ],
+    "lio": [
+      0.05662691593170166,
+      0.10810781717300419,
+      0.2932720017433166,
+      0.33258056640625
+    ]
+  }
+}

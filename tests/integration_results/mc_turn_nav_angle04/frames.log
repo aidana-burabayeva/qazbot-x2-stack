@@ -1,0 +1,20 @@
+stdin is not a terminal device. Keyboard handling disabled.[INFO] [1793032263.045853800] [rosbag2_recorder]: Press SPACE for pausing/resuming
+[INFO] [1793032263.048940472] [rosbag2_storage]: Opened database '/workspace/control_backend/tests/integration_results/mc_turn_nav_angle04/frames/frames_0.db3' for READ_WRITE.
+[INFO] [1793032263.050344419] [rosbag2_recorder]: Listening for topics...
+[INFO] [1793032263.050355710] [rosbag2_recorder]: Event publisher thread: Starting
+[INFO] [1793032263.054865178] [rosbag2_recorder]: Subscribed to topic '/tf'
+[INFO] [1793032263.056211476] [rosbag2_recorder]: Subscribed to topic '/qazbot_sim/tf'
+[INFO] [1793032263.058303286] [rosbag2_recorder]: Subscribed to topic '/qazbot_sim/rviz_goal'
+[INFO] [1793032263.060426723] [rosbag2_recorder]: Subscribed to topic '/qazbot_sim/round_trip/status'
+[INFO] [1793032263.062967011] [rosbag2_recorder]: Subscribed to topic '/qazbot_sim/odom'
+[INFO] [1793032263.064404264] [rosbag2_recorder]: Subscribed to topic '/qazbot_sim/model_truth'
+[INFO] [1793032263.067427417] [rosbag2_recorder]: Subscribed to topic '/tf_static'
+[INFO] [1793032263.072165755] [rosbag2_recorder]: Subscribed to topic '/aima/mc/common/state'
+[INFO] [1793032263.074626424] [rosbag2_recorder]: Subscribed to topic '/aima/hal/odom/state'
+[INFO] [1793032263.074814494] [rosbag2_recorder]: Recording...
+[INFO] [1793032264.906505988] [rosbag2_recorder]: Subscribed to topic '/qazbot_sim/amcl_pose'
+[INFO] [1793032265.624670502] [rosbag2_recorder]: Subscribed to topic '/aima/mc/locomotion/velocity'
+[INFO] [1793032265.624753599] [rosbag2_recorder]: All requested topics are subscribed. Stopping discovery...
+[INFO] [1793032289.971368543] [rosbag2_cpp]: Writing remaining messages from cache to the bag. It may take a while
+[INFO] [1793032289.973529702] [rosbag2_recorder]: Event publisher thread: Exiting
+[INFO] [1793032289.973639839] [rosbag2_recorder]: Recording stopped

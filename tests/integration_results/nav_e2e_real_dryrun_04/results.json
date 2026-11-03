@@ -1,0 +1,102 @@
+{
+  "checks": [
+    {
+      "name": "adapter_dry_run_mode",
+      "ok": true,
+      "detail": {
+        "state": "idle",
+        "reason": "driver_not_armed",
+        "latch": "",
+        "live": false,
+        "mode": "dry_run",
+        "dry_run": true,
+        "mc_source": "sdk_qazbot_nav2",
+        "trusted": false,
+        "registration": "dry_run",
+        "registration_error": "",
+        "sdk_service_ready": false,
+        "motion_armed": false,
+        "ready": false,
+        "foreign_publishers": [],
+        "counters": {
+          "saturated": 0,
+          "rejected": 0,
+          "latched": 0,
+          "published": 0
+        }
+      }
+    },
+    {
+      "name": "no_MC_velocity_publisher",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "no_registration_client",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no_owner_lock_in_dry_run",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "trust_sees_served_map_identical",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "ambiguity_budget_default_conservative",
+      "ok": true,
+      "detail": {
+        "degenerate_budget_m": 0.0,
+        "frozen_window_s": 1.0
+      }
+    },
+    {
+      "name": "trust_baseline_start",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "trust_baseline_finish",
+      "ok": true,
+      "detail": "baseline median 0.999 from 25 samples (min 0.999)"
+    },
+    {
+      "name": "trust_anchor_confirmed",
+      "ok": true,
+      "detail": "anchor (x, y, yaw) = (-1.275, -6.375, 0.000)"
+    },
+    {
+      "name": "real_trust_node_trusted",
+      "ok": true,
+      "detail": {
+        "sigma_xy": 0.1,
+        "sigma_yaw": 0.06324555320336758,
+        "cloud_std": 0.06716781592408054,
+        "second_mode_weight": 0.0,
+        "scan_score": 0.9988040445583971,
+        "scan_floor": 0.7990432356467178,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0,
+        "anchor_err_xy": 0.0,
+        "anchor_err_yaw": 0.0,
+        "anchor_limit_xy": 0.15,
+        "path_since_anchor": 0.0
+      }
+    }
+  ],
+  "failed": [],
+  "shutdown": {
+    "nav2": 0,
+    "adapter": 0,
+    "trust": 0,
+    "model": 0,
+    "abnormal_children": 0
+  },
+  "known_defects": {},
+  "smac_libraries": [],
+  "scope": "D1 grid + real Nav2 + REAL x2_motion_adapter (dry run shadow) + REAL localization_trust (emulated AMCL outputs, D1 ray-cast scan) + kinematic model on adapter dry_run_cmd; domain 87"
+}

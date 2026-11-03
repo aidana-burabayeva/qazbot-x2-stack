@@ -1,0 +1,7 @@
+  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
+n_scans 5 pts [165, 166, 167, 168, 170] seed score 0.113
+best 0.407 at x -1.597 y -0.053 yaw -1.930 rad (-110.6 deg); offset dxy 0.97 m dyaw -15.5 deg
+ mode 0.394 x -1.65 y -0.05 yaw -109.4 deg
+ mode 0.388 x -2.35 y -1.15 yaw -98.0 deg
+ mode 0.360 x -2.05 y -0.15 yaw -103.7 deg
+ mode 0.357 x -1.75 y -0.45 yaw -109.4 deg

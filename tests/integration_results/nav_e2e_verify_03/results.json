@@ -1,0 +1,4471 @@
+{
+  "checks": [
+    {
+      "name": "adapter_dry_run_mode",
+      "ok": true,
+      "detail": {
+        "state": "idle",
+        "reason": "driver_not_armed",
+        "latch": "",
+        "live": false,
+        "mode": "dry_run",
+        "dry_run": true,
+        "mc_source": "sdk_qazbot_nav2",
+        "trusted": false,
+        "registration": "dry_run",
+        "registration_error": "",
+        "sdk_service_ready": false,
+        "motion_armed": false,
+        "ready": false,
+        "foreign_publishers": [],
+        "counters": {
+          "saturated": 0,
+          "rejected": 0,
+          "latched": 0,
+          "published": 0
+        }
+      }
+    },
+    {
+      "name": "no_MC_velocity_publisher",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "no_registration_client",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no_owner_lock_in_dry_run",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "trust_sees_served_map_identical",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trust_map_is_nav2_v2",
+      "ok": true,
+      "detail": "545630c14f0e37cf2385af8780a09ad7a3fddf7765460c1624e645c42aee2e33"
+    },
+    {
+      "name": "ambiguity_budget_default_conservative",
+      "ok": true,
+      "detail": {
+        "degenerate_budget_m": 0.0,
+        "frozen_window_s": 1.0
+      }
+    },
+    {
+      "name": "trust_baseline_start",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "trust_baseline_finish",
+      "ok": true,
+      "detail": "baseline median 0.998 from 25 samples (min 0.998)"
+    },
+    {
+      "name": "trust_anchor_confirmed",
+      "ok": true,
+      "detail": "anchor (x, y, yaw) = (-1.275, -4.825, 0.000)"
+    },
+    {
+      "name": "real_trust_node_trusted",
+      "ok": true,
+      "detail": {
+        "sigma_xy": 0.1,
+        "sigma_yaw": 0.06324555320336758,
+        "cloud_std": 0.07174975447577978,
+        "second_mode_weight": 0.0,
+        "scan_score": 0.9976922619337985,
+        "scan_floor": 0.7981538095470389,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0,
+        "anchor_err_xy": 0.0,
+        "anchor_err_yaw": 0.0,
+        "anchor_limit_xy": 0.15,
+        "path_since_anchor": 0.0
+      }
+    },
+    {
+      "name": "coordinator_accepts_dry_run_driver",
+      "ok": true,
+      "detail": {
+        "busy": false,
+        "latched": false,
+        "gate": false,
+        "fault": "",
+        "source_zero": true,
+        "trusted": true,
+        "driver_ready": true,
+        "driver_mode": "dry_run",
+        "ready": true,
+        "child_uuid": null
+      }
+    },
+    {
+      "name": "expected_smac_overlay_loaded",
+      "ok": true,
+      "detail": [
+        "/home/agi/control_backend/candidates/nav2_smac_bounds/install/nav2_smac_planner/lib/libnav2_smac_planner_2d.so"
+      ]
+    },
+    {
+      "name": "straight_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "straight_succeeded",
+      "ok": true,
+      "detail": 4
+    },
+    {
+      "name": "straight_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.095,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": 0.001,
+          "value": [
+            0.12,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 51,
+        "model_max_speed": 0.008574467365236045,
+        "pose_drift": 0.0020179864331924535,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "straight_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          0.16686951555585505,
+          -4.825,
+          0.0
+        ],
+        "xy_error": 0.05813048444414495,
+        "yaw_error": 0.0,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "straight_limits",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "straight_adapter_idle_after",
+      "ok": true,
+      "detail": {
+        "state": "idle",
+        "reason": "no_command",
+        "latch": "",
+        "live": false,
+        "mode": "dry_run",
+        "dry_run": true,
+        "mc_source": "sdk_qazbot_nav2",
+        "trusted": true,
+        "registration": "dry_run",
+        "registration_error": "",
+        "sdk_service_ready": false,
+        "motion_armed": true,
+        "ready": true,
+        "foreign_publishers": [],
+        "counters": {
+          "saturated": 0,
+          "rejected": 0,
+          "latched": 0,
+          "published": 318
+        }
+      }
+    },
+    {
+      "name": "rotate_in_place_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "rotate_in_place_succeeded",
+      "ok": true,
+      "detail": 4
+    },
+    {
+      "name": "rotate_in_place_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.092,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.006,
+          "value": [
+            0.0,
+            0.0,
+            0.425
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 0.009085706533820424,
+        "pose_drift": 0.0,
+        "yaw_drift": 0.0021378791689985466,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "rotate_in_place_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -1.275,
+          -4.825,
+          1.6478556410303256
+        ],
+        "xy_error": 0.0,
+        "yaw_error": 0.077059314235429,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "rotate_in_place_limits",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "already_there_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "already_there_succeeded",
+      "ok": true,
+      "detail": 4
+    },
+    {
+      "name": "already_there_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": null,
+        "last_nonzero_cmd": null,
+        "nonzero_after_terminal": [],
+        "window_samples": 49,
+        "model_max_speed": 0.0,
+        "pose_drift": 0.0,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "already_there_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -1.275,
+          -4.825,
+          0.0
+        ],
+        "xy_error": 0.0,
+        "yaw_error": 0.0,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "already_there_no_motion",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "repeat_first_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "repeat_while_active_rejected",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "repeat_first_succeeded",
+      "ok": true,
+      "detail": 4
+    },
+    {
+      "name": "repeat_first_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.092,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.005,
+          "value": [
+            0.09,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 0.009168364850806578,
+        "pose_drift": 0.0021565301118724456,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "repeat_first_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -0.43829296262538237,
+          -4.825,
+          0.0
+        ],
+        "xy_error": 0.06329296262538237,
+        "yaw_error": 0.0,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "repeat_again_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "repeat_again_succeeded",
+      "ok": true,
+      "detail": 4
+    },
+    {
+      "name": "repeat_again_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": null,
+        "last_nonzero_cmd": null,
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 2.0830539086912274e-10,
+        "pose_drift": 4.8836490407211386e-11,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "repeat_again_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -0.4382498112843544,
+          -4.825,
+          0.0
+        ],
+        "xy_error": 0.06324981128435442,
+        "yaw_error": 0.0,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "repeat_again_no_motion",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "cancel_goal_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "cancel_terminal",
+      "ok": true,
+      "detail": 5
+    },
+    {
+      "name": "cancel_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.047,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.05,
+          "value": [
+            0.25999999999999995,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 0.009126142989397226,
+        "pose_drift": 0.002142746130255002,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "cancel_adapter_not_latched",
+      "ok": true,
+      "detail": {
+        "state": "idle",
+        "reason": "no_command",
+        "latch": "",
+        "live": false,
+        "mode": "dry_run",
+        "dry_run": true,
+        "mc_source": "sdk_qazbot_nav2",
+        "trusted": true,
+        "registration": "dry_run",
+        "registration_error": "",
+        "sdk_service_ready": false,
+        "motion_armed": true,
+        "ready": true,
+        "foreign_publishers": [],
+        "counters": {
+          "saturated": 0,
+          "rejected": 0,
+          "latched": 0,
+          "published": 802
+        }
+      }
+    },
+    {
+      "name": "resume_after_cancel",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "obstacle_goal_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "obstacle_goal_not_succeeded",
+      "ok": true,
+      "detail": {
+        "status": 6,
+        "fault": ""
+      }
+    },
+    {
+      "name": "obstacle_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.088,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.005,
+          "value": [
+            0.09000000000000002,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 0.008771378136699466,
+        "pose_drift": 0.0020544075800891237,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "obstacle_safe_termination_adapter_idle",
+      "ok": true,
+      "detail": {
+        "a": "idle",
+        "fault": ""
+      }
+    },
+    {
+      "name": "obstacle_body_clearance",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -0.7155836759983714,
+          -4.825,
+          0.0
+        ],
+        "clearance": 0.7405836759983714
+      }
+    },
+    {
+      "name": "unreachable_accepted_for_evaluation",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "unreachable_aborted",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "unreachable_no_motion",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "left_accepted_for_planning",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "left_fails_without_crash",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "left_no_motion",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "right_accepted_for_planning",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "right_fails_without_crash",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "right_no_motion",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "bottom_accepted_for_planning",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "bottom_fails_without_crash",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "bottom_no_motion",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "top_accepted_for_planning",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "top_fails_without_crash",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "top_no_motion",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "occupied_accepted_for_planning",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "occupied_fails_without_crash",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "occupied_no_motion",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "rviz_goal_pose_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": -0.086,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.186,
+          "value": [
+            0.09,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 0.009030962357162471,
+        "pose_drift": 0.0021215372907795738,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "rviz_goal_pose_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -0.8361729934455273,
+          -4.825,
+          0.0
+        ],
+        "xy_error": 0.06117299344552729,
+        "yaw_error": 0.0,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "takeover_goal_A_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "takeover_goal_A_terminal",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "takeover_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": -0.001,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.103,
+          "value": [
+            0.27999999999999997,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 0.009211037148563962,
+        "pose_drift": 0.0021637747544656083,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "takeover_adapter_latched",
+      "ok": true,
+      "detail": {
+        "state": "latched",
+        "reason": "operator_takeover",
+        "latch": "operator_takeover",
+        "live": false,
+        "mode": "dry_run",
+        "dry_run": true,
+        "mc_source": "rc",
+        "trusted": true,
+        "registration": "dry_run",
+        "registration_error": "",
+        "sdk_service_ready": false,
+        "motion_armed": false,
+        "ready": false,
+        "foreign_publishers": [],
+        "counters": {
+          "saturated": 0,
+          "rejected": 0,
+          "latched": 1,
+          "published": 1106
+        }
+      }
+    },
+    {
+      "name": "takeover_internal_nav2_goal_terminal",
+      "ok": true,
+      "detail": 5
+    },
+    {
+      "name": "takeover_release_stays_latched",
+      "ok": true,
+      "detail": [
+        {
+          "state": "latched",
+          "reason": "operator_takeover",
+          "latch": "operator_takeover",
+          "live": false,
+          "mode": "dry_run",
+          "dry_run": true,
+          "mc_source": "sdk_qazbot_nav2",
+          "trusted": true,
+          "registration": "dry_run",
+          "registration_error": "",
+          "sdk_service_ready": false,
+          "motion_armed": false,
+          "ready": false,
+          "foreign_publishers": [],
+          "counters": {
+            "saturated": 0,
+            "rejected": 0,
+            "latched": 1,
+            "published": 1106
+          }
+        },
+        {
+          "busy": false,
+          "latched": true,
+          "gate": false,
+          "fault": "operator_takeover",
+          "source_zero": true,
+          "trusted": true,
+          "driver_ready": false,
+          "driver_mode": "dry_run",
+          "ready": false,
+          "child_uuid": null
+        }
+      ]
+    },
+    {
+      "name": "takeover_release_no_remotion",
+      "ok": true,
+      "detail": {
+        "late": [],
+        "p0": [
+          -1.1898987130067342,
+          -4.825,
+          0.0
+        ],
+        "p1": [
+          -1.1898979138506007,
+          -4.825,
+          0.0
+        ]
+      }
+    },
+    {
+      "name": "takeover_new_goal_refused_while_latched",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "takeover_explicit_resume",
+      "ok": true,
+      "detail": [
+        "resumed",
+        "ready for a NEW goal; no cached command/goal replay"
+      ]
+    },
+    {
+      "name": "takeover_resume_alone_no_remotion",
+      "ok": true,
+      "detail": {
+        "late": [],
+        "p0": [
+          -1.189897912281733,
+          -4.825,
+          0.0
+        ],
+        "p1": [
+          -1.1898979120141673,
+          -4.825,
+          0.0
+        ]
+      }
+    },
+    {
+      "name": "takeover_goal_A_not_revived",
+      "ok": true,
+      "detail": {
+        "public": 6,
+        "internal": 5
+      }
+    },
+    {
+      "name": "takeover_goal_B_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "takeover_goal_B_succeeded",
+      "ok": true,
+      "detail": 4
+    },
+    {
+      "name": "takeover_goal_B_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.091,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.011,
+          "value": [
+            0.09,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 51,
+        "model_max_speed": 0.009182867259177135,
+        "pose_drift": 0.0021594441704141376,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "takeover_goal_B_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -0.8343224316410621,
+          -4.825,
+          0.0
+        ],
+        "xy_error": 0.0593224316410621,
+        "yaw_error": 0.0,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "scan_loss_goal_accepted",
+      "ok": true,
+      "detail": {
+        "trust": [],
+        "adapter": "no_command",
+        "coord": {
+          "busy": false,
+          "latched": false,
+          "gate": false,
+          "fault": "",
+          "source_zero": true,
+          "trusted": true,
+          "driver_ready": true,
+          "driver_mode": "dry_run",
+          "ready": false,
+          "child_uuid": null
+        }
+      }
+    },
+    {
+      "name": "scan_loss_aborts",
+      "ok": true,
+      "detail": {
+        "status": 6,
+        "fault": ""
+      }
+    },
+    {
+      "name": "scan_loss_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.061,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.032,
+          "value": [
+            0.3,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 0.009184346771544618,
+        "pose_drift": 0.002160829653801599,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "scan_loss_adapter_latched",
+      "ok": true,
+      "detail": "localization_untrusted"
+    },
+    {
+      "name": "scan_loss_recovery_stays_latched",
+      "ok": true,
+      "detail": {
+        "busy": false,
+        "latched": true,
+        "gate": false,
+        "fault": "localization_untrusted",
+        "source_zero": true,
+        "trusted": true,
+        "driver_ready": false,
+        "driver_mode": "dry_run",
+        "ready": false,
+        "child_uuid": null
+      }
+    },
+    {
+      "name": "scan_loss_after_recovery_no_remotion",
+      "ok": true,
+      "detail": {
+        "late": [],
+        "p0": [
+          -1.0426836648669224,
+          -4.825,
+          0.0
+        ],
+        "p1": [
+          -1.042683664866883,
+          -4.825,
+          0.0
+        ]
+      }
+    },
+    {
+      "name": "scan_loss_old_goal_not_revived",
+      "ok": true,
+      "detail": {
+        "busy": false,
+        "latched": true,
+        "gate": false,
+        "fault": "localization_untrusted",
+        "source_zero": true,
+        "trusted": true,
+        "driver_ready": false,
+        "driver_mode": "dry_run",
+        "ready": false,
+        "child_uuid": null
+      }
+    },
+    {
+      "name": "scan_loss_resume_ready",
+      "ok": true,
+      "detail": "ready for a NEW goal; no cached command/goal replay"
+    },
+    {
+      "name": "odom_loss_goal_accepted",
+      "ok": true,
+      "detail": {
+        "trust": [],
+        "adapter": "no_command",
+        "coord": {
+          "busy": false,
+          "latched": false,
+          "gate": false,
+          "fault": "",
+          "source_zero": true,
+          "trusted": true,
+          "driver_ready": true,
+          "driver_mode": "dry_run",
+          "ready": false,
+          "child_uuid": null
+        }
+      }
+    },
+    {
+      "name": "odom_loss_aborts",
+      "ok": true,
+      "detail": {
+        "status": 6,
+        "fault": ""
+      }
+    },
+    {
+      "name": "odom_loss_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.073,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.019,
+          "value": [
+            0.3,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 51,
+        "model_max_speed": 0.009098583036899218,
+        "pose_drift": 0.002136735012023827,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "odom_loss_adapter_latched",
+      "ok": true,
+      "detail": "localization_untrusted"
+    },
+    {
+      "name": "odom_loss_recovery_stays_latched",
+      "ok": true,
+      "detail": {
+        "busy": false,
+        "latched": true,
+        "gate": false,
+        "fault": "localization_untrusted",
+        "source_zero": true,
+        "trusted": true,
+        "driver_ready": false,
+        "driver_mode": "dry_run",
+        "ready": false,
+        "child_uuid": null
+      }
+    },
+    {
+      "name": "odom_loss_after_recovery_no_remotion",
+      "ok": true,
+      "detail": {
+        "late": [],
+        "p0": [
+          -1.0380766911793617,
+          -4.825,
+          0.0
+        ],
+        "p1": [
+          -1.0380766911793198,
+          -4.825,
+          0.0
+        ]
+      }
+    },
+    {
+      "name": "odom_loss_old_goal_not_revived",
+      "ok": true,
+      "detail": {
+        "busy": false,
+        "latched": true,
+        "gate": false,
+        "fault": "localization_untrusted",
+        "source_zero": true,
+        "trusted": true,
+        "driver_ready": false,
+        "driver_mode": "dry_run",
+        "ready": false,
+        "child_uuid": null
+      }
+    },
+    {
+      "name": "odom_loss_resume_ready",
+      "ok": true,
+      "detail": "ready for a NEW goal; no cached command/goal replay"
+    },
+    {
+      "name": "amcl_loss_goal_accepted",
+      "ok": true,
+      "detail": {
+        "trust": [],
+        "adapter": "driver_not_armed",
+        "coord": {
+          "busy": false,
+          "latched": false,
+          "gate": false,
+          "fault": "",
+          "source_zero": true,
+          "trusted": true,
+          "driver_ready": true,
+          "driver_mode": "dry_run",
+          "ready": false,
+          "child_uuid": null
+        }
+      }
+    },
+    {
+      "name": "amcl_loss_aborts",
+      "ok": true,
+      "detail": {
+        "status": 6,
+        "fault": ""
+      }
+    },
+    {
+      "name": "amcl_loss_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.095,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.001,
+          "value": [
+            0.18000000000000002,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 0.00909819889281054,
+        "pose_drift": 0.002136634335828891,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "amcl_loss_detected_by",
+      "ok": true,
+      "detail": {
+        "adapter": "idle",
+        "latch": "",
+        "coordinator_fault": ""
+      }
+    },
+    {
+      "name": "amcl_loss_after_recovery_no_remotion",
+      "ok": true,
+      "detail": {
+        "late": [],
+        "p0": [
+          -1.0700704200913747,
+          -4.825,
+          0.0
+        ],
+        "p1": [
+          -1.0700704200913385,
+          -4.825,
+          0.0
+        ]
+      }
+    },
+    {
+      "name": "amcl_loss_old_goal_not_revived",
+      "ok": true,
+      "detail": {
+        "busy": false,
+        "latched": false,
+        "gate": false,
+        "fault": "",
+        "source_zero": true,
+        "trusted": true,
+        "driver_ready": true,
+        "driver_mode": "dry_run",
+        "ready": true,
+        "child_uuid": null
+      }
+    },
+    {
+      "name": "amcl_loss_resume_ready",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "amcl_loss_standing_untrusted",
+      "ok": true,
+      "detail": [
+        "T1_tf_stale"
+      ]
+    },
+    {
+      "name": "amcl_loss_standing_goal_rejected",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "wrong_initial_pose_untrusted",
+      "ok": true,
+      "detail": [
+        "T4_scan_score",
+        "T4_scan_drop",
+        "T5_map_odom_jump",
+        "T6_anchor_disagreement"
+      ]
+    },
+    {
+      "name": "wrong_initial_pose_goal_rejected",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "wrong_initial_pose_no_motion",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "pose_jump_goal_accepted",
+      "ok": true,
+      "detail": {
+        "trust": [],
+        "adapter": "no_command",
+        "coord": {
+          "busy": false,
+          "latched": false,
+          "gate": false,
+          "fault": "",
+          "source_zero": true,
+          "trusted": true,
+          "driver_ready": true,
+          "driver_mode": "dry_run",
+          "ready": false,
+          "child_uuid": null
+        }
+      }
+    },
+    {
+      "name": "pose_jump_aborts",
+      "ok": true,
+      "detail": {
+        "status": 6,
+        "fault": ""
+      }
+    },
+    {
+      "name": "pose_jump_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.068,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.035,
+          "value": [
+            0.3,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 51,
+        "model_max_speed": 0.009308158398412125,
+        "pose_drift": 0.0021940993999538527,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "pose_jump_adapter_latched",
+      "ok": true,
+      "detail": "localization_untrusted"
+    },
+    {
+      "name": "pose_jump_recovery_stays_latched",
+      "ok": true,
+      "detail": {
+        "busy": false,
+        "latched": true,
+        "gate": false,
+        "fault": "localization_untrusted",
+        "source_zero": true,
+        "trusted": true,
+        "driver_ready": false,
+        "driver_mode": "dry_run",
+        "ready": false,
+        "child_uuid": null
+      }
+    },
+    {
+      "name": "pose_jump_after_recovery_no_remotion",
+      "ok": true,
+      "detail": {
+        "late": [],
+        "p0": [
+          -1.1562340012462604,
+          -4.825,
+          0.0
+        ],
+        "p1": [
+          -1.1562340012462604,
+          -4.825,
+          0.0
+        ]
+      }
+    },
+    {
+      "name": "pose_jump_old_goal_not_revived",
+      "ok": true,
+      "detail": {
+        "busy": false,
+        "latched": true,
+        "gate": false,
+        "fault": "localization_untrusted",
+        "source_zero": true,
+        "trusted": true,
+        "driver_ready": false,
+        "driver_mode": "dry_run",
+        "ready": false,
+        "child_uuid": null
+      }
+    },
+    {
+      "name": "pose_jump_old_goal_rejected_before_resume",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "pose_jump_explicit_resume",
+      "ok": true,
+      "detail": "ready for a NEW goal; no cached command/goal replay"
+    },
+    {
+      "name": "pose_jump_resume_alone_no_remotion",
+      "ok": true,
+      "detail": {
+        "late": [],
+        "p0": [
+          -1.1562340012462604,
+          -4.825,
+          0.0
+        ],
+        "p1": [
+          -1.1562340012462604,
+          -4.825,
+          0.0
+        ]
+      }
+    },
+    {
+      "name": "pose_jump_goal_A_not_revived",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "pose_jump_goal_B_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "pose_jump_goal_B_succeeded",
+      "ok": true,
+      "detail": 4
+    },
+    {
+      "name": "pose_jump_goal_B_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.084,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": 0.008,
+          "value": [
+            0.12,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 49,
+        "model_max_speed": 0.008332762923434225,
+        "pose_drift": 0.001949760014797297,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "pose_jump_goal_B_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -0.8339606828361298,
+          -4.825,
+          0.0
+        ],
+        "xy_error": 0.05896068283612976,
+        "yaw_error": 0.0,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "operator_goal_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "operator_stop_ack",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "operator_stop_aborts_old_goal",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "operator_stop_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.042,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.059,
+          "value": [
+            0.25999999999999995,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 0.008493454804373803,
+        "pose_drift": 0.001993236563964995,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "operator_release_no_restart",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "operator_stop_no_remotion",
+      "ok": true,
+      "detail": {
+        "late": [],
+        "p0": [
+          -1.1835230234920175,
+          -4.825,
+          0.0
+        ],
+        "p1": [
+          -1.183481948483351,
+          -4.825,
+          0.0
+        ]
+      }
+    },
+    {
+      "name": "operator_resume",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "unready_driver_rejects_goal",
+      "ok": true,
+      "detail": "no_command"
+    },
+    {
+      "name": "driver_loss_goal_accepted",
+      "ok": true,
+      "detail": {
+        "trust": [],
+        "adapter": "no_command",
+        "coord": {
+          "busy": false,
+          "latched": false,
+          "gate": false,
+          "fault": "",
+          "source_zero": true,
+          "trusted": true,
+          "driver_ready": true,
+          "driver_mode": "dry_run",
+          "ready": false,
+          "child_uuid": null
+        }
+      }
+    },
+    {
+      "name": "driver_loss_aborts",
+      "ok": true,
+      "detail": {
+        "status": 6,
+        "fault": ""
+      }
+    },
+    {
+      "name": "driver_loss_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": -0.026,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.126,
+          "value": [
+            0.3,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 0.009222462522660792,
+        "pose_drift": 0.00216603185666564,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "driver_loss_adapter_latched",
+      "ok": true,
+      "detail": "mc_state_stale"
+    },
+    {
+      "name": "driver_loss_recovery_stays_latched",
+      "ok": true,
+      "detail": {
+        "busy": false,
+        "latched": true,
+        "gate": false,
+        "fault": "mc_state_stale",
+        "source_zero": true,
+        "trusted": true,
+        "driver_ready": false,
+        "driver_mode": "dry_run",
+        "ready": false,
+        "child_uuid": null
+      }
+    },
+    {
+      "name": "driver_loss_after_recovery_no_remotion",
+      "ok": true,
+      "detail": {
+        "late": [],
+        "p0": [
+          -1.0702397181108168,
+          -4.825,
+          0.0
+        ],
+        "p1": [
+          -1.070196123826753,
+          -4.825,
+          0.0
+        ]
+      }
+    },
+    {
+      "name": "driver_loss_old_goal_not_revived",
+      "ok": true,
+      "detail": {
+        "busy": false,
+        "latched": true,
+        "gate": false,
+        "fault": "mc_state_stale",
+        "source_zero": true,
+        "trusted": true,
+        "driver_ready": false,
+        "driver_mode": "dry_run",
+        "ready": false,
+        "child_uuid": null
+      }
+    },
+    {
+      "name": "driver_recovery_explicit_resume",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "driver_new_goal_after_recovery",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "driver_new_goal_succeeds",
+      "ok": true,
+      "detail": 4
+    },
+    {
+      "name": "driver_new_goal_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.079,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.01,
+          "value": [
+            0.09,
+            0.0,
+            -0.05
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 0.008652987024458601,
+        "pose_drift": 0.0020361775719732744,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "driver_new_goal_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -0.8341035128622589,
+          -4.825,
+          0.0
+        ],
+        "xy_error": 0.0591035128622589,
+        "yaw_error": 0.0,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "restart_goal_A_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "restart_single_controller",
+      "ok": true,
+      "detail": [
+        19934
+      ]
+    },
+    {
+      "name": "restart_group_exit_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": -2.628,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -2.736,
+          "value": [
+            0.24999999999999997,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 3.3403375697769353e-06,
+        "pose_drift": 7.861047548463063e-07,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "restart_adapter_not_active",
+      "ok": true,
+      "detail": {
+        "state": "idle",
+        "reason": "no_command",
+        "latch": "",
+        "live": false,
+        "mode": "dry_run",
+        "dry_run": true,
+        "mc_source": "sdk_qazbot_nav2",
+        "trusted": true,
+        "registration": "dry_run",
+        "registration_error": "",
+        "sdk_service_ready": false,
+        "motion_armed": true,
+        "ready": true,
+        "foreign_publishers": [],
+        "counters": {
+          "saturated": 0,
+          "rejected": 4,
+          "latched": 5,
+          "published": 1895
+        }
+      }
+    },
+    {
+      "name": "restart_has_no_cached_goal",
+      "ok": true,
+      "detail": {
+        "busy": false,
+        "latched": false,
+        "gate": false,
+        "fault": "",
+        "source_zero": true,
+        "trusted": true,
+        "driver_ready": true,
+        "driver_mode": "dry_run",
+        "ready": true,
+        "child_uuid": null
+      }
+    },
+    {
+      "name": "restart_no_remotion",
+      "ok": true,
+      "detail": {
+        "late": [],
+        "p0": [
+          -1.1770549249592943,
+          -4.825,
+          0.0
+        ],
+        "p1": [
+          -1.1770549249592943,
+          -4.825,
+          0.0
+        ]
+      }
+    },
+    {
+      "name": "restart_new_goal_B_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "restart_new_goal_UUID",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "restart_new_goal_B_succeeded",
+      "ok": true,
+      "detail": 4
+    },
+    {
+      "name": "restart_goal_B_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.097,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": 0.001,
+          "value": [
+            0.09,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 0.008951381334736554,
+        "pose_drift": 0.0021069113871946543,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "restart_goal_B_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -0.8390412583577954,
+          -4.825,
+          0.0
+        ],
+        "xy_error": 0.0640412583577954,
+        "yaw_error": 0.0,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "never_a_global_cmd_vel_publisher",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "never_a_MC_velocity_publisher",
+      "ok": true,
+      "detail": null
+    }
+  ],
+  "failed": [],
+  "shutdown": {
+    "nav2_restarted": 0,
+    "adapter": 0,
+    "trust": 0,
+    "model": 0,
+    "abnormal_children": 0
+  },
+  "known_defects": {
+    "nav2_group_exit_after_controller_kill": 0,
+    "first_group_abnormal_children": 0,
+    "note": "lifecycle manager shutdown defect (candidates/nav2_lifecycle_shutdown not accepted); recorded, not masked"
+  },
+  "smac_libraries": [
+    "/home/agi/control_backend/candidates/nav2_smac_bounds/install/nav2_smac_planner/lib/libnav2_smac_planner_2d.so"
+  ],
+  "trust_log": [
+    [
+      1602.795,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1602.993,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1603.191,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1603.391,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1603.597,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1603.797,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1603.997,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1604.19,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1604.39,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1604.592,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1604.793,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1605.0,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1605.194,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1605.391,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1605.59,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1605.791,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1605.992,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1606.191,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1606.394,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1606.593,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1606.79,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1606.993,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1607.195,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1607.391,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1607.596,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      1607.794,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1607.993,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1608.192,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1608.39,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1608.594,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1608.798,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1609.0,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1609.19,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1609.392,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1609.596,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1609.794,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1609.997,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1610.192,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1610.396,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1610.594,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1610.79,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1610.997,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1611.204,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1611.389,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1611.59,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1611.799,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1611.99,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1612.218,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1612.389,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1612.594,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1612.805,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1612.988,
+      true,
+      [],
+      0.998862805374892
+    ],
+    [
+      1613.188,
+      false,
+      [
+        "T4_scan_score",
+        "T4_scan_drop",
+        "T5_map_odom_jump",
+        "T6_anchor_disagreement"
+      ],
+      0.17488476946142192
+    ],
+    [
+      1613.39,
+      false,
+      [
+        "T4_scan_score",
+        "T4_scan_drop",
+        "T5_map_odom_jump",
+        "T6_anchor_disagreement"
+      ],
+      0.1689843181239977
+    ],
+    [
+      1613.598,
+      false,
+      [
+        "T4_scan_score",
+        "T4_scan_drop",
+        "T5_map_odom_jump",
+        "T6_anchor_disagreement"
+      ],
+      0.16978372824359483
+    ],
+    [
+      1613.79,
+      false,
+      [
+        "T4_scan_score",
+        "T4_scan_drop",
+        "T5_map_odom_jump",
+        "T6_anchor_disagreement"
+      ],
+      0.1672353910940652
+    ],
+    [
+      1613.992,
+      false,
+      [
+        "T4_scan_score",
+        "T4_scan_drop",
+        "T5_map_odom_jump",
+        "T6_anchor_disagreement"
+      ],
+      0.15660951300623935
+    ],
+    [
+      1614.192,
+      false,
+      [
+        "T4_scan_score",
+        "T4_scan_drop",
+        "T6_anchor_disagreement"
+      ],
+      0.16488924953545767
+    ],
+    [
+      1614.396,
+      false,
+      [
+        "T4_scan_score",
+        "T4_scan_drop",
+        "T6_anchor_disagreement"
+      ],
+      0.16580978394973966
+    ],
+    [
+      1614.598,
+      false,
+      [
+        "T4_scan_score",
+        "T4_scan_drop",
+        "T6_anchor_disagreement"
+      ],
+      0.1691070910344009
+    ],
+    [
+      1614.791,
+      false,
+      [
+        "T4_scan_score",
+        "T4_scan_drop",
+        "T6_anchor_disagreement"
+      ],
+      0.1691070910344009
+    ],
+    [
+      1614.996,
+      false,
+      [
+        "T4_scan_score",
+        "T4_scan_drop",
+        "T6_anchor_disagreement"
+      ],
+      0.1691070910344009
+    ],
+    [
+      1615.192,
+      false,
+      [
+        "T5_map_odom_jump"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1615.397,
+      false,
+      [
+        "T5_map_odom_jump"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1615.591,
+      false,
+      [
+        "T5_map_odom_jump"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1615.789,
+      false,
+      [
+        "T5_map_odom_jump"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1615.994,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1616.188,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1616.39,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1616.59,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1616.79,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1616.992,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1617.193,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1617.397,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1617.59,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1617.795,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1617.995,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1618.188,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1618.389,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1618.589,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1618.792,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1618.99,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1619.202,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1619.39,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1619.592,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1619.79,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1619.997,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1620.197,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1620.398,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1620.594,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1620.795,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1620.988,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      1621.193,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1621.391,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1621.592,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1621.79,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1621.993,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1622.197,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1622.389,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1622.589,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1622.804,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1622.989,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1623.189,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1623.39,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1623.593,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1623.794,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1623.997,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1624.19,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1624.392,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1624.589,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1624.794,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1624.992,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1625.194,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1625.415,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1625.594,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1625.808,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1626.002,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1626.189,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1626.395,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1626.595,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1626.8,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1626.996,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1627.19,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1627.389,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1627.591,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1627.794,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1627.989,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1628.197,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1628.399,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1628.604,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1628.796,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1628.989,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1629.19,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1629.418,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1629.599,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1629.806,
+      true,
+      [],
+      0.9919229167682945
+    ],
+    [
+      1629.993,
+      true,
+      [],
+      0.9908228725297407
+    ],
+    [
+      1630.202,
+      true,
+      [],
+      0.9930767858013952
+    ],
+    [
+      1630.394,
+      true,
+      [],
+      0.9907145878398261
+    ],
+    [
+      1630.595,
+      true,
+      [],
+      0.9907418978755913
+    ],
+    [
+      1630.797,
+      true,
+      [],
+      0.9919700134635231
+    ],
+    [
+      1631.01,
+      true,
+      [],
+      0.9919700134635231
+    ],
+    [
+      1631.212,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1631.395,
+      true,
+      [],
+      0.9907960388236873
+    ],
+    [
+      1631.598,
+      true,
+      [],
+      0.9965685813347032
+    ],
+    [
+      1631.793,
+      true,
+      [],
+      0.9977321651856635
+    ],
+    [
+      1631.997,
+      true,
+      [],
+      0.994280968891172
+    ],
+    [
+      1632.199,
+      true,
+      [],
+      0.997725610749784
+    ],
+    [
+      1632.393,
+      true,
+      [],
+      0.9988561937782344
+    ],
+    [
+      1632.588,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1632.79,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1632.991,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1633.205,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1633.389,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1633.591,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1633.791,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1633.992,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1634.225,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1634.396,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1634.59,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1634.788,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1634.996,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1635.211,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1635.393,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1635.592,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1635.792,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1635.992,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1636.195,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1636.392,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1636.6,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1636.791,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1637.0,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1637.195,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1637.397,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1637.593,
+      true,
+      [],
+      0.996588416124676
+    ],
+    [
+      1637.798,
+      true,
+      [],
+      0.9896757315959582
+    ],
+    [
+      1637.991,
+      true,
+      [],
+      0.9977057181324351
+    ],
+    [
+      1638.194,
+      true,
+      [],
+      0.9977057181324351
+    ],
+    [
+      1638.388,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1638.595,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1638.792,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1638.991,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1639.194,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1639.393,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1639.592,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1639.794,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1639.989,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1640.195,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1640.39,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1640.593,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1640.791,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1640.995,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1641.189,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1641.404,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1641.59,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1641.794,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1641.989,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1642.192,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1642.394,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1642.59,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1642.795,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1642.996,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1643.216,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1643.402,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1643.588,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1643.789,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1643.993,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1644.216,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1644.391,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1644.592,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1644.79,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1644.997,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1645.197,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1645.402,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1645.596,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1645.79,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1645.997,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1646.188,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1646.397,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1646.589,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1646.802,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1647.0,
+      true,
+      [],
+      0.998862805374892
+    ],
+    [
+      1647.204,
+      true,
+      [],
+      0.9954114362648704
+    ],
+    [
+      1647.39,
+      true,
+      [],
+      0.988979955448608
+    ],
+    [
+      1647.596,
+      true,
+      [],
+      0.9780764883710851
+    ],
+    [
+      1647.793,
+      true,
+      [],
+      0.9907418978755913
+    ],
+    [
+      1647.989,
+      true,
+      [],
+      0.9953980194118437
+    ],
+    [
+      1648.196,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1648.398,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1648.597,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1648.789,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1648.991,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1649.193,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1649.389,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1649.595,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1649.789,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1649.988,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1650.19,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1650.401,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1650.59,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1650.801,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1650.997,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1651.195,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1651.393,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1651.594,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1651.798,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1651.997,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1652.192,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1652.392,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1652.592,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1652.791,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1653.004,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1653.213,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1653.395,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1653.598,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1653.798,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1653.989,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1654.209,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1654.391,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1654.592,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1654.792,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1654.994,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1655.2,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1655.4,
+      true,
+      [],
+      0.997725610749784
+    ],
+    [
+      1655.599,
+      true,
+      [],
+      0.9954114362648704
+    ],
+    [
+      1655.796,
+      true,
+      [],
+      0.994280968891172
+    ],
+    [
+      1655.993,
+      true,
+      [],
+      0.9977057181324351
+    ],
+    [
+      1656.198,
+      true,
+      [],
+      0.9953845238675969
+    ],
+    [
+      1656.398,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1656.603,
+      true,
+      [],
+      0.9988427372344489
+    ],
+    [
+      1656.792,
+      true,
+      [],
+      0.9919700134635231
+    ],
+    [
+      1656.992,
+      true,
+      [],
+      0.9977123875564687
+    ],
+    [
+      1657.206,
+      true,
+      [],
+      0.9988561937782344
+    ],
+    [
+      1657.389,
+      true,
+      [],
+      0.9965585771986527
+    ],
+    [
+      1657.603,
+      true,
+      [],
+      0.996578527475762
+    ],
+    [
+      1657.8,
+      true,
+      [],
+      0.9954643303713272
+    ],
+    [
+      1657.992,
+      true,
+      [],
+      0.9897057440041096
+    ],
+    [
+      1658.192,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1658.399,
+      true,
+      [],
+      0.9977123875564687
+    ],
+    [
+      1658.595,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1658.797,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1658.991,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1659.195,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1659.393,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1659.59,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1659.789,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1659.991,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1660.19,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1660.389,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1660.59,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1660.79,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1660.997,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1661.196,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1661.388,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1661.602,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1661.818,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1661.998,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1662.198,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1662.404,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1662.594,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1662.796,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1662.998,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      1663.195,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1663.394,
+      true,
+      [],
+      0.993176832249352
+    ],
+    [
+      1663.596,
+      true,
+      [],
+      0.9965585771986527
+    ],
+    [
+      1663.807,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1664.033,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1664.191,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1664.39,
+      true,
+      [],
+      0.9988461309668992
+    ],
+    [
+      1664.592,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1664.791,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1664.988,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1665.19,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1665.389,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1665.589,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1665.789,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1665.99,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1666.19,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1666.388,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1666.596,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1666.789,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1666.989,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1667.191,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1667.388,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1667.593,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1667.795,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1667.989,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1668.19,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1668.389,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1668.59,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1668.797,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1668.99,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1669.191,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1669.389,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1669.591,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1669.794,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1669.99,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1670.189,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1670.391,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1670.589,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1670.791,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1670.994,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1671.191,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1671.39,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1671.593,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1671.792,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1671.992,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1672.193,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1672.39,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1672.591,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1672.794,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1673.0,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1673.189,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1673.395,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1673.597,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1673.805,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1673.995,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1674.197,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1674.397,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1674.59,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1674.8,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1674.988,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1675.192,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1675.392,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1675.589,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1675.788,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1675.994,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1676.205,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1676.398,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1676.592,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1676.797,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1676.998,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1677.194,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1677.392,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1677.614,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1677.793,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1677.989,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1678.199,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1678.397,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1678.594,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      1678.802,
+      true,
+      [],
+      0.9953980194118437
+    ],
+    [
+      1679.018,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1679.203,
+      true,
+      [],
+      0.9942136861722446
+    ],
+    [
+      1679.404,
+      true,
+      [],
+      0.9815380954703874
+    ],
+    [
+      1679.595,
+      true,
+      [],
+      0.9942475242648046
+    ],
+    [
+      1679.791,
+      true,
+      [],
+      0.9965383929006977
+    ],
+    [
+      1679.993,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1680.193,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      1680.391,
+      true,
+      [],
+      0.9977123875564687
+    ],
+    [
+      1680.594,
+      true,
+      [],
+      0.994264295331088
+    ],
+    [
+      1680.789,
+      true,
+      [],
+      0.9897355824272861
+    ],
+    [
+      1680.995,
+      true,
+      [],
+      0.98862805374892
+    ],
+    [
+      1681.191,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1681.394,
+      true,
+      [],
+      0.998862805374892
+    ],
+    [
+      1681.6,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1681.791,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1681.993,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1682.19,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1682.389,
+      true,
+      [],
+      1.0
+    ],
+    [
+      1682.596,
+      true,
+      [],
+      1.0
+    ]
+  ],
+  "scope": "D1 grid + real Nav2 + REAL x2_motion_adapter (dry run shadow) + REAL localization_trust (emulated AMCL outputs, D1 ray-cast scan) + kinematic model on adapter dry_run_cmd; domain 87"
+}

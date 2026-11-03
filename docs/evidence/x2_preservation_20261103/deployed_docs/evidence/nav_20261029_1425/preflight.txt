@@ -1,0 +1,11 @@
+== preflight 14:25:45
+ 14:25:45 up 8 min,  0 users,  load average: 12.78, 8.90, 4.38
+stack procs:
+hal:
+2746 /bin/sh /agibot/software/hal_sensor_orin/bin/em_run.sh
+2810 ./aima-hal_sensor-app-main --cfg_file_path=cfg/hal_sensor_orin_t2d5.yaml --process_name=hal_sensor_orin
+2881 /bin/sh /agibot/software/hal_sensor_orin/bin/em_run.sh
+{"service": "GetMcLocomotionSpeedStatus", "response": {"header": {"stamp": {"sec": 1793255148, "nanosec": 336935779}, "code": 0}, "current_speed_status": {"speed_mode": {"value": 1}, "forward_bounds": {"min_value": -1.0, "max_value": 0.8}, "lateral_bounds": {"min_value": -1.0, "max_value": 1.0}, "angular_bounds": {"min_value": -1.0, "max_value": 1.0}}, "none_speed_status": {"speed_mode": {"value": 0}, "forward_bounds": {"min_value": 0.0, "max_value": 0.0}, "lateral_bounds": {"min_value": 0.0, "max_value": 0.0}, "angular_bounds": {"min_value": 0.0, "max_value": 0.0}}, "low_speed_status": {"spee
+{"service": "GetCurrentInputSource", "response": {"response": {"header": {"stamp": {"sec": 1793255148, "nanosec": 346490779}, "code": 0}, "task_id": 0, "state": {"value": 0}}, "input_source": {"name": "", "priority": 0, "timeout": 0}}}
+lidar /aima/hal/sensor/lidar_chest_front/lidar_pointcloud hz 8.6
+MC source= prio=0 action=PASSIVE_DEFAULT status=100

@@ -1,0 +1,2 @@
+[INFO] [1793028163.376687447] [qazbot_sim.motion_adapter]: x2_motion_adapter started: live=True cmd_topic=/qazbot_sim/cmd_vel_authorized source=sdk_qazbot_nav2 priority=30
+[INFO] [1793028165.134121085] [qazbot_sim.motion_adapter]: SDK source registered; waiting for fresh authorized command

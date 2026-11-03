@@ -1,0 +1,26 @@
+== adapter
+Ran 43 tests in 0.025s
+
+OK
+== trust
+Ran 46 tests in 16.180s
+
+OK
+== stop
+Ran 7 tests in 0.001s
+
+OK
+== footprint
+Ran 4 tests in 0.002s
+
+OK
+Ran 1 test in 8.005s
+
+OK
+== launch_stagger
+Ran 5 tests in 0.407s
+
+FAILED (errors=1)
+Ran 5 tests in 0.259s
+
+OK

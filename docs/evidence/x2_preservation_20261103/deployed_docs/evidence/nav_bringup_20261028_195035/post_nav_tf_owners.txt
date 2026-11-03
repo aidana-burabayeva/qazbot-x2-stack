@@ -1,0 +1,4 @@
+/qazbot_d1_map/tf
+amcl /qazbot_d1_map
+qazbot_native_odom_bridge /
+/qazbot_d1_map/tf_static

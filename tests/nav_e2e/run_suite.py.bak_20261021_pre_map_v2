@@ -1,0 +1,181 @@
+#!/usr/bin/env python3
+"""Real Nav2 1.1.18 on D1 grid + existing MC model. No hardware/SDK endpoint."""
+import json,math,os,signal,subprocess,sys,time,re
+from pathlib import Path
+if os.environ.get('ROS_DOMAIN_ID')!='87':raise RuntimeError('requires domain 87')
+import rclpy
+from rclpy.node import Node
+from rclpy.action import ActionClient
+from nav2_msgs.action import NavigateToPose
+from nav_msgs.msg import Odometry
+from geometry_msgs.msg import Twist,PoseStamped
+from std_msgs.msg import Bool,Float64MultiArray,String
+from std_srvs.srv import Trigger
+root=Path.home()/'control_backend';nav=root/'ws/src/navigation';ns='qazbot_e2e'
+out=root/'tests/integration_results'/(sys.argv[1] if len(sys.argv)>1 else 'nav_e2e_candidate')
+if out.exists():raise RuntimeError('result directory exists')
+out.mkdir();procs=[];logs=[];results=[];smac_libraries=[]
+def start(name,args):
+    f=(out/(name+'.log')).open('w');logs.append(f)
+    p=subprocess.Popen(args,stdout=f,stderr=subprocess.STDOUT,start_new_session=True);procs.append((name,p));return p
+rclpy.init();n=Node('integration_harness',namespace=ns)
+pose=None;vel=None;cmds=[];coord={}
+def odom(m):
+    global pose,vel
+    p,q=m.pose.pose.position,m.pose.pose.orientation;pose=(p.x,p.y,2*math.atan2(q.z,q.w));vel=(m.twist.twist.linear.x,m.twist.twist.angular.z)
+def command(m):cmds.append((time.monotonic(),m.linear.x,m.linear.y,m.angular.z))
+def status(m):
+    global coord
+    coord=json.loads(m.data)
+n.create_subscription(Odometry,'odom',odom,10);n.create_subscription(Twist,'cmd_vel_authorized',command,10)
+n.create_subscription(String,'goal_coordinator/status',status,10)
+reset=n.create_publisher(Float64MultiArray,'sim_reset',1);trust=n.create_publisher(Bool,'fixture_trust',1)
+scan_enable=n.create_publisher(Bool,'fixture_scan_enabled',1)
+odom_enable=n.create_publisher(Bool,'fixture_odom_enabled',1)
+driver_enable=n.create_publisher(Bool,'fixture_driver_ready',1)
+client=ActionClient(n,NavigateToPose,'navigate_to_pose');internal=ActionClient(n,NavigateToPose,'nav2/navigate_to_pose')
+stop=n.create_client(Trigger,'goal_coordinator/stop');resume=n.create_client(Trigger,'goal_coordinator/resume')
+def wait(pred,seconds=30):
+    end=time.monotonic()+seconds
+    while not pred():
+        if any(p.poll() is not None for _,p in procs):raise RuntimeError('child exited')
+        if time.monotonic()>end:raise RuntimeError('observation deadline: '+str(coord))
+        rclpy.spin_once(n,timeout_sec=.02)
+def spin(s):
+    end=time.monotonic()+s
+    while time.monotonic()<end:rclpy.spin_once(n,timeout_sec=.02)
+def call(c):
+    wait(lambda:c.service_is_ready());f=c.call_async(Trigger.Request());wait(f.done);return f.result()
+def check(name,ok,detail=None):
+    results.append(dict(name=name,ok=bool(ok),detail=detail));print(json.dumps(results[-1]),flush=True)
+    if not ok:raise AssertionError(name)
+def new_goal(x,y,yaw):
+    g=NavigateToPose.Goal();g.pose.header.frame_id='map';g.pose.header.stamp=n.get_clock().now().to_msg()
+    g.pose.pose.position.x=float(x);g.pose.pose.position.y=float(y)
+    g.pose.pose.orientation.z=math.sin(yaw/2);g.pose.pose.orientation.w=math.cos(yaw/2)
+    f=client.send_goal_async(g);wait(f.done);return f.result()
+def reset_pose():
+    reset.publish(Float64MultiArray(data=[-1.275,-6.375,0.,-1.]));spin(.5)
+    wait(lambda:vel and max(abs(v) for v in vel)<.01)
+    wait(lambda:not coord.get('busy',True) and coord.get('source_zero',False))
+try:
+    # Retain robot SHM capacity, but use loopback; no hardware DDS domain.
+    start('model',['python3',str(root/'tests/nav_e2e/model_fixture.py'),ns,'--ros-args',
+          '-r',f'/{ns}/cmd_vel:=/{ns}/cmd_vel_authorized'])
+    wait(lambda:pose is not None)
+    start('nav2',['ros2','launch',str(nav/'nav_full.launch.py'),f'ns:={ns}','robot_radius:=0.454',
+          f'scan_topic:=/{ns}/scan',f'odom_topic:=/{ns}/odom'])
+    from rclpy.action.graph import get_action_server_names_and_types_by_node
+    last_graph=None
+    def ready():
+        global last_graph
+        if ('bt_navigator','/'+ns+'/nav2') not in n.get_node_names_and_namespaces():return False
+        graph=get_action_server_names_and_types_by_node(n,'bt_navigator','/'+ns+'/nav2')
+        if graph!=last_graph:
+            print('BT SERVERS',graph,flush=True);last_graph=graph
+        return internal.server_is_ready()
+    wait(ready,20)
+    wait(lambda:client.server_is_ready() and coord.get('ready',False))
+    for row in subprocess.check_output(['ps','-eo','pid=,args='],text=True).splitlines():
+        if '/lib/nav2_planner/planner_server ' in row and '__ns:=/'+ns+'/nav2' in row:
+            pid=int(row.split()[0])
+            smac_libraries=sorted({line.split()[-1] for line in Path('/proc/'+str(pid)+'/maps').read_text().splitlines() if 'libnav2_smac_planner_2d.so' in line})
+    check('expected_smac_overlay_loaded',bool(smac_libraries) and all(os.environ['QAZBOT_SMAC_PREFIX'] in x for x in smac_libraries),smac_libraries)
+
+    for label,target in [('straight',(.225,-6.375,0.)),('final_yaw',(-1.275,-6.375,math.pi/2)),('already_there',(-1.275,-6.375,0.))]:
+        reset_pose();cmds.clear();h=new_goal(*target);check(label+'_accepted',h.accepted)
+        f=h.get_result_async();wait(f.done,60);spin(.7)
+        check(label+'_succeeded',f.result().status==4,f.result().status)
+        err=math.hypot(pose[0]-target[0],pose[1]-target[1]);yaw=abs(math.atan2(math.sin(pose[2]-target[2]),math.cos(pose[2]-target[2])))
+        check(label+'_actual_pose',err<=.11 and yaw<=.11,dict(pose=pose,xy_error=err,yaw_error=yaw))
+        check(label+'_limits',all(abs(v)<=.300001 and abs(y)<1e-9 and abs(w)<=.500001 for _,v,y,w in cmds))
+        if label=='already_there':check('already_there_no_motion',all(abs(v)<1e-9 and abs(w)<1e-9 for _,v,_,w in cmds))
+    reset_pose();cmds.clear();h=new_goal(.425,-6.375,0.);check('cancel_goal_accepted',h.accepted)
+    wait(lambda:vel and vel[0]>.15);f=h.get_result_async();c=h.cancel_goal_async();wait(c.done);wait(f.done)
+    check('cancel_terminal',f.result().status==5,f.result().status)
+    wait(lambda:vel and max(abs(v) for v in vel)<.01,5);t=time.monotonic();p0=pose;spin(1.)
+    check('cancel_no_restart',all(abs(v)<1e-9 and abs(w)<1e-9 for a,v,_,w in cmds if a>=t),dict(p0=p0,p1=pose))
+    check('resume_after_cancel',call(resume).success)
+    reset_pose();h=new_goal(.425,-6.375,0.);check('fault_goal_accepted',h.accepted);f=h.get_result_async()
+    wait(lambda:vel and vel[0]>.15);trust.publish(Bool(data=False));wait(f.done)
+    check('trust_loss_aborts_goal',f.result().status==6,f.result().status)
+    trust.publish(Bool(data=True));wait(lambda:coord.get('trusted',False));spin(.8)
+    check('recovery_remains_latched',coord.get('latched') and not coord.get('gate'))
+    check('old_goal_rejected_before_resume',not new_goal(.425,-6.375,0.).accepted)
+    check('explicit_resume',call(resume).success);spin(.5)
+    check('resume_alone_does_not_move',vel and max(abs(v) for v in vel)<.01,vel)
+    reset_pose();h=new_goal(-.775,-6.375,0.);check('new_goal_B_accepted',h.accepted);f=h.get_result_async();wait(f.done,30)
+    check('new_goal_B_succeeded',f.result().status==4)
+    for label,toggle in [('scan_loss',scan_enable),('odom_loss',odom_enable)]:
+        reset_pose();h=new_goal(.425,-6.375,0.);check(label+'_goal_accepted',h.accepted)
+        f=h.get_result_async();wait(lambda:vel and vel[0]>.15);toggle.publish(Bool(data=False))
+        wait(f.done);check(label+'_aborts',f.result().status==6)
+        toggle.publish(Bool(data=True));wait(lambda:coord.get('trusted',False));spin(.8)
+        check(label+'_no_auto_resume',coord.get('latched') and not coord.get('gate'))
+        check(label+'_resume',call(resume).success)
+    reset_pose();h=new_goal(.425,-6.375,0.);check('operator_goal_accepted',h.accepted)
+    f=h.get_result_async();wait(lambda:vel and vel[0]>.15);check('operator_stop_ack',call(stop).success)
+    wait(f.done);check('operator_stop_aborts_old_goal',f.result().status==6)
+    wait(lambda:vel and max(abs(v) for v in vel)<.01,5);spin(.5)
+    check('operator_release_no_restart',coord.get('latched') and not coord.get('gate'))
+    check('operator_resume',call(resume).success)
+    reset_pose();cmds.clear();h=new_goal(99.,99.,0.);check('unreachable_accepted_for_evaluation',h.accepted)
+    f=h.get_result_async();wait(f.done);spin(.5);check('unreachable_aborted',f.result().status==6)
+    check('unreachable_no_motion',all(abs(v)<1e-9 and abs(w)<1e-9 for _,v,_,w in cmds))
+    for label,x,y in [('left',-8.150001,-6.375),('right',13.75,-6.375),('bottom',0.,-11.500001),('top',0.,9.25),('occupied',1.43,-5.88)]:
+        cmds.clear();h=new_goal(x,y,0.);check(label+'_accepted_for_planning',h.accepted)
+        f=h.get_result_async();wait(f.done);spin(.2)
+        check(label+'_fails_without_crash',f.result().status==6)
+        check(label+'_no_motion',all(abs(v)<1e-9 and abs(w)<1e-9 for _,v,_,w in cmds))
+
+    reset_pose();cmds.clear()
+    reset.publish(Float64MultiArray(data=[-1.275,-6.375,0.,0.025]));spin(.5)
+    h=new_goal(.425,-6.375,0.);check('wall_goal_accepted',h.accepted);f=h.get_result_async();wait(f.done,30)
+    check('wall_goal_not_succeeded',f.result().status==6)
+    wait(lambda:vel and max(abs(v) for v in vel)<.01,5)
+    check('wall_body_clearance',.025-pose[0]>.464,dict(pose=pose,clearance=.025-pose[0]))
+    reset_pose()
+    pose_pub=n.create_publisher(PoseStamped,'goal_pose',1);wait(lambda:pose_pub.get_subscription_count()==1)
+    goal_pose=PoseStamped();goal_pose.header.frame_id='map';goal_pose.header.stamp=n.get_clock().now().to_msg()
+    goal_pose.pose.position.x=-.775;goal_pose.pose.position.y=-6.375;goal_pose.pose.orientation.w=1.
+    pose_pub.publish(goal_pose);wait(lambda:coord.get('busy',False));wait(lambda:not coord.get('busy',True),30)
+    wait(lambda:vel and max(abs(v) for v in vel)<.01,5)
+    check('rviz_goal_pose_topic_reaches_pose',math.hypot(pose[0]+.775,pose[1]+6.375)<.11,pose)
+    reset_pose();h=new_goal(.425,-6.375,0.);check('takeover_goal_accepted',h.accepted);f=h.get_result_async()
+    wait(lambda:vel and vel[0]>.15)
+    adapter_status=n.create_publisher(String,'motion_adapter/status',1);wait(lambda:adapter_status.get_subscription_count()==1)
+    adapter_status.publish(String(data=json.dumps(dict(state='latched',reason='operator_takeover',latch='operator_takeover'))))
+    wait(f.done);check('adapter_takeover_aborts',f.result().status==6)
+    wait(lambda:vel and max(abs(v) for v in vel)<.01,5);spin(.5)
+    check('adapter_takeover_stays_latched',coord.get('latched') and not coord.get('gate'))
+    check('adapter_takeover_resume',call(resume).success)
+    driver_enable.publish(Bool(data=False));wait(lambda:not coord.get('driver_ready',True))
+    check('unready_driver_rejects_goal',not new_goal(-.775,-6.375,0.).accepted)
+    driver_enable.publish(Bool(data=True));wait(lambda:coord.get('ready',False))
+    reset_pose();h=new_goal(.425,-6.375,0.);check('driver_loss_goal_accepted',h.accepted);f=h.get_result_async()
+    wait(lambda:vel and vel[0]>.15);driver_enable.publish(Bool(data=False));wait(f.done)
+    check('driver_loss_aborts_goal',f.result().status==6)
+    wait(lambda:vel and max(abs(v) for v in vel)<.01,5)
+    driver_enable.publish(Bool(data=True));wait(lambda:coord.get('driver_ready',False));t=time.monotonic();spin(.6)
+    check('driver_recovery_stays_latched',coord.get('latched') and not coord.get('gate'))
+    check('driver_recovery_has_no_old_commands',not any(abs(v)>1e-9 or abs(w)>1e-9 for a,v,_,w in cmds if a>=t))
+    check('driver_recovery_explicit_resume',call(resume).success)
+    reset_pose();h=new_goal(-.775,-6.375,0.);check('driver_new_goal_after_recovery',h.accepted);f=h.get_result_async();wait(f.done)
+    check('driver_new_goal_succeeds',f.result().status==4)
+
+
+finally:
+    for _,p in reversed(procs):
+        if p.poll() is None:os.kill(p.pid,signal.SIGINT)
+    codes={}
+    for name,p in reversed(procs):
+        try:codes[name]=p.wait(timeout=15)
+        except subprocess.TimeoutExpired:
+            os.killpg(p.pid,signal.SIGTERM);codes[name]=p.wait(timeout=5)
+    for f in logs:f.close()
+    abnormal=re.findall(r'process has died.*exit code (-?\d+)',(out/'nav2.log').read_text())
+    codes['abnormal_children']=len([x for x in abnormal if int(x)!=0])
+    (out/'results.json').write_text(json.dumps(dict(checks=results,shutdown=codes,
+        smac_libraries=smac_libraries,scope='D1 grid + real Nav2 + ideal localization fixture + existing MC model; no AMCL/SDK qualification'),indent=2))
+    n.destroy_node();rclpy.try_shutdown()
+    if any(c!=0 for c in codes.values()):raise RuntimeError('unclean shutdown: '+str(codes))

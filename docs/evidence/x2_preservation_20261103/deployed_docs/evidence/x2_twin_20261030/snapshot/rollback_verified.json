@@ -1,0 +1,40 @@
+{
+  "time": 1793363292.0656865,
+  "amcl_actual": {
+    "laser_model_type": "likelihood_field",
+    "do_beamskip": false,
+    "resample_interval": 1,
+    "update_min_d": 0.1,
+    "update_min_a": 0.05,
+    "alpha1": 0.3,
+    "alpha2": 0.2,
+    "alpha3": 0.15,
+    "alpha4": 0.15,
+    "alpha5": 0.15,
+    "scan_topic": "/qazbot_lio/scan"
+  },
+  "files": {
+    "localization.launch.py": {
+      "sha256": "14ca4202069848611676e457dc5a2b5873797a5ae4c71dcfc571f5168b9f0e19",
+      "matches_backup": true
+    },
+    "loc_trust.py": {
+      "sha256": "72cd4868bad90b7fd8f8f4d736cf3dd091cc662fa40342e7e7acc32f6155ff8f",
+      "matches_backup": true
+    },
+    "localization_trust_node.py": {
+      "sha256": "e7b5689d80a3a341b7ef21cc014bb22294d758c9cb5efa765a8d86d82c5dc262",
+      "matches_backup": true
+    },
+    "goal_coordinator.py": {
+      "sha256": "aed37cb57ab03313bbf1b3207c646589fcaaae0072e8b54e019d4aa89c75eb3e",
+      "matches_backup": true
+    },
+    "x2_motion_adapter.py": {
+      "sha256": "c76ac1d163f9746f25f7529eed0bd913a99ffb7f35756db82425e0da736e93b1",
+      "matches_backup": true
+    }
+  },
+  "goals_sent": false,
+  "rollback_source": "bak_20261030_pre_p26"
+}

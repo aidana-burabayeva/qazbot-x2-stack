@@ -1,0 +1,376 @@
+[INFO] [launch]: All log files can be found below /home/agi/.ros/log/2026-10-21-19-19-32-211934-agi-278211
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [controller_server-1]: process started with pid [278216]
+[controller_server-1] [INFO] [1792581572.440714595] [qazbot_e2e.nav2.controller_server]: 
+[controller_server-1] 	controller_server lifecycle node launched. 
+[controller_server-1] 	Waiting on external lifecycle transitions to activate
+[controller_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-1] [INFO] [1792581572.444637271] [qazbot_e2e.nav2.controller_server]: Creating controller server
+[controller_server-1] [INFO] [1792581572.467556988] [qazbot_e2e.nav2.local_costmap.local_costmap]: 
+[controller_server-1] 	local_costmap lifecycle node launched. 
+[controller_server-1] 	Waiting on external lifecycle transitions to activate
+[controller_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-1] [INFO] [1792581572.468649694] [qazbot_e2e.nav2.local_costmap.local_costmap]: Creating Costmap
+[INFO] [velocity_smoother-2]: process started with pid [278243]
+[velocity_smoother-2] [INFO] [1792581573.045520448] [qazbot_e2e.nav2.velocity_smoother]: 
+[velocity_smoother-2] 	velocity_smoother lifecycle node launched. 
+[velocity_smoother-2] 	Waiting on external lifecycle transitions to activate
+[velocity_smoother-2] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [planner_server-3]: process started with pid [278261]
+[planner_server-3] [INFO] [1792581573.637417776] [qazbot_e2e.nav2.planner_server]: 
+[planner_server-3] 	planner_server lifecycle node launched. 
+[planner_server-3] 	Waiting on external lifecycle transitions to activate
+[planner_server-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[planner_server-3] [INFO] [1792581573.639269053] [qazbot_e2e.nav2.planner_server]: Creating
+[planner_server-3] [INFO] [1792581573.663947408] [qazbot_e2e.nav2.global_costmap.global_costmap]: 
+[planner_server-3] 	global_costmap lifecycle node launched. 
+[planner_server-3] 	Waiting on external lifecycle transitions to activate
+[planner_server-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[planner_server-3] [INFO] [1792581573.665079664] [qazbot_e2e.nav2.global_costmap.global_costmap]: Creating Costmap
+[INFO] [bt_navigator-4]: process started with pid [278278]
+[bt_navigator-4] [INFO] [1792581574.230982997] [qazbot_e2e.nav2.bt_navigator]: 
+[bt_navigator-4] 	bt_navigator lifecycle node launched. 
+[bt_navigator-4] 	Waiting on external lifecycle transitions to activate
+[bt_navigator-4] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[bt_navigator-4] [INFO] [1792581574.231234414] [qazbot_e2e.nav2.bt_navigator]: Creating
+[INFO] [gdb-5]: process started with pid [278299]
+[INFO] [python3-6]: process started with pid [278314]
+[gdb-5] [Thread debugging using libthread_db enabled]
+[gdb-5] Using host libthread_db library "/lib/aarch64-linux-gnu/libthread_db.so.1".
+[gdb-5] [New Thread 0xfffff5f6e880 (LWP 278328)]
+[gdb-5] [New Thread 0xfffff575e880 (LWP 278329)]
+[gdb-5] [New Thread 0xfffff4f4e880 (LWP 278330)]
+[gdb-5] [New Thread 0xffffede7d880 (LWP 278331)]
+[gdb-5] [New Thread 0xffffed66d880 (LWP 278333)]
+[gdb-5] [New Thread 0xffffece5d880 (LWP 278334)]
+[gdb-5] [New Thread 0xffffdbffe880 (LWP 278335)]
+[gdb-5] [New Thread 0xffffdb7ee880 (LWP 278337)]
+[gdb-5] [New Thread 0xffffdafde880 (LWP 278338)]
+[gdb-5] [New Thread 0xffffda7ce880 (LWP 278339)]
+[gdb-5] [New Thread 0xffffd9fbe880 (LWP 278340)]
+[gdb-5] [New Thread 0xffffd97ae880 (LWP 278341)]
+[gdb-5] [New Thread 0xffffd8f9e880 (LWP 278342)]
+[gdb-5] [INFO] [1792581576.012533842] [qazbot_e2e.nav2.lifecycle_manager_navigation]: Creating
+[gdb-5] [INFO] [1792581576.101610141] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[gdb-5] [New Thread 0xffffd1e7d880 (LWP 278356)]
+[gdb-5] [New Thread 0xffffd166d880 (LWP 278371)]
+[gdb-5] [INFO] [1792581577.922538827] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mStarting managed nodes bringup...[0m[0m
+[gdb-5] [INFO] [1792581577.922627561] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mConfiguring controller_server[0m[0m
+[controller_server-1] [INFO] [1792581577.923220248] [qazbot_e2e.nav2.controller_server]: Configuring controller interface
+[controller_server-1] [INFO] [1792581577.923456594] [qazbot_e2e.nav2.controller_server]: getting goal checker plugins..
+[controller_server-1] [INFO] [1792581577.923605678] [qazbot_e2e.nav2.controller_server]: Controller frequency set to 20.0000Hz
+[controller_server-1] [INFO] [1792581577.923664396] [qazbot_e2e.nav2.local_costmap.local_costmap]: Configuring
+[controller_server-1] [INFO] [1792581577.936978943] [qazbot_e2e.nav2.local_costmap.local_costmap]: Using plugin "obstacle_layer"
+[controller_server-1] [INFO] [1792581577.943659143] [qazbot_e2e.nav2.local_costmap.local_costmap]: Subscribed to Topics: scan
+[controller_server-1] [INFO] [1792581577.950365775] [qazbot_e2e.nav2.local_costmap.local_costmap]: Initialized plugin "obstacle_layer"
+[controller_server-1] [INFO] [1792581577.950448973] [qazbot_e2e.nav2.local_costmap.local_costmap]: Using plugin "inflation_layer"
+[controller_server-1] [INFO] [1792581577.951053308] [qazbot_e2e.nav2.local_costmap.local_costmap]: Initialized plugin "inflation_layer"
+[controller_server-1] [INFO] [1792581577.979304756] [qazbot_e2e.nav2.controller_server]: Created progress_checker : progress_checker of type nav2_controller::SimpleProgressChecker
+[controller_server-1] [INFO] [1792581577.980197340] [qazbot_e2e.nav2.controller_server]: Created goal checker : goal_checker of type nav2_controller::SimpleGoalChecker
+[controller_server-1] [INFO] [1792581577.980471060] [qazbot_e2e.nav2.controller_server]: Controller Server has goal_checker  goal checkers available.
+[controller_server-1] [INFO] [1792581577.981283326] [qazbot_e2e.nav2.controller_server]: Created controller : FollowPath of type nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[controller_server-1] [INFO] [1792581577.987952903] [qazbot_e2e.nav2.controller_server]: Controller Server has FollowPath  controllers available.
+[gdb-5] [INFO] [1792581578.011085804] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mConfiguring velocity_smoother[0m[0m
+[velocity_smoother-2] [INFO] [1792581578.011583742] [qazbot_e2e.nav2.velocity_smoother]: Configuring velocity smoother
+[gdb-5] [INFO] [1792581578.022093726] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mConfiguring planner_server[0m[0m
+[planner_server-3] [INFO] [1792581578.022913095] [qazbot_e2e.nav2.planner_server]: Configuring
+[planner_server-3] [INFO] [1792581578.023072771] [qazbot_e2e.nav2.global_costmap.global_costmap]: Configuring
+[planner_server-3] [INFO] [1792581578.055577542] [qazbot_e2e.nav2.global_costmap.global_costmap]: Using plugin "static_layer"
+[planner_server-3] [INFO] [1792581578.062414410] [qazbot_e2e.nav2.global_costmap.global_costmap]: Subscribing to the map topic (/qazbot_e2e/map) with transient local durability
+[planner_server-3] [INFO] [1792581578.066353022] [qazbot_e2e.nav2.global_costmap.global_costmap]: Initialized plugin "static_layer"
+[planner_server-3] [INFO] [1792581578.066428252] [qazbot_e2e.nav2.global_costmap.global_costmap]: Using plugin "inflation_layer"
+[planner_server-3] [INFO] [1792581578.066941198] [qazbot_e2e.nav2.global_costmap.global_costmap]: Initialized plugin "inflation_layer"
+[planner_server-3] [INFO] [1792581578.091270706] [qazbot_e2e.nav2.global_costmap.global_costmap]: StaticLayer: Resizing costmap to 438 X 415 at 0.050000 m/pix
+[planner_server-3] [INFO] [1792581578.099323413] [qazbot_e2e.nav2.planner_server]: Created global planner plugin GridBased of type nav2_smac_planner/SmacPlanner2D
+[planner_server-3] [INFO] [1792581578.099437362] [qazbot_e2e.nav2.planner_server]: Configuring GridBased of type SmacPlanner2D
+[planner_server-3] [INFO] [1792581578.102323715] [qazbot_e2e.nav2.planner_server]: Configured plugin GridBased of type SmacPlanner2D with tolerance 0.00, maximum iterations 1000000, max on approach iterations 1000, and not allowing unknown traversal.
+[planner_server-3] [INFO] [1792581578.102413216] [qazbot_e2e.nav2.planner_server]: Planner Server has GridBased  planners available.
+[gdb-5] [INFO] [1792581578.125490375] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mConfiguring bt_navigator[0m[0m
+[bt_navigator-4] [INFO] [1792581578.126063767] [qazbot_e2e.nav2.bt_navigator]: Configuring
+[gdb-5] [INFO] [1792581578.270999979] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mActivating controller_server[0m[0m
+[controller_server-1] [INFO] [1792581578.271775862] [qazbot_e2e.nav2.controller_server]: Activating
+[controller_server-1] [INFO] [1792581578.271900755] [qazbot_e2e.nav2.local_costmap.local_costmap]: Activating
+[controller_server-1] [INFO] [1792581578.271954737] [qazbot_e2e.nav2.local_costmap.local_costmap]: Checking transform
+[controller_server-1] [INFO] [1792581578.272164331] [qazbot_e2e.nav2.local_costmap.local_costmap]: start
+[controller_server-1] [INFO] [1792581578.474459383] [qazbot_e2e.nav2.controller_server]: Activating controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[controller_server-1] [INFO] [1792581578.474652882] [qazbot_e2e.nav2.controller_server]: Creating bond (controller_server) to lifecycle manager.
+[gdb-5] [INFO] [1792581578.587846730] [qazbot_e2e.nav2.lifecycle_manager_navigation]: Server controller_server connected with bond.
+[gdb-5] [INFO] [1792581578.587961095] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mActivating velocity_smoother[0m[0m
+[velocity_smoother-2] [INFO] [1792581578.588548694] [qazbot_e2e.nav2.velocity_smoother]: Activating
+[velocity_smoother-2] [INFO] [1792581578.588657427] [qazbot_e2e.nav2.velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
+[gdb-5] [INFO] [1792581578.700296918] [qazbot_e2e.nav2.lifecycle_manager_navigation]: Server velocity_smoother connected with bond.
+[gdb-5] [INFO] [1792581578.700376692] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mActivating planner_server[0m[0m
+[planner_server-3] [INFO] [1792581578.700905638] [qazbot_e2e.nav2.planner_server]: Activating
+[planner_server-3] [INFO] [1792581578.700984067] [qazbot_e2e.nav2.global_costmap.global_costmap]: Activating
+[planner_server-3] [INFO] [1792581578.701009795] [qazbot_e2e.nav2.global_costmap.global_costmap]: Checking transform
+[planner_server-3] [INFO] [1792581578.701171454] [qazbot_e2e.nav2.global_costmap.global_costmap]: start
+[planner_server-3] [INFO] [1792581578.751362074] [qazbot_e2e.nav2.planner_server]: Activating plugin GridBased of type SmacPlanner2D
+[planner_server-3] [INFO] [1792581578.755906621] [qazbot_e2e.nav2.planner_server]: Creating bond (planner_server) to lifecycle manager.
+[gdb-5] [INFO] [1792581578.868632610] [qazbot_e2e.nav2.lifecycle_manager_navigation]: Server planner_server connected with bond.
+[gdb-5] [INFO] [1792581578.868718720] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mActivating bt_navigator[0m[0m
+[bt_navigator-4] [INFO] [1792581578.869323087] [qazbot_e2e.nav2.bt_navigator]: Activating
+[bt_navigator-4] [INFO] [1792581578.896228876] [qazbot_e2e.nav2.bt_navigator]: Creating bond (bt_navigator) to lifecycle manager.
+[gdb-5] [INFO] [1792581579.002915927] [qazbot_e2e.nav2.lifecycle_manager_navigation]: Server bt_navigator connected with bond.
+[gdb-5] [INFO] [1792581579.003012532] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mManaged nodes are active[0m[0m
+[gdb-5] [INFO] [1792581579.003037235] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mCreating bond timer...[0m[0m
+[bt_navigator-4] [INFO] [1792581579.745981765] [qazbot_e2e.nav2.bt_navigator]: Begin navigating from current location (-1.27, -6.38) to (0.42, -6.38)
+[controller_server-1] [INFO] [1792581579.768891222] [qazbot_e2e.nav2.controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1792581580.403589437] [rclcpp]: signal_handler(signum=2)
+[controller_server-1] [INFO] [1792581580.403751897] [qazbot_e2e.nav2.controller_server]: Running Nav2 LifecycleNode rcl preshutdown (controller_server)
+[controller_server-1] [INFO] [1792581580.403863414] [qazbot_e2e.nav2.controller_server]: Deactivating
+[controller_server-1] [WARN] [1792581580.403885877] [qazbot_e2e.nav2.controller_server]: [follow_path] [ActionServer] Requested to deactivate server but goal is still executing. Should check if action server is running before deactivating.
+[controller_server-1] [WARN] [1792581580.419135606] [qazbot_e2e.nav2.controller_server]: [follow_path] [ActionServer] Stopping the thread per request.
+[controller_server-1] [WARN] [1792581580.419227988] [qazbot_e2e.nav2.controller_server]: [follow_path] [ActionServer] Aborting handle.
+[controller_server-1] [INFO] [1792581580.420770186] [qazbot_e2e.nav2.controller_server]: Deactivating controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[controller_server-1] [INFO] [1792581580.420879303] [qazbot_e2e.nav2.local_costmap.local_costmap]: Deactivating
+[bt_navigator-4] [WARN] [1792581580.446221485] [qazbot_e2e.nav2.bt_navigator]: [navigate_to_pose] [ActionServer] Aborting handle.
+[bt_navigator-4] [ERROR] [1792581580.446698368] [qazbot_e2e.nav2.bt_navigator]: Goal failed
+[controller_server-1] [INFO] [1792581580.472699861] [qazbot_e2e.nav2.controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[controller_server-1] [INFO] [1792581580.483150165] [qazbot_e2e.nav2.controller_server]: Cleaning up
+[controller_server-1] [INFO] [1792581580.483229971] [qazbot_e2e.nav2.controller_server]: Cleaning up controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[controller_server-1] [INFO] [1792581580.483302609] [qazbot_e2e.nav2.local_costmap.local_costmap]: Cleaning up
+[controller_server-1] [INFO] [1792581580.523969937] [qazbot_e2e.nav2.controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[controller_server-1] [INFO] [1792581580.527412403] [qazbot_e2e.nav2.local_costmap.local_costmap]: Destroying
+[controller_server-1] [INFO] [1792581580.543828303] [qazbot_e2e.nav2.controller_server]: Destroying
+[gdb-5] [INFO] [1792581580.603110511] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mHave not received a heartbeat from controller_server.[0m[0m
+[gdb-5] [ERROR] [1792581580.603208140] [qazbot_e2e.nav2.lifecycle_manager_navigation]: CRITICAL FAILURE: SERVER controller_server IS DOWN after not receiving a heartbeat for 4000 ms. Shutting down related nodes.
+[gdb-5] [INFO] [1792581580.603230988] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mTerminating bond timer...[0m[0m
+[gdb-5] [INFO] [1792581580.603243659] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mResetting managed nodes...[0m[0m
+[gdb-5] [INFO] [1792581580.603254315] [qazbot_e2e.nav2.lifecycle_manager_navigation]: [34m[1mDeactivating bt_navigator[0m[0m
+[bt_navigator-4] [INFO] [1792581580.603710463] [qazbot_e2e.nav2.bt_navigator]: Deactivating
+[bt_navigator-4] [INFO] [1792581580.603777501] [qazbot_e2e.nav2.bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
+[INFO] [controller_server-1]: process has finished cleanly [pid 278216]
+[INFO] [python3-6]: sending signal 'SIGINT' to process[python3-6]
+[INFO] [gdb-5]: sending signal 'SIGINT' to process[gdb-5]
+[INFO] [bt_navigator-4]: sending signal 'SIGINT' to process[bt_navigator-4]
+[INFO] [planner_server-3]: sending signal 'SIGINT' to process[planner_server-3]
+[INFO] [velocity_smoother-2]: sending signal 'SIGINT' to process[velocity_smoother-2]
+[bt_navigator-4] [INFO] [1792581580.684063963] [rclcpp]: signal_handler(signum=2)
+[bt_navigator-4] [INFO] [1792581580.684172888] [qazbot_e2e.nav2.bt_navigator]: Running Nav2 LifecycleNode rcl preshutdown (bt_navigator)
+[bt_navigator-4] [INFO] [1792581580.684284085] [qazbot_e2e.nav2.bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
+[bt_navigator-4] [ERROR] [1792581580.688719291] [qazbot_e2e.nav2.bt_navigator]: Failed to finish transition 4. Current state is now: inactive (Could not publish transition: publisher's context is invalid, at /home/run/ros2_humble/src/ros2/rcl/rcl/src/rcl/publisher.c:389, at /home/run/ros2_humble/src/ros2/rcl/rcl_lifecycle/src/rcl_lifecycle.c:368)
+[planner_server-3] [INFO] [1792581580.691873540] [rclcpp]: signal_handler(signum=2)
+[planner_server-3] [INFO] [1792581580.692015616] [qazbot_e2e.nav2.planner_server]: Running Nav2 LifecycleNode rcl preshutdown (planner_server)
+[planner_server-3] [INFO] [1792581580.692134589] [qazbot_e2e.nav2.planner_server]: Deactivating
+[planner_server-3] [INFO] [1792581580.692186587] [qazbot_e2e.nav2.global_costmap.global_costmap]: Deactivating
+[velocity_smoother-2] [INFO] [1792581580.694519771] [rclcpp]: signal_handler(signum=2)
+[velocity_smoother-2] [INFO] [1792581580.694711062] [qazbot_e2e.nav2.velocity_smoother]: Running Nav2 LifecycleNode rcl preshutdown (velocity_smoother)
+[velocity_smoother-2] [INFO] [1792581580.695063756] [qazbot_e2e.nav2.velocity_smoother]: Deactivating
+[velocity_smoother-2] [INFO] [1792581580.695117035] [qazbot_e2e.nav2.velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[planner_server-3] [INFO] [1792581580.701498843] [qazbot_e2e.nav2.planner_server]: Deactivating plugin GridBased of type SmacPlanner2D
+[planner_server-3] [INFO] [1792581580.701591385] [qazbot_e2e.nav2.planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[gdb-5] 
+[gdb-5] Thread 1 "lifecycle_manag" received signal SIGINT, Interrupt.
+[gdb-5] __futex_abstimed_wait_common64 (private=0, cancel=true, abstime=0xffffffffd6f8, op=137, expected=0, futex_word=0xaaaaaae4e40c) at ./nptl/futex-internal.c:57
+[gdb-5] 57	./nptl/futex-internal.c: No such file or directory.
+[bt_navigator-4] [INFO] [1792581580.774348038] [qazbot_e2e.nav2.bt_navigator]: Destroying
+[bt_navigator-4] [ERROR] [1792581580.774412260] [qazbot_e2e.nav2.bt_navigator]: Unable to start transition 2 from current state cleaningup: Could not publish transition: publisher's context is invalid, at /home/run/ros2_humble/src/ros2/rcl/rcl/src/rcl/publisher.c:389, at /home/run/ros2_humble/src/ros2/rcl/rcl_lifecycle/src/rcl_lifecycle.c:368
+[velocity_smoother-2] [INFO] [1792581580.795564478] [qazbot_e2e.nav2.velocity_smoother]: Cleaning up
+[velocity_smoother-2] [INFO] [1792581580.795690043] [qazbot_e2e.nav2.velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[velocity_smoother-2] [INFO] [1792581580.801559193] [qazbot_e2e.nav2.velocity_smoother]: Destroying
+[planner_server-3] [INFO] [1792581580.802532222] [qazbot_e2e.nav2.planner_server]: Cleaning up
+[planner_server-3] [INFO] [1792581580.819058135] [qazbot_e2e.nav2.global_costmap.global_costmap]: Cleaning up
+[planner_server-3] [INFO] [1792581580.825600483] [qazbot_e2e.nav2.planner_server]: Cleaning up plugin GridBased of type SmacPlanner2D
+[planner_server-3] [INFO] [1792581580.825981305] [qazbot_e2e.nav2.planner_server]: Destroying plugin GridBased of type SmacPlanner2D
+[planner_server-3] [INFO] [1792581580.832935001] [qazbot_e2e.nav2.planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[planner_server-3] [INFO] [1792581580.847102387] [qazbot_e2e.nav2.global_costmap.global_costmap]: Destroying
+[planner_server-3] [INFO] [1792581580.866525437] [qazbot_e2e.nav2.planner_server]: Destroying
+[INFO] [bt_navigator-4]: process has finished cleanly [pid 278278]
+[INFO] [velocity_smoother-2]: process has finished cleanly [pid 278243]
+[INFO] [python3-6]: process has finished cleanly [pid 278314]
+[INFO] [planner_server-3]: process has finished cleanly [pid 278261]
+[gdb-5] 
+[gdb-5] Thread 16 (Thread 0xffffd166d880 (LWP 278371) "lifecycle_manag"):
+[gdb-5] #0  __futex_abstimed_wait_common64 (private=0, cancel=true, abstime=0xffffd1669228, op=137, expected=0, futex_word=0xaaaaaaf15d28) at ./nptl/futex-internal.c:57
+[gdb-5] #1  __futex_abstimed_wait_common (cancel=true, private=0, abstime=0xffffd1669228, clockid=0, expected=0, futex_word=0xaaaaaaf15d28) at ./nptl/futex-internal.c:87
+[gdb-5] #2  __GI___futex_abstimed_wait_cancelable64 (futex_word=futex_word@entry=0xaaaaaaf15d28, expected=expected@entry=0, clockid=clockid@entry=1, abstime=abstime@entry=0xffffd1669228, private=private@entry=0) at ./nptl/futex-internal.c:139
+[gdb-5] #3  0x0000fffff78bfc9c in __pthread_cond_wait_common (abstime=0xffffd1669228, clockid=1, mutex=0xaaaaaaf15cd0, cond=0xaaaaaaf15d00) at ./nptl/pthread_cond_wait.c:503
+[gdb-5] #4  ___pthread_cond_clockwait64 (abstime=0xffffd1669228, clockid=1, mutex=0xaaaaaaf15cd0, cond=0xaaaaaaf15d00) at ./nptl/pthread_cond_wait.c:691
+[gdb-5] #5  ___pthread_cond_clockwait64 (cond=0xaaaaaaf15d00, mutex=0xaaaaaaf15cd0, clockid=1, abstime=0xffffd1669228) at ./nptl/pthread_cond_wait.c:679
+[gdb-5] #6  0x0000fffff6a7db34 in eprosima::fastdds::dds::detail::WaitSetImpl::wait(std::vector<eprosima::fastdds::dds::Condition*, std::allocator<eprosima::fastdds::dds::Condition*> >&, eprosima::fastrtps::Time_t const&) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #7  0x0000fffff6a7d208 in eprosima::fastdds::dds::WaitSet::wait(std::vector<eprosima::fastdds::dds::Condition*, std::allocator<eprosima::fastdds::dds::Condition*> >&, eprosima::fastrtps::Time_t) const () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #8  0x0000fffff6f3b0ac in rmw_fastrtps_shared_cpp::__rmw_wait(char const*, rmw_subscriptions_s*, rmw_guard_conditions_s*, rmw_services_s*, rmw_clients_s*, rmw_events_s*, rmw_wait_set_s*, rmw_time_s const*) () from /opt/ros/humble/lib/librmw_fastrtps_shared_cpp.so
+[gdb-5] #9  0x0000fffff7678010 in rcl_wait () from /opt/ros/humble/lib/librcl.so
+[gdb-5] #10 0x0000fffff7d9fd90 in rclcpp::Executor::wait_for_work(std::chrono::duration<long, std::ratio<1l, 1000000000l> >) () from /opt/ros/humble/lib/librclcpp.so
+[gdb-5] #11 0x0000fffff7da016c in rclcpp::Executor::get_next_executable(rclcpp::AnyExecutable&, std::chrono::duration<long, std::ratio<1l, 1000000000l> >) () from /opt/ros/humble/lib/librclcpp.so
+[gdb-5] #12 0x0000fffff7da262c in rclcpp::Executor::spin_once_impl(std::chrono::duration<long, std::ratio<1l, 1000000000l> >) () from /opt/ros/humble/lib/librclcpp.so
+[gdb-5] #13 0x0000fffff76e3eb8 in ?? () from /opt/ros/humble/lib/libnav2_util_core.so
+[gdb-5] #14 0x0000fffff76e5878 in nav2_util::LifecycleServiceClient::get_state(std::chrono::duration<long, std::ratio<1l, 1l> >) () from /opt/ros/humble/lib/libnav2_util_core.so
+[gdb-5] #15 0x0000fffff7f6a418 in nav2_lifecycle_manager::LifecycleManager::changeStateForNode (this=this@entry=0xaaaaaab4b080, node_name="bt_navigator", transition=<optimized out>, transition@entry=4 '\004') at /usr/include/c++/11/chrono:521
+[gdb-5] #16 0x0000fffff7f6a6f0 in nav2_lifecycle_manager::LifecycleManager::changeStateForAllNodes (this=this@entry=0xaaaaaab4b080, transition=transition@entry=4 '\004', hard_change=hard_change@entry=true) at /home/agi/control_backend/candidates/nav2_lifecycle_shutdown/src/nav2_lifecycle_manager/src/lifecycle_manager.cpp:255
+[gdb-5] #17 0x0000fffff7f6ad58 in nav2_lifecycle_manager::LifecycleManager::reset (this=this@entry=0xaaaaaab4b080, hard_reset=hard_reset@entry=true) at /home/agi/control_backend/candidates/nav2_lifecycle_shutdown/src/nav2_lifecycle_manager/src/lifecycle_manager.cpp:315
+[gdb-5] #18 0x0000fffff7f6bb20 in nav2_lifecycle_manager::LifecycleManager::checkBondConnections (this=0xaaaaaab4b080) at /home/agi/control_backend/candidates/nav2_lifecycle_shutdown/src/nav2_lifecycle_manager/src/lifecycle_manager.cpp:443
+[gdb-5] #19 0x0000fffff7d9d508 in rclcpp::Executor::execute_any_executable(rclcpp::AnyExecutable&) () from /opt/ros/humble/lib/librclcpp.so
+[gdb-5] #20 0x0000fffff7da4e3c in rclcpp::executors::SingleThreadedExecutor::spin() () from /opt/ros/humble/lib/librclcpp.so
+[gdb-5] #21 0x0000fffff7af31fc in ?? () from /lib/aarch64-linux-gnu/libstdc++.so.6
+[gdb-5] #22 0x0000fffff78c0398 in start_thread (arg=0x80e0c0) at ./nptl/pthread_create.c:442
+[gdb-5] #23 0x0000fffff7929e9c in thread_start () at ../sysdeps/unix/sysv/linux/aarch64/clone.S:79
+[gdb-5] 
+[gdb-5] Thread 15 (Thread 0xffffd1e7d880 (LWP 278356) "lifecycle_manag"):
+[gdb-5] #0  __futex_abstimed_wait_common64 (private=0, cancel=true, abstime=0x0, op=393, expected=0, futex_word=0xaaaaaaea95b8) at ./nptl/futex-internal.c:57
+[gdb-5] #1  __futex_abstimed_wait_common (cancel=true, private=0, abstime=0x0, clockid=0, expected=0, futex_word=0xaaaaaaea95b8) at ./nptl/futex-internal.c:87
+[gdb-5] #2  __GI___futex_abstimed_wait_cancelable64 (futex_word=futex_word@entry=0xaaaaaaea95b8, expected=expected@entry=0, clockid=clockid@entry=0, abstime=abstime@entry=0x0, private=private@entry=0) at ./nptl/futex-internal.c:139
+[gdb-5] #3  0x0000fffff78bf694 in __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0xaaaaaaea9560, cond=0xaaaaaaea9590) at ./nptl/pthread_cond_wait.c:503
+[gdb-5] #4  ___pthread_cond_wait (cond=0xaaaaaaea9590, mutex=0xaaaaaaea9560) at ./nptl/pthread_cond_wait.c:627
+[gdb-5] #5  0x0000fffff6a7dc94 in eprosima::fastdds::dds::detail::WaitSetImpl::wait(std::vector<eprosima::fastdds::dds::Condition*, std::allocator<eprosima::fastdds::dds::Condition*> >&, eprosima::fastrtps::Time_t const&) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #6  0x0000fffff6a7d208 in eprosima::fastdds::dds::WaitSet::wait(std::vector<eprosima::fastdds::dds::Condition*, std::allocator<eprosima::fastdds::dds::Condition*> >&, eprosima::fastrtps::Time_t) const () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #7  0x0000fffff6f3b0ac in rmw_fastrtps_shared_cpp::__rmw_wait(char const*, rmw_subscriptions_s*, rmw_guard_conditions_s*, rmw_services_s*, rmw_clients_s*, rmw_events_s*, rmw_wait_set_s*, rmw_time_s const*) () from /opt/ros/humble/lib/librmw_fastrtps_shared_cpp.so
+[gdb-5] #8  0x0000fffff7678010 in rcl_wait () from /opt/ros/humble/lib/librcl.so
+[gdb-5] #9  0x0000fffff7db2ebc in rclcpp::graph_listener::GraphListener::run_loop() () from /opt/ros/humble/lib/librclcpp.so
+[gdb-5] #10 0x0000fffff7db3600 in rclcpp::graph_listener::GraphListener::run() () from /opt/ros/humble/lib/librclcpp.so
+[gdb-5] #11 0x0000fffff7af31fc in ?? () from /lib/aarch64-linux-gnu/libstdc++.so.6
+[gdb-5] #12 0x0000fffff78c0398 in start_thread (arg=0x80e0c0) at ./nptl/pthread_create.c:442
+[gdb-5] #13 0x0000fffff7929e9c in thread_start () at ../sysdeps/unix/sysv/linux/aarch64/clone.S:79
+[gdb-5] 
+[gdb-5] Thread 14 (Thread 0xffffd8f9e880 (LWP 278342) "lifecycle_manag"):
+[gdb-5] #0  __futex_abstimed_wait_common64 (private=0, cancel=true, abstime=0x0, op=393, expected=0, futex_word=0xffffbc000c68) at ./nptl/futex-internal.c:57
+[gdb-5] #1  __futex_abstimed_wait_common (cancel=true, private=0, abstime=0x0, clockid=0, expected=0, futex_word=0xffffbc000c68) at ./nptl/futex-internal.c:87
+[gdb-5] #2  __GI___futex_abstimed_wait_cancelable64 (futex_word=futex_word@entry=0xffffbc000c68, expected=expected@entry=0, clockid=clockid@entry=0, abstime=abstime@entry=0x0, private=private@entry=0) at ./nptl/futex-internal.c:139
+[gdb-5] #3  0x0000fffff78bf694 in __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0xffffbc000c10, cond=0xffffbc000c40) at ./nptl/pthread_cond_wait.c:503
+[gdb-5] #4  ___pthread_cond_wait (cond=0xffffbc000c40, mutex=0xffffbc000c10) at ./nptl/pthread_cond_wait.c:627
+[gdb-5] #5  0x0000fffff6a7dc94 in eprosima::fastdds::dds::detail::WaitSetImpl::wait(std::vector<eprosima::fastdds::dds::Condition*, std::allocator<eprosima::fastdds::dds::Condition*> >&, eprosima::fastrtps::Time_t const&) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #6  0x0000fffff6a7d208 in eprosima::fastdds::dds::WaitSet::wait(std::vector<eprosima::fastdds::dds::Condition*, std::allocator<eprosima::fastdds::dds::Condition*> >&, eprosima::fastrtps::Time_t) const () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #7  0x0000fffff6f3b0ac in rmw_fastrtps_shared_cpp::__rmw_wait(char const*, rmw_subscriptions_s*, rmw_guard_conditions_s*, rmw_services_s*, rmw_clients_s*, rmw_events_s*, rmw_wait_set_s*, rmw_time_s const*) () from /opt/ros/humble/lib/librmw_fastrtps_shared_cpp.so
+[gdb-5] #8  0x0000fffff6f08d58 in node_listener(rmw_context_s*) () from /opt/ros/humble/lib/librmw_fastrtps_shared_cpp.so
+[gdb-5] #9  0x0000fffff7af31fc in ?? () from /lib/aarch64-linux-gnu/libstdc++.so.6
+[gdb-5] #10 0x0000fffff78c0398 in start_thread (arg=0x80e0c0) at ./nptl/pthread_create.c:442
+[gdb-5] #11 0x0000fffff7929e9c in thread_start () at ../sysdeps/unix/sysv/linux/aarch64/clone.S:79
+[gdb-5] 
+[gdb-5] Thread 13 (Thread 0xffffd97ae880 (LWP 278341) "dds.asyn.0.0"):
+[gdb-5] #0  __futex_abstimed_wait_common64 (private=0, cancel=true, abstime=0x0, op=393, expected=0, futex_word=0xaaaaaabb5d94) at ./nptl/futex-internal.c:57
+[gdb-5] #1  __futex_abstimed_wait_common (cancel=true, private=0, abstime=0x0, clockid=0, expected=0, futex_word=0xaaaaaabb5d94) at ./nptl/futex-internal.c:87
+[gdb-5] #2  __GI___futex_abstimed_wait_cancelable64 (futex_word=futex_word@entry=0xaaaaaabb5d94, expected=expected@entry=0, clockid=clockid@entry=0, abstime=abstime@entry=0x0, private=private@entry=0) at ./nptl/futex-internal.c:139
+[gdb-5] #3  0x0000fffff78bf694 in __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0xaaaaaab49350, cond=0xaaaaaabb5d68) at ./nptl/pthread_cond_wait.c:503
+[gdb-5] #4  ___pthread_cond_wait (cond=0xaaaaaabb5d68, mutex=0xaaaaaab49350) at ./nptl/pthread_cond_wait.c:627
+[gdb-5] #5  0x0000fffff6aeed20 in void std::_V2::condition_variable_any::wait<std::unique_lock<std::timed_mutex> >(std::unique_lock<std::timed_mutex>&) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #6  0x0000fffff6af65c0 in eprosima::fastdds::rtps::FlowControllerImpl<eprosima::fastdds::rtps::FlowControllerSyncPublishMode, eprosima::fastdds::rtps::FlowControllerFifoSchedule>::run() () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #7  0x0000fffff6af6a70 in void* eprosima::thread::ThreadProxy<eprosima::create_thread<eprosima::fastdds::rtps::FlowControllerImpl<eprosima::fastdds::rtps::FlowControllerSyncPublishMode, eprosima::fastdds::rtps::FlowControllerFifoSchedule>::initialize_async_thread<eprosima::fastdds::rtps::FlowControllerSyncPublishMode>()::{lambda()#1}, unsigned int, unsigned int>(eprosima::fastdds::rtps::FlowControllerImpl<eprosima::fastdds::rtps::FlowControllerSyncPublishMode, eprosima::fastdds::rtps::FlowControllerFifoSchedule>::initialize_async_thread<eprosima::fastdds::rtps::FlowControllerSyncPublishMode>()::{lambda()#1}, eprosima::fastdds::rtps::ThreadSettings const&, char const*, unsigned int, unsigned int)::{lambda()#1}>(void*) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #8  0x0000fffff78c0398 in start_thread (arg=0x80e0c0) at ./nptl/pthread_create.c:442
+[gdb-5] #9  0x0000fffff7929e9c in thread_start () at ../sysdeps/unix/sysv/linux/aarch64/clone.S:79
+[gdb-5] 
+[gdb-5] Thread 12 (Thread 0xffffd9fbe880 (LWP 278340) "dds.udp.29173"):
+[gdb-5] #0  0x0000fffff792bde4 in __libc_recvfrom (fd=26, buf=0xaaaaaaba4d50, len=65500, flags=0, addr=..., addrlen=0xffffd9fbd9a8) at ../sysdeps/unix/sysv/linux/recvfrom.c:27
+[gdb-5] #1  0x0000fffff6994fe8 in eprosima::fastdds::rtps::UDPChannelResource::Receive(unsigned char*, unsigned int, unsigned int&, eprosima::fastrtps::rtps::Locator_t&) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #2  0x0000fffff699592c in eprosima::fastdds::rtps::UDPChannelResource::perform_listen_operation(eprosima::fastrtps::rtps::Locator_t) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #3  0x0000fffff6996040 in void* eprosima::thread::ThreadProxy<eprosima::create_thread<eprosima::fastdds::rtps::UDPChannelResource::UDPChannelResource(eprosima::fastdds::rtps::UDPTransportInterface*, eprosima::fastdds::rtps::eProsimaUDPSocket&, unsigned int, eprosima::fastrtps::rtps::Locator_t const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, eprosima::fastdds::rtps::TransportReceiverInterface*, eprosima::fastdds::rtps::ThreadSettings const&)::{lambda()#1}, unsigned int>(eprosima::fastdds::rtps::UDPChannelResource::UDPChannelResource(eprosima::fastdds::rtps::UDPTransportInterface*, eprosima::fastdds::rtps::eProsimaUDPSocket&, unsigned int, eprosima::fastrtps::rtps::Locator_t const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, eprosima::fastdds::rtps::TransportReceiverInterface*, eprosima::fastdds::rtps::ThreadSettings const&)::{lambda()#1}, eprosima::fastdds::rtps::ThreadSettings const&, char const*, unsigned int)::{lambda()#1}>(void*) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #4  0x0000fffff78c0398 in start_thread (arg=0x80e0c0) at ./nptl/pthread_create.c:442
+[gdb-5] #5  0x0000fffff7929e9c in thread_start () at ../sysdeps/unix/sysv/linux/aarch64/clone.S:79
+[gdb-5] 
+[gdb-5] Thread 11 (Thread 0xffffda7ce880 (LWP 278339) "dds.shm.29173"):
+[gdb-5] #0  __futex_abstimed_wait_common64 (private=<optimized out>, cancel=true, abstime=0xffffda7cd7a8, op=265, expected=0, futex_word=0xfffff6465120) at ./nptl/futex-internal.c:57
+[gdb-5] #1  __futex_abstimed_wait_common (cancel=true, private=<optimized out>, abstime=0xffffda7cd7a8, clockid=0, expected=0, futex_word=0xfffff6465120) at ./nptl/futex-internal.c:87
+[gdb-5] #2  __GI___futex_abstimed_wait_cancelable64 (futex_word=futex_word@entry=0xfffff6465120, expected=expected@entry=0, clockid=clockid@entry=0, abstime=abstime@entry=0xffffda7cd7a8, private=<optimized out>) at ./nptl/futex-internal.c:139
+[gdb-5] #3  0x0000fffff78c8544 in do_futex_wait (sem=sem@entry=0xfffff6465120, abstime=abstime@entry=0xffffda7cd7a8, clockid=0) at ./nptl/sem_waitcommon.c:111
+[gdb-5] #4  0x0000fffff78c8614 in __new_sem_wait_slow64 (sem=0xfffff6465120, abstime=0xffffda7cd7a8, clockid=0) at ./nptl/sem_waitcommon.c:183
+[gdb-5] #5  0x0000fffff6bc902c in eprosima::fastdds::rtps::SharedMemGlobal::Port::wait_pop(eprosima::fastdds::rtps::MultiProducerConsumerRingBuffer<eprosima::fastdds::rtps::SharedMemGlobal::BufferDescriptor>::Listener&, std::atomic<bool> const&, unsigned int) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #6  0x0000fffff6bda648 in eprosima::fastdds::rtps::SharedMemManager::Listener::pop() () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #7  0x0000fffff6bdb0b0 in eprosima::fastdds::rtps::SharedMemChannelResource::Receive(eprosima::fastrtps::rtps::Locator_t&) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #8  0x0000fffff6bd4aa4 in eprosima::fastdds::rtps::SharedMemChannelResource::perform_listen_operation(eprosima::fastrtps::rtps::Locator_t) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #9  0x0000fffff6bd5060 in void* eprosima::thread::ThreadProxy<eprosima::create_thread<eprosima::fastdds::rtps::SharedMemChannelResource::init_thread(eprosima::fastrtps::rtps::Locator_t const&, eprosima::fastdds::rtps::ThreadSettings const&)::{lambda()#1}, unsigned int>(eprosima::fastdds::rtps::SharedMemChannelResource::init_thread(eprosima::fastrtps::rtps::Locator_t const&, eprosima::fastdds::rtps::ThreadSettings const&)::{lambda()#1}, eprosima::fastdds::rtps::ThreadSettings const&, char const*, unsigned int)::{lambda()#1}>(void*) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #10 0x0000fffff78c0398 in start_thread (arg=0x80e0c0) at ./nptl/pthread_create.c:442
+[gdb-5] #11 0x0000fffff7929e9c in thread_start () at ../sysdeps/unix/sysv/linux/aarch64/clone.S:79
+[gdb-5] 
+[gdb-5] Thread 10 (Thread 0xffffdafde880 (LWP 278338) "dds.udp.29150"):
+[gdb-5] #0  0x0000fffff792bde4 in __libc_recvfrom (fd=25, buf=0xaaaaaab8e410, len=65500, flags=0, addr=..., addrlen=0xffffdafdd9a8) at ../sysdeps/unix/sysv/linux/recvfrom.c:27
+[gdb-5] #1  0x0000fffff6994fe8 in eprosima::fastdds::rtps::UDPChannelResource::Receive(unsigned char*, unsigned int, unsigned int&, eprosima::fastrtps::rtps::Locator_t&) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #2  0x0000fffff699592c in eprosima::fastdds::rtps::UDPChannelResource::perform_listen_operation(eprosima::fastrtps::rtps::Locator_t) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #3  0x0000fffff6996040 in void* eprosima::thread::ThreadProxy<eprosima::create_thread<eprosima::fastdds::rtps::UDPChannelResource::UDPChannelResource(eprosima::fastdds::rtps::UDPTransportInterface*, eprosima::fastdds::rtps::eProsimaUDPSocket&, unsigned int, eprosima::fastrtps::rtps::Locator_t const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, eprosima::fastdds::rtps::TransportReceiverInterface*, eprosima::fastdds::rtps::ThreadSettings const&)::{lambda()#1}, unsigned int>(eprosima::fastdds::rtps::UDPChannelResource::UDPChannelResource(eprosima::fastdds::rtps::UDPTransportInterface*, eprosima::fastdds::rtps::eProsimaUDPSocket&, unsigned int, eprosima::fastrtps::rtps::Locator_t const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, eprosima::fastdds::rtps::TransportReceiverInterface*, eprosima::fastdds::rtps::ThreadSettings const&)::{lambda()#1}, eprosima::fastdds::rtps::ThreadSettings const&, char const*, unsigned int)::{lambda()#1}>(void*) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #4  0x0000fffff78c0398 in start_thread (arg=0x80e0c0) at ./nptl/pthread_create.c:442
+[gdb-5] #5  0x0000fffff7929e9c in thread_start () at ../sysdeps/unix/sysv/linux/aarch64/clone.S:79
+[gdb-5] 
+[gdb-5] Thread 9 (Thread 0xffffdb7ee880 (LWP 278337) "dds.udp.29150"):
+[gdb-5] #0  0x0000fffff792bde4 in __libc_recvfrom (fd=22, buf=0xaaaaaab7e420, len=65500, flags=0, addr=..., addrlen=0xffffdb7ed9a8) at ../sysdeps/unix/sysv/linux/recvfrom.c:27
+[gdb-5] #1  0x0000fffff6994fe8 in eprosima::fastdds::rtps::UDPChannelResource::Receive(unsigned char*, unsigned int, unsigned int&, eprosima::fastrtps::rtps::Locator_t&) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #2  0x0000fffff699592c in eprosima::fastdds::rtps::UDPChannelResource::perform_listen_operation(eprosima::fastrtps::rtps::Locator_t) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #3  0x0000fffff6996040 in void* eprosima::thread::ThreadProxy<eprosima::create_thread<eprosima::fastdds::rtps::UDPChannelResource::UDPChannelResource(eprosima::fastdds::rtps::UDPTransportInterface*, eprosima::fastdds::rtps::eProsimaUDPSocket&, unsigned int, eprosima::fastrtps::rtps::Locator_t const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, eprosima::fastdds::rtps::TransportReceiverInterface*, eprosima::fastdds::rtps::ThreadSettings const&)::{lambda()#1}, unsigned int>(eprosima::fastdds::rtps::UDPChannelResource::UDPChannelResource(eprosima::fastdds::rtps::UDPTransportInterface*, eprosima::fastdds::rtps::eProsimaUDPSocket&, unsigned int, eprosima::fastrtps::rtps::Locator_t const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, eprosima::fastdds::rtps::TransportReceiverInterface*, eprosima::fastdds::rtps::ThreadSettings const&)::{lambda()#1}, eprosima::fastdds::rtps::ThreadSettings const&, char const*, unsigned int)::{lambda()#1}>(void*) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #4  0x0000fffff78c0398 in start_thread (arg=0x80e0c0) at ./nptl/pthread_create.c:442
+[gdb-5] #5  0x0000fffff7929e9c in thread_start () at ../sysdeps/unix/sysv/linux/aarch64/clone.S:79
+[gdb-5] 
+[gdb-5] Thread 8 (Thread 0xffffdbffe880 (LWP 278335) "dds.udp.29150"):
+[gdb-5] #0  0x0000fffff792bde4 in __libc_recvfrom (fd=24, buf=0xaaaaaab6e430, len=65500, flags=0, addr=..., addrlen=0xffffdbffd9a8) at ../sysdeps/unix/sysv/linux/recvfrom.c:27
+[gdb-5] #1  0x0000fffff6994fe8 in eprosima::fastdds::rtps::UDPChannelResource::Receive(unsigned char*, unsigned int, unsigned int&, eprosima::fastrtps::rtps::Locator_t&) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #2  0x0000fffff699592c in eprosima::fastdds::rtps::UDPChannelResource::perform_listen_operation(eprosima::fastrtps::rtps::Locator_t) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #3  0x0000fffff6996040 in void* eprosima::thread::ThreadProxy<eprosima::create_thread<eprosima::fastdds::rtps::UDPChannelResource::UDPChannelResource(eprosima::fastdds::rtps::UDPTransportInterface*, eprosima::fastdds::rtps::eProsimaUDPSocket&, unsigned int, eprosima::fastrtps::rtps::Locator_t const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, eprosima::fastdds::rtps::TransportReceiverInterface*, eprosima::fastdds::rtps::ThreadSettings const&)::{lambda()#1}, unsigned int>(eprosima::fastdds::rtps::UDPChannelResource::UDPChannelResource(eprosima::fastdds::rtps::UDPTransportInterface*, eprosima::fastdds::rtps::eProsimaUDPSocket&, unsigned int, eprosima::fastrtps::rtps::Locator_t const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, eprosima::fastdds::rtps::TransportReceiverInterface*, eprosima::fastdds::rtps::ThreadSettings const&)::{lambda()#1}, eprosima::fastdds::rtps::ThreadSettings const&, char const*, unsigned int)::{lambda()#1}>(void*) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #4  0x0000fffff78c0398 in start_thread (arg=0x80e0c0) at ./nptl/pthread_create.c:442
+[gdb-5] #5  0x0000fffff7929e9c in thread_start () at ../sysdeps/unix/sysv/linux/aarch64/clone.S:79
+[gdb-5] 
+[gdb-5] Thread 7 (Thread 0xffffece5d880 (LWP 278334) "dds.udp.29150"):
+[gdb-5] #0  0x0000fffff792bde4 in __libc_recvfrom (fd=23, buf=0xaaaaaab5e440, len=65500, flags=0, addr=..., addrlen=0xffffece5c9a8) at ../sysdeps/unix/sysv/linux/recvfrom.c:27
+[gdb-5] #1  0x0000fffff6994fe8 in eprosima::fastdds::rtps::UDPChannelResource::Receive(unsigned char*, unsigned int, unsigned int&, eprosima::fastrtps::rtps::Locator_t&) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #2  0x0000fffff699592c in eprosima::fastdds::rtps::UDPChannelResource::perform_listen_operation(eprosima::fastrtps::rtps::Locator_t) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #3  0x0000fffff6996040 in void* eprosima::thread::ThreadProxy<eprosima::create_thread<eprosima::fastdds::rtps::UDPChannelResource::UDPChannelResource(eprosima::fastdds::rtps::UDPTransportInterface*, eprosima::fastdds::rtps::eProsimaUDPSocket&, unsigned int, eprosima::fastrtps::rtps::Locator_t const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, eprosima::fastdds::rtps::TransportReceiverInterface*, eprosima::fastdds::rtps::ThreadSettings const&)::{lambda()#1}, unsigned int>(eprosima::fastdds::rtps::UDPChannelResource::UDPChannelResource(eprosima::fastdds::rtps::UDPTransportInterface*, eprosima::fastdds::rtps::eProsimaUDPSocket&, unsigned int, eprosima::fastrtps::rtps::Locator_t const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, eprosima::fastdds::rtps::TransportReceiverInterface*, eprosima::fastdds::rtps::ThreadSettings const&)::{lambda()#1}, eprosima::fastdds::rtps::ThreadSettings const&, char const*, unsigned int)::{lambda()#1}>(void*) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #4  0x0000fffff78c0398 in start_thread (arg=0x80e0c0) at ./nptl/pthread_create.c:442
+[gdb-5] #5  0x0000fffff7929e9c in thread_start () at ../sysdeps/unix/sysv/linux/aarch64/clone.S:79
+[gdb-5] 
+[gdb-5] Thread 6 (Thread 0xffffed66d880 (LWP 278333) "dds.udp.29172"):
+[gdb-5] #0  0x0000fffff792bde4 in __libc_recvfrom (fd=21, buf=0xaaaaaab4e450, len=65500, flags=0, addr=..., addrlen=0xffffed66c9a8) at ../sysdeps/unix/sysv/linux/recvfrom.c:27
+[gdb-5] #1  0x0000fffff6994fe8 in eprosima::fastdds::rtps::UDPChannelResource::Receive(unsigned char*, unsigned int, unsigned int&, eprosima::fastrtps::rtps::Locator_t&) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #2  0x0000fffff699592c in eprosima::fastdds::rtps::UDPChannelResource::perform_listen_operation(eprosima::fastrtps::rtps::Locator_t) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #3  0x0000fffff6996040 in void* eprosima::thread::ThreadProxy<eprosima::create_thread<eprosima::fastdds::rtps::UDPChannelResource::UDPChannelResource(eprosima::fastdds::rtps::UDPTransportInterface*, eprosima::fastdds::rtps::eProsimaUDPSocket&, unsigned int, eprosima::fastrtps::rtps::Locator_t const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, eprosima::fastdds::rtps::TransportReceiverInterface*, eprosima::fastdds::rtps::ThreadSettings const&)::{lambda()#1}, unsigned int>(eprosima::fastdds::rtps::UDPChannelResource::UDPChannelResource(eprosima::fastdds::rtps::UDPTransportInterface*, eprosima::fastdds::rtps::eProsimaUDPSocket&, unsigned int, eprosima::fastrtps::rtps::Locator_t const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, eprosima::fastdds::rtps::TransportReceiverInterface*, eprosima::fastdds::rtps::ThreadSettings const&)::{lambda()#1}, eprosima::fastdds::rtps::ThreadSettings const&, char const*, unsigned int)::{lambda()#1}>(void*) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #4  0x0000fffff78c0398 in start_thread (arg=0x80e0c0) at ./nptl/pthread_create.c:442
+[gdb-5] #5  0x0000fffff7929e9c in thread_start () at ../sysdeps/unix/sysv/linux/aarch64/clone.S:79
+[gdb-5] 
+[gdb-5] Thread 5 (Thread 0xffffede7d880 (LWP 278331) "dds.ev.0"):
+[gdb-5] #0  __futex_abstimed_wait_common64 (private=0, cancel=true, abstime=0xffffede7cea8, op=137, expected=0, futex_word=0xaaaaaab3e56c) at ./nptl/futex-internal.c:57
+[gdb-5] #1  __futex_abstimed_wait_common (cancel=true, private=0, abstime=0xffffede7cea8, clockid=0, expected=0, futex_word=0xaaaaaab3e56c) at ./nptl/futex-internal.c:87
+[gdb-5] #2  __GI___futex_abstimed_wait_cancelable64 (futex_word=futex_word@entry=0xaaaaaab3e56c, expected=expected@entry=0, clockid=clockid@entry=1, abstime=abstime@entry=0xffffede7cea8, private=private@entry=0) at ./nptl/futex-internal.c:139
+[gdb-5] #3  0x0000fffff78bfc9c in __pthread_cond_wait_common (abstime=0xffffede7cea8, clockid=1, mutex=0xaaaaaab3d580, cond=0xaaaaaab3e540) at ./nptl/pthread_cond_wait.c:503
+[gdb-5] #4  ___pthread_cond_clockwait64 (abstime=0xffffede7cea8, clockid=1, mutex=0xaaaaaab3d580, cond=0xaaaaaab3e540) at ./nptl/pthread_cond_wait.c:691
+[gdb-5] #5  ___pthread_cond_clockwait64 (cond=0xaaaaaab3e540, mutex=0xaaaaaab3d580, clockid=1, abstime=0xffffede7cea8) at ./nptl/pthread_cond_wait.c:679
+[gdb-5] #6  0x0000fffff67ceab4 in eprosima::fastrtps::rtps::ResourceEvent::event_service() () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #7  0x0000fffff67ced50 in void* eprosima::thread::ThreadProxy<eprosima::create_thread<eprosima::fastrtps::rtps::ResourceEvent::init_thread(eprosima::fastdds::rtps::ThreadSettings const&, char const*, unsigned int)::{lambda()#1}, unsigned int>(eprosima::fastrtps::rtps::ResourceEvent::init_thread(eprosima::fastdds::rtps::ThreadSettings const&, char const*, unsigned int)::{lambda()#1}, eprosima::fastdds::rtps::ThreadSettings const&, char const*, unsigned int)::{lambda()#1}>(void*) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #8  0x0000fffff78c0398 in start_thread (arg=0x80e0c0) at ./nptl/pthread_create.c:442
+[gdb-5] #9  0x0000fffff7929e9c in thread_start () at ../sysdeps/unix/sysv/linux/aarch64/clone.S:79
+[gdb-5] 
+[gdb-5] Thread 4 (Thread 0xfffff4f4e880 (LWP 278330) "dds.shm.wdog"):
+[gdb-5] #0  __futex_abstimed_wait_common64 (private=0, cancel=true, abstime=0xfffff4f4ded8, op=137, expected=0, futex_word=0xaaaaaab3b9b8) at ./nptl/futex-internal.c:57
+[gdb-5] #1  __futex_abstimed_wait_common (cancel=true, private=0, abstime=0xfffff4f4ded8, clockid=0, expected=0, futex_word=0xaaaaaab3b9b8) at ./nptl/futex-internal.c:87
+[gdb-5] #2  __GI___futex_abstimed_wait_cancelable64 (futex_word=futex_word@entry=0xaaaaaab3b9b8, expected=expected@entry=0, clockid=clockid@entry=1, abstime=abstime@entry=0xfffff4f4ded8, private=private@entry=0) at ./nptl/futex-internal.c:139
+[gdb-5] #3  0x0000fffff78bfc9c in __pthread_cond_wait_common (abstime=0xfffff4f4ded8, clockid=1, mutex=0xaaaaaab3b9c0, cond=0xaaaaaab3b990) at ./nptl/pthread_cond_wait.c:503
+[gdb-5] #4  ___pthread_cond_clockwait64 (abstime=0xfffff4f4ded8, clockid=1, mutex=0xaaaaaab3b9c0, cond=0xaaaaaab3b990) at ./nptl/pthread_cond_wait.c:691
+[gdb-5] #5  ___pthread_cond_clockwait64 (cond=0xaaaaaab3b990, mutex=0xaaaaaab3b9c0, clockid=1, abstime=0xfffff4f4ded8) at ./nptl/pthread_cond_wait.c:679
+[gdb-5] #6  0x0000fffff6bc5f08 in void* eprosima::thread::ThreadProxy<eprosima::create_thread<eprosima::fastdds::rtps::SharedMemWatchdog::SharedMemWatchdog()::{lambda()#1}>(eprosima::fastdds::rtps::SharedMemWatchdog::SharedMemWatchdog()::{lambda()#1}, eprosima::fastdds::rtps::ThreadSettings const&, char const*)::{lambda()#1}>(void*) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #7  0x0000fffff78c0398 in start_thread (arg=0x80e0c0) at ./nptl/pthread_create.c:442
+[gdb-5] #8  0x0000fffff7929e9c in thread_start () at ../sysdeps/unix/sysv/linux/aarch64/clone.S:79
+[gdb-5] 
+[gdb-5] Thread 3 (Thread 0xfffff575e880 (LWP 278329) "dds.log"):
+[gdb-5] #0  __futex_abstimed_wait_common64 (private=0, cancel=true, abstime=0x0, op=393, expected=0, futex_word=0xaaaaaab3aa78) at ./nptl/futex-internal.c:57
+[gdb-5] #1  __futex_abstimed_wait_common (cancel=true, private=0, abstime=0x0, clockid=0, expected=0, futex_word=0xaaaaaab3aa78) at ./nptl/futex-internal.c:87
+[gdb-5] #2  __GI___futex_abstimed_wait_cancelable64 (futex_word=futex_word@entry=0xaaaaaab3aa78, expected=expected@entry=0, clockid=clockid@entry=0, abstime=abstime@entry=0x0, private=private@entry=0) at ./nptl/futex-internal.c:139
+[gdb-5] #3  0x0000fffff78bf694 in __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0xaaaaaab3aa80, cond=0xaaaaaab3aa50) at ./nptl/pthread_cond_wait.c:503
+[gdb-5] #4  ___pthread_cond_wait (cond=0xaaaaaab3aa50, mutex=0xaaaaaab3aa80) at ./nptl/pthread_cond_wait.c:627
+[gdb-5] #5  0x0000fffff67c9ea8 in eprosima::fastdds::dds::detail::LogResources::run() () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #6  0x0000fffff67ca57c in void* eprosima::thread::ThreadProxy<eprosima::create_thread<eprosima::fastdds::dds::detail::LogResources::StartThread()::{lambda()#1}>(eprosima::fastdds::dds::detail::LogResources::StartThread()::{lambda()#1}, eprosima::fastdds::rtps::ThreadSettings const&, char const*)::{lambda()#1}>(void*) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #7  0x0000fffff78c0398 in start_thread (arg=0x80e0c0) at ./nptl/pthread_create.c:442
+[gdb-5] #8  0x0000fffff7929e9c in thread_start () at ../sysdeps/unix/sysv/linux/aarch64/clone.S:79
+[gdb-5] 
+[gdb-5] Thread 2 (Thread 0xfffff5f6e880 (LWP 278328) "lifecycle_manag"):
+[gdb-5] #0  __futex_abstimed_wait_common64 (private=<optimized out>, cancel=true, abstime=0x0, op=393, expected=0, futex_word=0xaaaaaab4aed0) at ./nptl/futex-internal.c:57
+[gdb-5] #1  __futex_abstimed_wait_common (cancel=true, private=<optimized out>, abstime=0x0, clockid=0, expected=0, futex_word=0xaaaaaab4aed0) at ./nptl/futex-internal.c:87
+[gdb-5] #2  __GI___futex_abstimed_wait_cancelable64 (futex_word=futex_word@entry=0xaaaaaab4aed0, expected=expected@entry=0, clockid=clockid@entry=0, abstime=abstime@entry=0x0, private=<optimized out>) at ./nptl/futex-internal.c:139
+[gdb-5] #3  0x0000fffff78c8804 in do_futex_wait (sem=sem@entry=0xaaaaaab4aed0, abstime=0x0, clockid=0) at ./nptl/sem_waitcommon.c:111
+[gdb-5] #4  0x0000fffff78c88c4 in __new_sem_wait_slow64 (sem=0xaaaaaab4aed0, abstime=0x0, clockid=0) at ./nptl/sem_waitcommon.c:183
+[gdb-5] #5  0x0000fffff7e54ccc in rclcpp::SignalHandler::wait_for_signal() () from /opt/ros/humble/lib/librclcpp.so
+[gdb-5] #6  0x0000fffff7e5600c in rclcpp::SignalHandler::deferred_signal_handler() () from /opt/ros/humble/lib/librclcpp.so
+[gdb-5] #7  0x0000fffff7af31fc in ?? () from /lib/aarch64-linux-gnu/libstdc++.so.6
+[gdb-5] #8  0x0000fffff78c0398 in start_thread (arg=0x80e0c0) at ./nptl/pthread_create.c:442
+[gdb-5] #9  0x0000fffff7929e9c in thread_start () at ../sysdeps/unix/sysv/linux/aarch64/clone.S:79
+[gdb-5] 
+[gdb-5] Thread 1 (Thread 0xfffff7f2d020 (LWP 278310) "lifecycle_manag"):
+[gdb-5] #0  __futex_abstimed_wait_common64 (private=0, cancel=true, abstime=0xffffffffd6f8, op=137, expected=0, futex_word=0xaaaaaae4e40c) at ./nptl/futex-internal.c:57
+[gdb-5] #1  __futex_abstimed_wait_common (cancel=true, private=0, abstime=0xffffffffd6f8, clockid=0, expected=0, futex_word=0xaaaaaae4e40c) at ./nptl/futex-internal.c:87
+[gdb-5] #2  __GI___futex_abstimed_wait_cancelable64 (futex_word=futex_word@entry=0xaaaaaae4e40c, expected=expected@entry=0, clockid=clockid@entry=1, abstime=abstime@entry=0xffffffffd6f8, private=private@entry=0) at ./nptl/futex-internal.c:139
+[gdb-5] #3  0x0000fffff78bfc9c in __pthread_cond_wait_common (abstime=0xffffffffd6f8, clockid=1, mutex=0xaaaaaae4e3b0, cond=0xaaaaaae4e3e0) at ./nptl/pthread_cond_wait.c:503
+[gdb-5] #4  ___pthread_cond_clockwait64 (abstime=0xffffffffd6f8, clockid=1, mutex=0xaaaaaae4e3b0, cond=0xaaaaaae4e3e0) at ./nptl/pthread_cond_wait.c:691
+[gdb-5] #5  ___pthread_cond_clockwait64 (cond=0xaaaaaae4e3e0, mutex=0xaaaaaae4e3b0, clockid=1, abstime=0xffffffffd6f8) at ./nptl/pthread_cond_wait.c:679
+[gdb-5] #6  0x0000fffff6a7db34 in eprosima::fastdds::dds::detail::WaitSetImpl::wait(std::vector<eprosima::fastdds::dds::Condition*, std::allocator<eprosima::fastdds::dds::Condition*> >&, eprosima::fastrtps::Time_t const&) () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #7  0x0000fffff6a7d208 in eprosima::fastdds::dds::WaitSet::wait(std::vector<eprosima::fastdds::dds::Condition*, std::allocator<eprosima::fastdds::dds::Condition*> >&, eprosima::fastrtps::Time_t) const () from /opt/ros/humble/lib/libfastrtps.so.2.14
+[gdb-5] #8  0x0000fffff6f3b0ac in rmw_fastrtps_shared_cpp::__rmw_wait(char const*, rmw_subscriptions_s*, rmw_guard_conditions_s*, rmw_services_s*, rmw_clients_s*, rmw_events_s*, rmw_wait_set_s*, rmw_time_s const*) () from /opt/ros/humble/lib/librmw_fastrtps_shared_cpp.so
+[gdb-5] #9  0x0000fffff7678010 in rcl_wait () from /opt/ros/humble/lib/librcl.so
+[gdb-5] #10 0x0000fffff7d9fd90 in rclcpp::Executor::wait_for_work(std::chrono::duration<long, std::ratio<1l, 1000000000l> >) () from /opt/ros/humble/lib/librclcpp.so
+[gdb-5] #11 0x0000fffff7da016c in rclcpp::Executor::get_next_executable(rclcpp::AnyExecutable&, std::chrono::duration<long, std::ratio<1l, 1000000000l> >) () from /opt/ros/humble/lib/librclcpp.so
+[gdb-5] #12 0x0000fffff7da4e28 in rclcpp::executors::SingleThreadedExecutor::spin() () from /opt/ros/humble/lib/librclcpp.so
+[gdb-5] #13 0x0000fffff7da3d10 in rclcpp::spin(std::shared_ptr<rclcpp::node_interfaces::NodeBaseInterface>) () from /opt/ros/humble/lib/librclcpp.so
+[gdb-5] #14 0x0000fffff7da408c in rclcpp::spin(std::shared_ptr<rclcpp::Node>) () from /opt/ros/humble/lib/librclcpp.so
+[gdb-5] #15 0x0000aaaaaaaa1e64 in main (argc=<optimized out>, argv=<optimized out>) at /home/agi/control_backend/candidates/nav2_lifecycle_shutdown/src/nav2_lifecycle_manager/src/main.cpp:24
+[INFO] [gdb-5]: process has finished cleanly [pid 278299]

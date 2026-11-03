@@ -1,0 +1,37 @@
+{
+  "state": "outbound_failed",
+  "workflow_succeeded": false,
+  "within_ground_truth_tolerance": false,
+  "backend": "official",
+  "scan_geometry": {
+    "fov_deg": 103.0,
+    "front_only": true,
+    "bins": 1440,
+    "range_max_m": 8.0,
+    "origin": "pelvis",
+    "ideal_rays": true
+  },
+  "map_sha256": "f6032f75ffd386361993a4b4864cf0816713fc27f6d037c88d929ae5d48562fb",
+  "shutdown": {
+    "nav2": 0,
+    "adapter": 0,
+    "trust": 0,
+    "amcl": 0,
+    "frames": 0
+  },
+  "home": [
+    -1.2609834960869686,
+    -4.817411279980068,
+    0.132725479103817
+  ],
+  "home_truth": [
+    -1.2609834960869686,
+    -4.817411279980068,
+    0.132725479103817
+  ],
+  "truth": [
+    -1.2510938670474665,
+    -4.9108068096818265,
+    1.6173160643797677
+  ]
+}

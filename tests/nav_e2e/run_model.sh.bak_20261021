@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Isolated model only. Never starts hardware localization or the MC adapter.
+set -e
+QAZBOT_TEST_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+QAZBOT_TEST_ROOT="$(cd -- "$QAZBOT_TEST_DIR/../.." && pwd)"
+export QAZBOT_SMAC_PREFIX="$QAZBOT_TEST_ROOT/candidates/nav2_smac_bounds/install/nav2_smac_planner"
+source "$QAZBOT_TEST_ROOT/ws/src/navigation/env.sh"
+export ROS_DOMAIN_ID=87 ROS_LOCALHOST_ONLY=1
+export FASTRTPS_DEFAULT_PROFILES_FILE="$QAZBOT_TEST_ROOT/tests/nav_e2e/dds_domain87_unicast.xml"
+exec python3 "$QAZBOT_TEST_DIR/run_suite.py" "${1:?Provide a new result directory name}"

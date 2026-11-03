@@ -1,0 +1,109 @@
+{"name": "adapter_dry_run_mode", "ok": true, "detail": {"state": "idle", "reason": "driver_not_armed", "latch": "", "live": false, "mode": "dry_run", "dry_run": true, "mc_source": "sdk_qazbot_nav2", "trusted": false, "registration": "dry_run", "registration_error": "", "sdk_service_ready": false, "motion_armed": false, "ready": false, "foreign_publishers": [], "counters": {"saturated": 0, "rejected": 0, "latched": 0, "published": 0}}}
+{"name": "no_MC_velocity_publisher", "ok": true, "detail": null}
+{"name": "no_registration_client", "ok": true, "detail": []}
+{"name": "no_owner_lock_in_dry_run", "ok": true, "detail": null}
+{"name": "trust_sees_served_map_identical", "ok": true, "detail": ""}
+{"name": "ambiguity_budget_default_conservative", "ok": true, "detail": {"degenerate_budget_m": 0.0, "frozen_window_s": 1.0}}
+{"name": "trust_baseline_start", "ok": true, "detail": null}
+{"name": "trust_baseline_finish", "ok": true, "detail": "baseline median 0.999 from 25 samples (min 0.999)"}
+{"name": "trust_anchor_confirmed", "ok": true, "detail": "anchor (x, y, yaw) = (-1.275, -6.375, 0.000)"}
+{"name": "real_trust_node_trusted", "ok": true, "detail": {"frozen_msg_motion_m": 0.0, "sigma_xy": 0.1, "sigma_yaw": 0.06324555320336758, "cloud_std": 0.07026052159091485, "second_mode_weight": 0.0, "scan_score": 0.9988040445583971, "scan_floor": 0.7990432356467178, "jump_xy": 0.0, "jump_yaw": 0.0, "anchor_err_xy": 0.0, "anchor_err_yaw": 0.0, "anchor_limit_xy": 0.15, "path_since_anchor": 0.0}}
+{"name": "coordinator_accepts_dry_run_driver", "ok": true, "detail": {"busy": false, "latched": false, "gate": false, "fault": "", "source_zero": true, "trusted": true, "driver_ready": true, "driver_mode": "dry_run", "ready": true, "child_uuid": null}}
+{"name": "expected_smac_overlay_loaded", "ok": true, "detail": ["/home/agi/control_backend/candidates/nav2_smac_bounds/install/nav2_smac_planner/lib/libnav2_smac_planner_2d.so"]}
+{"name": "straight_accepted", "ok": true, "detail": null}
+{"name": "straight_succeeded", "ok": true, "detail": 4}
+{"name": "straight_stop_criterion", "ok": true, "detail": {"terminal_observed": true, "last_cmd": {"t_rel": 0.08, "value": [0.0, 0.0, 0.0]}, "last_nonzero_cmd": {"t_rel": -0.012, "value": [0.12, 0.0, 0.0]}, "nonzero_after_terminal": [], "window_samples": 49, "model_max_speed": 0.008683578547244098, "pose_drift": 0.0020423404783069254, "yaw_drift": 0.0, "nonzero_in_window": 0}}
+{"name": "straight_model_pose", "ok": true, "detail": {"pose": [0.161962738210615, -6.375, 0.0], "xy_error": 0.06303726178938501, "yaw_error": 0.0, "tol": [0.1, 0.1]}}
+{"name": "straight_limits", "ok": true, "detail": null}
+{"name": "straight_adapter_idle_after", "ok": true, "detail": {"state": "idle", "reason": "no_command", "latch": "", "live": false, "mode": "dry_run", "dry_run": true, "mc_source": "sdk_qazbot_nav2", "trusted": true, "registration": "dry_run", "registration_error": "", "sdk_service_ready": false, "motion_armed": true, "ready": true, "foreign_publishers": [], "counters": {"saturated": 0, "rejected": 0, "latched": 0, "published": 317}}}
+{"name": "rotate_in_place_accepted", "ok": true, "detail": null}
+{"name": "rotate_in_place_succeeded", "ok": true, "detail": 4}
+{"name": "rotate_in_place_stop_criterion", "ok": true, "detail": {"terminal_observed": true, "last_cmd": {"t_rel": 0.074, "value": [0.0, 0.0, 0.0]}, "last_nonzero_cmd": {"t_rel": 0.001, "value": [0.0, 0.0, 0.425]}, "nonzero_after_terminal": [], "window_samples": 51, "model_max_speed": 0.008959393832708773, "pose_drift": 0.0, "yaw_drift": 0.0021123975660672922, "nonzero_in_window": 0}}
+{"name": "rotate_in_place_model_pose", "ok": true, "detail": {"pose": [-1.275, -6.375, 1.6213945376739818], "xy_error": 0.0, "yaw_error": 0.050598210879085226, "tol": [0.1, 0.1]}}
+{"name": "rotate_in_place_limits", "ok": true, "detail": null}
+{"name": "already_there_accepted", "ok": true, "detail": null}
+{"name": "already_there_succeeded", "ok": true, "detail": 4}
+{"name": "already_there_stop_criterion", "ok": true, "detail": {"terminal_observed": true, "last_cmd": null, "last_nonzero_cmd": null, "nonzero_after_terminal": [], "window_samples": 51, "model_max_speed": 0.0, "pose_drift": 0.0, "yaw_drift": 0.0, "nonzero_in_window": 0}}
+{"name": "already_there_model_pose", "ok": true, "detail": {"pose": [-1.275, -6.375, 0.0], "xy_error": 0.0, "yaw_error": 0.0, "tol": [0.1, 0.1]}}
+{"name": "already_there_no_motion", "ok": true, "detail": []}
+{"name": "repeat_first_accepted", "ok": true, "detail": null}
+{"name": "repeat_while_active_rejected", "ok": true, "detail": null}
+{"name": "repeat_first_succeeded", "ok": true, "detail": 4}
+{"name": "repeat_first_stop_criterion", "ok": true, "detail": {"terminal_observed": true, "last_cmd": {"t_rel": 0.07, "value": [0.0, 0.0, 0.0]}, "last_nonzero_cmd": {"t_rel": -0.022, "value": [0.09, 0.0, 0.0]}, "nonzero_after_terminal": [], "window_samples": 51, "model_max_speed": 0.008834035349094898, "pose_drift": 0.002082490827587047, "yaw_drift": 0.0, "nonzero_in_window": 0}}
+{"name": "repeat_first_model_pose", "ok": true, "detail": {"pose": [-0.4362516017254501, -6.375, 0.0], "xy_error": 0.06125160172545008, "yaw_error": 0.0, "tol": [0.1, 0.1]}}
+{"name": "repeat_again_accepted", "ok": true, "detail": null}
+{"name": "repeat_again_succeeded", "ok": true, "detail": 4}
+{"name": "repeat_again_stop_criterion", "ok": true, "detail": {"terminal_observed": true, "last_cmd": null, "last_nonzero_cmd": null, "nonzero_after_terminal": [], "window_samples": 51, "model_max_speed": 1.1645823916044649e-09, "pose_drift": 2.7444957417799287e-10, "yaw_drift": 0.0, "nonzero_in_window": 0}}
+{"name": "repeat_again_model_pose", "ok": true, "detail": {"pose": [-0.4362128433981599, -6.375, 0.0], "xy_error": 0.06121284339815991, "yaw_error": 0.0, "tol": [0.1, 0.1]}}
+{"name": "repeat_again_no_motion", "ok": true, "detail": []}
+{"name": "cancel_goal_accepted", "ok": true, "detail": null}
+{"name": "cancel_terminal", "ok": true, "detail": 5}
+{"name": "cancel_stop_criterion", "ok": true, "detail": {"terminal_observed": true, "last_cmd": {"t_rel": 0.065, "value": [0.0, 0.0, 0.0]}, "last_nonzero_cmd": {"t_rel": -0.035, "value": [0.25999999999999995, 0.0, 0.0]}, "nonzero_after_terminal": [], "window_samples": 50, "model_max_speed": 0.008610333158538628, "pose_drift": 0.002026592040060393, "yaw_drift": 0.0, "nonzero_in_window": 0}}
+{"name": "cancel_adapter_not_latched", "ok": true, "detail": {"state": "idle", "reason": "no_command", "latch": "", "live": false, "mode": "dry_run", "dry_run": true, "mc_source": "sdk_qazbot_nav2", "trusted": true, "registration": "dry_run", "registration_error": "", "sdk_service_ready": false, "motion_armed": true, "ready": true, "foreign_publishers": [], "counters": {"saturated": 0, "rejected": 0, "latched": 0, "published": 795}}}
+{"name": "resume_after_cancel", "ok": true, "detail": null}
+{"name": "obstacle_goal_accepted", "ok": true, "detail": null}
+{"name": "obstacle_goal_not_succeeded", "ok": true, "detail": {"status": 6, "fault": ""}}
+{"name": "obstacle_stop_criterion", "ok": true, "detail": {"terminal_observed": true, "last_cmd": {"t_rel": 0.099, "value": [0.0, 0.0, 0.0]}, "last_nonzero_cmd": {"t_rel": -0.008, "value": [0.12000000000000002, 0.0, 0.0]}, "nonzero_after_terminal": [], "window_samples": 51, "model_max_speed": 0.008928749845192324, "pose_drift": 0.0021046774107658095, "yaw_drift": 0.0, "nonzero_in_window": 0}}
+{"name": "obstacle_body_clearance", "ok": true, "detail": {"pose": [-0.7192544486572737, -6.375, 0.0], "clearance": 0.7442544486572737}}
+{"name": "unreachable_accepted_for_evaluation", "ok": true, "detail": null}
+{"name": "unreachable_aborted", "ok": true, "detail": 6}
+{"name": "unreachable_no_motion", "ok": true, "detail": null}
+{"name": "left_accepted_for_planning", "ok": true, "detail": null}
+{"name": "left_fails_without_crash", "ok": true, "detail": 6}
+{"name": "left_no_motion", "ok": true, "detail": null}
+{"name": "right_accepted_for_planning", "ok": true, "detail": null}
+{"name": "right_fails_without_crash", "ok": true, "detail": 6}
+{"name": "right_no_motion", "ok": true, "detail": null}
+{"name": "bottom_accepted_for_planning", "ok": true, "detail": null}
+{"name": "bottom_fails_without_crash", "ok": true, "detail": 6}
+{"name": "bottom_no_motion", "ok": true, "detail": null}
+{"name": "top_accepted_for_planning", "ok": true, "detail": null}
+{"name": "top_fails_without_crash", "ok": true, "detail": 6}
+{"name": "top_no_motion", "ok": true, "detail": null}
+{"name": "occupied_accepted_for_planning", "ok": true, "detail": null}
+{"name": "occupied_fails_without_crash", "ok": true, "detail": 6}
+{"name": "occupied_no_motion", "ok": true, "detail": null}
+{"name": "rviz_goal_pose_stop_criterion", "ok": true, "detail": {"terminal_observed": true, "last_cmd": {"t_rel": -0.056, "value": [0.0, 0.0, 0.0]}, "last_nonzero_cmd": {"t_rel": -0.154, "value": [0.09, 0.0, 0.0]}, "nonzero_after_terminal": [], "window_samples": 51, "model_max_speed": 0.009119207480221655, "pose_drift": 0.0021495848016694907, "yaw_drift": 0.0, "nonzero_in_window": 0}}
+{"name": "rviz_goal_pose_model_pose", "ok": true, "detail": {"pose": [-0.8335649401826664, -6.375, 0.0], "xy_error": 0.058564940182666336, "yaw_error": 0.0, "tol": [0.1, 0.1]}}
+{"name": "takeover_goal_A_accepted", "ok": true, "detail": null}
+{"name": "takeover_goal_A_terminal", "ok": true, "detail": 6}
+{"name": "takeover_stop_criterion", "ok": true, "detail": {"terminal_observed": true, "last_cmd": {"t_rel": -0.215, "value": [0.0, 0.0, 0.0]}, "last_nonzero_cmd": {"t_rel": -0.312, "value": [0.3, 0.0, 0.0]}, "nonzero_after_terminal": [], "window_samples": 50, "model_max_speed": 0.008663056792563281, "pose_drift": 0.0020389586789277825, "yaw_drift": 0.0, "nonzero_in_window": 0}}
+{"name": "takeover_adapter_latched", "ok": true, "detail": {"state": "latched", "reason": "operator_takeover", "latch": "operator_takeover", "live": false, "mode": "dry_run", "dry_run": true, "mc_source": "rc", "trusted": true, "registration": "dry_run", "registration_error": "", "sdk_service_ready": false, "motion_armed": false, "ready": false, "foreign_publishers": [], "counters": {"saturated": 0, "rejected": 0, "latched": 1, "published": 1100}}}
+{"name": "takeover_internal_nav2_goal_terminal", "ok": true, "detail": 5}
+{"name": "takeover_release_stays_latched", "ok": true, "detail": [{"state": "latched", "reason": "operator_takeover", "latch": "operator_takeover", "live": false, "mode": "dry_run", "dry_run": true, "mc_source": "sdk_qazbot_nav2", "trusted": true, "registration": "dry_run", "registration_error": "", "sdk_service_ready": false, "motion_armed": false, "ready": false, "foreign_publishers": [], "counters": {"saturated": 0, "rejected": 0, "latched": 1, "published": 1100}}, {"busy": false, "latched": true, "gate": false, "fault": "operator_takeover", "source_zero": true, "trusted": true, "driver_ready": false, "driver_mode": "dry_run", "ready": false, "child_uuid": null}]}
+{"name": "takeover_release_no_remotion", "ok": true, "detail": {"late": [], "p0": [-1.1756552341760818, -6.375, 0.0], "p1": [-1.1756544797834043, -6.375, 0.0]}}
+{"name": "takeover_new_goal_refused_while_latched", "ok": true, "detail": null}
+{"name": "takeover_explicit_resume", "ok": true, "detail": ["resumed", "ready for a NEW goal; no cached command/goal replay"]}
+{"name": "takeover_resume_alone_no_remotion", "ok": true, "detail": {"late": [], "p0": [-1.1756544782106941, -6.375, 0.0], "p1": [-1.1756544780541116, -6.375, 0.0]}}
+{"name": "takeover_goal_A_not_revived", "ok": true, "detail": {"public": 6, "internal": 5}}
+{"name": "takeover_goal_B_accepted", "ok": true, "detail": null}
+{"name": "takeover_goal_B_succeeded", "ok": true, "detail": 4}
+{"name": "takeover_goal_B_stop_criterion", "ok": true, "detail": {"terminal_observed": true, "last_cmd": {"t_rel": 0.087, "value": [0.0, 0.0, 0.0]}, "last_nonzero_cmd": {"t_rel": -0.007, "value": [0.09, 0.0, 0.0]}, "nonzero_after_terminal": [], "window_samples": 50, "model_max_speed": 0.0091743655973566, "pose_drift": 0.0021593472166817618, "yaw_drift": 0.0, "nonzero_in_window": 0}}
+{"name": "takeover_goal_B_model_pose", "ok": true, "detail": {"pose": [-0.8335345720173107, -6.375, 0.0], "xy_error": 0.058534572017310715, "yaw_error": 0.0, "tol": [0.1, 0.1]}}
+{"name": "scan_loss_goal_accepted", "ok": true, "detail": null}
+{"name": "scan_loss_aborts", "ok": true, "detail": {"status": 6, "fault": ""}}
+{"name": "scan_loss_stop_criterion", "ok": true, "detail": {"terminal_observed": true, "last_cmd": {"t_rel": 0.056, "value": [0.0, 0.0, 0.0]}, "last_nonzero_cmd": {"t_rel": -0.046, "value": [0.3, 0.0, 0.0]}, "nonzero_after_terminal": [], "window_samples": 50, "model_max_speed": 0.009048374295911892, "pose_drift": 0.002130008979935427, "yaw_drift": 0.0, "nonzero_in_window": 0}}
+{"name": "scan_loss_adapter_latched", "ok": true, "detail": "localization_untrusted"}
+{"name": "scan_loss_recovery_stays_latched", "ok": true, "detail": {"busy": false, "latched": true, "gate": false, "fault": "localization_untrusted", "source_zero": true, "trusted": true, "driver_ready": false, "driver_mode": "dry_run", "ready": false, "child_uuid": null}}
+{"name": "scan_loss_after_recovery_no_remotion", "ok": true, "detail": {"late": [], "p0": [-1.0439964391285608, -6.375, 0.0], "p1": [-1.043996439128544, -6.375, 0.0]}}
+{"name": "scan_loss_old_goal_not_revived", "ok": true, "detail": {"busy": false, "latched": true, "gate": false, "fault": "localization_untrusted", "source_zero": true, "trusted": true, "driver_ready": false, "driver_mode": "dry_run", "ready": false, "child_uuid": null}}
+{"name": "scan_loss_resume", "ok": true, "detail": "ready for a NEW goal; no cached command/goal replay"}
+{"name": "odom_loss_goal_accepted", "ok": true, "detail": null}
+{"name": "odom_loss_aborts", "ok": true, "detail": {"status": 6, "fault": ""}}
+{"name": "odom_loss_stop_criterion", "ok": true, "detail": {"terminal_observed": true, "last_cmd": {"t_rel": 0.057, "value": [0.0, 0.0, 0.0]}, "last_nonzero_cmd": {"t_rel": -0.039, "value": [0.3, 0.0, 0.0]}, "nonzero_after_terminal": [], "window_samples": 50, "model_max_speed": 0.0086016837376041, "pose_drift": 0.0020244959488811, "yaw_drift": 0.0, "nonzero_in_window": 0}}
+{"name": "odom_loss_adapter_latched", "ok": true, "detail": "localization_untrusted"}
+{"name": "odom_loss_recovery_stays_latched", "ok": true, "detail": {"busy": false, "latched": true, "gate": false, "fault": "localization_untrusted", "source_zero": true, "trusted": true, "driver_ready": false, "driver_mode": "dry_run", "ready": false, "child_uuid": null}}
+{"name": "odom_loss_after_recovery_no_remotion", "ok": true, "detail": {"late": [], "p0": [-1.0388428554648803, -6.375, 0.0], "p1": [-1.038842855464837, -6.375, 0.0]}}
+{"name": "odom_loss_old_goal_not_revived", "ok": true, "detail": {"busy": false, "latched": true, "gate": false, "fault": "localization_untrusted", "source_zero": true, "trusted": true, "driver_ready": false, "driver_mode": "dry_run", "ready": false, "child_uuid": null}}
+{"name": "odom_loss_resume", "ok": true, "detail": "ready for a NEW goal; no cached command/goal replay"}
+{"name": "amcl_loss_goal_accepted", "ok": true, "detail": null}
+{"name": "amcl_loss_aborts", "ok": true, "detail": {"status": 6, "fault": ""}}
+{"name": "amcl_loss_stop_criterion", "ok": true, "detail": {"terminal_observed": true, "last_cmd": {"t_rel": 0.092, "value": [0.0, 0.0, 0.0]}, "last_nonzero_cmd": {"t_rel": 0.001, "value": [0.15000000000000002, 0.0, 0.0]}, "nonzero_after_terminal": [], "window_samples": 50, "model_max_speed": 0.008703826329737683, "pose_drift": 0.002048573319148428, "yaw_drift": 0.0, "nonzero_in_window": 0}}
+Traceback (most recent call last):
+  File "/home/agi/control_backend/tests/nav_e2e/run_suite_real.py", line 273, in <module>
+    fault_case(label, lambda k=key: toggles[k].publish(off), lambda k=key: toggles[k].publish(on), latch)
+  File "/home/agi/control_backend/tests/nav_e2e/run_suite_real.py", line 164, in fault_case
+    if expect_latch: wait(lambda: S['adapter'].get('state') == 'latched', 5); check(label + '_adapter_latched', S['adapter'].get('latch') in expect_latch, S['adapter'].get('latch'))
+  File "/home/agi/control_backend/tests/nav_e2e/run_suite_real.py", line 82, in wait
+    if time.monotonic() > end: raise RuntimeError('observation deadline: ' + json.dumps(dict(c=S['coord'], a=S['adapter'], t=S['trust'].get('reasons'))))
+RuntimeError: observation deadline: {"c": {"busy": false, "latched": false, "gate": false, "fault": "", "source_zero": true, "trusted": false, "driver_ready": false, "driver_mode": "dry_run", "ready": false, "child_uuid": null}, "a": {"state": "idle", "reason": "no_command", "latch": "", "live": false, "mode": "dry_run", "dry_run": true, "mc_source": "sdk_qazbot_nav2", "trusted": false, "registration": "dry_run", "registration_error": "", "sdk_service_ready": false, "motion_armed": true, "ready": false, "foreign_publishers": [], "counters": {"saturated": 0, "rejected": 2, "latched": 3, "published": 1427}}, "t": ["T1_tf_stale"]}

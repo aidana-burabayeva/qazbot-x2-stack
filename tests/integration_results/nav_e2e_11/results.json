@@ -1,0 +1,20 @@
+{
+  "checks": [
+    {
+      "name": "straight_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "straight_succeeded",
+      "ok": false,
+      "detail": 6
+    }
+  ],
+  "shutdown": {
+    "nav2": 0,
+    "model": 0,
+    "abnormal_children": 0
+  },
+  "scope": "D1 grid + real Nav2 + ideal localization fixture + existing MC model; no AMCL/SDK qualification"
+}

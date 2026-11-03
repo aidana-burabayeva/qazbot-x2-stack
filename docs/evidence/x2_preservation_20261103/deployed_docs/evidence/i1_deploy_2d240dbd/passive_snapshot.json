@@ -1,0 +1,395 @@
+{
+  "snapshot_wall": 1793184965.776238,
+  "source_commit": "2d240dbd09ca69de87e9ac4b1acde735293ad6b2",
+  "initialposes": 1,
+  "trust_samples": 2485,
+  "trust_last": {
+    "kind": "trust",
+    "wall": 1793184860.775337,
+    "value": {
+      "trusted": true,
+      "ready": true,
+      "motion_ok": true,
+      "reasons": [],
+      "diagnostics": [
+        "T2_covariance",
+        "T3_particles",
+        "T4_no_baseline",
+        "T4_scan_score",
+        "T6_no_anchor"
+      ],
+      "metrics": {
+        "sigma_xy": 0.4874913747788363,
+        "sigma_yaw": 0.23095676413927607,
+        "cloud_std": 0.3290973470294749,
+        "second_mode_weight": 0.6423211605802902,
+        "scan_score": 0.16400627073493879,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      },
+      "admission_policy": "go2",
+      "initialized": true,
+      "ready_cause": "",
+      "anchor": false,
+      "baseline": null,
+      "moving": false,
+      "map_sha256": "f6032f75ffd386361993a4b4864cf0816713fc27f6d037c88d929ae5d48562fb",
+      "map_ok": "",
+      "odom_source": "native_imu",
+      "odom_topic": "/qazbot_native/odom",
+      "stamp_rejections": {},
+      "input_callbacks": {
+        "_tf": {
+          "count": 17197,
+          "duration_s": 6.553400089615025e-05,
+          "max_duration_s": 0.06978522500139661,
+          "received": 17578.644359199
+        },
+        "_odom": {
+          "count": 15416,
+          "duration_s": 4.6975001168902963e-05,
+          "max_duration_s": 0.1595694089992321,
+          "received": 17578.642571407
+        },
+        "_scan": {
+          "count": 2656,
+          "duration_s": 0.00024309800210176036,
+          "max_duration_s": 0.05008160500074155,
+          "received": 17578.642822952
+        },
+        "_map": {
+          "count": 1,
+          "duration_s": 0.0003002539997396525,
+          "max_duration_s": 0.0003002539997396525,
+          "received": 17043.714573749
+        },
+        "_initialpose": {
+          "count": 1,
+          "duration_s": 0.001464951998059405,
+          "max_duration_s": 0.001464951998059405,
+          "received": 17302.690831615
+        },
+        "_amcl": {
+          "count": 1,
+          "duration_s": 0.0002616890014905948,
+          "max_duration_s": 0.0002616890014905948,
+          "received": 17302.782070824
+        },
+        "_cloud": {
+          "count": 1,
+          "duration_s": 0.010361284999817144,
+          "max_duration_s": 0.010361284999817144,
+          "received": 17302.897932082
+        }
+      },
+      "input_ages": {
+        "scan": 0.06075463516754098,
+        "odom": 0.02340641524278908,
+        "odom_msg": 0.0234258484269958,
+        "map": 0.004979834000550909
+      },
+      "scan_frame": "base_footprint",
+      "scan_frame_rejections": 0,
+      "scan_points": 309,
+      "experimental": {
+        "degenerate_budget_m": 0.0,
+        "frozen_window_s": 1.0
+      }
+    }
+  },
+  "last_summary": {
+    "kind": "summary",
+    "wall": 1793184860.595527,
+    "counts": {
+      "odom->base_footprint": 3004,
+      "trust": 512,
+      "native_odom": 2967,
+      "scan": 510,
+      "scan_obstacles": 510,
+      "scan_clearing": 510,
+      "costmap": 170,
+      "map->odom": 508,
+      "mc_state": 1015
+    },
+    "last": {
+      "odom->base_footprint": {
+        "receipt_wall": 1793184860.556794,
+        "stamp": 1793184860.547693,
+        "age": 0.009108781814575195
+      },
+      "trust": {
+        "receipt_wall": 1793184860.5869641
+      },
+      "native_odom": {
+        "receipt_wall": 1793184860.5586152,
+        "stamp": 1793184860.547693,
+        "age": 0.010930061340332031
+      },
+      "scan": {
+        "receipt_wall": 1793184860.578622,
+        "stamp": 1793184860.510366,
+        "age": 0.06826400756835938
+      },
+      "scan_obstacles": {
+        "receipt_wall": 1793184860.5792112,
+        "stamp": 1793184860.510366,
+        "age": 0.06885170936584473,
+        "width": 311,
+        "height": 1,
+        "frame": "base_footprint"
+      },
+      "scan_clearing": {
+        "receipt_wall": 1793184860.5801072,
+        "stamp": 1793184860.510366,
+        "age": 0.0697472095489502,
+        "width": 362,
+        "height": 1,
+        "frame": "base_footprint"
+      },
+      "costmap": {
+        "receipt_wall": 1793184860.0284252,
+        "stamp": 1793184860.0273807,
+        "age": 0.0010528564453125,
+        "width": 80,
+        "height": 80,
+        "lethal": 194,
+        "unknown": 0
+      },
+      "map->odom": {
+        "receipt_wall": 1793184860.5775514,
+        "stamp": 1793184861.510366,
+        "age": -0.9328067302703857
+      },
+      "mc_state": {
+        "receipt_wall": 1793184860.4919217,
+        "stamp": 1793184860.4898248,
+        "age": 0.002106189727783203,
+        "value": {
+          "header": {
+            "stamp": {
+              "sec": 1793184860,
+              "nanosec": 489824677
+            },
+            "frame_id": "",
+            "sequence": 175239,
+            "meas_stamp": {
+              "sec": 0,
+              "nanosec": 0
+            }
+          },
+          "input_source": {
+            "name": "rc",
+            "priority": 80,
+            "timeout": 1000
+          },
+          "action_info": {
+            "current_action": {
+              "value": 0
+            },
+            "action_desc": "STAND_DEFAULT",
+            "status": {
+              "value": 100
+            }
+          },
+          "runtime_model": {
+            "waist_status": true,
+            "left_hand_status": {
+              "value": 0
+            },
+            "right_hand_status": {
+              "value": 0
+            }
+          },
+          "motion_status": {
+            "player_state": {
+              "value": 0
+            },
+            "control_area": {
+              "value": 0
+            },
+            "motion": "0",
+            "type": {
+              "value": 1
+            }
+          },
+          "servo_status": {
+            "squat_enable": false,
+            "squat_offset": 0.0,
+            "squat_limit": 2,
+            "head_yaw_offset": 0.0,
+            "head_pitch_offset": 0.0,
+            "waist_yaw_offset": 0.0,
+            "waist_pitch_offset": 0.0,
+            "waist_roll_offset": 0.0
+          },
+          "fsm_state": {
+            "current_state": 4
+          },
+          "body_status": {
+            "value": 1
+          },
+          "speed_status": {
+            "speed_mode": {
+              "value": 1
+            },
+            "forward_bounds": {
+              "min_value": -1.0,
+              "max_value": 0.8
+            },
+            "lateral_bounds": {
+              "min_value": -1.0,
+              "max_value": 1.0
+            },
+            "angular_bounds": {
+              "min_value": -1.0,
+              "max_value": 1.0
+            }
+          }
+        }
+      }
+    },
+    "tf_gids": {
+      "odom->base_footprint": [
+        "unavailable_in_humble_message_info"
+      ],
+      "map->odom": [
+        "unavailable_in_humble_message_info"
+      ]
+    },
+    "publishers": {
+      "/qazbot_d1_map/tf": [
+        {
+          "node": "/qazbot_native_odom_bridge",
+          "gid": "010f881b00631ed900000000000011030000000000000000"
+        },
+        {
+          "node": "/qazbot_d1_map/amcl",
+          "gid": "010f881bcc628e9b00000000000021030000000000000000"
+        }
+      ],
+      "/qazbot_d1_map/tf_static": [],
+      "/qazbot_lio/scan_obstacles": [
+        {
+          "node": "/qazbot_level_bridge",
+          "gid": "010f881bae62732400000000000016030000000000000000"
+        }
+      ],
+      "/qazbot_lio/scan_clearing": [
+        {
+          "node": "/qazbot_level_bridge",
+          "gid": "010f881bae62732400000000000015030000000000000000"
+        }
+      ],
+      "/qazbot_lio/cloud_registered": [
+        {
+          "node": "/qazbot_lio_mapping",
+          "gid": "010f881b9562dd3e00000000000014030000000000000000"
+        }
+      ],
+      "/qazbot_native/odom": [
+        {
+          "node": "/qazbot_native_odom_bridge",
+          "gid": "010f881b00631ed900000000000012030000000000000000"
+        }
+      ],
+      "/qazbot_lio/scan": [
+        {
+          "node": "/qazbot_level_bridge",
+          "gid": "010f881bae62732400000000000014030000000000000000"
+        }
+      ],
+      "/aima/mc/locomotion/velocity": [
+        {
+          "node": "/aimrt_planning_planning_node4787",
+          "gid": "010f881bb3129726000000000002aa030000000000000000"
+        },
+        {
+          "node": "/soc0_rc3207",
+          "gid": "010fab07870c898d00000000000019030000000000000000"
+        },
+        {
+          "node": "/app_proxy",
+          "gid": "010fab07e80f670e00000000000034030000000000000000"
+        },
+        {
+          "node": "/soc2_interaction_slave1630",
+          "gid": "010ff60a5e064afe00000000000025030000000000000000"
+        }
+      ],
+      "/cmd_vel": [
+        {
+          "node": "/controller_server_ros_node",
+          "gid": "010f881bb312972600000000000212030000000000000000"
+        }
+      ],
+      "/qazbot_d1_map/cmd_vel": [],
+      "/qazbot_d1_map/cmd_vel_nav": [],
+      "/qazbot_d1_map/cmd_vel_authorized": []
+    }
+  },
+  "reason_counts": {
+    "T1_tf_stale": 1137,
+    "not_ready:awaiting_initialpose_and_amcl": 1129,
+    "T1_scan_stale": 59,
+    "T1_odom_message_stale": 7,
+    "T1_odom_stale": 7
+  },
+  "errors": [],
+  "stage": "FAIL_LIVE_FRESHNESS_ROLLED_BACK",
+  "motion_authorized": false,
+  "post_seed": {
+    "samples": 1356,
+    "ready_motion_ok_samples": 1301,
+    "reason_counts": {
+      "T1_tf_stale": 8,
+      "T1_scan_stale": 42,
+      "T1_odom_message_stale": 7,
+      "T1_odom_stale": 7
+    },
+    "max_input_ages": {
+      "scan": 1.207120269533334,
+      "odom": 0.6500895919780305,
+      "odom_msg": 0.7312871665126295
+    },
+    "max_t5": {
+      "jump_xy": 0,
+      "jump_yaw": 0
+    },
+    "ready_span_s": 275.59404850006104,
+    "blocked_samples": 55,
+    "continuous_ready_claim": false
+  },
+  "owned_processes_stopped": true,
+  "rollback_manifest": {
+    "status": "ROLLED_BACK",
+    "source_commit": "2d240dbd09ca69de87e9ac4b1acde735293ad6b2",
+    "files": {
+      "ws/src/lio/level_bridge.py": {
+        "before": "86c434ce0ee5a48de1a324f7a3eb5e2136f8d9d3f1b91b582f6fa522707be686",
+        "after": "c817a5ed503386be742fa7b6fdab2b3209bdefaf42be799d2a130cd198f9369b"
+      },
+      "ws/src/navigation/nav_control.launch.py": {
+        "before": "ebea6637578530f0b30be6dd5d720ef1011270ce2a4df902d2bd1e1b5c266bec",
+        "after": "c4e46506069481f3cebd3fef38af7e83bac858f9d6d4e344edeb657a137de38e"
+      }
+    },
+    "profile_sha256": "29d4c736a364691689ccc8f27c62f566c65af946df1b6fc9dd5ec03ae239ec63"
+  },
+  "obstacle": {
+    "operator_report": "Chair 1 m from frontmost robot/feet edge; no robot movement",
+    "samples": 400,
+    "roi_base_coordinates": {
+      "x": [
+        0.55,
+        1.45
+      ],
+      "abs_y_lt": 0.3
+    },
+    "first_roi_lethal": 0,
+    "last_roi_lethal": 55,
+    "max_roi_lethal": 99,
+    "removal_test": "NOT_RUN",
+    "object_identity": "Operator placement and new returns consistent; probe does not classify chair vs operator"
+  }
+}

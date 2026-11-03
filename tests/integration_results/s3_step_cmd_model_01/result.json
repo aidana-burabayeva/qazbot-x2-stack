@@ -1,0 +1,61 @@
+{
+  "passed": 4,
+  "total": 10,
+  "checks": [
+    {
+      "name": "trust_baseline_finish",
+      "ok": false,
+      "detail": "fewer than 20 samples"
+    },
+    {
+      "name": "trust_anchor_confirmed",
+      "ok": true,
+      "detail": "anchor (x, y, yaw) = (-1.275, -4.825, 0.000); READY at the next clean gate evaluation (see status ready / reasons)"
+    },
+    {
+      "name": "graph_no_mc_velocity_or_cmd_vel_publisher_before",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "c0_wrong_domain_refused",
+      "ok": true,
+      "detail": 4
+    },
+    {
+      "name": "c1_exit_done",
+      "ok": false,
+      "detail": [
+        2,
+        "localization_untrusted",
+        ""
+      ]
+    },
+    {
+      "name": "c1_two_steps_at_20hz",
+      "ok": false,
+      "detail": []
+    },
+    {
+      "name": "c1_zero_pause_after_each_step_ge_1s",
+      "ok": false,
+      "detail": []
+    },
+    {
+      "name": "c1_pause_rows_all_zero",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "c1_step_values_exact",
+      "ok": false,
+      "detail": null
+    },
+    {
+      "name": "c1_adapter_output_equals_tool_steps",
+      "ok": false,
+      "detail": []
+    }
+  ],
+  "scope": "domain 87 localhost; real adapter dry_run + real trust + real coordinator; no Nav2; no MC velocity"
+}

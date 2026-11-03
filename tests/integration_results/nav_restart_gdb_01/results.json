@@ -1,0 +1,83 @@
+{
+  "checks": [
+    {
+      "name": "goal_A_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "single_controller_before_fault",
+      "ok": true,
+      "detail": [
+        278216
+      ]
+    },
+    {
+      "name": "coherent_group_stopped",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "no_commands_after_group_exit",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "model_stopped",
+      "ok": true,
+      "detail": {
+        "before": [
+          -1.1866764071498124,
+          -6.374999995951443,
+          7.942844216595354e-08
+        ],
+        "after": [
+          -1.186594445398296,
+          -6.374999995944933,
+          7.948902579909447e-08
+        ]
+      }
+    },
+    {
+      "name": "restart_has_no_cached_goal",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "restart_does_not_move",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "new_goal_B_after_restart",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "new_goal_UUID",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "new_goal_B_succeeds",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "actual_pose_B",
+      "ok": true,
+      "detail": [
+        -0.863482528645863,
+        -6.374999946506023,
+        2.3680859103961074e-07
+      ]
+    }
+  ],
+  "shutdown": {
+    "nav2_restarted": 0,
+    "model": 0,
+    "abnormal_children": 0
+  },
+  "smac_libraries": [],
+  "scope": "D1 grid + real Nav2 + ideal localization fixture + existing MC model; no AMCL/SDK qualification"
+}

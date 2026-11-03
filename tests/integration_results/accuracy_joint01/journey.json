@@ -1,0 +1,115 @@
+{
+  "backend": "kinematic",
+  "map": "/workspace/control_backend/ws/src/maps/first_map_nav2_v3/map.yaml",
+  "home": [
+    -1.275,
+    -4.825,
+    0.0
+  ],
+  "home_truth": [
+    -1.275,
+    -4.825,
+    0.0
+  ],
+  "events": [
+    {
+      "time": 1793027228.7053888,
+      "event": "trust_reasons",
+      "reasons": [
+        "T1_tf_stale",
+        "T8_map_unseen",
+        "not_ready:awaiting_initialpose_and_amcl"
+      ]
+    },
+    {
+      "time": 1793027229.705375,
+      "event": "trust_reasons",
+      "reasons": [
+        "T1_tf_stale",
+        "not_ready:awaiting_initialpose_and_amcl"
+      ]
+    },
+    {
+      "time": 1793027230.3057206,
+      "event": "trust_reasons",
+      "reasons": []
+    },
+    {
+      "time": 1793027238.9127111,
+      "state": "ready",
+      "home": [
+        -1.275,
+        -4.825,
+        0.0
+      ],
+      "home_truth": [
+        -1.275,
+        -4.825,
+        0.0
+      ],
+      "estimated_pose": [
+        -1.2747106196648403,
+        -4.829572876060012,
+        0.000200415846546953
+      ]
+    },
+    {
+      "time": 1793027239.107657,
+      "state": "outbound",
+      "goal": [
+        -4.92280912399292,
+        2.026400327682495,
+        -1.3016294577170986
+      ],
+      "truth": [
+        -1.275,
+        -4.825,
+        0.0
+      ]
+    },
+    {
+      "time": 1793027308.5288792,
+      "state": "settling",
+      "truth": [
+        -5.1136834491051095,
+        1.980038838546751,
+        -1.188522058161797
+      ]
+    },
+    {
+      "time": 1793027309.5853019,
+      "state": "outbound_settled",
+      "truth": [
+        -5.1136834491051095,
+        1.980038838546751,
+        -1.2095382211620374
+      ],
+      "xy_error": 0.1964240200737109,
+      "yaw_error": 0.09209123655506124
+    },
+    {
+      "time": 1793027309.5856535,
+      "state": "return",
+      "goal": [
+        -1.275,
+        -4.825,
+        0.0
+      ],
+      "truth": [
+        -5.1136834491051095,
+        1.980038838546751,
+        -1.2095382211620374
+      ]
+    },
+    {
+      "time": 1793027332.3766937,
+      "state": "return_failed",
+      "status": 6,
+      "truth": [
+        -5.091388376483536,
+        -3.3541864318410677,
+        -0.7311097431695421
+      ]
+    }
+  ]
+}

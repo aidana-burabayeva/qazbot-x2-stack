@@ -1,0 +1,9 @@
+/qazbot_d1_map/nav2/lifecycle_manager_navigation:
+  ros__parameters:
+    attempt_respawn_reconnection: false
+    autostart: true
+    node_names: !!python/tuple
+    - controller_server
+    - velocity_smoother
+    - planner_server
+    - bt_navigator

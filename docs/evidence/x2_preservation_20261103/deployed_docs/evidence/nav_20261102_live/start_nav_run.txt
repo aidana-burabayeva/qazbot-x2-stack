@@ -1,0 +1,14 @@
+[16:55:28.168470816] DRY profile d0f2441516fa5737 nav_full=9a9f963ad7931bd0 nav_control=39b8a6ffb13547db gc=aed37cb57ab03313 adapter=c76ac1d163f9746f
+[16:55:30.814127382] adapter started DRY (pid 175974)
+[16:55:49.011282469] nav_full: managed_active=0 tf_wait=1
+[16:55:52.200990353] owned nav/motion: 175974 176072 176100 176130 176154 176166 176198 176213 
+[18:37:48.445357083] go_live: pre: mc=[ name: rc  action_desc: STAND_DEFAULT ] gc={"busy": false, "latched": true, "gate": false, "fault": "operator_stop", "source_zero": true, "trusted": true, "paused": false, "driver_ready": true, "driver_m adapter={"state": "idle", "reason": "no_command", "latch": "", "live": false, "mode": "dry_run", "dry_run": true, "mc_source": "rc", "trusted": true, "registration": "d
+[18:37:48.973965362] go_live: dry adapter 175974 stopped
+[18:37:51.041381415] go_live: live adapter pid 257874 sha c76ac1d163f9746f
+[18:37:58.616187949] go_live: register: 
+[18:38:01.629372500] go_live: [INFO] [1793615878.280732429] [qazbot_d1_map.motion_adapter]: SDK source registered; waiting for fresh authorized command
+[18:38:03.567653782] go_live: post: {"state": "idle", "reason": "driver_not_armed", "latch": "", "live": true, "mode": "live", "dry_run": false, "mc_source": "rc", "trusted": true, "registration": "registered", "registration_error": "", "sdk_service_ready": true, "motion_armed": false, "t1_pause": false, "ready": true, "foreign_publishers": [], "counters": {"saturated": 0, "rejected": 0, "latched": 0, "published": 0, "yaw_loop": 0, 
+[18:25:29.080182509] DRY profile d0f2441516fa5737 nav_full=9a9f963ad7931bd0 nav_control=39b8a6ffb13547db gc=aed37cb57ab03313 adapter=c76ac1d163f9746f
+[18:25:31.126260675] adapter started DRY (pid 242319)
+[18:25:41.895481101] nav_full: managed_active=0 tf_wait=1
+[18:25:44.929131888] owned nav/motion: 242319 242424 242437 242466 242483 242503 242524 242548 

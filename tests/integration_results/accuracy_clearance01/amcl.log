@@ -1,0 +1,78 @@
+[INFO] [launch]: All log files can be found below /tmp/home/.ros/log/2026-10-26-15-18-54-019456-b3389d823bad-21134
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [map_server-1]: process started with pid [21155]
+[map_server-1] [INFO] [1793027934.177991605] [qazbot_sim.map_server]: 
+[map_server-1] 	map_server lifecycle node launched. 
+[map_server-1] 	Waiting on external lifecycle transitions to activate
+[map_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[map_server-1] [INFO] [1793027934.178145342] [qazbot_sim.map_server]: Creating
+[INFO] [amcl-2]: process started with pid [21181]
+[amcl-2] [INFO] [1793027934.757957810] [qazbot_sim.amcl]: 
+[amcl-2] 	amcl lifecycle node launched. 
+[amcl-2] 	Waiting on external lifecycle transitions to activate
+[amcl-2] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[amcl-2] [INFO] [1793027934.758480473] [qazbot_sim.amcl]: Creating
+[INFO] [lifecycle_manager-3]: process started with pid [21193]
+[lifecycle_manager-3] [INFO] [1793027935.684055150] [qazbot_sim.lifecycle_manager_localization]: Creating
+[lifecycle_manager-3] [INFO] [1793027935.688212923] [qazbot_sim.lifecycle_manager_localization]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[lifecycle_manager-3] [INFO] [1793027937.689353662] [qazbot_sim.lifecycle_manager_localization]: Waiting for service map_server/get_state...
+[lifecycle_manager-3] [INFO] [1793027937.724755588] [qazbot_sim.lifecycle_manager_localization]: [34m[1mStarting managed nodes bringup...[0m[0m
+[lifecycle_manager-3] [INFO] [1793027937.724800554] [qazbot_sim.lifecycle_manager_localization]: [34m[1mConfiguring map_server[0m[0m
+[map_server-1] [INFO] [1793027937.725017196] [qazbot_sim.map_server]: Configuring
+[map_server-1] [INFO] [1793027937.725072048] [map_io]: Loading yaml file: /workspace/control_backend/ws/src/maps/first_map_nav2_v3/map.yaml
+[map_server-1] [INFO] [1793027937.725286121] [map_io]: resolution: 0.05
+[map_server-1] [INFO] [1793027937.725298166] [map_io]: origin[0]: -13.3
+[map_server-1] [INFO] [1793027937.725304224] [map_io]: origin[1]: -10.4
+[map_server-1] [INFO] [1793027937.725309545] [map_io]: origin[2]: 0
+[map_server-1] [INFO] [1793027937.725315211] [map_io]: free_thresh: 0.196
+[map_server-1] [INFO] [1793027937.725320733] [map_io]: occupied_thresh: 0.65
+[map_server-1] [INFO] [1793027937.725326924] [map_io]: mode: trinary
+[map_server-1] [INFO] [1793027937.725332634] [map_io]: negate: 0
+[map_server-1] [INFO] [1793027937.725556913] [map_io]: Loading image_file: /workspace/control_backend/ws/src/maps/first_map_nav2_v3/map.pgm
+[map_server-1] [INFO] [1793027937.744223523] [map_io]: Read map /workspace/control_backend/ws/src/maps/first_map_nav2_v3/map.pgm: 319 X 426 map @ 0.05 m/cell
+[lifecycle_manager-3] [INFO] [1793027937.748784644] [qazbot_sim.lifecycle_manager_localization]: [34m[1mConfiguring amcl[0m[0m
+[amcl-2] [INFO] [1793027937.748989238] [qazbot_sim.amcl]: Configuring
+[amcl-2] [INFO] [1793027937.749077169] [qazbot_sim.amcl]: initTransforms
+[amcl-2] [INFO] [1793027937.755906893] [qazbot_sim.amcl]: initPubSub
+[amcl-2] [INFO] [1793027937.759139121] [qazbot_sim.amcl]: Subscribed to map topic.
+[lifecycle_manager-3] [INFO] [1793027937.761822758] [qazbot_sim.lifecycle_manager_localization]: [34m[1mActivating map_server[0m[0m
+[map_server-1] [INFO] [1793027937.761970834] [qazbot_sim.map_server]: Activating
+[map_server-1] [INFO] [1793027937.762273897] [qazbot_sim.map_server]: Creating bond (map_server) to lifecycle manager.
+[amcl-2] [INFO] [1793027937.762595310] [qazbot_sim.amcl]: Received a 319 X 426 map @ 0.050 m/pix
+[lifecycle_manager-3] [INFO] [1793027937.866454503] [qazbot_sim.lifecycle_manager_localization]: Server map_server connected with bond.
+[lifecycle_manager-3] [INFO] [1793027937.866500528] [qazbot_sim.lifecycle_manager_localization]: [34m[1mActivating amcl[0m[0m
+[amcl-2] [INFO] [1793027937.866682273] [qazbot_sim.amcl]: Activating
+[amcl-2] [INFO] [1793027937.866713628] [qazbot_sim.amcl]: Creating bond (amcl) to lifecycle manager.
+[lifecycle_manager-3] [INFO] [1793027937.979221272] [qazbot_sim.lifecycle_manager_localization]: Server amcl connected with bond.
+[lifecycle_manager-3] [INFO] [1793027937.979289158] [qazbot_sim.lifecycle_manager_localization]: [34m[1mManaged nodes are active[0m[0m
+[lifecycle_manager-3] [INFO] [1793027937.979304372] [qazbot_sim.lifecycle_manager_localization]: [34m[1mCreating bond timer...[0m[0m
+[amcl-2] [INFO] [1793027938.031890165] [qazbot_sim.amcl]: createLaserObject
+[amcl-2] [INFO] [1793027938.121660513] [qazbot_sim.amcl]: initialPoseReceived
+[amcl-2] [WARN] [1793027938.121779107] [qazbot_sim.amcl]: Failed to transform initial pose in time (Lookup would require extrapolation into the future.  Requested time 1793027938.121717 but the latest data is at time 1793027938.069244, when looking up transform from frame [base_footprint] to frame [odom])
+[amcl-2] [INFO] [1793027938.121801450] [qazbot_sim.amcl]: Setting pose (1793027938.121801): -1.275 -4.825 0.000
+[amcl-2] [INFO] [1793027995.864168489] [qazbot_sim.amcl]: Message Filter dropping message: frame 'base_footprint' at time 1793027994.812 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[INFO] [lifecycle_manager-3]: sending signal 'SIGINT' to process[lifecycle_manager-3]
+[INFO] [amcl-2]: sending signal 'SIGINT' to process[amcl-2]
+[INFO] [map_server-1]: sending signal 'SIGINT' to process[map_server-1]
+[lifecycle_manager-3] [INFO] [1793028004.316937027] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[lifecycle_manager-3] [INFO] [1793028004.317051441] [qazbot_sim.lifecycle_manager_localization]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_localization)
+[lifecycle_manager-3] [INFO] [1793028004.317089857] [qazbot_sim.lifecycle_manager_localization]: [34m[1mTerminating bond timer...[0m[0m
+[amcl-2] [INFO] [1793028004.317884296] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[amcl-2] [INFO] [1793028004.317971383] [qazbot_sim.amcl]: Running Nav2 LifecycleNode rcl preshutdown (amcl)
+[amcl-2] [INFO] [1793028004.318028626] [qazbot_sim.amcl]: Deactivating
+[amcl-2] [INFO] [1793028004.318051027] [qazbot_sim.amcl]: Destroying bond (amcl) to lifecycle manager.
+[map_server-1] [INFO] [1793028004.320600018] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[map_server-1] [INFO] [1793028004.320705808] [qazbot_sim.map_server]: Running Nav2 LifecycleNode rcl preshutdown (map_server)
+[map_server-1] [INFO] [1793028004.320779550] [qazbot_sim.map_server]: Deactivating
+[map_server-1] [INFO] [1793028004.320803558] [qazbot_sim.map_server]: Destroying bond (map_server) to lifecycle manager.
+[amcl-2] [INFO] [1793028004.328356469] [qazbot_sim.amcl]: Cleaning up
+[map_server-1] [INFO] [1793028004.331031606] [qazbot_sim.map_server]: Cleaning up
+[map_server-1] [INFO] [1793028004.331130871] [qazbot_sim.map_server]: Destroying bond (map_server) to lifecycle manager.
+[amcl-2] [INFO] [1793028004.336694647] [qazbot_sim.amcl]: Destroying bond (amcl) to lifecycle manager.
+[map_server-1] [INFO] [1793028004.348236861] [qazbot_sim.map_server]: Destroying
+[lifecycle_manager-3] [INFO] [1793028004.359069130] [qazbot_sim.lifecycle_manager_localization]: Destroying lifecycle_manager_localization
+[amcl-2] [INFO] [1793028004.377084484] [qazbot_sim.amcl]: Destroying
+[INFO] [map_server-1]: process has finished cleanly [pid 21155]
+[INFO] [amcl-2]: process has finished cleanly [pid 21181]
+[INFO] [lifecycle_manager-3]: process has finished cleanly [pid 21193]

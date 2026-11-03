@@ -1,0 +1,13 @@
+PUB /qazbot_lio/cloud_registered 1 ['qazbot_lio_mapping']
+PUB /qazbot_lio/cloud_registered_body 1 ['qazbot_lio_mapping']
+PUB /qazbot_lio/scan 1 ['qazbot_level_bridge']
+PUB /qazbot_lio/scan_clearing 1 ['qazbot_level_bridge']
+PUB /qazbot_lio/scan_obstacles 1 ['qazbot_level_bridge']
+PUB /x2robot/scan/bluetooth 1 ['soc0_housekeeper']
+AMCL {'max_beams': 180, 'alpha1': 0.1, 'alpha2': 0.1, 'alpha3': 0.1, 'alpha4': 0.1, 'alpha5': 0.1, 'update_min_d': 0.1, 'update_min_a': 0.1, 'scan_topic': '/qazbot_lio/scan'}
+TRUST {'jump_xy_max': 0.25, 'jump_yaw_max': 0.25, 'admission_policy': 'go2', 'expected_map_sha256': '6fc67526d5314447d3ffa25d4144310d78b5202a649e87d852735b87c9f320e5'}
+CTRL no service
+STATUS localization_trust {"trusted": false, "ready": false, "motion_ok": false, "t1_transient": false, "reasons": ["T1_tf_stale", "not_ready:awaiting_initialpose_and_amcl"], "diagnostics": ["T1_amcl_pose_stale", "T3_no_particles", "T4_no_baseline", "T6_no_anchor"], "metrics": {"jump_xy": 0.0, "jump_yaw": 0.0}, "admission_policy": "go2", "initialized": false, "ready_cause": "awaiting_initialpose_and_amcl", "anchor": false, "baseline": null, "moving": false, "map_sha256": "6fc67526d5314447d3ffa25d4144310d78b5202a649e87d852735b87c9f320e5", "map_ok": "", "odom_source": "native_imu", "odom_topic": "/qazbot_native/odom", "stamp_rejections": {}, "input_callbacks": {"_odom": {"count": 2860, "duration_s": 7.814100001724e-05,
+STATUS goal_coordinator {"busy": false, "latched": false, "gate": false, "fault": "", "source_zero": true, "trusted": false, "paused": false, "driver_ready": false, "driver_mode": "live", "ready": false, "child_uuid": null}
+STATUS motion_adapter {"state": "idle", "reason": "registration_not_requested", "latch": "", "live": true, "mode": "live", "dry_run": false, "mc_source": "", "trusted": false, "registration": "not_requested", "registration_error": "", "sdk_service_ready": true, "motion_armed": false, "t1_pause": false, "ready": false, "foreign_publishers": [], "counters": {"saturated": 0, "rejected": 0, "latched": 0, "published": 0}}
+MC source= prio=0 action=PASSIVE_DEFAULT

@@ -1,0 +1,15 @@
+/aima/mc/locomotion/velocity:
+  history: keep_last
+  depth: 100
+  reliability: best_effort
+  durability: volatile
+/aima/mc/common/state:
+  history: keep_last
+  depth: 50
+  reliability: best_effort
+  durability: volatile
+/aima/mc/body_pose:
+  history: keep_last
+  depth: 50
+  reliability: best_effort
+  durability: volatile

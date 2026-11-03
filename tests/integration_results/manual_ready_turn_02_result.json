@@ -1,0 +1,108 @@
+{
+  "bag_finalized": true,
+  "odom_samples": 725,
+  "yaw_change_deg": 22.469273008660576,
+  "yaw_span_deg": 32.554653273999875,
+  "max_displacement_m": 0.08125294601058175,
+  "sdk_messages": 0,
+  "nonzero_rc_count": 450,
+  "first_nonzero": {
+    "t": 1792665917.6244712,
+    "source": "rc",
+    "vx": 0.0,
+    "wz": 0.019593938403804707
+  },
+  "last_nonzero": {
+    "t": 1792665927.351464,
+    "source": "rc",
+    "vx": 0.0,
+    "wz": 0.19231341826646753
+  },
+  "MC_last": {
+    "t": 1792665968.5200002,
+    "source": "rc",
+    "body": 1,
+    "fsm": 4
+  },
+  "AMCL_updates": 2,
+  "AMCL_first": {
+    "t": 1792665896.6325924,
+    "x": -7.290399675940325,
+    "y": 5.239225188782884,
+    "yaw": -1.591097916830748,
+    "sigma_xy": 0.4450865083176147,
+    "sigma_yaw": 0.21921342988549494
+  },
+  "AMCL_last": {
+    "t": 1792665927.380316,
+    "x": -7.263472586347454,
+    "y": 5.2222161406444085,
+    "yaw": -1.3063813028036357,
+    "sigma_xy": 0.4631138448344622,
+    "sigma_yaw": 0.23473021405793112
+  },
+  "trust_last": {
+    "t": 1792665968.4302068,
+    "trusted": false,
+    "ready": false,
+    "motion_ok": false,
+    "reasons": [
+      "not_ready:initialpose"
+    ],
+    "diagnostics": [
+      "T2_covariance",
+      "T3_particles",
+      "T4_scan_score",
+      "T6_no_anchor"
+    ],
+    "metrics": {
+      "sigma_xy": 0.506727323993026,
+      "sigma_yaw": 0.23473021405793112,
+      "cloud_std": 0.27259627128569336,
+      "second_mode_weight": 0.6792763157894737,
+      "scan_score": 0.4179874285410136,
+      "scan_floor": 0.5073741864294061,
+      "jump_xy": 0.0,
+      "jump_yaw": 0.0
+    },
+    "ready_cause": "initialpose",
+    "anchor": false,
+    "baseline": 0.6342177330367577,
+    "moving": false,
+    "map_sha256": "f6032f75ffd386361993a4b4864cf0816713fc27f6d037c88d929ae5d48562fb",
+    "map_ok": "",
+    "experimental": {
+      "degenerate_budget_m": 0.0,
+      "frozen_window_s": 1.0
+    }
+  },
+  "adapter_last": {
+    "state": "idle",
+    "reason": "driver_not_armed",
+    "latch": "",
+    "live": true,
+    "mode": "live",
+    "dry_run": false,
+    "mc_source": "rc",
+    "trusted": false,
+    "registration": "registered",
+    "registration_error": "",
+    "sdk_service_ready": true,
+    "motion_armed": false,
+    "ready": false,
+    "foreign_publishers": [],
+    "counters": {
+      "saturated": 0,
+      "rejected": 0,
+      "latched": 1,
+      "published": 2302
+    }
+  },
+  "joints": {
+    "samples": 3909,
+    "count": 31,
+    "begin": 1792665887.1686728,
+    "end": 1792665968.5221581,
+    "covers_nonzero_commands": true
+  }
+}

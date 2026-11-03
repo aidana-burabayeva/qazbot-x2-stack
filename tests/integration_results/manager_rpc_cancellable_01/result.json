@@ -1,0 +1,7 @@
+{
+  "manager_pid": 282878,
+  "gdb_exit": 1,
+  "manager_alive_after_shutdown_signal": false,
+  "fixed_prefix": "/home/agi/control_backend/candidates/nav2_lifecycle_shutdown/install/nav2_lifecycle_manager",
+  "manager_exited_while_controller_frozen": true
+}

@@ -1,0 +1,32 @@
+test_dry_run_does_not_latch_on_faults (test_adapter_core.DryRun) ... ok
+test_dry_run_reports_but_never_enters_live_states (test_adapter_core.DryRun) ... ok
+test_dry_run_sends_no_zero_burst (test_adapter_core.DryRun) ... ok
+test_cancel_gives_short_zero_burst_then_silence (test_adapter_core.EndOfMotion) ... ok
+test_idle_is_silent (test_adapter_core.EndOfMotion) ... ok
+test_impossible_goal_means_no_command_and_no_motion (test_adapter_core.EndOfMotion) ... ok
+test_lost_commands_stop_within_three_controller_periods (test_adapter_core.EndOfMotion) ... ok
+test_control_never_acquired_when_operator_holds_control (test_adapter_core.Latching) ... ok
+test_falling_while_driving_latches (test_adapter_core.Latching) ... ok
+test_foreign_sdk_source_is_refused (test_adapter_core.Latching) ... ok
+test_fsm_safe_refuses_motion (test_adapter_core.Latching) ... ok
+test_lateral_is_refused_by_default (test_adapter_core.Latching) ... ok
+test_localization_loss_latches_and_needs_resume (test_adapter_core.Latching) ... ok
+test_moving_fsm_is_allowed (test_adapter_core.Latching) ... ok
+test_non_finite_command_latches (test_adapter_core.Latching) ... ok
+test_operator_takeover_latches_and_never_auto_resumes (test_adapter_core.Latching) ... ok
+test_robot_not_standing_refuses_motion (test_adapter_core.Latching) ... ok
+test_stale_mc_state_refuses_motion (test_adapter_core.Latching) ... ok
+test_stop_service_latches (test_adapter_core.Latching) ... ok
+test_follows_a_change_of_mc_speed_mode (test_adapter_core.Nominal) ... ok
+test_route_passes_commands_through (test_adapter_core.Nominal) ... ok
+test_saturates_to_live_mc_bounds_and_counts (test_adapter_core.Nominal) ... ok
+test_small_speed_is_not_raised_to_a_minimum (test_adapter_core.Nominal) ... ok
+test_turn_in_place (test_adapter_core.Nominal) ... ok
+test_builtin_and_unprefixed_source_names_are_refused (test_adapter_core.Ownership) ... ok
+test_default_cmd_timeout_is_below_mc_silence_zeroing (test_adapter_core.Ownership) ... ok
+test_owner_lock_is_exclusive (test_adapter_core.Ownership) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 0.013s
+
+OK

@@ -1,0 +1,160 @@
+{
+  "poses": [
+    {
+      "header": {
+        "stamp": {
+          "sec": 1792493190,
+          "nanosec": 210333824
+        },
+        "frame_id": "map"
+      },
+      "pose": {
+        "pose": {
+          "position": {
+            "x": 0.8273825687934129,
+            "y": -7.459710635827955,
+            "z": 0.0
+          },
+          "orientation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.6057215801761857,
+            "w": 0.7956766725931235
+          }
+        },
+        "covariance": [
+          0.6518221279950773,
+          0.237251269439138,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.237251269439138,
+          0.630096254145851,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.11081913625290078
+        ]
+      }
+    }
+  ],
+  "tf_edges": {
+    "odom->base_footprint": {
+      "header": {
+        "stamp": {
+          "sec": 1792493728,
+          "nanosec": 410835981
+        },
+        "frame_id": "odom"
+      },
+      "child_frame_id": "base_footprint",
+      "transform": {
+        "translation": {
+          "x": -0.018484088469134324,
+          "y": 0.12326036053973502,
+          "z": 0.0
+        },
+        "rotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": -0.611327783787211,
+          "w": 0.7913774957438561
+        }
+      }
+    },
+    "map->odom": {
+      "header": {
+        "stamp": {
+          "sec": 1792493729,
+          "nanosec": 210669994
+        },
+        "frame_id": "map"
+      },
+      "child_frame_id": "odom",
+      "transform": {
+        "translation": {
+          "x": 0.8376062474363247,
+          "y": -7.364456799890545,
+          "z": 0.0
+        },
+        "rotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.959440511494523,
+          "w": 0.28191116491392804
+        }
+      }
+    }
+  },
+  "map": {
+    "frame": "map",
+    "info": {
+      "map_load_time": {
+        "sec": 1792492644,
+        "nanosec": 686377817
+      },
+      "resolution": 0.05000000074505806,
+      "width": 438,
+      "height": 415,
+      "origin": {
+        "position": {
+          "x": -8.15,
+          "y": -11.5,
+          "z": 0.0
+        },
+        "orientation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0,
+          "w": 1.0
+        }
+      }
+    },
+    "counts": {
+      "-1": 139414,
+      "100": 3009,
+      "0": 39347
+    },
+    "grid_sha256": "efec50e832f1caf5280115ca7b70774de10097f5e0ca6d03120774797b038204"
+  },
+  "states": {
+    "map_server": "active",
+    "amcl": "active"
+  },
+  "actions": {},
+  "/qazbot_d1_map/tf_publishers": [
+    "qazbot_level_bridge",
+    "amcl"
+  ],
+  "/qazbot_d1_map/map_publishers": [
+    "map_server"
+  ],
+  "/qazbot_d1_map/amcl_pose_publishers": [
+    "amcl"
+  ]
+}

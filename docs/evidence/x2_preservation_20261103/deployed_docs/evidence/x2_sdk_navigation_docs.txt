@@ -1,0 +1,1743 @@
+DOCUMENT SLAM
+5.5.2 SLAM（选装） — AimDK_X2 1.1.0 文档
+AimDK_X2
+1
+关于 AgiBot X2
+1.1 产品简介
+1.1.1 旗舰版（X2 Ultra）
+1.1.2 X2 EDU（人人造版）
+1.1.3 旗舰焕新版（X2 Ultra(new version)）
+1.2 机器人具体参数
+1.2.1 X2 系列参数
+1.3 计算单元
+1.3.1 标配计算单元
+1.3.2 开发计算单元具体参数
+1.4 用户调试接口
+1.4.1 X2 Ultra（旗舰版）
+1.4.2 X2 Ultra(new version)（旗舰焕新版）
+1.4.3 X2 EDU（人人造版）
+1.5 二次开发接口
+1.6 灵犀X2 传感器说明
+1.6.1 传感器能力及视场角示意图
+1.6.2 传感器具体参数
+激光雷达
+RGBD摄像头
+前视双目RGB摄像头
+前视交互RGB摄像头
+后视RGB摄像头
+触摸传感器
+独立惯性传感器（IMU）
+GNSS模块
+1.7 关节活动范围说明
+1.7.1 手臂可保证活动空间
+1.7.2 腿部可保证活动空间
+1.7.3 头部可保证活动空间
+1.7.4 腰部活动空间
+1.8 坐标系
+1.8.1 URDF 与出厂标定
+1.8.2 出厂标定参数
+2
+操作指南
+2.1 开机指南
+2.1.1 吊起开机（需移位机）(SDK推荐使用)
+2.1.2 平躺站起开机（无需移位机）
+2.1.3 坐下站起开机（无需移位机）
+2.2 机器人手机APP连接（Agibot Go APP）
+2.2.1 下载地址
+iOS
+Android
+操作步骤
+2.3 遥控手柄连接
+2.3.1 操作步骤
+2.4 关机指南
+2.4.1 辅助躺下机器人（无需移位机）
+Step 1: 进入站姿预备模式（位控站立）
+Step 2: 平躺机器人
+Step 3: 进入零力矩模式
+Step 5：将机器人按图示指引装箱
+2.4.2 坐下关机（无需移位机）
+Step 1：遥控机器人坐下
+Step 2：进入零力矩模式
+Step 3：关机
+Step 4: 将机器人按图示指引装箱
+3
+获取SDK
+4
+快速开始
+4.1 阅读用户使用指南，熟悉相关术语及安全注意事项
+4.2 选择开发模式
+4.2.1 开发计算单元直接使用 SDK（快速上手，仅旗舰版 / 旗舰焕新版）
+4.2.2 开发计算单元上使用容器开发（推荐，仅旗舰版 / 旗舰焕新版）
+4.2.3 上位机/外接算力包 + 跨机组网
+4.3 网络连接
+4.3.1 X2 Ultra 旗舰版 / X2 Ultra(new version) 旗舰焕新版
+4.3.2 X2 EDU 人人造版
+4.4 在容器中开发
+4.4.1 准备文件
+构建前必查：镜像源可达性
+构建前必查：
+/etc/subgid
+尾随空格
+Dockerfile
+run.sh
+4.4.2 构建镜像
+4.4.3 启动容器
+4.4.4 进入容器
+4.4.5 构建并运行
+4.5 首次运行前：构建 SDK
+4.6 运行一个代码示例
+4.6.1 获取机器人的当前状态
+4.6.2 控制机器人挥手
+4.7 代码编写
+4.7.1 项目概述
+4.7.2 在现有SDK工作空间中添加示例
+了解现有结构
+添加新的Python示例
+4.7.3 编写控制代码
+创建机器人控制类
+添加主程序入口
+注册到构建系统
+4.7.4 构建与运行
+构建项目
+运行项目
+4.7.5 代码解析
+机器人控制类
+4.7.6 扩展与优化
+添加更多动作和交互
+添加参数配置
+添加错误处理
+添加更多交互功能
+4.7.7 遇到问题时排查解决
+4.7.8 下一步学习
+4.7.9 小结
+5
+接口说明
+5.1 控制模块
+5.1.1 运动模式切换
+核心功能
+查询运动模式服务
+设置运动模式服务
+编程示例
+安全注意事项
+5.1.2 走跑控制
+控制功能
+走跑控制话题
+编程示例
+安全注意事项
+5.1.3 MC控制信号设置
+核心特性
+系统预置的输入源
+仲裁流程
+输入源管理服务
+编程示例
+注意事项
+5.1.4 运控状态查询
+运控状态话题
+状态字段说明
+5.1.5 上肢控制
+话题接口
+关节索引
+使用流程
+编程示例
+5.1.6 预设动作控制
+预设动作控制服务
+预设动作状态查询服务
+预设动作的优先级与打断机制
+编程示例
+安全注意事项
+5.1.7 灵创动作
+关于 LinkCraft
+接口说明
+编程示例
+5.1.8 末端执行器控制
+控制方式
+底层控制接口
+手部状态信息话题
+查询手部类型服务
+编程示例
+安全注意事项
+5.1.9 关节控制
+核心特性
+关节控制话题
+关节状态查询服务
+编程示例
+安全注意事项
+5.2 交互模块
+5.2.1 语音控制
+核心特性
+音量控制服务
+语音合成服务
+音频文件播放服务
+音频流播放功能集
+MIC音频流采集话题
+麦克风控制服务
+编程示例
+安全注意事项
+5.2.2 屏幕控制
+核心功能
+表情播放状态查询话题
+表情播放服务
+视频播放服务
+编程示例
+安全注意事项
+5.2.3 灯带控制
+核心特性
+灯带控制服务
+灯带状态话题
+编程示例
+5.2.4 灵心云交互
+关于 LinkSoul
+技术架构
+使用步骤
+5.3 故障与系统管理模块
+5.3.1 故障处理
+核心功能
+话题接口
+服务接口
+编程示例
+5.3.2 权限管理 （待上线）
+5.3.3 诊断码参考表
+如何使用本表
+告警级别说明
+后处理信号（robot_sig）
+高危故障速览
+PDU（驱动控制单元）
+健康管理模块
+硬件抽象层（ECAT，EtherCAT 关节控制）
+感知模块
+硬件抽象层（传感器）
+SLAM 模块
+导航模块
+运控模块
+交互模块
+状态管理模块
+建图模块
+定位模块
+硬件抽象层（电源）
+5.4 硬件抽象模块
+5.4.1 传感器接口
+核心功能
+标准传感器消息
+IMU话题
+头部触摸状态话题
+后视RGB相机话题
+双目相机话题
+深度相机话题
+Lidar话题
+GNSS话题
+编程示例
+安全注意事项
+5.4.2 电源管理单元 (PMU)
+核心功能
+电源管理话题
+安全注意事项
+5.5 感知模块（选装）
+5.5.1 视觉(待开放)
+5.5.2 SLAM（选装）
+地图构建
+地图获取
+重定位
+地图标识与坐标的获取
+编程示例
+5.5.3 导航（选装）
+导航任务话题
+接口说明
+坐标转换
+编程示例
+5.5.4 数据可视化
+Foxglove 可视化
+RSView 可视化
+RViz 可视化
+系统状态、日志、通信可视化
+5.6 系统模式与开发者模式
+5.6.1 查询系统状态
+系统状态话题
+查询系统模式服务
+5.6.2 进入开发者模式
+5.6.3 编程示例
+5.6.4 技术细节
+5.6.5 安全注意事项
+6
+示例代码
+6.1 Python接口使用示例
+6.1.1 进入开发者模式
+6.1.2 获取机器人模式
+6.1.3 设置机器人模式
+6.1.4 设置机器人动作
+6.1.5 夹爪控制
+6.1.6 灵巧手控制
+6.1.7 灵巧手触觉数据（T2.1支持）
+6.1.8 注册二开输入源
+6.1.9 获取当前输入源
+6.1.10 机器人走跑控制
+6.1.11 关节电机控制
+机器人关节控制示例
+6.1.12 键盘控制机器人
+6.1.13 拍照
+6.1.14 相机推流示例集
+深度相机数据订阅
+双目相机数据订阅
+头部后置单目相机数据订阅
+6.1.15 头部触摸传感器数据订阅
+6.1.16 激光雷达数据订阅
+6.1.17 IMU数据订阅
+6.1.18 播放视频
+6.1.19 音频文件播放
+6.1.20 TTS (文字转语音)
+6.1.21 麦克风数据接收
+6.1.22 麦克风原始流式数据接收
+6.1.23 获取当前麦克风
+6.1.24 切换麦克风
+6.1.25 原始流式音频播放
+6.1.26 表情控制
+6.1.27 地图构建
+6.1.28 使用地图进行重定位
+6.1.29 获取已存储的地图
+6.1.30 导航
+6.1.31 播放灵创动作
+6.1.32 群控播放灵创动作
+6.1.33 LED灯带控制
+6.1.34 GNSS定位数据订阅
+6.1.35 上肢控制
+6.1.36 订阅 HDS 诊断信息 / 查询历史事件
+6.2 C++接口使用示例
+6.2.1 进入开发者模式
+6.2.2 获取机器人模式
+6.2.3 设置机器人模式
+6.2.4 设置机器人动作
+6.2.5 夹爪控制
+6.2.6 灵巧手控制
+6.2.7 灵巧手触觉数据（T2.1支持）
+6.2.8 注册二开输入源
+6.2.9 获取当前输入源
+6.2.10 机器人走跑控制
+6.2.11 关节电机控制
+机器人关节控制示例
+6.2.12 键盘控制机器人
+6.2.13 拍照
+6.2.14 相机推流示例集
+深度相机数据订阅
+双目相机数据订阅
+头部后置单目相机数据订阅
+6.2.15 头部触摸传感器数据订阅
+6.2.16 激光雷达数据订阅
+6.2.17 IMU数据订阅
+6.2.18 播放视频
+6.2.19 音频文件播放
+6.2.20 TTS (文字转语音)
+6.2.21 麦克风数据接收
+6.2.22 麦克风原始流式数据接收
+6.2.23 获取当前麦克风
+6.2.24 切换麦克风
+6.2.25 原始流式音频播放
+6.2.26 表情控制
+6.2.27 地图构建
+6.2.28 使用地图进行重定位
+6.2.29 获取已存储的地图
+6.2.30 导航
+6.2.31 播放灵创动作
+6.2.32 群控播放灵创动作
+6.2.33 LED灯带控制
+6.2.34 GNSS定位数据订阅
+6.2.35 上肢控制
+6.2.36 订阅 HDS 诊断信息 / 查询历史事件
+7
+FAQ
+8
+特殊过渡方案声明
+8.1 关闭 X2 自带的交互能力，开发您自己的语音系统
+8.1.1 临时关闭内置交互系统操作步骤
+8.1.2 恢复内置交互系统操作步骤
+8.2 机器人运动状态精简，v0.7.x及之前的部分McAction状态码不再支持
+9
+二次开发边界与声明
+仿真与强化学习
+X2 RL Deployment
+1 使用说明
+1.1 环境依赖
+1.2 快速使用
+1.3 运行 RL 模型示例
+1.4 目录结构
+1.5 模型部署
+1.6 通信协议
+X2 Sim + MC Deployment
+1 X2 MuJoCo 运控仿真
+1.1 目录
+1.2 软件组成
+1.3 前置条件
+1.4 准备软件目录
+1.5 方案一：本地部署
+1.6 方案二：Docker 部署
+1.7 验证运动控制
+1.8 停止环境
+1.9 常见问题
+版本更新记录
+Changelog v1.1.0
+新开放功能
+现有功能调整
+迭代优化掉的功能
+Changelog v1.0.0
+新开放功能
+现有功能调整
+迭代优化掉的功能
+Changelog v0.9.0
+新开放功能
+现有功能调整
+迭代优化掉的功能
+Changelog v0.8.2
+新开放功能
+现有功能调整
+迭代优化掉的功能
+Changelog v0.8.1
+新开放功能
+现有功能调整
+迭代优化掉的功能
+Changelog v0.8.0
+新开放功能
+现有功能调整
+迭代优化掉的功能
+其他更新
+AimDK使用问题反馈
+AimDK_X2
+5
+接口说明
+5.5
+感知模块（选装）
+5.5.2
+SLAM（选装）
+5.5.2
+SLAM（选装）
+
+SLAM（同步定位与建图）模块提供地图构建、地图获取和重定位接口，支持机器人在未知环境中建立地图并基于已有地图进行精确定位。
+重要
+本处为选装组件, 如需使用本页面所述功能接口, 请联系售后技术支持
+地图构建
+
+使用话题控制建图流程的启停，并指定保存的地图名称。
+话题名称
+数据类型
+描述
+QoS
+频率
+/integrated_command
+std_msgs/String
+发布建图控制指令
+RELIABLE
++
+TRANSIENT_LOCAL
+用户发送（按需）
+指令格式
+：
+指令
+说明
+start_mapping
+开始建图
+stop_mapping:<map_name>
+停止建图并以
+<map_name>
+保存地图
+注意：
+发送
+stop_mapping
+指令后，地图保存需要一定时间。保存过程中系统可能因异常（如 SLAM 模块无响应、磁盘 I/O 慢等）导致超时失败（默认超时 120 秒）。可通过
+GetStoredMapByName
+服务按地图名称查询是否保存成功。
+地图获取
+
+服务名称
+数据类型
+描述
+/aimdk_5Fmsgs/srv/GetStoredMapByName
+GetStoredMapByName
+按地图名称获取已存储的地图数据
+GetStoredMapByName
+ros2-srv @ mm/srv/GetStoredMapByName.srv
+# 按地图名称获取已存储的地图数据
+# 服务名称: /aimdk_5Fmsgs/srv/GetStoredMapByName
+# 请求
+std_msgs
+/
+Header
+header
+# 请求头
+string
+map_name
+# 地图名称
+---
+# 响应
+uint64
+code
+# 返回码，0 表示成功
+std_msgs
+/
+Header
+header
+# 响应头
+nav_msgs
+/
+MapMetaData
+map_info
+# 地图信息（分辨率、宽高等）
+uint64
+map_version
+# 地图版本号
+string
+map_path
+# 地图 PNG 文件路径
+int8
+[]
+data
+# 地图栅格数据（-1/0/100）
+NaviPoint
+[]
+navi_points
+# 导航点拓扑信息
+QRPoint
+[]
+qr_points      # 二维码点拓扑信息
+HRPoint[] hr_
+points
+# 高精度点拓扑信息
+Path
+[]
+paths
+# 路径拓扑信息
+Region
+[]
+regions
+# 区域拓扑信息（含虚拟墙）
+uint64
+map_id
+# 地图 ID
+std_msgs/Header
+nav_msgs/MapMetaData
+NaviPoint
+ros2-msg @ mm/msg/NaviPoint.msg
+int32
+point_id
+# 点位 ID
+geometry_msgs
+/
+Pose2D
+navi_point
+# 导航点二维坐标位姿
+geometry_msgs/Pose2D
+QRPoint
+ros2-msg @ mm/msg/QRPoint.msg
+int32
+point_id
+# 点位 ID
+QRCode
+qr_code
+# 二维码信息
+QRCode
+ros2-msg @ common/QRCode.msg
+int32
+code
+# 二维码值
+geometry_msgs
+/
+Pose
+pose
+# 二维码位姿
+geometry_msgs/Pose
+HRPoint
+ros2-msg @ mm/msg/HRPoint.msg
+int32
+point_id
+# 点位 ID
+geometry_msgs
+/
+Pose
+pose
+# 高精度点的实时位姿
+QRCode
+[]
+qr_list         # 关联的二维码点列表
+bool use_
+head
+# 是否使用头部相机
+geometry_msgs/Pose
+Path
+ros2-msg @ mm/msg/Path.msg
+int32
+path_id
+# 路径 ID
+geometry_msgs
+/
+Pose2D
+[]
+points
+# 路径点二维坐标位姿列表
+geometry_msgs/Pose2D
+Region
+ros2-msg @ mm/msg/Region.msg
+uint8
+type
+# 区域类型（0: 未定义, 1: 工作区域, 2: 虚拟墙）
+uint8
+drawing_type
+# 绘制类型（0: 未定义, 1: 封闭区域, 2: 折线）
+string
+name
+# 区域名称
+geometry_msgs
+/
+Polygon
+polygon
+# 闭合多边形顶点（有序，首尾不重合）
+geometry_msgs/Polygon
+重定位
+
+将机器人定位到已建立地图中的指定位置，需先触发重定位指令，再提供初始位姿估计，最后通过订阅定位结果话题确认重定位是否成功。
+何时需要重定位
+
+以下场景需要重新执行重定位，使机器人获取在地图中的初始位姿：
+机器人开机后首次使用导航功能
+切换到新的地图
+定位丢失（如机器人被搬动后）
+注意：
+不执行重定位时，定位模块不会启动，
+/slam/lidar_odom
+不会有数据发布。
+话题名称
+数据类型
+描述
+QoS
+频率
+/integrated_command
+std_msgs/String
+发布重定位控制指令
+RELIABLE
++
+TRANSIENT_LOCAL
+用户发送（按需）
+/relocalization_pose
+geometry_msgs/Pose
+发布机器人初始位姿估计
+BEST_EFFORT
++
+VOLATILE
+用户发送（按需）
+/slam/lidar_odom
+nav_msgs/Odometry
+订阅激光定位结果（
+frame_id
+为
+map
+，
+child_frame_id
+为
+torso_link
+，表示机器人在全局地图中的位姿）
+RELIABLE
++
+TRANSIENT_LOCAL
+10Hz
+重定位指令格式
+：
+指令
+说明
+start_relocalization:<map_id>
+开始重定位，
+<map_id>
+为目标地图 ID（可通过手机 APP 查看，或从
+map.db
+的
+map
+表
+map_id
+字段获取）
+操作流程
+：
+向
+/integrated_command
+发布
+start_relocalization:<map_id>
+指令
+延迟约 1 秒后向
+/relocalization_pose
+发布机器人的初始位姿估计（建议从地图构建的起始点开始）
+订阅
+/slam/lidar_odom
+，收到数据表示重定位成功
+注意：
+/relocalization_pose
+中使用的坐标为
+像素坐标
+，可从地图信息文件中获取。地图信息文件路径为：
+/agibot/data/var/MapManagerModule/<map_id>/grid_map_info.txt
+该文件包含三行：
+第一行：分辨率（1m 对应 20 个 pixel）
+第二行：地图起点坐标（建图原点的像素坐标），即重定位时可使用的初始位姿
+第三行：图像长宽（pixel）
+地图标识与坐标的获取
+
+调用地图获取、重定位、导航接口时常用的参数，获取方式如下：
+map_id
+（重定位、导航必填）与
+map_name
+（
+GetStoredMapByName
+按名取图用）：通过手机 APP 查看，或在机器人上查询地图数据库，从结果中读取对应的
+map_id
+/
+map_name
+字段：
+sqlite3
+/agibot/data/var/MapManagerModule/map.db
+"SELECT * FROM map;"
+坐标
+：
+重定位初始位姿（
+/relocalization_pose
+）使用
+像素坐标
+，取
+grid_map_info.txt
+（见上文「重定位」说明）第 2 行的建图原点
+origin
+，其中
+origin.u
+对应
+position.x
+、
+origin.v
+对应
+position.y
+。
+导航目标点（
+target_pose
+）使用
+米制 Map 世界坐标
+，与像素坐标不同，像素到米制的换算见
+导航接口的坐标转换
+。
+编程示例
+
+详细的编程示例和代码说明请参考：
+Python 示例（建图）
+：
+地图构建
+Python 示例（重定位）
+：
+使用地图进行重定位
+Python 示例（地图获取）
+：
+获取已存储的地图
+C++ 示例（建图）
+：
+地图构建
+C++ 示例（重定位）
+：
+使用地图进行重定位
+C++ 示例（地图获取）
+：
+获取已存储的地图
+小心
+ROS的服务(service)机制在跨板通信时存在一些待优化问题,
+二次开发时请参考例程添加异常处理、快速重试等保护机制
+机器人处于
+稳定站立 / 走跑模式
+时,
+请勿批量快速启动 ROS 节点(建议不超过 2 个/秒)
+, 短时间内大量节点参与 DDS 发现会造成通信拥塞、影响运控实时性, 存在机器人失稳摔倒风险
+上一页
+下一页
+© 版权所有 2025 智元创新（上海）科技股份有限公司。
+沪ICP备2023019007号-2
+沪公网安备31011502401815号
+jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+DOCUMENT navigation
+5.5.3 导航（选装） — AimDK_X2 1.1.0 文档
+AimDK_X2
+1
+关于 AgiBot X2
+1.1 产品简介
+1.1.1 旗舰版（X2 Ultra）
+1.1.2 X2 EDU（人人造版）
+1.1.3 旗舰焕新版（X2 Ultra(new version)）
+1.2 机器人具体参数
+1.2.1 X2 系列参数
+1.3 计算单元
+1.3.1 标配计算单元
+1.3.2 开发计算单元具体参数
+1.4 用户调试接口
+1.4.1 X2 Ultra（旗舰版）
+1.4.2 X2 Ultra(new version)（旗舰焕新版）
+1.4.3 X2 EDU（人人造版）
+1.5 二次开发接口
+1.6 灵犀X2 传感器说明
+1.6.1 传感器能力及视场角示意图
+1.6.2 传感器具体参数
+激光雷达
+RGBD摄像头
+前视双目RGB摄像头
+前视交互RGB摄像头
+后视RGB摄像头
+触摸传感器
+独立惯性传感器（IMU）
+GNSS模块
+1.7 关节活动范围说明
+1.7.1 手臂可保证活动空间
+1.7.2 腿部可保证活动空间
+1.7.3 头部可保证活动空间
+1.7.4 腰部活动空间
+1.8 坐标系
+1.8.1 URDF 与出厂标定
+1.8.2 出厂标定参数
+2
+操作指南
+2.1 开机指南
+2.1.1 吊起开机（需移位机）(SDK推荐使用)
+2.1.2 平躺站起开机（无需移位机）
+2.1.3 坐下站起开机（无需移位机）
+2.2 机器人手机APP连接（Agibot Go APP）
+2.2.1 下载地址
+iOS
+Android
+操作步骤
+2.3 遥控手柄连接
+2.3.1 操作步骤
+2.4 关机指南
+2.4.1 辅助躺下机器人（无需移位机）
+Step 1: 进入站姿预备模式（位控站立）
+Step 2: 平躺机器人
+Step 3: 进入零力矩模式
+Step 5：将机器人按图示指引装箱
+2.4.2 坐下关机（无需移位机）
+Step 1：遥控机器人坐下
+Step 2：进入零力矩模式
+Step 3：关机
+Step 4: 将机器人按图示指引装箱
+3
+获取SDK
+4
+快速开始
+4.1 阅读用户使用指南，熟悉相关术语及安全注意事项
+4.2 选择开发模式
+4.2.1 开发计算单元直接使用 SDK（快速上手，仅旗舰版 / 旗舰焕新版）
+4.2.2 开发计算单元上使用容器开发（推荐，仅旗舰版 / 旗舰焕新版）
+4.2.3 上位机/外接算力包 + 跨机组网
+4.3 网络连接
+4.3.1 X2 Ultra 旗舰版 / X2 Ultra(new version) 旗舰焕新版
+4.3.2 X2 EDU 人人造版
+4.4 在容器中开发
+4.4.1 准备文件
+构建前必查：镜像源可达性
+构建前必查：
+/etc/subgid
+尾随空格
+Dockerfile
+run.sh
+4.4.2 构建镜像
+4.4.3 启动容器
+4.4.4 进入容器
+4.4.5 构建并运行
+4.5 首次运行前：构建 SDK
+4.6 运行一个代码示例
+4.6.1 获取机器人的当前状态
+4.6.2 控制机器人挥手
+4.7 代码编写
+4.7.1 项目概述
+4.7.2 在现有SDK工作空间中添加示例
+了解现有结构
+添加新的Python示例
+4.7.3 编写控制代码
+创建机器人控制类
+添加主程序入口
+注册到构建系统
+4.7.4 构建与运行
+构建项目
+运行项目
+4.7.5 代码解析
+机器人控制类
+4.7.6 扩展与优化
+添加更多动作和交互
+添加参数配置
+添加错误处理
+添加更多交互功能
+4.7.7 遇到问题时排查解决
+4.7.8 下一步学习
+4.7.9 小结
+5
+接口说明
+5.1 控制模块
+5.1.1 运动模式切换
+核心功能
+查询运动模式服务
+设置运动模式服务
+编程示例
+安全注意事项
+5.1.2 走跑控制
+控制功能
+走跑控制话题
+编程示例
+安全注意事项
+5.1.3 MC控制信号设置
+核心特性
+系统预置的输入源
+仲裁流程
+输入源管理服务
+编程示例
+注意事项
+5.1.4 运控状态查询
+运控状态话题
+状态字段说明
+5.1.5 上肢控制
+话题接口
+关节索引
+使用流程
+编程示例
+5.1.6 预设动作控制
+预设动作控制服务
+预设动作状态查询服务
+预设动作的优先级与打断机制
+编程示例
+安全注意事项
+5.1.7 灵创动作
+关于 LinkCraft
+接口说明
+编程示例
+5.1.8 末端执行器控制
+控制方式
+底层控制接口
+手部状态信息话题
+查询手部类型服务
+编程示例
+安全注意事项
+5.1.9 关节控制
+核心特性
+关节控制话题
+关节状态查询服务
+编程示例
+安全注意事项
+5.2 交互模块
+5.2.1 语音控制
+核心特性
+音量控制服务
+语音合成服务
+音频文件播放服务
+音频流播放功能集
+MIC音频流采集话题
+麦克风控制服务
+编程示例
+安全注意事项
+5.2.2 屏幕控制
+核心功能
+表情播放状态查询话题
+表情播放服务
+视频播放服务
+编程示例
+安全注意事项
+5.2.3 灯带控制
+核心特性
+灯带控制服务
+灯带状态话题
+编程示例
+5.2.4 灵心云交互
+关于 LinkSoul
+技术架构
+使用步骤
+5.3 故障与系统管理模块
+5.3.1 故障处理
+核心功能
+话题接口
+服务接口
+编程示例
+5.3.2 权限管理 （待上线）
+5.3.3 诊断码参考表
+如何使用本表
+告警级别说明
+后处理信号（robot_sig）
+高危故障速览
+PDU（驱动控制单元）
+健康管理模块
+硬件抽象层（ECAT，EtherCAT 关节控制）
+感知模块
+硬件抽象层（传感器）
+SLAM 模块
+导航模块
+运控模块
+交互模块
+状态管理模块
+建图模块
+定位模块
+硬件抽象层（电源）
+5.4 硬件抽象模块
+5.4.1 传感器接口
+核心功能
+标准传感器消息
+IMU话题
+头部触摸状态话题
+后视RGB相机话题
+双目相机话题
+深度相机话题
+Lidar话题
+GNSS话题
+编程示例
+安全注意事项
+5.4.2 电源管理单元 (PMU)
+核心功能
+电源管理话题
+安全注意事项
+5.5 感知模块（选装）
+5.5.1 视觉(待开放)
+5.5.2 SLAM（选装）
+地图构建
+地图获取
+重定位
+地图标识与坐标的获取
+编程示例
+5.5.3 导航（选装）
+导航任务话题
+接口说明
+坐标转换
+编程示例
+5.5.4 数据可视化
+Foxglove 可视化
+RSView 可视化
+RViz 可视化
+系统状态、日志、通信可视化
+5.6 系统模式与开发者模式
+5.6.1 查询系统状态
+系统状态话题
+查询系统模式服务
+5.6.2 进入开发者模式
+5.6.3 编程示例
+5.6.4 技术细节
+5.6.5 安全注意事项
+6
+示例代码
+6.1 Python接口使用示例
+6.1.1 进入开发者模式
+6.1.2 获取机器人模式
+6.1.3 设置机器人模式
+6.1.4 设置机器人动作
+6.1.5 夹爪控制
+6.1.6 灵巧手控制
+6.1.7 灵巧手触觉数据（T2.1支持）
+6.1.8 注册二开输入源
+6.1.9 获取当前输入源
+6.1.10 机器人走跑控制
+6.1.11 关节电机控制
+机器人关节控制示例
+6.1.12 键盘控制机器人
+6.1.13 拍照
+6.1.14 相机推流示例集
+深度相机数据订阅
+双目相机数据订阅
+头部后置单目相机数据订阅
+6.1.15 头部触摸传感器数据订阅
+6.1.16 激光雷达数据订阅
+6.1.17 IMU数据订阅
+6.1.18 播放视频
+6.1.19 音频文件播放
+6.1.20 TTS (文字转语音)
+6.1.21 麦克风数据接收
+6.1.22 麦克风原始流式数据接收
+6.1.23 获取当前麦克风
+6.1.24 切换麦克风
+6.1.25 原始流式音频播放
+6.1.26 表情控制
+6.1.27 地图构建
+6.1.28 使用地图进行重定位
+6.1.29 获取已存储的地图
+6.1.30 导航
+6.1.31 播放灵创动作
+6.1.32 群控播放灵创动作
+6.1.33 LED灯带控制
+6.1.34 GNSS定位数据订阅
+6.1.35 上肢控制
+6.1.36 订阅 HDS 诊断信息 / 查询历史事件
+6.2 C++接口使用示例
+6.2.1 进入开发者模式
+6.2.2 获取机器人模式
+6.2.3 设置机器人模式
+6.2.4 设置机器人动作
+6.2.5 夹爪控制
+6.2.6 灵巧手控制
+6.2.7 灵巧手触觉数据（T2.1支持）
+6.2.8 注册二开输入源
+6.2.9 获取当前输入源
+6.2.10 机器人走跑控制
+6.2.11 关节电机控制
+机器人关节控制示例
+6.2.12 键盘控制机器人
+6.2.13 拍照
+6.2.14 相机推流示例集
+深度相机数据订阅
+双目相机数据订阅
+头部后置单目相机数据订阅
+6.2.15 头部触摸传感器数据订阅
+6.2.16 激光雷达数据订阅
+6.2.17 IMU数据订阅
+6.2.18 播放视频
+6.2.19 音频文件播放
+6.2.20 TTS (文字转语音)
+6.2.21 麦克风数据接收
+6.2.22 麦克风原始流式数据接收
+6.2.23 获取当前麦克风
+6.2.24 切换麦克风
+6.2.25 原始流式音频播放
+6.2.26 表情控制
+6.2.27 地图构建
+6.2.28 使用地图进行重定位
+6.2.29 获取已存储的地图
+6.2.30 导航
+6.2.31 播放灵创动作
+6.2.32 群控播放灵创动作
+6.2.33 LED灯带控制
+6.2.34 GNSS定位数据订阅
+6.2.35 上肢控制
+6.2.36 订阅 HDS 诊断信息 / 查询历史事件
+7
+FAQ
+8
+特殊过渡方案声明
+8.1 关闭 X2 自带的交互能力，开发您自己的语音系统
+8.1.1 临时关闭内置交互系统操作步骤
+8.1.2 恢复内置交互系统操作步骤
+8.2 机器人运动状态精简，v0.7.x及之前的部分McAction状态码不再支持
+9
+二次开发边界与声明
+仿真与强化学习
+X2 RL Deployment
+1 使用说明
+1.1 环境依赖
+1.2 快速使用
+1.3 运行 RL 模型示例
+1.4 目录结构
+1.5 模型部署
+1.6 通信协议
+X2 Sim + MC Deployment
+1 X2 MuJoCo 运控仿真
+1.1 目录
+1.2 软件组成
+1.3 前置条件
+1.4 准备软件目录
+1.5 方案一：本地部署
+1.6 方案二：Docker 部署
+1.7 验证运动控制
+1.8 停止环境
+1.9 常见问题
+版本更新记录
+Changelog v1.1.0
+新开放功能
+现有功能调整
+迭代优化掉的功能
+Changelog v1.0.0
+新开放功能
+现有功能调整
+迭代优化掉的功能
+Changelog v0.9.0
+新开放功能
+现有功能调整
+迭代优化掉的功能
+Changelog v0.8.2
+新开放功能
+现有功能调整
+迭代优化掉的功能
+Changelog v0.8.1
+新开放功能
+现有功能调整
+迭代优化掉的功能
+Changelog v0.8.0
+新开放功能
+现有功能调整
+迭代优化掉的功能
+其他更新
+AimDK使用问题反馈
+AimDK_X2
+5
+接口说明
+5.5
+感知模块（选装）
+5.5.3
+导航（选装）
+5.5.3
+导航（选装）
+
+导航模块提供路径规划与自主导航接口，支持机器人在已知地图中执行点到点导航任务，并支持暂停、恢复、停止等任务控制操作。
+重要
+本处为选装组件, 如需使用本页面所述功能接口, 请联系售后技术支持
+导航任务话题
+
+话题名称
+数据类型
+描述
+QoS
+频率
+/aima/te/pnc_task_request
+PncTaskRequest
+发布导航任务请求（开始/暂停/恢复/停止）
+BEST_EFFORT
++
+VOLATILE
+用户发送（按需）
+/aima/pnc/pnc_task_response
+PncTaskResponse
+导航任务执行结果反馈
+BEST_EFFORT
++
+TRANSIENT_LOCAL
+事件驱动（任务状态变化时）
+/task_master/state
+TaskMasterState
+任务引擎状态（主状态、子状态、SLAM 状态、导览/领航任务状态）
+BEST_EFFORT
++
+TRANSIENT_LOCAL
+1Hz
+前置条件
+
+使用导航功能前，需确保以下条件就绪：
+已完成重定位
+：机器人已在地图中完成定位（通过
+start_relocalization:<map_id>
+指令触发，详见
+SLAM
+）
+已设置当前工作地图
+：导航请求中的
+map_id
+需与重定位所用的地图 ID 一致（重定位流程会自动加载目标地图并建立定位；若导航时指定其他
+map_id
+，PNC 会加载该地图数据但定位坐标系仍停留在重定位地图上，导致导航异常）。
+map_id
+必须为有效已建图的地图 ID
+运动控制模式为稳定站立（
+STAND_DEFAULT
+）或走跑（
+LOCOMOTION_DEFAULT
+）
+：机器人需处于可接收走跑指令的模式，否则导航任务将被阻断。稳定站立与走跑模式为一体化设计，导航下发的速度指令会驱动二者内部自动切换（详见
+运动模式切换
+）
+PncTaskRequest
+ros2-msg @ task_engine/msg/PncTaskRequest.msg
+# 导航任务请求
+# 话题名称: /aima/te/pnc_task_request
+MessageHeader
+header
+uint8
+task_type
+# 任务类型，见枚举定义 TASK_TYPE
+uint8
+task_request
+# 任务请求，见枚举定义 TASK_REQUEST
+uint8
+pnc_mode
+# PNC 模式（0: NORMAL，开启避障；1: NO_PERCEPTION，关闭避障）
+uint64
+task_id
+# 任务 ID，暂停/恢复/停止时需与开始时保持一致
+uint64
+map_id
+# 地图 ID
+geometry_msgs
+/
+PoseStamped
+target_pose
+# 目标位姿
+geometry_msgs
+/
+Pose2D
+[]
+reference_line
+# 指引线（仅考虑 x, y），target_pose 设置为目标姿态（yaw）
+float64
+target_pose_radius
+# 目标范围半径（单位：m），最小有效值 0.25
+float32
+max_forward_speed
+# 最大运行速度（单位：m/s，默认 0.8）
+geometry_msgs
+/
+Pose2D
+[]
+trajectory_pos
+# （预留）群控参数
+geometry_msgs
+/
+Twist
+[]
+trajectory_vel
+# （预留）群控参数
+uint64
+play_timestamp
+# （预留）群控参数
+uint64
+time_duration
+# （预留）群控参数
+# 64 byte 保留字段
+char
+[
+64
+]
+reserve_info
+task_type
+可用值（
+TASK_TYPE
+枚举定义）：
+枚举名
+数值
+说明
+TASK_TYPE_PLANNING_NAVI_TO_POSE_2D
+2
+规划导航至二维位姿
+其他枚举值仅供内部使用。
+task_request
+可用值（
+TASK_REQUEST
+枚举定义）：
+枚举名
+数值
+说明
+TASK_REQUEST_NONE
+0
+无请求
+TASK_REQUEST_START
+1
+开始导航任务
+TASK_REQUEST_STOP
+2
+停止导航，任务状态清除
+TASK_REQUEST_PAUSE
+3
+暂停导航，机器人原地停止，状态保留
+TASK_REQUEST_RESUME
+4
+恢复已暂停的导航任务
+TASK_REQUEST_STATUS_INQUIRY
+5
+查询当前任务状态
+接口说明
+
+开始导航
+
+设置目标位姿、地图 ID、避障模式和速度，发起导航任务。
+PncTaskRequest.task_type = TASK_TYPE_PLANNING_NAVI_TO_POSE_2D
+PncTaskRequest.task_request = TASK_REQUEST_START
+PncTaskRequest.task_id = xxx          // 任务 ID（毫秒时间戳）
+PncTaskRequest.map_id = xxxx          // 实际所用地图 ID
+PncTaskRequest.pnc_mode = 0           // 0: NORMAL（开启避障），1: NO_PERCEPTION（关闭避障）
+PncTaskRequest.max_forward_speed = 0.5 // 最大前进速度（m/s）
+PncTaskRequest.target_pose = ...      // 目标点位姿
+PncTaskRequest.target_pose_radius = 0.5 // 到点精度控制（m）
+暂停导航
+
+暂停当前导航任务，机器人原地停止，任务状态保留。
+PncTaskRequest
+.
+task_type
+=
+TASK_TYPE_PLANNING_NAVI_TO_POSE_2D
+PncTaskRequest
+.
+task_request
+=
+TASK_REQUEST_PAUSE
+PncTaskRequest
+.
+task_id
+=
+xxx
+//
+与开始导航时一致的任务
+ID
+恢复导航
+
+恢复已暂停的导航任务，机器人继续执行之前的导航目标。
+PncTaskRequest
+.
+task_type
+=
+TASK_TYPE_PLANNING_NAVI_TO_POSE_2D
+PncTaskRequest
+.
+task_request
+=
+TASK_REQUEST_RESUME
+PncTaskRequest
+.
+task_id
+=
+xxx
+//
+与开始导航时一致的任务
+ID
+停止导航
+
+停止当前导航任务，任务状态清除。
+PncTaskRequest
+.
+task_type
+=
+TASK_TYPE_PLANNING_NAVI_TO_POSE_2D
+PncTaskRequest
+.
+task_request
+=
+TASK_REQUEST_STOP
+PncTaskRequest
+.
+task_id
+=
+xxx
+//
+与开始导航时一致的任务
+ID
+提醒：
+map_id
+是用户必填字段（获取方式见
+地图标识与坐标的获取
+），暂停/恢复/停止时
+task_id
+需与开始导航时保持一致。
+获取导航任务执行结果
+
+订阅
+/aima/pnc/pnc_task_response
+话题，获取导航任务的执行结果。该话题仅在任务状态变化时发布一次（如 RUNNING/FAILED/FINISHED/PAUSED）。
+PncTaskResponse
+ros2-msg @ task_engine/msg/PncTaskResponse.msg
+# 导航任务执行结果
+# 话题名称: /aima/pnc/pnc_task_response
+MessageHeader
+header
+uint8
+task_type
+# 任务类型，见枚举定义 TASK_TYPE
+uint64
+task_id
+# 任务 ID（同请求时的 task_id）
+uint64
+map_id
+# 地图 ID
+uint8
+task_status
+# 任务状态，见枚举定义 TASK_STATUS
+# 64 byte 保留字段
+char
+[
+64
+]
+reserve_info
+task_status
+可用值（
+TASK_STATUS
+枚举定义）：
+枚举名
+数值
+说明
+TASK_STATUS_UNKONW
+0
+未知状态
+TASK_STATUS_RUNNING
+1
+任务执行中
+TASK_STATUS_FAILED
+2
+任务失败
+TASK_STATUS_PAUSED
+3
+任务已暂停
+TASK_STATUS_FINISHED
+4
+任务已完成
+TASK_STATUS_RECOVERY_TIMEOUT
+22
+恢复超时
+其他状态
+10-31
+详见
+PncTaskResponse.msg
+定义
+警告
+导航任务可能被自动中断
+当机器人检测到严重系统故障时（如摔倒、系统故障等），导航任务可能被自动中断。机器人会播放 TTS 语音提示：“抱歉，检测到系统存在故障，不能进行自主导航任务了。请前往客户端查看故障原因。”
+如需程序化获知导航任务是否被中断，可通过以下方式：
+订阅
+/aima/pnc/pnc_task_response
+话题，观察
+task_status
+是否变为
+FAILED
+订阅
+/task_master/state
+话题，观察
+main_state
+是否从
+PILOT
+变为
+IDLE
+获取任务引擎状态
+
+订阅
+/task_master/state
+话题，获取任务引擎的整体状态。该话题为
+周期发布
+，持续更新任务引擎的状态机状态。
+TaskMasterState
+ros2-msg @ task_engine/msg/TaskMasterState.msg
+# 任务引擎状态
+# 话题名称: /task_master/state
+uint8
+main_state
+# 主状态，见枚举定义 TM_MAIN_STATE
+uint8
+sub_state
+# 子状态，见枚举定义 TM_SUB_STATE
+uint8
+slam_state
+# SLAM 状态，见枚举定义 SLAM_STATE
+uint64
+loc_map_id
+# 当前定位地图 ID（仅 slam_state=LOCALIZATION 时有效）
+string
+loc_map_name
+# 当前定位地图名称（仅 slam_state=LOCALIZATION 时有效）
+FixLineIntroState
+fix_line_intro_state
+# 导览任务状态（仅 main_state=FIX_LINE_INTRO 时有效）
+PilotState
+pilot_state
+# 领航任务状态（仅 main_state=PILOT 时有效）
+# 保留信息
+string
+reserve_info
+main_state
+可用值（
+TM_MAIN_STATE
+枚举定义）：
+枚举名
+数值
+说明
+TM_MAIN_STATE_IDLE
+0
+空闲状态
+TM_MAIN_STATE_RELOCALIZATION
+1
+重定位中
+TM_MAIN_STATE_MAPPING
+2
+建图中
+TM_MAIN_STATE_FIX_LINE_INTRO
+3
+导览任务执行中
+TM_MAIN_STATE_RECORDING_PATH
+4
+录制路径中
+TM_MAIN_STATE_PILOT
+5
+领航任务执行中
+sub_state
+可用值（
+TM_SUB_STATE
+枚举定义）：
+枚举名
+数值
+说明
+TM_SUB_STATE_NONE
+0
+无子状态
+TM_SUB_STATE_RESUME
+1
+长程任务运行中
+TM_SUB_STATE_PAUSE
+2
+长程任务暂停中
+slam_state
+可用值（
+SLAM_STATE
+枚举定义）：
+枚举名
+数值
+说明
+SLAM_STATE_IDLE
+0
+SLAM 空闲
+SLAM_STATE_RELOCALIZATION
+1
+SLAM 重定位中
+SLAM_STATE_MAPPING
+2
+SLAM 建图中
+SLAM_STATE_LOCALIZATION
+3
+SLAM 定位中
+FixLineIntroState
+ros2-msg @ task_engine/msg/FixLineIntroState.msg
+# 导览任务状态
+uint8
+fix_line_intro_state
+# 导览任务状态，见枚举定义 TM_FIX_LINE_INTRO_STATE
+uint64
+set_task_id
+# 用户预设置任务的 ID（若未设置过则为 0）
+string
+set_task_name
+# 用户预设置任务的别名（若未设置过则为空）
+string
+task_name
+# 任务别名
+uint64
+task_id
+# 任务 ID（创建任务时生成）
+string
+map_name
+# 地图别名（仅任务依赖地图时有效）
+uint64
+map_id
+# 地图 ID（创建地图时生成）
+uint32
+rest_site_number
+# 剩余讲解点数量（不包含当前讲解点）
+uint64
+cur_target_id
+# 当前目标点位 ID
+fix_line_intro_state
+可用值（
+TM_FIX_LINE_INTRO_STATE
+枚举定义）：
+枚举名
+数值
+说明
+TM_FIX_LINE_INTRO_STATE_NAVI_TO_NEXT_SITE
+0
+导航到下一个讲解点
+TM_FIX_LINE_INTRO_STATE_SITE_ACTIONS
+1
+执行当前讲解点动作
+TM_FIX_LINE_INTRO_STATE_NAVI_RETURN
+2
+导航返回待机点
+TM_FIX_LINE_INTRO_STATE_NAVI_TO_TARGET_POI
+3
+导航到目标 POI
+TM_FIX_LINE_INTRO_STATE_POI_ACTIONS
+4
+执行 POI 动作
+TM_FIX_LINE_INTRO_STATE_STANDBY_ACTIONS
+5
+待机动作
+PilotState
+ros2-msg @ task_engine/msg/PilotState.msg
+# 领航任务状态
+uint8
+pilot_state
+# 领航任务状态，见枚举定义 TM_PILOT_STATE
+string
+target_name
+# 目标点别名（导航至 POI 时为 POI 别名，导航至讲解点时为讲解点别名）
+uint64
+target_id
+# 目标点 ID
+string
+intro_task_name
+# 讲解任务别名（仅导航至讲解任务创建的讲解点时有效）
+uint64
+intro_task_id
+# 讲解任务 ID
+string
+map_name
+# 地图别名（仅任务依赖地图时有效）
+uint64
+map_id
+# 地图 ID（创建地图时生成）
+pilot_state
+可用值（
+TM_PILOT_STATE
+枚举定义）：
+枚举名
+数值
+说明
+TM_PILOT_STATE_NAVI_TO_TARGET
+0
+导航到目标点
+TM_PILOT_STATE_TARGET_ACTIONS
+1
+执行目标点动作
+TM_PILOT_STATE_NAVI_RETURN
+2
+导航返回
+TM_PILOT_STATE_STANDBY_ACTIONS
+3
+待机动作
+坐标转换
+
+导航接口中
+target_pose
+使用的是
+Map 世界坐标
+（单位：米）。如果目标点来源于地图像素坐标，需要先将像素坐标转换为世界坐标。
+像素坐标可从地图信息文件中获取，路径为：
+/agibot/data/var/MapManagerModule/<map_id>/grid_map_info.txt
+该文件包含三行：
+第一行：分辨率（1m 对应的 pixel 数，例如 20）
+第二行：地图起点像素坐标（建图原点
+origin.u
+,
+origin.v
+）
+第三行：图像长宽（pixel）
+像素坐标 → 世界坐标转换公式：
+x
+=
+(
+pixel_u
+-
+origin_u
+)
+/
+resolution
+y
+=
+-
+(
+pixel_v
+-
+origin_v
+)
+/
+resolution
+其中
+resolution
+为第一行的分辨率，
+origin_u
+/
+origin_v
+为第二行的起点像素坐标。转换后的
+(x,
+y)
+即可作为
+target_pose.pose.position
+使用。
+编程示例
+
+详细的编程示例和代码说明请参考：
+Python 示例（导航）
+：
+导航
+C++ 示例（导航）
+：
+导航
+小心
+ROS的服务(service)机制在跨板通信时存在一些待优化问题,
+二次开发时请参考例程添加异常处理、快速重试等保护机制
+机器人处于
+稳定站立 / 走跑模式
+时,
+请勿批量快速启动 ROS 节点(建议不超过 2 个/秒)
+, 短时间内大量节点参与 DDS 发现会造成通信拥塞、影响运控实时性, 存在机器人失稳摔倒风险
+上一页
+下一页
+© 版权所有 2025 智元创新（上海）科技股份有限公司。
+沪ICP备2023019007号-2
+沪公网安备31011502401815号
+jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });

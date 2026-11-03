@@ -1,0 +1,4 @@
+[INFO] [1793028083.359569944] [qazbot_sim.localization_trust]: localization_trust started, map=/workspace/control_backend/ws/src/maps/first_map_nav2_v3/map.yaml, policy=go2
+[WARN] [1793028084.551666610] [qazbot_sim.localization_trust]: initialpose received: READY cleared; policy=go2
+[INFO] [1793028084.729492455] [qazbot_sim.localization_trust]: initialpose: requested AMCL update without motion, attempt 1
+The following exception was never retrieved: cannot use Destroyable because destruction was requested

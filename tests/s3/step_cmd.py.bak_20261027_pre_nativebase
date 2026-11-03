@@ -1,0 +1,487 @@
+#!/usr/bin/env python3
+"""S3 step-command tool: velocity steps through the SAME safety path a Nav2 goal uses.
+
+Path (docs/X2_MOTION_ADAPTER.md, docs/X2_FIRST_PHYSICAL_TEST_PLAN.md S0/S3 "test publisher into the private topic"):
+    this tool -> <ns>/cmd_vel_authorized -> x2_motion_adapter (trust, MC state, foreign-publisher scan,
+    takeover latch, motion_armed, 0.15 s watchdog, zero burst) -> MC (live) or ~/dry_run_cmd (dry run).
+The tool never publishes to /cmd_vel or /aima/*, never registers a source, never changes adapter parameters.
+
+Admission per step mirrors goal_coordinator.goal() for a NEW goal: localization_trust/arm_check ->
+motion_adapter/arm_motion -> a NEW trust message that is true. Concurrent Nav2 goals are excluded by latching
+the coordinator (goal_coordinator/stop) before the first step; it stays latched afterwards (explicit
+goal_coordinator/resume by the operator before the next Nav2 goal). The tool aborts (zeros, then adapter ~/stop)
+on adapter latch (operator_takeover, ...), untrusted localization, a foreign publisher on cmd_vel_authorized,
+a busy coordinator, stale adapter status or stale odometry (when a motion limit is set).
+
+Timing: 20 Hz (Nav2 controller_frequency, adapter controller_hz -> 0.15 s watchdog); zeros for --pause s (>= 1 s)
+between steps and at the end; zeros while arming. SIGINT: zeros for --pause s, adapter ~/stop, exit 130.
+Normal end: zeros, then adapter ~/stop + ~/resume (disarm: idle, motion_armed=false). Abort/SIGINT: adapter left
+latched for operator review. Limits (--stop-after-yaw-deg / --stop-after-dist) use odometry (default
+/qazbot_lio/odom_level), measured from the pose at the first step; on reaching one the remaining steps are skipped.
+
+Outputs: CSV (every published command), <csv>.odom.csv (odometry samples), <csv>.summary.json (per-step onset lag,
+steady actual/commanded ratio, coast; odometry-based, tape is the reference). Exit: 0 done, 3 limit reached,
+2 aborted, 4 refused (precondition), 130 SIGINT.
+"""
+import argparse
+import csv
+import json
+import math
+import os
+import re
+import signal
+import sys
+import time
+
+RATE_HZ = 20.0            # Nav2 controller_frequency (nav_control.launch.py) = adapter controller_hz
+MAX_LIN = 0.3             # nav_full/nav_control launch default max_linear (m/s); the tool never exceeds Nav2's own cap
+MAX_ROT = 0.5             # nav_full/nav_control launch default max_angular (rad/s)
+EPS = 0.005               # adapter Config.eps: |v| below this is zero
+TRUST_MAX_AGE = 0.6       # adapter/coordinator trust_max_age_s
+ODOM_MAX_AGE = 0.5        # loc_trust.py odom_max_age_s
+STATUS_MAX_AGE = 1.5      # adapter ~/status is published every 0.5 s: three missed reports
+HARD = {'operator_takeover', 'control_not_acquired', 'robot_not_standing', 'mc_fsm_not_stable', 'mc_state_stale',
+        'foreign_sdk_source_active', 'foreign_velocity_publisher', 'vendor_autonomy_active', 'localization_untrusted',
+        'localization_lost', 'stop_requested', 'non_finite_command', 'lateral_not_allowed'}   # goal_coordinator.adapter()
+NODE = 's3_step_cmd'
+EXIT_DONE, EXIT_ABORT, EXIT_LIMIT, EXIT_REFUSED, EXIT_SIGINT = 0, 2, 3, 4, 130
+
+
+def floats(s):
+    return [float(x) for x in s.split(',') if x.strip()]
+
+
+def parse(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    g = ap.add_mutually_exclusive_group(required=True)
+    g.add_argument('--rot', type=floats, help='angular steps rad/s (+ = CCW, REP 103), e.g. 0.1,0.2,0.3,0.4')
+    g.add_argument('--lin', type=floats, help='forward steps m/s (> 0 only), e.g. 0.05,0.1,0.15,0.2')
+    ap.add_argument('--rot-dur', type=float, default=3.0, help='seconds per rotation step')
+    ap.add_argument('--lin-dur', type=float, default=2.0, help='seconds per forward step')
+    ap.add_argument('--pause', type=float, default=1.0, help='zeros between steps and at the end, s (>= 1)')
+    ap.add_argument('--stop-after-yaw-deg', type=float, help='end when |yaw - yaw0| reaches this (odometry)')
+    ap.add_argument('--stop-after-dist', type=float, help='end when planar distance from start reaches this, m')
+    ap.add_argument('--expect-domain', type=int, required=True, help='refuse unless ROS_DOMAIN_ID equals this')
+    ap.add_argument('--expect-mode', choices=('live', 'dry_run'), required=True, help='adapter mode that must be running')
+    ap.add_argument('--ns', default='/qazbot_d1_map', help='stack namespace (adapter, coordinator, trust)')
+    ap.add_argument('--odom-topic', default='/qazbot_lio/odom_level')
+    ap.add_argument('--csv', required=True, help='output CSV (new file)')
+    ap.add_argument('--rot-cap', type=float, default=MAX_ROT,
+                    help='S3b only: explicit operator-approved rotation cap above the Nav2 cap, <= 1.0 rad/s '
+                         '(the PS5 pad commands up to 1.0; the adapter still saturates to the MC bounds)')
+    a = ap.parse_args(argv)
+    if not re.fullmatch(r'/[A-Za-z0-9_]+', a.ns):
+        ap.error('--ns must be one absolute name component, e.g. /qazbot_d1_map')
+    if a.pause < 1.0:
+        ap.error('--pause must be >= 1 s')
+    if a.rot is not None:
+        steps, dur = [(0.0, w) for w in a.rot], a.rot_dur
+        if not (MAX_ROT <= a.rot_cap <= 1.0):
+            ap.error(f'--rot-cap must satisfy {MAX_ROT} <= cap <= 1.0 rad/s')
+        if any(not (EPS <= abs(w) <= a.rot_cap) for w in a.rot):
+            ap.error(f'--rot values must satisfy {EPS} <= |w| <= {a.rot_cap} rad/s')
+    else:
+        steps, dur = [(v, 0.0) for v in a.lin], a.lin_dur
+        if any(not (EPS <= v <= MAX_LIN) for v in a.lin):
+            ap.error(f'--lin values must satisfy {EPS} <= v <= {MAX_LIN} m/s (forward only: no rear sensor)')
+        if a.stop_after_dist is None:
+            ap.error('--lin requires --stop-after-dist (bounded straight travel)')
+    if not (dur > 0 and math.isfinite(dur)):
+        ap.error('step duration must be > 0')
+    for v in (a.stop_after_yaw_deg, a.stop_after_dist):
+        if v is not None and not (v > 0 and math.isfinite(v)):
+            ap.error('limits must be > 0')
+    if os.path.exists(a.csv):
+        ap.error('--csv exists: ' + a.csv)
+    a.steps, a.dur = steps, dur
+    return a
+
+
+class Tool:
+    def __init__(self, a):
+        import rclpy
+        from geometry_msgs.msg import Twist
+        from nav_msgs.msg import Odometry
+        from rclpy.node import Node
+        from std_msgs.msg import Bool, String
+        from std_srvs.srv import Trigger
+        self.rclpy, self.Twist, self.Trigger, self.a = rclpy, Twist, Trigger, a
+        self.n = n = Node(NODE)
+        ns = a.ns
+        self.cmd_topic = ns + '/cmd_vel_authorized'
+        assert self.cmd_topic not in ('/cmd_vel', '/aima/mc/locomotion/velocity') and not self.cmd_topic.startswith('/aima')
+        self.pub = n.create_publisher(Twist, self.cmd_topic, 1)        # same QoS as goal_coordinator
+        self.adapter, self.adapter_at = {}, float('-inf')
+        self.coord, self.coord_at = {}, float('-inf')
+        self.trust, self.trust_at, self.trust_seq = None, float('-inf'), 0
+        self.odom, self.odom_at, self.odom_rows, self.yaw_unwrapped = None, float('-inf'), [], None
+        n.create_subscription(String, ns + '/motion_adapter/status', self._on_adapter, 10)
+        n.create_subscription(String, ns + '/goal_coordinator/status', self._on_coord, 10)
+        n.create_subscription(Bool, ns + '/localization_trust/trusted', self._on_trust, 10)
+        n.create_subscription(Odometry, a.odom_topic, self._on_odom, 50)
+        self.srv = {k: n.create_client(Trigger, ns + '/' + k) for k in (
+            'localization_trust/arm_check', 'motion_adapter/arm_motion', 'motion_adapter/stop', 'motion_adapter/resume',
+            'goal_coordinator/stop')}
+        self.sigint = 0
+        os.makedirs(os.path.dirname(os.path.abspath(a.csv)), exist_ok=True)
+        self.f = open(a.csv, 'x', newline='')
+        self.w = csv.writer(self.f)
+        self.w.writerow(['t_unix', 't_rel', 'seq', 'phase', 'step', 'vx_cmd', 'wz_cmd', 'adapter_state', 'adapter_reason',
+                         'motion_armed', 'trusted', 'odom_x', 'odom_y', 'odom_yaw_unwrapped', 'odom_age_s', 'dist_m', 'dyaw_deg'])
+        self.seq, self.t0, self.start_pose = 0, time.monotonic(), None
+        self.events = []
+
+    # ---------------------------------------------------------------- inputs
+    def _on_adapter(self, m):
+        self.adapter, self.adapter_at = json.loads(m.data), time.monotonic()
+
+    def _on_coord(self, m):
+        self.coord, self.coord_at = json.loads(m.data), time.monotonic()
+
+    def _on_trust(self, m):
+        self.trust, self.trust_at, self.trust_seq = bool(m.data), time.monotonic(), self.trust_seq + 1
+
+    def _on_odom(self, m):
+        p, q = m.pose.pose.position, m.pose.pose.orientation
+        yaw = math.atan2(2 * (q.w * q.z + q.x * q.y), 1 - 2 * (q.y * q.y + q.z * q.z))
+        if self.yaw_unwrapped is None:
+            self.yaw_unwrapped = yaw
+        else:
+            prev = self.yaw_unwrapped
+            self.yaw_unwrapped = prev + math.atan2(math.sin(yaw - prev), math.cos(yaw - prev))
+        now = time.monotonic()
+        self.odom, self.odom_at = (p.x, p.y, self.yaw_unwrapped), now
+        self.odom_rows.append((now, time.time(), p.x, p.y, self.yaw_unwrapped))
+
+    # ---------------------------------------------------------------- helpers
+    def log(self, text):
+        self.events.append((round(time.monotonic() - self.t0, 3), text))
+        print(f'[{time.monotonic() - self.t0:7.2f}] {text}', flush=True)
+
+    def spin(self, timeout=0.0):
+        self.rclpy.spin_once(self.n, timeout_sec=timeout)
+
+    def trusted_now(self):
+        return self.trust is True and time.monotonic() - self.trust_at <= TRUST_MAX_AGE
+
+    def displacement(self):
+        if self.start_pose is None or self.odom is None:
+            return None, None
+        x0, y0, t0 = self.start_pose
+        x, y, t = self.odom
+        return math.hypot(x - x0, y - y0), math.degrees(t - t0)
+
+    def cmd_publishers(self):
+        return sorted({i.node_name for i in self.n.get_publishers_info_by_topic(self.cmd_topic)} - {NODE})
+
+    def publish(self, phase, step, vx, wz):
+        t = self.Twist()
+        t.linear.x, t.angular.z = float(vx), float(wz)
+        self.pub.publish(t)
+        self.seq += 1
+        d, dyaw = self.displacement()
+        o = self.odom or (None, None, None)
+        a = self.adapter
+        self.w.writerow([f'{time.time():.6f}', f'{time.monotonic() - self.t0:.4f}', self.seq, phase, step, vx, wz,
+                         a.get('state'), a.get('reason'), a.get('motion_armed'), self.trusted_now(),
+                         *(None if v is None else f'{v:.5f}' for v in o),
+                         f'{time.monotonic() - self.odom_at:.3f}' if self.odom else None,
+                         None if d is None else f'{d:.4f}', None if dyaw is None else f'{dyaw:.2f}'])
+        self.f.flush()
+
+    def fault(self, motion, trust=True):
+        """Abort reason or ''. motion=True while a step is commanded. trust=False only while an arm service call is
+        pending (as goal_coordinator.goal(): no motion yet; a NEW true verdict is required after the arm)."""
+        now, a = time.monotonic(), self.adapter
+        if now - self.adapter_at > STATUS_MAX_AGE:
+            return 'adapter_status_stale'
+        if a.get('state') == 'latched':
+            return 'adapter_latched:' + str(a.get('latch') or a.get('reason'))
+        if a.get('reason') in HARD:
+            return 'adapter_fault:' + str(a.get('reason'))
+        if a.get('foreign_publishers'):
+            return 'foreign_mc_publisher:' + ','.join(a['foreign_publishers'])
+        if trust and not self.trusted_now():
+            return 'localization_untrusted'
+        if self.coord.get('busy'):
+            return 'coordinator_busy'
+        extra = self.cmd_publishers()
+        if any(x != 'goal_coordinator' for x in extra):
+            return 'foreign_command_publisher:' + ','.join(extra)
+        if motion and not a.get('motion_armed', False) and self.armed_seen:
+            return 'adapter_disarmed'
+        if self.limits and now - self.odom_at > ODOM_MAX_AGE:
+            return 'odom_stale'
+        return ''
+
+    def call(self, name):
+        """Trigger call while publishing zeros at 20 Hz (no deadline: operator ends with Ctrl-C)."""
+        fut = self.srv[name].call_async(self.Trigger.Request())
+        while not fut.done():
+            if self.sigint:
+                return None
+            self.zero_tick('arm', self.step_idx)
+            why = self.fault(False, trust=False)
+            if why:
+                self.abort_reason = why
+                return None
+        return fut.result()
+
+    def zero_tick(self, phase, step):
+        self.publish(phase, step, 0.0, 0.0)
+        self.sleep_tick()
+
+    def sleep_tick(self):
+        self.next_t += 1.0 / RATE_HZ
+        while True:
+            left = self.next_t - time.monotonic()
+            if left <= 0:
+                break
+            self.spin(min(left, 0.01))
+        if time.monotonic() - self.next_t > 0.5:      # resynchronise after a long stall instead of bursting
+            self.next_t = time.monotonic()
+
+    def zeros_for(self, seconds, phase, step):
+        end = time.monotonic() + seconds
+        while time.monotonic() < end:
+            self.zero_tick(phase, step)
+            if self.sigint > 1:
+                break
+
+    # ---------------------------------------------------------------- run
+    def preconditions(self):
+        a = self.a
+        need = dict(adapter_status=lambda: self.adapter_at > float('-inf'),
+                    coordinator_status=lambda: self.coord_at > float('-inf'),
+                    trust=lambda: self.trust is not None,
+                    services=lambda: all(c.service_is_ready() for c in self.srv.values()))
+        if self.limits:
+            need['odometry'] = lambda: self.odom is not None
+        last = 0.0
+        while True:
+            self.spin(0.05)
+            if self.sigint:
+                return 'sigint'
+            missing = [k for k, f in need.items() if not f()]
+            if not missing:
+                break
+            if time.monotonic() - last > 2.0:
+                last = time.monotonic()
+                self.log('waiting for: ' + ', '.join(missing))
+        end = time.monotonic() + 1.0                   # two adapter reports with current values
+        while time.monotonic() < end:
+            self.spin(0.05)
+        ad, why = self.adapter, []
+        mode_ok = (ad.get('mode') == a.expect_mode and ad.get('live') is (a.expect_mode == 'live')
+                   and ad.get('registration') == ('registered' if a.expect_mode == 'live' else 'dry_run'))
+        if not mode_ok:
+            why.append(f"adapter mode/registration {ad.get('mode')}/{ad.get('registration')} != {a.expect_mode}")
+        if ad.get('state') != 'idle':
+            why.append(f"adapter state {ad.get('state')} latch={ad.get('latch')}")
+        if not ad.get('ready'):
+            why.append('adapter not ready: ' + str(ad.get('reason')))
+        if ad.get('foreign_publishers'):
+            why.append('foreign MC publishers ' + str(ad['foreign_publishers']))
+        if self.coord.get('busy'):
+            why.append('coordinator busy (Nav2 goal active)')
+        if not self.trusted_now():
+            why.append('localization not trusted')
+        extra = self.cmd_publishers()
+        if any(x != 'goal_coordinator' for x in extra):
+            why.append('other publishers on cmd_vel_authorized: ' + str(extra))
+        subs = {i.node_name for i in self.n.get_subscriptions_info_by_topic(self.cmd_topic)}
+        if 'motion_adapter' not in subs:
+            why.append('motion_adapter does not subscribe ' + self.cmd_topic)
+        if self.limits and time.monotonic() - self.odom_at > ODOM_MAX_AGE:
+            why.append('odometry stale')
+        if why:
+            return '; '.join(why)
+        self.log(f"preconditions ok: adapter mode={ad.get('mode')} registration={ad.get('registration')} "
+                 f"mc_source={ad.get('mc_source')} coordinator latched={self.coord.get('latched')}")
+        r = self.call_plain('goal_coordinator/stop')
+        if r is None or not r.success:
+            return 'goal_coordinator/stop failed'
+        end = time.monotonic() + STATUS_MAX_AGE        # coordinator reports at 5 Hz
+        while not self.coord.get('latched') and time.monotonic() < end:
+            self.spin(0.05)
+        if not self.coord.get('latched'):
+            return 'coordinator did not report latched after stop'
+        self.log('coordinator latched (Nav2 goals locked out) fault=' + str(self.coord.get('fault')))
+        return ''
+
+    def call_plain(self, name):
+        fut = self.srv[name].call_async(self.Trigger.Request())
+        while not fut.done():
+            self.spin(0.05)
+        return fut.result()
+
+    def run(self):
+        a = self.a
+        self.limits = a.stop_after_dist is not None or a.stop_after_yaw_deg is not None
+        self.armed_seen, self.abort_reason, self.step_idx, self.limit_hit = False, '', -1, ''
+        why = self.preconditions()
+        if why:
+            self.log('REFUSED: ' + why)
+            return EXIT_REFUSED if why != 'sigint' else EXIT_SIGINT
+        self.next_t = time.monotonic()
+        self.step_times = []
+        result = EXIT_DONE
+        for i, (vx, wz) in enumerate(a.steps):
+            self.step_idx, self.armed_seen = i, False
+            # admission for a NEW motion, as goal_coordinator.goal(): trust arm_check -> adapter arm_motion -> new trust
+            r = self.call('localization_trust/arm_check')
+            if r is None or not r.success:
+                self.abort_reason = self.abort_reason or ('trust_arm_check: ' + (r.message if r else 'interrupted'))
+                break
+            r = self.call('motion_adapter/arm_motion')
+            if r is None or not r.success:
+                self.abort_reason = self.abort_reason or ('adapter_arm_motion: ' + (r.message if r else 'interrupted'))
+                break
+            seq = self.trust_seq
+            while self.trust_seq == seq and not self.sigint and not self.abort_reason:
+                self.zero_tick('arm', i)
+                self.abort_reason = self.fault(False, trust=False)
+            if self.sigint or self.abort_reason or not self.trust:
+                self.abort_reason = self.abort_reason or ('' if self.sigint else 'post_arm_untrusted')
+                break
+            end = time.monotonic() + 1.0                  # adapter status (2 Hz): two reports must show the arm
+            while (not self.adapter.get('motion_armed') and time.monotonic() < end and not self.sigint
+                   and not self.abort_reason):
+                self.zero_tick('arm', i)
+                self.abort_reason = self.fault(False)
+            if self.sigint or self.abort_reason or not self.adapter.get('motion_armed'):
+                self.abort_reason = self.abort_reason or ('' if self.sigint else 'arm_not_reported')
+                break
+            self.armed_seen = True
+            if self.start_pose is None:
+                self.start_pose = self.odom
+            self.log(f'step {i}: vx={vx} wz={wz} for {a.dur} s')
+            t_on = time.time()
+            end = time.monotonic() + a.dur
+            while time.monotonic() < end:
+                if self.sigint:
+                    break
+                why = self.fault(True)
+                if why:
+                    self.abort_reason = why
+                    break
+                d, dyaw = self.displacement()
+                if a.stop_after_dist is not None and d is not None and d >= a.stop_after_dist:
+                    self.limit_hit = f'dist {d:.3f} m >= {a.stop_after_dist}'
+                    break
+                if a.stop_after_yaw_deg is not None and dyaw is not None and abs(dyaw) >= a.stop_after_yaw_deg:
+                    self.limit_hit = f'yaw {dyaw:.1f} deg >= {a.stop_after_yaw_deg}'
+                    break
+                self.publish('step', i, vx, wz)
+                self.sleep_tick()
+            t_off = time.time()
+            self.step_times.append(dict(step=i, vx=vx, wz=wz, t_on=t_on, t_off=t_off))
+            if self.sigint or self.abort_reason or self.limit_hit:
+                break
+            self.zeros_for(a.pause, 'pause', i)          # zeros between steps (and the end zeros after the last)
+            if self.sigint:
+                break
+            why = self.fault(False)
+            if why:
+                self.abort_reason = why
+                break
+        # ------------------------------------------------ ending
+        if self.sigint:
+            self.log('SIGINT: zeros, then adapter stop'); result = EXIT_SIGINT
+        elif self.abort_reason:
+            self.log('ABORT: ' + self.abort_reason); result = EXIT_ABORT
+        elif self.limit_hit:
+            self.log('LIMIT: ' + self.limit_hit + ' (remaining steps skipped)'); result = EXIT_LIMIT
+        if result != EXIT_DONE:
+            self.zeros_for(a.pause, 'end_zeros', self.step_idx)
+        latched = self.adapter.get('state') == 'latched'
+        if not latched:
+            r = self.call_plain('motion_adapter/stop')          # disarm: motion_armed=false (idle: no MC output)
+            self.log('adapter stop (disarm): ' + str(r.success if r else None))
+            if result in (EXIT_DONE, EXIT_LIMIT):
+                r = self.call_plain('motion_adapter/resume')    # own disarm latch only; not after a fault/SIGINT
+                self.log('adapter resume (idle, unarmed): ' + str(r.success if r else None))
+        else:
+            self.log('adapter latched by itself: ' + str(self.adapter.get('latch')) + ' (left latched for review)')
+        self.log('coordinator stays latched: run goal_coordinator/resume explicitly before the next Nav2 goal')
+        return result
+
+    def close(self, code):
+        self.f.close()
+        a = self.a
+        with open(a.csv + '.odom.csv', 'w', newline='') as f:
+            w = csv.writer(f)
+            w.writerow(['t_mono', 't_unix', 'x', 'y', 'yaw_unwrapped'])
+            w.writerows(self.odom_rows)
+        summary = dict(args={k: v for k, v in vars(a).items() if k != 'steps'}, steps_cmd=a.steps, exit_code=code,
+                       abort_reason=getattr(self, 'abort_reason', ''), limit_hit=getattr(self, 'limit_hit', ''),
+                       published=self.seq, domain=os.environ.get('ROS_DOMAIN_ID', '0'), events=self.events,
+                       per_step=step_summary(getattr(self, 'step_times', []), self.odom_rows),
+                       note='odometry-based (odom_topic); tape measure is the reference; thresholds V_MOVE/W_MOVE '
+                            'and 0.2 s velocity window from tools/analyze_motion.py')
+        with open(a.csv + '.summary.json', 'w') as f:
+            json.dump(summary, f, indent=2, default=str)
+        for s in summary['per_step']:
+            print(json.dumps(s), flush=True)
+
+
+def step_summary(steps, odom_rows):
+    """Onset lag, steady actual/commanded ratio (second half of the step), coast after the step (odometry)."""
+    if not steps or len(odom_rows) < 3:
+        return []
+    import numpy as np
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'tools'))
+    from analyze_motion import V_MOVE, W_MOVE, vel_from_pose
+    P = np.array([(r[1], r[2], r[3], r[4]) for r in odom_rows])     # unix time, x, y, unwrapped yaw
+    t, v, vy, w = vel_from_pose(P)
+    spd = np.hypot(v, vy)
+    moving = (spd > V_MOVE) | (np.abs(w) > W_MOVE)
+    out = []
+    for s in steps:
+        on, off = s['t_on'], s['t_off']
+        k = np.where((t >= on) & (t <= off + 5.0) & moving)[0]
+        onset = float(t[k[0]] - on) if len(k) else None
+        half = (t >= on + (off - on) / 2) & (t <= off)
+        cmd = s['vx'] if s['vx'] else s['wz']
+        act = float(np.mean(v[half] if s['vx'] else w[half])) if half.any() else None
+        rest = np.where((t >= off) & ~moving)[0]
+        j = int(np.searchsorted(t, off)) if off <= t[-1] else None
+        coast = None
+        if len(rest) and j is not None:
+            r = rest[0]
+            coast = dict(time_s=float(t[r] - off), dist_m=float(math.hypot(P[r, 1] - P[j, 1], P[r, 2] - P[j, 2])),
+                         yaw_deg=float(math.degrees(P[r, 3] - P[j, 3])))
+        out.append(dict(step=s['step'], cmd=cmd, axis='vx' if s['vx'] else 'wz', duration_s=round(off - on, 3),
+                        onset_lag_s=onset, steady_actual=act,
+                        ratio=None if act is None or onset is None else act / cmd,
+                        coast_after_step=coast))
+    return out
+
+
+def main(argv=None):
+    a = parse(argv)
+    dom = os.environ.get('ROS_DOMAIN_ID', '0')
+    if dom != str(a.expect_domain):
+        print(f'REFUSED: ROS_DOMAIN_ID={dom} but --expect-domain {a.expect_domain}', file=sys.stderr)
+        return EXIT_REFUSED
+    import rclpy
+    from rclpy.signals import SignalHandlerOptions
+    rclpy.init(signal_handler_options=SignalHandlerOptions.NO)
+    tool = Tool(a)
+
+    def on_sigint(signum, frame):
+        tool.sigint += 1
+    signal.signal(signal.SIGINT, on_sigint)
+    signal.signal(signal.SIGTERM, on_sigint)
+    code = EXIT_ABORT
+    try:
+        code = tool.run()
+    finally:
+        tool.close(code)
+        tool.n.destroy_node()
+        rclpy.try_shutdown()
+    return code
+
+
+if __name__ == '__main__':
+    sys.exit(main())

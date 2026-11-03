@@ -1,0 +1,10 @@
+/qazbot_d1_map/amcl:
+  ros__parameters:
+    base_frame_id: base_footprint
+    global_frame_id: map
+    map_topic: map
+    max_beams: 1440
+    odom_frame_id: odom
+    robot_model_type: nav2_amcl::OmniMotionModel
+    scan_topic: /qazbot_lio/scan
+    use_sim_time: false

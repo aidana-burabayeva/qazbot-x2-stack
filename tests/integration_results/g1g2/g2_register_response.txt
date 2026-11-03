@@ -1,0 +1,3 @@
+response:
+std_srvs.srv.Trigger_Response(success=True, message='one request submitted; check status.registration for result')
+

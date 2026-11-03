@@ -1,0 +1,1 @@
+["python3", "localization_trust_node.py", "--ros-args", "-p", "map_yaml:=/home/agi/control_backend/ws/src/maps/first_map_nav2_v3/map.yaml", "-p", "expected_map_sha256:=f6032f75ffd386361993a4b4864cf0816713fc27f6d037c88d929ae5d48562fb", "-p", "admission_policy:=go2", "-p", "odom_source:=native_imu", "-p", "odom_topic:=/qazbot_native/odom"]

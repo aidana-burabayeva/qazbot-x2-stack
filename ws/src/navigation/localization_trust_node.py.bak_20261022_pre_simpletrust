@@ -1,0 +1,270 @@
+#!/usr/bin/env python3
+"""ROS wrapper for loc_trust.TrustEvaluator. Subscribes only (plus its own status topics); never publishes velocity.
+
+Namespace /qazbot_d1_map, node `localization_trust`:
+  in : amcl_pose, particle_cloud, map (served grid, identity check T8), /qazbot_lio/scan,
+       /qazbot_lio/odom_level, /qazbot_d1_map/tf (map->odom, odom->base_footprint)
+  out: ~/trusted (Bool, 5 Hz), ~/status (String JSON: reasons + metrics)
+  srv: ~/confirm_anchor   operator verified the pose (floor mark / known start); fixes the T6 anchor
+       ~/arm_check        ambiguity of the score landscape around the pose (run standing, before a goal)
+       ~/baseline_start, ~/baseline_finish   median scan score at the confirmed standing pose (stage F0)
+"""
+import hashlib
+import json
+import math
+import os
+import sys
+import time
+
+import numpy as np
+import rclpy
+from geometry_msgs.msg import PoseWithCovarianceStamped
+from nav2_msgs.msg import ParticleCloud
+from nav_msgs.msg import OccupancyGrid, Odometry
+from rclpy.node import Node
+from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
+from sensor_msgs.msg import LaserScan
+from std_msgs.msg import Bool, String
+from std_srvs.srv import Trigger
+from tf2_msgs.msg import TFMessage
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from source_stamp import SourceStamp
+import loc_trust as L  # noqa: E402
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+
+
+def yaw_of(q):
+    return math.atan2(2 * (q.w * q.z + q.x * q.y), 1 - 2 * (q.y * q.y + q.z * q.z))
+
+
+class TrustNode(Node):
+    def __init__(self):
+        super().__init__('localization_trust', namespace='qazbot_d1_map')
+        p = self.declare_parameter
+        grid_yaml = p('map_yaml', os.path.join(HERE, '..', 'maps', 'first_map_nav2_v2', 'map.yaml')).value
+        cfg = L.TrustConfig(**{k: p(k, v).value for k, v in L.TrustConfig().__dict__.items()})
+        self.ev = L.TrustEvaluator(L.OccGrid.from_pgm(os.path.abspath(grid_yaml)), cfg)
+        self.cfg = cfg
+        import yaml
+        with open(os.path.abspath(grid_yaml)) as f:
+            image = os.path.join(os.path.dirname(os.path.abspath(grid_yaml)), yaml.safe_load(f)['image'])
+        with open(image, 'rb') as f:
+            self.map_sha256 = hashlib.sha256(f.read()).hexdigest()
+        expected = p('expected_map_sha256', '').value
+        self.file_mismatch = 'image_sha256' if expected and expected != self.map_sha256 else ''
+        self.map_ok = None                    # served grid not seen yet
+        if cfg.degenerate_budget_m > 0:
+            self.get_logger().warn(f'EXPERIMENTAL degenerate_budget_m={cfg.degenerate_budget_m} m is enabled')
+        self.mo = self.odom = None
+        self.mo_t = self.odom_t = self.odom_msg_t = self.amcl_t = self.scan_t = float('-inf')
+        self.cov = self.cloud = self.scan_pts = self.odom_msg_pose = None
+        self.cloud_t = float('-inf')
+        self.stamps = {k: SourceStamp() for k in ('map', 'odom', 'odom_msg', 'amcl', 'scan', 'cloud')}
+        self.odom_hist = []
+        self.odom_src = []                    # (source stamp s, odom->base pose) for scan-time/amcl-stamp alignment
+        # odom_src must reach back past the oldest amcl_pose stamp still of interest: AMCL output latency is
+        # bounded by pose_max_age_moving_s (beyond it a due AMCL is stale anyway) + 1 s for the scan/TF delivery
+        # margin; at 10 Hz TF this is ~40 entries.
+        self.odom_src_span = cfg.pose_max_age_moving_s + 1.0
+        self.amcl_src = None                  # amcl_pose source stamp
+        self.odom_at_amcl = self.odom_at_cloud = None
+        self.scan_src = None
+        self.baseline_scores = None
+        be = QoSProfile(depth=1, reliability=ReliabilityPolicy.BEST_EFFORT)
+        self.create_subscription(TFMessage, '/qazbot_d1_map/tf', self._tf, QoSProfile(depth=50))
+        self.create_subscription(PoseWithCovarianceStamped, 'amcl_pose', self._amcl,
+                                 QoSProfile(depth=1, reliability=ReliabilityPolicy.RELIABLE,
+                                            durability=DurabilityPolicy.TRANSIENT_LOCAL))
+        self.create_subscription(Odometry, '/qazbot_lio/odom_level', self._odom, be)
+        self.create_subscription(ParticleCloud, 'particle_cloud', self._cloud, be)
+        self.create_subscription(LaserScan, '/qazbot_lio/scan', self._scan, be)
+        self.create_subscription(OccupancyGrid, p('map_topic', 'map').value, self._map,
+                                 QoSProfile(depth=1, reliability=ReliabilityPolicy.RELIABLE,
+                                            durability=DurabilityPolicy.TRANSIENT_LOCAL))
+        self.pub_ok = self.create_publisher(Bool, '~/trusted', 10)
+        self.pub_status = self.create_publisher(String, '~/status', 10)
+        # Services run in their own callback group on a second executor thread: arm_check (ambiguity scan,
+        # ~0.9 s on the X2 Jetson, measured 2026-10-21) must not stall the 5 Hz verdict, otherwise every
+        # consumer (adapter, coordinator: trust_max_age 0.6 s) sees trust expire during goal arming.
+        from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
+        srv = MutuallyExclusiveCallbackGroup()
+        self.create_service(Trigger, '~/confirm_anchor', self._confirm, callback_group=srv)
+        self.create_service(Trigger, '~/arm_check', self._arm, callback_group=srv)
+        self.create_service(Trigger, '~/baseline_start', self._bl_start, callback_group=srv)
+        self.create_service(Trigger, '~/baseline_finish', self._bl_finish, callback_group=srv)
+        self.create_timer(0.2, self._tick)
+        self.get_logger().info(f'localization_trust started, map={grid_yaml}')
+
+    def _stamp(self, key, stamp, future=0.0):
+        source = stamp.sec + stamp.nanosec * 1e-9
+        return self.stamps[key].accept(source, self.get_clock().now().nanoseconds * 1e-9,
+                                       time.monotonic(), future)
+
+    def _tf(self, m):
+        now = time.monotonic()
+        for t in m.transforms:
+            pair = (t.header.frame_id, t.child_frame_id)
+            tr, q = t.transform.translation, t.transform.rotation
+            if pair == ('map', 'odom'):
+                self.mo, self.mo_t = (tr.x, tr.y, yaw_of(q)), self._stamp('map', t.header.stamp, 1.0)
+            elif pair == ('odom', 'base_footprint'):
+                self.odom_t = self._stamp('odom', t.header.stamp)
+                self.odom = (tr.x, tr.y, yaw_of(q))
+                src = t.header.stamp.sec + t.header.stamp.nanosec * 1e-9
+                self.odom_src = [(a, b) for a, b in self.odom_src if src - a <= self.odom_src_span and a < src] + [(src, self.odom)]
+                self.odom_hist = [(a, b) for a, b in self.odom_hist if now - a <= 0.6] + [(now, self.odom)]
+
+    def _odom(self,m):
+        if m.header.frame_id!='odom' or m.child_frame_id!='base_footprint':
+            self.odom_msg_t=float('-inf');return
+        self.odom_msg_t=self._stamp('odom_msg',m.header.stamp)
+        q=m.pose.pose.orientation;self.odom_msg_pose=(m.pose.pose.position.x,m.pose.pose.position.y,yaw_of(q))
+
+    def _map(self, m):
+        if m.header.frame_id != 'map':
+            self.map_ok = 'frame_id'
+            return
+        o = m.info.origin.position
+        self.map_ok = self.file_mismatch or L.map_identity(self.ev.grid, m.info.resolution, (o.x, o.y),
+                                                           m.info.width, m.info.height, m.data)
+        if self.map_ok:
+            self.get_logger().error('served map differs from the trust grid: ' + self.map_ok)
+
+    def _amcl(self, m):
+        if m.header.frame_id!='map':
+            self.cov=None;self.amcl_t=float('-inf');return
+        t = self._stamp('amcl', m.header.stamp)
+        if t == float('-inf'):                # rejected / duplicate / old stamp: ignore the message entirely, keep
+            return                            # previous cov, stamp and odom reference (no due-timer reset either)
+        self.cov, self.amcl_t = list(m.pose.covariance), t
+        self.amcl_src = m.header.stamp.sec + m.header.stamp.nanosec * 1e-9
+        # odom pose AMCL worked from (its scan stamp); history miss -> odom at receipt (latest known)
+        self.odom_at_amcl = self._odom_at(self.amcl_src) or self.odom
+
+    def _cloud(self, m):
+        if m.particles and m.header.frame_id == 'map':
+            t = self._stamp('cloud', m.header.stamp)
+            if t == float('-inf'):              # rejected / duplicate stamp: ignore, keep previous cloud/reference
+                return
+            self.cloud = (np.array([[q.pose.position.x, q.pose.position.y] for q in m.particles]),
+                          np.array([q.weight for q in m.particles]))
+            self.cloud_t = t
+            # the cloud is stamped with AMCL's now(): odom at receipt is the closest available reference
+            self.odom_at_cloud = self.odom
+
+    def _scan(self, m):
+        if m.header.frame_id!='base_footprint':
+            self.scan_pts=None;self.scan_t=float('-inf');return
+        self.scan_pts = L.scan_endpoints(m.ranges, m.angle_min, m.angle_increment, self.cfg.rmin, self.cfg.rmax)
+        self.scan_t = self._stamp('scan', m.header.stamp)
+        self.scan_src = m.header.stamp.sec + m.header.stamp.nanosec * 1e-9
+
+    def _odom_at_scan(self):
+        """odom->base_footprint interpolated at the scan source stamp; None if the scan is outside the history."""
+        return self._odom_at(self.scan_src)
+
+    def _odom_at(self, t):
+        h = self.odom_src
+        if t is None or not h or not h[0][0] <= t <= h[-1][0]:
+            return None
+        for (t0, a), (t1, b) in zip(h, h[1:]):
+            if t0 <= t <= t1:
+                f = (t - t0) / max(t1 - t0, 1e-9)
+                return (a[0] + f * (b[0] - a[0]), a[1] + f * (b[1] - a[1]), L.wrap(a[2] + f * L.wrap(b[2] - a[2])))
+        return h[-1][1]
+
+    def _moving(self):
+        if len(self.odom_hist) < 2:
+            return False
+        (t0, a), (t1, b) = self.odom_hist[0], self.odom_hist[-1]
+        dt = max(t1 - t0, 1e-3)
+        return (math.hypot(b[0] - a[0], b[1] - a[1]) / dt > 0.02) or (abs(L.wrap(b[2] - a[2])) / dt > 0.03)
+
+    def _inputs(self):
+        # an amcl/cloud message that arrived before any odom: pin the reference to the first odom seen
+        if self.odom is not None:
+            if self.cov is not None and self.odom_at_amcl is None:
+                self.odom_at_amcl = self.odom
+            if self.cloud is not None and self.odom_at_cloud is None:
+                self.odom_at_cloud = self.odom
+        return L.Inputs(now=time.monotonic(), map_odom=self.mo, map_odom_stamp=self.mo_t, odom_base=self.odom, odom_stamp=self.odom_t, odom_msg_stamp=self.odom_msg_t,
+                        amcl_cov=self.cov, amcl_stamp=self.amcl_t,
+                        cloud_xy=None if self.cloud is None else self.cloud[0],
+                        cloud_w=None if self.cloud is None else self.cloud[1], cloud_stamp=self.cloud_t,
+                        odom_msg_pose=self.odom_msg_pose, map_ok=self.map_ok, odom_at_scan=self._odom_at_scan(),
+                        scan_pts=self.scan_pts, scan_stamp=self.scan_t, moving=self._moving(),
+                        odom_at_amcl=self.odom_at_amcl, odom_at_cloud=self.odom_at_cloud)
+
+    def _tick(self):
+        inp = self._inputs()
+        r = self.ev.evaluate(inp)
+        if self.baseline_scores is not None and 'scan_score' in r['metrics']:
+            self.baseline_scores.append(r['metrics']['scan_score'])
+        self.pub_ok.publish(Bool(data=bool(r['trusted'])))
+        self.pub_status.publish(String(data=json.dumps(dict(
+            r, anchor=self.ev.anchor is not None, baseline=self.ev.baseline, moving=inp.moving,
+            map_sha256=self.map_sha256, map_ok=self.map_ok,
+            experimental=dict(degenerate_budget_m=self.cfg.degenerate_budget_m,
+                              frozen_window_s=self.cfg.frozen_window_s)), default=float)))
+
+    def _ready(self, resp):
+        inp = self._inputs()
+        if (self.mo is None or self.odom is None or self.scan_pts is None or
+            not 0 <= inp.now - self.odom_t <= self.cfg.odom_max_age_s or
+            not 0 <= inp.now - self.odom_msg_t <= self.cfg.odom_max_age_s or
+            not 0 <= inp.now - self.scan_t <= self.cfg.scan_max_age_s or
+            not 0 <= inp.now - self.mo_t <= self.cfg.tf_max_age_s):
+            resp.success, resp.message = False, 'no map->odom / odom / scan yet'
+            return None
+        return inp
+
+    def _confirm(self, req, resp):
+        inp = self._ready(resp)
+        if inp is not None:
+            pose = self.ev.confirm_anchor(inp)
+            resp.success, resp.message = True, 'anchor (x, y, yaw) = (%.3f, %.3f, %.3f)' % pose
+        return resp
+
+    def _arm(self, req, resp):
+        inp = self._ready(resp)
+        if inp is not None:
+            a = self.ev.arm_check(inp)
+            resp.success = not a['ambiguous']
+            resp.message = json.dumps(a, default=float)
+        return resp
+
+    def _bl_start(self, req, resp):
+        self.baseline_scores, resp.success, resp.message = [], True, 'collecting scan scores; stand still at the confirmed pose'
+        return resp
+
+    def _bl_finish(self, req, resp):
+        if not self.baseline_scores or len(self.baseline_scores) < 20:
+            resp.success, resp.message = False, 'fewer than 20 samples'
+        else:
+            self.ev.set_baseline(self.baseline_scores)
+            resp.success = True
+            resp.message = 'baseline median %.3f from %d samples (min %.3f)' % (
+                self.ev.baseline, len(self.baseline_scores), min(self.baseline_scores))
+        self.baseline_scores = None
+        return resp
+
+
+def main():
+    from rclpy.executors import MultiThreadedExecutor
+    rclpy.init()
+    node = TrustNode()
+    ex = MultiThreadedExecutor(num_threads=2)
+    ex.add_node(node)
+    try:
+        ex.spin()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.try_shutdown()
+
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,30 @@
+{
+  "utc": "2026-10-27T10:23:05.167737+00:00",
+  "host": "agi",
+  "machine": "aarch64",
+  "python": "3.10.12 (main, Jan 26 2026, 14:55:28) [GCC 11.4.0]",
+  "clock_ticks": 100,
+  "errors": [
+    [
+      "/proc/2483",
+      "PermissionError(13, 'Permission denied')"
+    ],
+    [
+      "/proc/197628",
+      "FileNotFoundError(2, 'No such file or directory')"
+    ],
+    [
+      "/proc/198066",
+      "FileNotFoundError(2, 'No such file or directory')"
+    ],
+    [
+      "/proc/198067",
+      "FileNotFoundError(2, 'No such file or directory')"
+    ],
+    [
+      "/proc/198070",
+      "FileNotFoundError(2, 'No such file or directory')"
+    ]
+  ],
+  "loaded_python_source_hash": "not observable without process introspection; disk hash is not a loaded-code hash"
+}

@@ -1,0 +1,6 @@
+{
+  "tests/integration_results/user_return_front02/trace.jsonl": "a198cdac7b5dea6c1422f18a34682a34812f8567dfb3e18fa189290f579cf73c",
+  "tools/twin/profiles/robot66_observation_v1.json": "3f3cde33507e88b0a8adefe636f56f2a5bdc840dd7b220682ad1dfa8f6e28d8c",
+  "ws/src/maps/first_map_nav2_v3/map.yaml": "f49dd066e7ed40699fb26558745d743383b49b16043b1d079af645d17d821e6d",
+  "ws/src/maps/first_map_nav2_v3/map.pgm": "f6032f75ffd386361993a4b4864cf0816713fc27f6d037c88d929ae5d48562fb"
+}

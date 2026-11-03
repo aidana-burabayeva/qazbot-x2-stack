@@ -1,0 +1,6 @@
+n_scans 5 pts [169, 164, 166, 167, 168] seed score 0.518
+best 0.609 at x -3.102 y 1.011 yaw -1.541 rad (-88.3 deg); offset dxy 0.20 m dyaw -1.1 deg
+ mode 0.589 x -3.08 y 0.91 yaw -90.0 deg
+ mode 0.554 x -2.48 y 0.41 yaw -107.2 deg
+ mode 0.529 x -3.48 y 1.21 yaw -81.4 deg
+ mode 0.520 x -3.78 y 0.31 yaw -72.8 deg

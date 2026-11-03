@@ -1,0 +1,70 @@
+{
+  "permission": "operator approved R0 and confirmed standing in chat",
+  "old_tag": "nav72_20261027",
+  "new_tag": "rviz_native_v13_20261027_110741Z",
+  "state": "native_dry_run_up_needs_operator_seed",
+  "odom_source": "native_imu",
+  "adapter_live": false,
+  "first_goal_parameters": {
+    "xy_tol": 0.2,
+    "yaw_tol": 0.17453292519943295,
+    "goal_checker_stateful": true
+  },
+  "changes": [
+    {
+      "path": "ws/src/navigation/loc_trust.py",
+      "before_sha256": "b18cd35adcc9900b5c31858cda79687d753f377228e25aeab66be8922ef52771",
+      "after_sha256": "9793de94ff11a61130f21f2e82e578aa0625d7236b5da017b197a92e68bc6310"
+    },
+    {
+      "path": "ws/src/lio/native_odom.py",
+      "before_sha256": "deff161aa0184cc9e540cf789038c9d3dcf56fdca67b11cc854f6b4c0d69e62d",
+      "after_sha256": "1ac4698f5980b08a3e041361f0db09b5094399b7398e7384446e2ca21d90e1a4"
+    },
+    {
+      "path": "tests/loc_trust/test_go2_policy.py",
+      "before_sha256": "03f62241b251bde5187d9d6db1af2080a0c649dcffe80fc6e9d3ffed3cdc4b15",
+      "after_sha256": "d1b9fae5bde246e9193966cb543af9b264ad6dde72e391e256c78453b4c13110"
+    },
+    {
+      "path": "tests/loc_trust/test_loc_trust.py",
+      "before_sha256": "c19af033d54d2be85bf408b03f361661c1a73480ab9c682320b47e0894d22f3e",
+      "after_sha256": "2ea1c34537d93ba0c7fc73a1e4c1ae8336c541b50815859de4014d52cdcc6c7a"
+    },
+    {
+      "path": "tests/loc_trust/test_pose_persist.py",
+      "before_sha256": "ae57832b1632edfe340031e580f9f2ed8ef22bf70e56c0ff8249f4b02744dc1a",
+      "after_sha256": "927923c75f0406f85b6a0fa470a8794137ab5bd721684b642633816b0b912a2f"
+    },
+    {
+      "path": "tests/loc_trust/test_ready_motion.py",
+      "before_sha256": "8f3c20bcab9fa294b712dfaf1a93fe9081950c1b1351c35084e345476ee6db7d",
+      "after_sha256": "7ea6672d5e4b677b2eadcd34662818e52a2cd8173b0d1b038fb61aa240153df1"
+    },
+    {
+      "path": "tests/loc_trust/test_source_failures.py",
+      "before_sha256": "364bddc5140249dc4a6c6a4948ecd8f87f32263ab3644b04d8ca1bc86cbdf82b",
+      "after_sha256": "1acf21f59ea4973a9f43663b38b9e0d900b34efd48ada9397b4d7a3465a02713"
+    },
+    {
+      "path": "tests/loc_trust/test_trust_gaps.py",
+      "before_sha256": "f9b95a1a1a4af3d9731abfc3c48e4b351479a691f7bb20063030f231189bd65f",
+      "after_sha256": "e82e75aec7b386e03bedb434d737147505f0fa61a4805fb238934b2d28e48a83"
+    },
+    {
+      "path": "tests/loc_trust/test_seed_refresh.py",
+      "before_sha256": null,
+      "after_sha256": "e5232406572e429bf224357cd11684c9e7936b59dfd27c64f278e2c0e1f5ee65"
+    },
+    {
+      "path": "tests/lio/test_native_odom_bridge.py",
+      "before_sha256": "00c38874110ce32a104e1e3e8cc8f8096c6a741271cf3db0a255f89b649dcf8f",
+      "after_sha256": "526361bb1fddce9a317a5c3561d27614a34c37ab704fc7835d3dafa44140d292"
+    },
+    {
+      "path": "tests/lio/test_native_odom_clock_gaps.py",
+      "before_sha256": null,
+      "after_sha256": "a240514cb1e5527ec46bf35aa8f390b3f883112d703b721438cae1f372385a9d"
+    }
+  ]
+}

@@ -1,0 +1,230 @@
+--- loc_trust.py.bak_20261030_pre_p27	2026-10-30 18:35:25.183012903 +0800
++++ loc_trust.py	2026-10-30 19:01:48.915149625 +0800
+@@ -61,6 +61,16 @@
+              (t1_transient=True, plus status field quality_pause=True): coordinator/adapter pause, resume when quality
+              returns, and cancel+latch only after their own quality_pause_max_s. Consumers that do not know quality_pause
+              fall back to their T1 bound (shorter = more conservative).
++P27 2026-10-30 (go2 only, operator-approved): T5 RE-ANCHOR. A T5 jump (per-update step or across a gap) while READY with
++             jump <= jump_xy_hard_max AND <= jump_yaw_hard_max does NOT clear READY immediately: blocking reason
++             'T5_reanchor', TRANSIENT (t1_transient=True, quality_pause=True, reanchor_pause=True) so coordinator/adapter
++             PAUSE via the P26 quality-pause path (no GC/adapter change). Every evaluation in the window must have all three
++             metrics with sigma_xy <= reanchor_sigma_xy_max, scan_score >= reanchor_scan_score_min, second_mode_weight <=
++             reanchor_second_mode_max and no further T5 (step > jump_xy_max / jump_yaw_max) and no T8. Window passed for
++             reanchor_window_s -> the post-jump pose is accepted (T5 reference already moved; go2 anchor, if any, reset to
++             the current pose), pause cleared, goal resumes; one 'reanchor accepted' event (node logs WARN). Any failure ->
++             'T5_reanchor_failed:<cause>' = old behaviour (READY lost, consumers cancel+latch). Jumps above the hard
++             ceiling, jumps while not READY, or reanchor=false -> old behaviour (T5 clears READY at once).
+ """
+ import math
+ from dataclasses import dataclass, field
+@@ -133,6 +143,14 @@
+     ready_sigma_xy_max: float = 0.25
+     ready_second_mode_max: float = 0.15
+     ready_scan_score_min: float = 0.35
++    # P27 2026-10-30 go2 T5 re-anchor (see module docstring). jump_xy_max / jump_yaw_max stay the SOFT threshold.
++    reanchor: bool = True
++    reanchor_window_s: float = 1.5
++    reanchor_sigma_xy_max: float = 0.35
++    reanchor_scan_score_min: float = 0.35
++    reanchor_second_mode_max: float = 0.30
++    jump_xy_hard_max: float = 1.0
++    jump_yaw_hard_max: float = 0.5
+ 
+ 
+ EXPERIMENTAL_DEGENERATE_BUDGET_M = 2.0
+@@ -318,8 +336,11 @@
+         self._due = {}                   # 'pose'/'cloud' -> (output stamp, time AMCL became due or None)
+         self.ready, self.pending, self.ready_cause = False, False, 'no_anchor'
+         self.seed_ok, self.q_since = False, None   # P26 go2 seed gate passed since the last initialization; Q-bad since
++        self.reanchor = None             # P27 active re-anchor window: dict(t0, jump_xy, jump_yaw, n, worst metrics)
++        self.reanchor_last = None        # P27 last closed window (status)
++        self.events = []                 # P27 (level, text) for the node to log; drained by the node each tick
+         self.last = dict(trusted=False, ready=False, motion_ok=False, t1_transient=False, quality_pause=False,
+-                         reasons=['no_data'], diagnostics=[], metrics={})
++                         reanchor_pause=False, reanchor=None, reasons=['no_data'], diagnostics=[], metrics={})
+ 
+     @staticmethod
+     def correction_at(prev, new, odom):
+@@ -370,6 +391,7 @@
+         self.anchor, self.ready, self.pending, self.ready_cause = None, False, False, 'initialpose'
+         self.initialized = False
+         self.seed_ok, self.q_since = False, None
++        self.reanchor = None
+         self._reset_map_history()
+ 
+     def _reset_map_history(self):
+@@ -384,6 +406,7 @@
+         self._reset_map_history()
+         self.initialized = True
+         self.seed_ok, self.q_since = False, None
++        self.reanchor = None
+ 
+     def goal_request(self):
+         """A new goal is requested. Critical-input loss (T0/T1) still present now is 'prolonged': READY is lost.
+@@ -394,7 +417,7 @@
+         if self.ready and loss:
+             self.ready, self.ready_cause = False, 'input_loss_at_goal_request:' + ','.join(loss)
+             self.last = dict(self.last, trusted=False, ready=False, motion_ok=False, t1_transient=False, quality_pause=False,
+-                             reasons=loss + ['not_ready:' + self.ready_cause])
++                             reanchor_pause=False, reasons=loss + ['not_ready:' + self.ready_cause])
+         return loss
+ 
+     def arm_check(self, inp: Inputs):
+@@ -435,10 +458,12 @@
+         for value in (inp.map_odom, inp.odom_base):
+             if value is not None and (len(value)!=3 or not np.isfinite(value).all()):
+                 self.mo_gap = True       # keep mo_ref: the first fresh value after the gap is compared with it
+-                return self._verdict(['T0_invalid_pose'], {})
++                m = {}
++                return self._verdict(self._reanchor_step(['T0_invalid_pose'], m, inp), m)
+         if inp.scan_pts is not None and not np.isfinite(inp.scan_pts).all():
+             self.mo_gap = True
+-            return self._verdict(['T0_invalid_scan'], {})
++            m = {}
++            return self._verdict(self._reanchor_step(['T0_invalid_scan'], m, inp), m)
+         if self._last_odom is not None and inp.odom_base is not None:
+             self.path_len += math.hypot(inp.odom_base[0] - self._last_odom[0], inp.odom_base[1] - self._last_odom[1])
+         if inp.odom_base is not None:
+@@ -569,14 +594,75 @@
+                     why.append('Q_localization_quality')
+             else:
+                 self.q_since = None
+-        return self._verdict(why, m)
++        return self._verdict(self._reanchor_step(why, m, inp), m)
++
++    # -- P27 go2 T5 re-anchor (see module docstring)
++    def _reanchor_step(self, why, m, inp):
++        """Opens / advances / closes the re-anchor window. Returns the reason list for _verdict: the opening T5 replaced by
++        'T5_reanchor' while the window runs, nothing on acceptance, the T5 reasons + 'T5_reanchor_failed:<cause>' on failure."""
++        c = self.cfg
++        if c.admission_policy != 'go2' or not c.reanchor:
++            self.reanchor = None
++            return why
++        t5 = [r for r in why if r.startswith('T5')]
++        gap = 'T5_map_odom_jump_across_gap' in why
++        jxy = max(m.get('jump_latched_xy', 0.0), m.get('gap_jump_xy', 0.0) if gap else 0.0)
++        jyaw = max(m.get('jump_latched_yaw', 0.0), m.get('gap_jump_yaw', 0.0) if gap else 0.0)
++        t8 = [r for r in why if r.startswith('T8')]
++        ra = self.reanchor
++        if ra is None:
++            if not (t5 and self.ready and not t8):
++                return why
++            if jxy > c.jump_xy_hard_max or jyaw > c.jump_yaw_hard_max:
++                self._reanchor_close('hard_ceiling', dict(jump_xy=jxy, jump_yaw=jyaw, n=0, elapsed_s=0.0),
++                                     'T5 jump %.2f m / %.2f rad above hard ceiling %.2f m / %.2f rad -> READY lost (no re-anchor)'
++                                     % (jxy, jyaw, c.jump_xy_hard_max, c.jump_yaw_hard_max))
++                return why
++            ra = self.reanchor = dict(t0=inp.now, jump_xy=jxy, jump_yaw=jyaw, n=0, max_sigma_xy=0.0,
++                                      max_second_mode_weight=0.0, min_scan_score=float('inf'))
++            t5 = []                      # the opening jump is what the window judges
++            self.events.append(('info', 'T5 jump %.2f m / %.2f rad <= hard ceiling: re-anchor window %.1f s opened (goal paused)'
++                                % (jxy, jyaw, c.reanchor_window_s)))
++        rest = [r for r in why if not r.startswith('T5')]
++        sxy, w2, sc = m.get('sigma_xy'), m.get('second_mode_weight'), m.get('scan_score')
++        cause = ('jump_in_window' if t5 else 'T8' if t8 else 'not_ready' if not self.ready else
++                 'metrics_missing' if sxy is None or w2 is None or sc is None else '')
++        if not cause:
++            ra['n'] += 1
++            ra.update(max_sigma_xy=max(ra['max_sigma_xy'], sxy), max_second_mode_weight=max(ra['max_second_mode_weight'], w2),
++                      min_scan_score=min(ra['min_scan_score'], sc))
++            cause = ','.join(k for k, bad in (('sigma_xy', sxy > c.reanchor_sigma_xy_max),
++                                              ('scan_score', sc < c.reanchor_scan_score_min),
++                                              ('second_mode_weight', w2 > c.reanchor_second_mode_max)) if bad)
++        ra['elapsed_s'] = elapsed = inp.now - ra['t0']
++        m.update(reanchor_elapsed_s=elapsed)
++        if cause:
++            self.reanchor = None
++            self._reanchor_close('failed:' + cause, ra, 'T5 re-anchor FAILED (%s) %s -> READY lost' % (cause, self._ra_text(ra, m)))
++            return why + ['T5_reanchor_failed:' + cause]   # T5* = fatal in _verdict: READY lost, consumers cancel+latch
++        if elapsed >= c.reanchor_window_s:
++            self.reanchor = None
++            if self.anchor is not None and inp.map_odom is not None and inp.odom_base is not None:
++                self.anchor = (compose(inp.map_odom, inp.odom_base), inp.odom_base, self.path_len)
++            self._reanchor_close('accepted', ra, 'T5 re-anchor ACCEPTED %s -> new pose kept, pause cleared' % self._ra_text(ra, m))
++            return rest
++        return rest + ['T5_reanchor']
++
++    def _ra_text(self, ra, m):
++        return ('jump %.2f m / %.2f rad; window %.2f s, %d evals: max sigma_xy %.2f, max second_mode %.2f, min scan_score %.2f'
++                % (ra['jump_xy'], ra['jump_yaw'], ra.get('elapsed_s', 0.0), ra['n'], ra['max_sigma_xy'],
++                   ra['max_second_mode_weight'], ra['min_scan_score'] if ra['n'] else float('nan')))
++
++    def _reanchor_close(self, result, ra, text):
++        self.reanchor_last = dict({k: (None if v == float('inf') else v) for k, v in ra.items() if k != 't0'}, result=result)
++        self.events.append(('warn', text))
+ 
+     # -- READY / MOTION_OK from the raw check results (see module docstring)
+     GATE_SKIP = ('T4_no_baseline', 'T6_no_anchor', 'T7_')    # not part of the READY gate
+ 
+     def _t1_transient(self, blocking):
+-        """READY kept and the only motion blockers are T1 freshness (or P26 Q quality): pause-and-continue."""
+-        return bool(self.ready and blocking and all(r.startswith(('T1', 'Q')) for r in blocking))
++        """READY kept and the only motion blockers are T1 freshness (or P26 Q quality, P27 T5_reanchor): pause-and-continue."""
++        return bool(self.ready and blocking and all(r.startswith(('T1', 'Q')) or r == 'T5_reanchor' for r in blocking))
+ 
+     def _seed_gate(self, blocking, m):
+         """P26: one clean evaluation after initialization, all three metrics present."""
+@@ -591,7 +677,7 @@
+             # AMCL is event-driven: no external pose/cloud-due or frozen-TF gate.
+             diagnostic_only = ('T1_amcl_pose_stale', 'T1_particle_cloud_stale', 'T1_tf_frozen')
+             blocking = [r for r in why if r.startswith(('T0', 'T1', 'T5', 'T8')) and r not in diagnostic_only]
+-            if any(r.startswith(('T5', 'T8')) for r in blocking):
++            if any(r.startswith(('T5', 'T8')) and r != 'T5_reanchor' for r in blocking):   # P27: re-anchor window keeps READY
+                 self.initialized = False
+                 self.seed_ok = False
+             if self.initialized and not self.seed_ok:
+@@ -605,7 +691,11 @@
+             motion_ok = self.ready and not blocking
+             transient = self._t1_transient(blocking)
+             self.last = dict(trusted=motion_ok, ready=self.ready, motion_ok=motion_ok,
+-                             t1_transient=transient, quality_pause=bool(transient and any(r.startswith('Q') for r in blocking)),
++                             t1_transient=transient,
++                             quality_pause=bool(transient and any(r.startswith('Q') or r == 'T5_reanchor' for r in blocking)),
++                             reanchor_pause=bool(transient and 'T5_reanchor' in blocking),
++                             reanchor=None if self.reanchor is None else {k: v for k, v in self.reanchor.items() if k != 't0'},
++                             reanchor_last=self.reanchor_last,
+                              reasons=reasons, diagnostics=[r for r in why if r not in blocking], metrics=m)
+             return self.last
+         motion = [r for r in why if r.startswith(('T0', 'T1'))]
+@@ -621,5 +711,6 @@
+         motion_ok = self.ready and not motion
+         reasons = motion + ([] if self.ready else ['not_ready:' + self.ready_cause] + [r for r in gate if r not in motion])
+         self.last = dict(trusted=motion_ok, ready=self.ready, motion_ok=motion_ok, reasons=reasons,
+-                         t1_transient=self._t1_transient(motion), quality_pause=False, diagnostics=diag, metrics=m)
++                         t1_transient=self._t1_transient(motion), quality_pause=False, reanchor_pause=False, reanchor=None,
++                         reanchor_last=None, diagnostics=diag, metrics=m)
+         return self.last
+--- localization_trust_node.py.bak_20261030_pre_p27	2026-10-30 18:35:25.223011296 +0800
++++ localization_trust_node.py	2026-10-30 19:01:25.223795279 +0800
+@@ -11,7 +11,9 @@
+        initialpose (strict: confirm_anchor; Go2: valid post-seed AMCL required)
+   out: ~/trusted (Bool, 5 Hz) = MOTION_OK (READY and fresh critical inputs),
+        ~/status (String JSON: trusted, ready, motion_ok, t1_transient (READY kept, only T1 freshness blocks: consumers
+-                 pause and continue the goal), ready_cause, reasons (motion-blocking / not-ready),
++                 pause and continue the goal), quality_pause (P26 Q / P27 re-anchor: longer consumer bound),
++                 reanchor_pause / reanchor (P27 active T5 re-anchor window) / reanchor_last (last window result),
++                 ready_cause, reasons (motion-blocking / not-ready; P27 'T5_reanchor', 'T5_reanchor_failed:<cause>'),
+        diagnostics (T2/T3/T4/T6/T7 after READY, never blocking), metrics)
+   srv: ~/confirm_anchor   operator verified the pose (floor mark / known start); fixes the T6 anchor and gates READY
+        ~/arm_check        called by the coordinator for every NEW goal request: input loss still present now clears
+@@ -140,6 +142,10 @@
+         self.create_timer(0.2, self._tick)
+         self.get_logger().info(f'localization_trust started, map={grid_yaml}, policy={cfg.admission_policy}, '
+                                f'odom_source={self.odom_source}, odom_topic={self.odom_topic}')
++        self.get_logger().info(f'P27 T5 re-anchor={cfg.reanchor} soft jump {cfg.jump_xy_max} m/{cfg.jump_yaw_max} rad, hard '
++                               f'{cfg.jump_xy_hard_max} m/{cfg.jump_yaw_hard_max} rad, window {cfg.reanchor_window_s} s, '
++                               f'sigma_xy<={cfg.reanchor_sigma_xy_max} scan_score>={cfg.reanchor_scan_score_min} '
++                               f'second_mode<={cfg.reanchor_second_mode_max}')
+         if self.odom_source == 'native_imu' and self.odom_topic == '/qazbot_lio/odom_level':
+             self.get_logger().warn('odom_source=native_imu but odom_topic is the LIO topic: odom->base_footprint and '
+                                    'the odometry message come from different sources (T1_tf_frozen cross-check)')
+@@ -345,6 +351,9 @@
+         with self.lock:
+             for pose,odom in steps:self.ev.observe_map_odom(pose,odom)
+             r = self.ev.evaluate(inp)
++            events, self.ev.events = self.ev.events, []
++        for level, text in events:   # P27 re-anchor: INFO when a window opens, one WARN per window result
++            (self.get_logger().warn if level == 'warn' else self.get_logger().info)(text)
+         self.saver.on_verdict(r, *self._pose_cov(inp))
+         if self.baseline_scores is not None and 'scan_score' in r['metrics']:
+             self.baseline_scores.append(r['metrics']['scan_score'])

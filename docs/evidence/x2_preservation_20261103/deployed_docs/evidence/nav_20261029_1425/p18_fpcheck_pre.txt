@@ -1,0 +1,9 @@
+local published_footprint (16 pts): [(4.618, 2.393), (4.582, 2.577), (4.483, 2.724), (4.335, 2.821), (4.161, 2.855), (3.968, 2.819), (3.821, 2.72), (3.723, 2.572), (3.69, 2.398), (3.726, 2.204), (3.825, 2.058), (3.973, 1.96), (4.147, 1.927), (4.34, 1.962), (4.487, 2.062), (4.585, 2.21)]
+[lc] frame=odom robot=(4.15,2.39,yaw 0deg) centre_cost=96 nearest_lethal=0.479 m at 10deg (robot frame)
+   circle0.464: current-yaw outline max=100  lethal at 72/72 yaw offsets [-180, -175, -170, -165, -160, -155, -150, -145, -140, -135, -130, -125]...
+   poly+pad0.01: current-yaw outline max=99  lethal at 0/72 yaw offsets []
+   poly+pad0.045(global): current-yaw outline max=99  lethal at 15/72 yaw offsets [60, 65, 70, 75, 80, 85, 90, 125, 130, 135, 140, 145]...
+[gc] frame=map robot=(-4.38,0.08,yaw -81deg) centre_cost=99 nearest_lethal=0.484 m at 9deg (robot frame)
+   circle0.464: current-yaw outline max=100  lethal at 64/72 yaw offsets [-180, -175, -170, -165, -155, -150, -145, -140, -135, -130, -125, -120]...
+   poly+pad0.01: current-yaw outline max=99  lethal at 0/72 yaw offsets []
+   poly+pad0.045(global): current-yaw outline max=99  lethal at 6/72 yaw offsets [125, 130, 135, 140, 145, 150]

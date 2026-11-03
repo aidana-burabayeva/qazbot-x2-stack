@@ -1,0 +1,9 @@
+# lioapply (2026-10-22)
+- Old binary sha256 4097314bba6df4e2a358625bdb06897cbd3cd50f1d14fb6f2986572101237064 (backup fastlio_mapping.bak_20261022_pre_loopback, same hash).
+- Old stack stopped via SIGINT (nav_full_dryrun_03 4 s, adapter_dryrun_02 2 s, trust_v3_06 2 s, localization_v3_dryrun_02 2 s), all "finished cleanly"; fastlio exit clean.
+- Patch applied, rebuilt in place: colcon build --packages-select fast_lio -DCMAKE_BUILD_TYPE=Release (2.5 min). New sha256 63903a5c42e78438a97493d3a9cd3e8e26eb079932d4bf77746c342f093c17e8 (md5 differs from scratch build a38eb32a: embedded build path). Notes: candidates/fast_lio_portable/NOTES_loopback_fix.md; old build.log kept as .bak_20261022_pre_loopback. Docs updated (DECISIONS, INTEGRATION_STATUS, X2_NAV2_CONTROLLER, X2_FIRST_PHYSICAL_TEST_PLAN; backups *.bak_20261022_pre_loopback except DECISIONS).
+- Offline replay domain 88: 609/609 poses identical to original (dpos 0, dang 0); odom recv - cloud publish p50 26 ms, p95 32 ms, 0% after next scan.
+- Live (domain 0): localization_v3_loopfix_01 (launch 97589, fastlio 97622, taskset 5,6 all threads mask 0x60), trust_v3_07 (97765), adapter_dryrun_03 (97772, live=False), nav_full_dryrun_04 (97880). pid files logs/<name>.pid.
+- Note: a "lidar loop back, clear buffer" + "Too few input point cloud!" occurred ~8 s after start (vendor stream back-stamp at start, same as 14:10 event); patched binary recovered: 30 s probe on /qazbot_lio/odometry p50 31 ms, p95 36, p99 146, max 343 (287 msgs).
+- Publishers: /aima/mc/locomotion/velocity 4 vendor only (aimrt_planning, soc0_rc, app_proxy, soc2_interaction); /cmd_vel 1 vendor controller_server_ros_node; none ours.
+- Nav2 costmap waits for map->base TF (AMCL no initial pose). Nothing confirmed, no goals. Operator must re-localize in RViz, then baseline/confirm_anchor.

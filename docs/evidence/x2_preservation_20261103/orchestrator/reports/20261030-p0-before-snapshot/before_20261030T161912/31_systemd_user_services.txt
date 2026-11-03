@@ -1,0 +1,7 @@
+dbus.service loaded active running
+dirmngr.service loaded inactive dead
+gpg-agent.service loaded inactive dead
+lingxi-off.service loaded active running
+pk-debconf-helper.service loaded inactive dead
+qazbot-speech.service loaded activating auto-restart
+tailscaled.service loaded active running

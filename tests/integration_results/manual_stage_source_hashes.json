@@ -1,0 +1,8 @@
+{
+  "ws/src/navigation/rviz/localization.rviz": "fca83974c38742e8bd0db70d5f3eef0aff80ddd0e52f341dec43da0c08981f74",
+  "ws/src/navigation/rviz/run_local_viewer.sh": "05129526643e057a89fec5ed9efcc703f6e2871a634717b44f893e0be9f271d5",
+  "ws/src/navigation/rviz/dds_pc_x2.xml": "6b5a973b2a248ae672d6af6e71b6c4475723aa3aca22e720e682c6a2724bea2c",
+  "ws/src/navigation/record_validation.py": "ac281caa1005a5e81977cdfda1797702b1a3091d94cd46be7054218e1ffb9784",
+  "ws/src/navigation/analyze_validation.py": "37e6da279336ae85f3f6b41cf7439a9249d612190b19de85422bf80ebf3943e5",
+  "tests/localization/multiview_diagnostic.py": "b3ad608e8506d94f91e54ffba50d69c10452f3c72ee76ffcaa5bbc55cb09878b"
+}

@@ -1,0 +1,57 @@
+{
+  "checks": [
+    {
+      "name": "scan_lifecycle_1",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "scan_lifecycle_3",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "voxel_lifecycle_1",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "voxel_lifecycle_3",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "both_mark_obstacle",
+      "ok": true,
+      "detail": {
+        "scan": 100,
+        "voxel": 100
+      }
+    },
+    {
+      "name": "unobserved_does_not_clear",
+      "ok": true,
+      "detail": {
+        "scan": 100,
+        "voxel": 100
+      }
+    },
+    {
+      "name": "present_obstacle_remains",
+      "ok": true,
+      "detail": {
+        "scan": 100,
+        "voxel": 100
+      }
+    },
+    {
+      "name": "scan_retains_ghost_voxel_clears_observed_space",
+      "ok": true,
+      "detail": {
+        "scan": 100,
+        "voxel": 0
+      }
+    }
+  ],
+  "scope": "actual Nav2 costmap plugins; controlled finite 3-D sensor rays; no motion"
+}

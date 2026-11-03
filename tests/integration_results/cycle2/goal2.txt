@@ -1,0 +1,4 @@
+"latched": false
+"ready": true
+1792669388.344 sending (-7.269,5.564,-1.282)
+1792669388.507 accepted=False

@@ -1,0 +1,35 @@
+{
+  "checks": [
+    {
+      "name": "dry_node_passes_valid_command",
+      "ok": true
+    },
+    {
+      "name": "no_MC_publisher",
+      "ok": true
+    },
+    {
+      "name": "no_registration_client",
+      "ok": true
+    },
+    {
+      "name": "untrusted_refused",
+      "ok": true
+    },
+    {
+      "name": "vendor_autonomy_refused",
+      "ok": true
+    },
+    {
+      "name": "foreign_endpoint_refused",
+      "ok": true
+    },
+    {
+      "name": "no_MC_publisher_after_test",
+      "ok": true
+    }
+  ],
+  "node_exit": 0,
+  "domain": 89,
+  "live": false
+}

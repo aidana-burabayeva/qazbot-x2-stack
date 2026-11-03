@@ -1,0 +1,108 @@
+{
+  "checks": [
+    {
+      "name": "adapter_is_live",
+      "ok": true,
+      "detail": {
+        "state": "idle",
+        "reason": "registration_not_requested",
+        "latch": "",
+        "live": true,
+        "mode": "live",
+        "dry_run": false,
+        "mc_source": "",
+        "trusted": false,
+        "registration": "not_requested",
+        "registration_error": "",
+        "sdk_service_ready": true,
+        "motion_armed": false,
+        "ready": false,
+        "foreign_publishers": [
+          "graph_unobserved"
+        ],
+        "counters": {
+          "saturated": 0,
+          "rejected": 0,
+          "latched": 0,
+          "published": 0
+        }
+      }
+    },
+    {
+      "name": "registration_not_automatic",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "no_MC_velocity_endpoint_before_registration",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "twin_mc_is_only_common_state_publisher",
+      "ok": true,
+      "detail": [
+        "virtual_mc"
+      ]
+    },
+    {
+      "name": "trust_map_ok",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trust_baseline_start",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "trust_baseline_finish",
+      "ok": true,
+      "detail": "baseline median 0.998 from 26 samples (min 0.998)"
+    },
+    {
+      "name": "trust_anchor_confirmed",
+      "ok": true,
+      "detail": "anchor (x, y, yaw) = (-1.275, -4.825, 0.000); READY at the next clean gate evaluation (see status ready / reasons)"
+    },
+    {
+      "name": "registration_requested_explicitly",
+      "ok": true,
+      "detail": "one request submitted; check status.registration for result"
+    },
+    {
+      "name": "virtual_mc_registered_sdk_source",
+      "ok": true,
+      "detail": {
+        "source": "sdk_qazbot_nav2",
+        "priority": 30,
+        "last_cmd": [
+          0.0,
+          0.0
+        ],
+        "counters": {
+          "accepted": 0,
+          "rejected_unregistered": 0,
+          "rejected_lateral": 0,
+          "registrations": 1,
+          "registrations_refused": 0
+        }
+      }
+    },
+    {
+      "name": "single_MC_velocity_publisher_is_adapter",
+      "ok": true,
+      "detail": null
+    }
+  ],
+  "failed": [],
+  "shutdown": {
+    "nav2": 0,
+    "adapter": 0,
+    "trust": 0,
+    "virtual_mc": 0,
+    "model": 0
+  },
+  "max_angular": 0.5,
+  "scope": "real coordinator/trust/Nav2/adapter(live) + Virtual MC (aimdk_msgs interface) + LocSim plant; emulated AMCL; domain 87"
+}

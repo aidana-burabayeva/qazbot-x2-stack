@@ -1,0 +1,78 @@
+[INFO] [launch]: All log files can be found below /tmp/home/.ros/log/2026-10-26-15-14-14-672957-b3389d823bad-20731
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [map_server-1]: process started with pid [20732]
+[map_server-1] [INFO] [1793027655.118076056] [accuracy_reference_sensor.map_server]: 
+[map_server-1] 	map_server lifecycle node launched. 
+[map_server-1] 	Waiting on external lifecycle transitions to activate
+[map_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[map_server-1] [INFO] [1793027655.118236476] [accuracy_reference_sensor.map_server]: Creating
+[INFO] [amcl-2]: process started with pid [20744]
+[amcl-2] [INFO] [1793027655.385926857] [accuracy_reference_sensor.amcl]: 
+[amcl-2] 	amcl lifecycle node launched. 
+[amcl-2] 	Waiting on external lifecycle transitions to activate
+[amcl-2] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[amcl-2] [INFO] [1793027655.386623795] [accuracy_reference_sensor.amcl]: Creating
+[INFO] [lifecycle_manager-3]: process started with pid [20756]
+[lifecycle_manager-3] [INFO] [1793027655.989988301] [accuracy_reference_sensor.lifecycle_manager_localization]: Creating
+[lifecycle_manager-3] [INFO] [1793027655.998211384] [accuracy_reference_sensor.lifecycle_manager_localization]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[lifecycle_manager-3] [INFO] [1793027656.006507276] [accuracy_reference_sensor.lifecycle_manager_localization]: [34m[1mStarting managed nodes bringup...[0m[0m
+[lifecycle_manager-3] [INFO] [1793027656.006559019] [accuracy_reference_sensor.lifecycle_manager_localization]: [34m[1mConfiguring map_server[0m[0m
+[map_server-1] [INFO] [1793027656.006880574] [accuracy_reference_sensor.map_server]: Configuring
+[map_server-1] [INFO] [1793027656.006998970] [map_io]: Loading yaml file: /workspace/control_backend/ws/src/maps/first_map_nav2_v3/map.yaml
+[map_server-1] [INFO] [1793027656.007257691] [map_io]: resolution: 0.05
+[map_server-1] [INFO] [1793027656.007268419] [map_io]: origin[0]: -13.3
+[map_server-1] [INFO] [1793027656.007275193] [map_io]: origin[1]: -10.4
+[map_server-1] [INFO] [1793027656.007281609] [map_io]: origin[2]: 0
+[map_server-1] [INFO] [1793027656.007288363] [map_io]: free_thresh: 0.196
+[map_server-1] [INFO] [1793027656.007295266] [map_io]: occupied_thresh: 0.65
+[map_server-1] [INFO] [1793027656.007302303] [map_io]: mode: trinary
+[map_server-1] [INFO] [1793027656.007309044] [map_io]: negate: 0
+[map_server-1] [INFO] [1793027656.007542121] [map_io]: Loading image_file: /workspace/control_backend/ws/src/maps/first_map_nav2_v3/map.pgm
+[map_server-1] [INFO] [1793027656.026798135] [map_io]: Read map /workspace/control_backend/ws/src/maps/first_map_nav2_v3/map.pgm: 319 X 426 map @ 0.05 m/cell
+[lifecycle_manager-3] [INFO] [1793027656.033059811] [accuracy_reference_sensor.lifecycle_manager_localization]: [34m[1mConfiguring amcl[0m[0m
+[amcl-2] [INFO] [1793027657.040818344] [accuracy_reference_sensor.amcl]: Configuring
+[amcl-2] [INFO] [1793027657.040934786] [accuracy_reference_sensor.amcl]: initTransforms
+[amcl-2] [INFO] [1793027657.053425829] [accuracy_reference_sensor.amcl]: initPubSub
+[amcl-2] [INFO] [1793027657.059819013] [accuracy_reference_sensor.amcl]: Subscribed to map topic.
+[lifecycle_manager-3] [INFO] [1793027657.071944748] [accuracy_reference_sensor.lifecycle_manager_localization]: [34m[1mActivating map_server[0m[0m
+[map_server-1] [INFO] [1793027657.072555505] [accuracy_reference_sensor.map_server]: Activating
+[map_server-1] [INFO] [1793027657.072944040] [accuracy_reference_sensor.map_server]: Creating bond (map_server) to lifecycle manager.
+[amcl-2] [INFO] [1793027657.073381074] [accuracy_reference_sensor.amcl]: Received a 319 X 426 map @ 0.050 m/pix
+[lifecycle_manager-3] [INFO] [1793027657.180471736] [accuracy_reference_sensor.lifecycle_manager_localization]: Server map_server connected with bond.
+[lifecycle_manager-3] [INFO] [1793027657.180531284] [accuracy_reference_sensor.lifecycle_manager_localization]: [34m[1mActivating amcl[0m[0m
+[amcl-2] [INFO] [1793027657.180796137] [accuracy_reference_sensor.amcl]: Activating
+[amcl-2] [INFO] [1793027657.180839026] [accuracy_reference_sensor.amcl]: Creating bond (amcl) to lifecycle manager.
+[lifecycle_manager-3] [INFO] [1793027657.291493295] [accuracy_reference_sensor.lifecycle_manager_localization]: Server amcl connected with bond.
+[lifecycle_manager-3] [INFO] [1793027657.291559800] [accuracy_reference_sensor.lifecycle_manager_localization]: [34m[1mManaged nodes are active[0m[0m
+[lifecycle_manager-3] [INFO] [1793027657.291575369] [accuracy_reference_sensor.lifecycle_manager_localization]: [34m[1mCreating bond timer...[0m[0m
+[amcl-2] [INFO] [1793027658.281953051] [accuracy_reference_sensor.amcl]: createLaserObject
+[amcl-2] [WARN] [1793027659.055375397] [accuracy_reference_sensor.amcl]: AMCL cannot publish a pose or update the transform. Please set the initial pose...
+[amcl-2] [INFO] [1793027659.643400211] [accuracy_reference_sensor.amcl]: initialPoseReceived
+[amcl-2] [WARN] [1793027659.643520318] [accuracy_reference_sensor.amcl]: Failed to transform initial pose in time (Lookup would require extrapolation into the future.  Requested time 1793027659.643456 but the latest data is at time 1793027659.591331, when looking up transform from frame [base_footprint] to frame [odom])
+[amcl-2] [INFO] [1793027659.643544201] [accuracy_reference_sensor.amcl]: Setting pose (1793027659.643544): -1.275 -4.825 0.000
+[amcl-2] [INFO] [1793027663.011485011] [accuracy_reference_sensor.amcl]: Requesting no-motion update
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[INFO] [lifecycle_manager-3]: sending signal 'SIGINT' to process[lifecycle_manager-3]
+[INFO] [amcl-2]: sending signal 'SIGINT' to process[amcl-2]
+[INFO] [map_server-1]: sending signal 'SIGINT' to process[map_server-1]
+[lifecycle_manager-3] [INFO] [1793027774.981102532] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[lifecycle_manager-3] [INFO] [1793027774.981310437] [accuracy_reference_sensor.lifecycle_manager_localization]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_localization)
+[lifecycle_manager-3] [INFO] [1793027774.981394055] [accuracy_reference_sensor.lifecycle_manager_localization]: [34m[1mTerminating bond timer...[0m[0m
+[amcl-2] [INFO] [1793027774.983074793] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[amcl-2] [INFO] [1793027774.983297154] [accuracy_reference_sensor.amcl]: Running Nav2 LifecycleNode rcl preshutdown (amcl)
+[amcl-2] [INFO] [1793027774.983407247] [accuracy_reference_sensor.amcl]: Deactivating
+[amcl-2] [INFO] [1793027774.983472260] [accuracy_reference_sensor.amcl]: Destroying bond (amcl) to lifecycle manager.
+[map_server-1] [INFO] [1793027774.987376358] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[map_server-1] [INFO] [1793027774.987511199] [accuracy_reference_sensor.map_server]: Running Nav2 LifecycleNode rcl preshutdown (map_server)
+[map_server-1] [INFO] [1793027774.987604056] [accuracy_reference_sensor.map_server]: Deactivating
+[map_server-1] [INFO] [1793027774.987636996] [accuracy_reference_sensor.map_server]: Destroying bond (map_server) to lifecycle manager.
+[amcl-2] [INFO] [1793027774.995378014] [accuracy_reference_sensor.amcl]: Cleaning up
+[map_server-1] [INFO] [1793027774.998907721] [accuracy_reference_sensor.map_server]: Cleaning up
+[map_server-1] [INFO] [1793027774.999025293] [accuracy_reference_sensor.map_server]: Destroying bond (map_server) to lifecycle manager.
+[amcl-2] [INFO] [1793027775.004353633] [accuracy_reference_sensor.amcl]: Destroying bond (amcl) to lifecycle manager.
+[map_server-1] [INFO] [1793027775.013913655] [accuracy_reference_sensor.map_server]: Destroying
+[amcl-2] [INFO] [1793027775.018323844] [accuracy_reference_sensor.amcl]: Destroying
+[lifecycle_manager-3] [INFO] [1793027775.023798205] [accuracy_reference_sensor.lifecycle_manager_localization]: Destroying lifecycle_manager_localization
+[INFO] [lifecycle_manager-3]: process has finished cleanly [pid 20756]
+[INFO] [map_server-1]: process has finished cleanly [pid 20732]
+[INFO] [amcl-2]: process has finished cleanly [pid 20744]

@@ -1,0 +1,15 @@
+{
+  "status": "ROLLED_BACK",
+  "source_commit": "2d240dbd09ca69de87e9ac4b1acde735293ad6b2",
+  "files": {
+    "ws/src/lio/level_bridge.py": {
+      "before": "86c434ce0ee5a48de1a324f7a3eb5e2136f8d9d3f1b91b582f6fa522707be686",
+      "after": "c817a5ed503386be742fa7b6fdab2b3209bdefaf42be799d2a130cd198f9369b"
+    },
+    "ws/src/navigation/nav_control.launch.py": {
+      "before": "ebea6637578530f0b30be6dd5d720ef1011270ce2a4df902d2bd1e1b5c266bec",
+      "after": "c4e46506069481f3cebd3fef38af7e83bac858f9d6d4e344edeb657a137de38e"
+    }
+  },
+  "profile_sha256": "29d4c736a364691689ccc8f27c62f566c65af946df1b6fc9dd5ec03ae239ec63"
+}

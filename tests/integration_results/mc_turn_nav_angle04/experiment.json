@@ -1,0 +1,12 @@
+{
+  "mc_turn_candidate": true,
+  "mc_turn_command_cap": 0.8,
+  "local_frame": "odom",
+  "goal_checker_stateful": false,
+  "xy_tolerance": 0.1,
+  "yaw_tolerance": 0.1,
+  "amcl_overrides": {
+    "update_min_d": 0.05,
+    "update_min_a": 0.05
+  }
+}

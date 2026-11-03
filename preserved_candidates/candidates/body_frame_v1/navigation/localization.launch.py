@@ -1,0 +1,58 @@
+"""X2 independent LIO + map_server + AMCL. No command publisher or MC calls."""
+import os
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, ExecuteProcess, RegisterEventHandler, EmitEvent
+from launch.event_handlers import OnProcessExit
+from launch.events import Shutdown
+from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
+
+
+def generate_launch_description():
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    ns = 'qazbot_d1_map'
+    tf_remaps = [('/tf', '/qazbot_d1_map/tf'), ('/tf_static', '/qazbot_d1_map/tf_static')]
+    lio_remaps = [('/Odometry', '/qazbot_lio/odometry'),
+                  ('/cloud_registered', '/qazbot_lio/cloud_registered'),
+                  ('/cloud_registered_body', '/qazbot_lio/cloud_registered_body'),
+                  ('/cloud_effected', '/qazbot_lio/cloud_effected'),
+                  ('/Laser_map', '/qazbot_lio/map'), ('/path', '/qazbot_lio/path'),
+                  ('/tf', '/qazbot_lio/tf'), ('map_save', '/qazbot_lio/map_save')]
+    lio_args = ['--ros-args', '-r', '__node:=qazbot_lio_mapping', '--params-file',
+                os.path.join(root, 'lio', 'x2.yaml')]
+    for source, target in lio_remaps:
+        lio_args += ['-r', source + ':=' + target]
+    actions = [
+        DeclareLaunchArgument('map_yaml', default_value=os.path.join(root, 'maps', 'first_map_nav2_v1', 'map.yaml')),
+        ExecuteProcess(cmd=[os.path.join(root, 'runtime', 'fastlio_mapping')] + lio_args, output='screen'),
+        ExecuteProcess(cmd=['python3', os.path.join(root, 'lio', 'level_bridge.py'), '--ros-args',
+                            '-r', '__node:=qazbot_level_bridge',
+                            '-r', '/Odometry:=/qazbot_lio/odometry',
+                            '-r', '/cloud_registered:=/qazbot_lio/cloud_registered',
+                            '-r', '/scan:=/qazbot_lio/scan',
+                            '-r', '/odom_level:=/qazbot_lio/odom_level',
+                            '-r', '/tf:=/qazbot_d1_map/tf',
+                            '-r', '/tf_static:=/qazbot_d1_map/tf_static',
+                            '-p', 'range_max:=8.0', '-p', 'scan_every:=2'], output='screen'),
+        ExecuteProcess(cmd=['python3', os.path.join(root, 'navigation', 'body_pose_adapter.py')], output='screen'),
+        Node(package='nav2_map_server', executable='map_server', namespace=ns,
+             name='map_server', output='screen', remappings=tf_remaps,
+             parameters=[{'yaml_filename': LaunchConfiguration('map_yaml'), 'topic_name': 'map',
+                          'frame_id': 'map', 'use_sim_time': False}]),
+        Node(package='nav2_amcl', executable='amcl', namespace=ns, name='amcl',
+             output='screen', remappings=tf_remaps,
+             parameters=[{'use_sim_time': False, 'global_frame_id': 'map', 'odom_frame_id': 'odom',
+                          'base_frame_id': 'base_footprint', 'map_topic': 'map',
+                          'scan_topic': '/qazbot_lio/scan', 'max_beams': 1440,
+                          'robot_model_type': 'nav2_amcl::OmniMotionModel'}]),
+        Node(package='nav2_lifecycle_manager', executable='lifecycle_manager', namespace=ns,
+             name='lifecycle_manager_localization', output='screen',
+             parameters=[{'use_sim_time': False, 'autostart': True, 'node_names': ['map_server', 'amcl']}]),
+    ]
+    guarded = []
+    for action in actions:
+        if isinstance(action, ExecuteProcess):
+            guarded.append(RegisterEventHandler(OnProcessExit(target_action=action,
+                on_exit=[EmitEvent(event=Shutdown(reason='Critical localization process exited; stop the coherent stack'))])))
+        guarded.append(action)
+    return LaunchDescription(guarded)

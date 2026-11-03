@@ -1,0 +1,97 @@
+"""Plan-only Nav2 on the D1 map: planner_server + global costmap + bt_navigator.
+
+Requires the localization launch. NavigateToPose runs a tree that only
+computes the path, so RViz's goal tool can be used without any motion output:
+there is no controller_server and nothing publishes velocity.
+"""
+import math
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from launch_stagger import staggered  # noqa: E402
+import tempfile
+
+import yaml
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
+from launch_ros.descriptions import ParameterFile
+
+NS = 'qazbot_d1_map'
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(HERE)
+
+
+def setup(context):
+    radius = float(LaunchConfiguration('robot_radius').perform(context))
+    if not math.isfinite(radius) or radius <= 0:
+        raise ValueError('robot_radius must be the positive body envelope about the LIO base')
+    with open(LaunchConfiguration('map_yaml').perform(context)) as f:
+        resolution = float(yaml.safe_load(f)['resolution'])
+    # The costmap marks a cell inscribed by the distance between cell centres,
+    # while the occupied area is the whole cell. A path on cell centres is thus
+    # up to half a cell diagonal closer to an obstacle than the radius asks.
+    margin = resolution / math.sqrt(2) if LaunchConfiguration('cell_margin').perform(context) == 'true' else 0.0
+    inscribed = radius + margin
+    params = {
+        f'/{NS}/planner_server': {'ros__parameters': {
+            'use_sim_time': False,
+            'planner_plugins': ['GridBased'],
+            'GridBased.plugin': 'nav2_smac_planner/SmacPlanner2D',
+            'GridBased.allow_unknown': False,
+            'GridBased.tolerance': 0.0,
+        }},
+        f'/{NS}/global_costmap/global_costmap': {'ros__parameters': {
+            'use_sim_time': False,
+            'global_frame': 'map', 'robot_base_frame': 'base_footprint',
+            'robot_radius': inscribed,
+            'track_unknown_space': True,
+            'plugins': ['static_layer', 'inflation_layer'],
+            'static_layer.plugin': 'nav2_costmap_2d::StaticLayer',
+            'static_layer.map_topic': f'/{NS}/map',
+            'static_layer.map_subscribe_transient_local': True,
+            'static_layer.footprint_clearing_enabled': False,
+            'inflation_layer.plugin': 'nav2_costmap_2d::InflationLayer',
+            'inflation_layer.inflation_radius': inscribed,
+            'inflation_layer.inflate_around_unknown': True,
+        }},
+        f'/{NS}/bt_navigator': {'ros__parameters': {
+            'use_sim_time': False,
+            'global_frame': 'map', 'robot_base_frame': 'base_footprint',
+            'odom_topic': '/qazbot_lio/odom_level',
+            'default_nav_to_pose_bt_xml': os.path.join(HERE, 'bt', 'plan_to_pose.xml'),
+            'default_nav_through_poses_bt_xml': os.path.join(HERE, 'bt', 'plan_through_poses.xml'),
+            'plugin_lib_names': ['nav2_compute_path_to_pose_action_bt_node',
+                                 'nav2_compute_path_through_poses_action_bt_node'],
+        }},
+    }
+    logdir = os.environ.get('ROS_LOG_DIR', os.path.expanduser('~/.ros/log'))
+    os.makedirs(logdir, exist_ok=True)
+    with tempfile.NamedTemporaryFile(mode='w', prefix='qazbot_plan_', suffix='.yaml',
+                                     dir=logdir, delete=False) as f:
+        yaml.safe_dump(params, f)
+        path = f.name
+    remaps = [('/tf', f'/{NS}/tf'), ('/tf_static', f'/{NS}/tf_static')]
+    return staggered([
+        Node(package='nav2_planner', executable='planner_server', namespace=NS,
+             name='planner_server', output='screen', remappings=remaps,
+             parameters=[ParameterFile(path)]),
+        Node(package='nav2_bt_navigator', executable='bt_navigator', namespace=NS,
+             name='bt_navigator', output='screen', remappings=remaps,
+             parameters=[ParameterFile(path)]),
+        Node(package='nav2_lifecycle_manager', executable='lifecycle_manager', namespace=NS,
+             name='lifecycle_manager_navigation', output='screen',
+             parameters=[{'autostart': True, 'node_names': ['planner_server', 'bt_navigator']}]),
+    ])
+
+
+def generate_launch_description():
+    return LaunchDescription([
+        DeclareLaunchArgument('robot_radius', description='Body envelope radius in metres; no default'),
+        DeclareLaunchArgument('map_yaml', default_value=os.path.join(ROOT, 'maps', 'first_map_nav2_v1', 'map.yaml')),
+        DeclareLaunchArgument('cell_margin', default_value='true',
+                              description='Add half a cell diagonal to the inscribed radius'),
+        OpaqueFunction(function=setup),
+    ])

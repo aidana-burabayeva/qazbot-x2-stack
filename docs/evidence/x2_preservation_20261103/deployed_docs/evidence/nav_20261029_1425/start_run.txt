@@ -1,0 +1,18 @@
+[14:27:44.787774943] profile /home/agi/control_backend/docs/evidence/nav_20261029_1425/dds_nav_two_iface_log.xml 661979e23665ed3c launch_sha=0807263e1c2e5a30
+[14:27:49.933933167] localization: managed_active=1 levelled=1 native=1
+[14:27:52.494619237] trust: started=1
+[14:27:55.629200036] owned: 16385 16391 16414 16438 16462 16489 16552 16593 
+[14:45:51.038461274] profile /home/agi/control_backend/docs/evidence/nav_20261029_1425/dds_nav_two_iface_log.xml 661979e23665ed3c launch_sha=0807263e1c2e5a30
+[14:45:58.656997749] localization: managed_active=1 levelled=1 native=1
+[14:46:02.950846154] trust: started=1
+[14:46:06.204828006] owned: 37128 37188 37209 37229 37252 37276 37320 37408 
+[17:58:24.340617895] restart_trust: SIGINT trust 37408
+[17:58:29.743559049] restart_trust: trust: pid 196689 started=1 env=FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/nav_20261029_1425/dds_nav_two_iface_log.xml ROS_DOMAIN_ID=0 ROS_LOCALHOST_ONLY=0 
+[20:33:44.880779343] profile /home/agi/control_backend/docs/evidence/nav_20261029_1425/dds_nav_two_iface_log.xml 661979e23665ed3c launch_sha=0807263e1c2e5a30
+[20:33:52.368961052] localization: managed_active=1 levelled=1 native=1
+[20:33:56.687787535] trust: started=1
+[20:33:59.925115902] owned: 333643 333660 333682 333710 333731 333763 333789 333860 
+[21:47:05.515990531] restart_trust: SIGINT trust 333860
+[21:47:10.361028840] restart_trust: trust: pid 397013 started=1 env=FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/nav_20261029_1425/dds_nav_two_iface_log.xml ROS_DOMAIN_ID=0 ROS_LOCALHOST_ONLY=0 
+[21:48:15.437153871] restart_trust: SIGINT trust 397013
+[21:48:20.712594362] restart_trust: trust: pid 398491 started=1 env=FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/nav_20261029_1425/dds_nav_two_iface_log.xml ROS_DOMAIN_ID=0 ROS_LOCALHOST_ONLY=0 

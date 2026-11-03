@@ -1,0 +1,65 @@
+{
+  "checks": [
+    {
+      "name": "commands_before_registration_create_no_MC_endpoint",
+      "ok": true
+    },
+    {
+      "name": "explicit_registration_requested",
+      "ok": true
+    },
+    {
+      "name": "registered_but_unarmed_drops_old_goal_stream",
+      "ok": true
+    },
+    {
+      "name": "new_goal_arm_accepted",
+      "ok": true
+    },
+    {
+      "name": "arm_alone_does_not_move",
+      "ok": true
+    },
+    {
+      "name": "fresh_command_after_arm_passes",
+      "ok": true
+    },
+    {
+      "name": "operator_takeover_latches",
+      "ok": true
+    },
+    {
+      "name": "takeover_closes_motion_arm",
+      "ok": true
+    },
+    {
+      "name": "explicit_resume_accepted",
+      "ok": true
+    },
+    {
+      "name": "resume_does_not_replay_stream",
+      "ok": true
+    },
+    {
+      "name": "new_goal_rearm_accepted",
+      "ok": true
+    },
+    {
+      "name": "fresh_new_goal_after_resume_passes",
+      "ok": true
+    },
+    {
+      "name": "only_one_registration_request",
+      "ok": true
+    },
+    {
+      "name": "clean_shutdown",
+      "ok": true
+    }
+  ],
+  "node_exit": 0,
+  "registration_requests": [
+    "sdk_qazbot_nav2"
+  ],
+  "scope": "Actual ROS adapter, fake SDK/state; loopback domain 89 only, no hardware commands"
+}

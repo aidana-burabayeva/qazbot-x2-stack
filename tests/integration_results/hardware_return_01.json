@@ -1,0 +1,39 @@
+{
+  "mc_last": {
+    "body": 1,
+    "fsm": 4,
+    "source": "rc"
+  },
+  "sensors": {
+    "imu": {
+      "count": 1154,
+      "hz": 199.98294251252727,
+      "age_min": 0.00033736228942871094,
+      "age_max": 0.007941484451293945
+    },
+    "lidar_pointcloud": {
+      "count": 57,
+      "hz": 10.000375267895679,
+      "age_min": 0.10201716423034668,
+      "age_max": 0.10754036903381348
+    }
+  },
+  "mc_publishers": [
+    [
+      "_NODE_NAMESPACE_UNKNOWN_",
+      "_NODE_NAME_UNKNOWN_"
+    ],
+    [
+      "/",
+      "soc0_rc3107"
+    ],
+    [
+      "/",
+      "app_proxy"
+    ],
+    [
+      "/",
+      "soc2_interaction_slave1577"
+    ]
+  ]
+}

@@ -1,0 +1,157 @@
+{
+  "motion_adapter": {
+    "state": "idle",
+    "reason": "driver_not_armed",
+    "latch": "",
+    "live": true,
+    "mode": "live",
+    "dry_run": false,
+    "mc_source": "rc",
+    "trusted": false,
+    "registration": "registered",
+    "registration_error": "",
+    "sdk_service_ready": true,
+    "motion_armed": false,
+    "ready": false,
+    "foreign_publishers": [],
+    "counters": {
+      "saturated": 0,
+      "rejected": 0,
+      "latched": 1,
+      "published": 2302
+    }
+  },
+  "goal_coordinator": {
+    "busy": false,
+    "latched": true,
+    "gate": false,
+    "fault": "operator_stop",
+    "source_zero": true,
+    "trusted": false,
+    "driver_ready": false,
+    "driver_mode": "live",
+    "ready": false,
+    "child_uuid": null
+  },
+  "mc": {
+    "source": "rc",
+    "body": 1,
+    "fsm": 4
+  },
+  "localization_trust": {
+    "trusted": false,
+    "ready": false,
+    "motion_ok": false,
+    "reasons": [
+      "not_ready:initialpose"
+    ],
+    "diagnostics": [
+      "T2_covariance",
+      "T3_particles",
+      "T6_no_anchor"
+    ],
+    "metrics": {
+      "sigma_xy": 0.5009358327619983,
+      "sigma_yaw": 0.23508683884764076,
+      "cloud_std": 0.3336674379774113,
+      "second_mode_weight": 0.5282181357006976,
+      "scan_score": 0.6615096890779898,
+      "scan_floor": 0.5073741864294061,
+      "jump_xy": 0.0,
+      "jump_yaw": 0.0
+    },
+    "ready_cause": "initialpose",
+    "anchor": false,
+    "baseline": 0.6342177330367577,
+    "moving": false,
+    "map_sha256": "f6032f75ffd386361993a4b4864cf0816713fc27f6d037c88d929ae5d48562fb",
+    "map_ok": "",
+    "experimental": {
+      "degenerate_budget_m": 0.0,
+      "frozen_window_s": 1.0
+    }
+  },
+  "controller_server": {
+    "controller_frequency": {
+      "type": 3,
+      "double": 20.0,
+      "string": "",
+      "array": []
+    },
+    "FollowPath.max_angular_accel": {
+      "type": 3,
+      "double": 1.0,
+      "string": "",
+      "array": []
+    },
+    "FollowPath.rotate_to_heading_angular_vel": {
+      "type": 3,
+      "double": 0.5,
+      "string": "",
+      "array": []
+    }
+  },
+  "velocity_smoother": {
+    "feedback": {
+      "type": 4,
+      "double": 0.0,
+      "string": "OPEN_LOOP",
+      "array": []
+    },
+    "max_velocity": {
+      "type": 8,
+      "double": 0.0,
+      "string": "",
+      "array": [
+        0.3,
+        0.0,
+        0.5
+      ]
+    },
+    "max_accel": {
+      "type": 8,
+      "double": 0.0,
+      "string": "",
+      "array": [
+        0.4,
+        0.0,
+        1.0
+      ]
+    },
+    "max_decel": {
+      "type": 8,
+      "double": 0.0,
+      "string": "",
+      "array": [
+        -0.6,
+        0.0,
+        -1.5
+      ]
+    }
+  },
+  "MC_publishers": [
+    {
+      "node": "motion_adapter",
+      "namespace": "/qazbot_d1_map"
+    },
+    {
+      "node": "aimrt_planning_planning_node4590",
+      "namespace": "/"
+    },
+    {
+      "node": "soc0_rc3123",
+      "namespace": "/"
+    },
+    {
+      "node": "app_proxy",
+      "namespace": "/"
+    },
+    {
+      "node": "soc2_interaction_slave1592",
+      "namespace": "/"
+    }
+  ],
+  "authorized_publishers": [
+    "/qazbot_d1_map/goal_coordinator"
+  ]
+}

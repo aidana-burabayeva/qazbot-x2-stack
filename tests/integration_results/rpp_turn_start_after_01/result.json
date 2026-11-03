@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "output": "RPP first magnitude=0.5 reaches requested cap=1 smoother ramp=1 stop=1\n",
+  "controller_frequency": 20.0,
+  "rpp_max_angular_accel": 10.0,
+  "rpp_angular_cap": 0.5,
+  "smoother_angular_accel": 1.0,
+  "smoother_angular_decel": -1.5,
+  "nodes_launched": false
+}

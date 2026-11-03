@@ -1,0 +1,7 @@
+[21:56:12.327744857] pre: mc=[  action_desc: STAND_DEFAULT] adapter={"state": "idle", "reason": "no_command", "latch": "", "live": true, "mode": "live", "dry_run": false, "mc_source": "rc", "trusted": true, "registration": "registered", "registration_error": "", "sdk_ gc={"busy": false, "latched": false, "gate": false, "fault": "", "source_zero": true, "trusted": true, "paused": false, "dr
+[21:56:16.084828541] DELETE sdk_qazbot_nav2_1029a code 0
+[21:56:17.097108090] old adapter 17061 stopped
+[21:56:19.768659826] new adapter pid 405674 sha 9c05bb340c38aac2: [INFO] [1793282179.384048915] [qazbot_d1_map.motion_adapter]: x2_motion_adapter started: live=True cmd_topic=/qazbot_d1_map/cmd_vel_authorized source=sdk_qazbot_nav2_1029a priority=30 yaw_loop=True u_min ccw/cw=0.6/0.45 u_max=1.0 ki=0.4
+[21:56:26.835785893] 
+[21:56:29.851528997] [INFO] [1793282186.464726847] [qazbot_d1_map.motion_adapter]: SDK source registered; waiting for fresh authorized command
+[21:56:32.067866285] post: {"state": "idle", "reason": "driver_not_armed", "latch": "", "live": true, "mode": "live", "dry_run": false, "mc_source": "rc", "trusted": false, "registration": "registered", "registration_error": "", "sdk_service_ready": true, "motion_armed": false, "t1_pause": true, "ready": false, "foreign_publishers": [], "counters": {"saturated": 0, "rejected": 0, "latched": 0, "published": 0, "yaw_loop": 0,

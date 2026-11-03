@@ -1,0 +1,1764 @@
+{
+ "actions": [],
+ "discovery_s": 8.0,
+ "endpoints": {
+  "/aima/mc/common/state": {
+   "publishers": [
+    {
+     "depth": 0,
+     "dur": "TRANSIENT_LOCAL",
+     "node": "/mc_ros2_node3225",
+     "rel": "BEST_EFFORT",
+     "type": "aimdk_msgs/msg/McCommonState"
+    }
+   ],
+   "subscribers": [
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/soc0_drp_ros2_node2068",
+     "rel": "BEST_EFFORT",
+     "type": "aimdk_msgs/msg/McCommonState"
+    },
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/app_proxy",
+     "rel": "BEST_EFFORT",
+     "type": "aimdk_msgs/msg/McCommonState"
+    },
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/app_proxy",
+     "rel": "BEST_EFFORT",
+     "type": "aimdk_msgs/msg/McCommonState"
+    },
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/soc0_task_manager4532",
+     "rel": "BEST_EFFORT",
+     "type": "aimdk_msgs/msg/McCommonState"
+    },
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/aimrt_agent_node1944",
+     "rel": "BEST_EFFORT",
+     "type": "aimdk_msgs/msg/McCommonState"
+    }
+   ]
+  },
+  "/aima/mc/locomotion/velocity": {
+   "publishers": [
+    {
+     "depth": 0,
+     "dur": "TRANSIENT_LOCAL",
+     "node": "/aimrt_planning_planning_node4571",
+     "rel": "RELIABLE",
+     "type": "aimdk_msgs/msg/McLocomotionVelocity"
+    },
+    {
+     "depth": 0,
+     "dur": "TRANSIENT_LOCAL",
+     "node": "/soc0_rc3107",
+     "rel": "BEST_EFFORT",
+     "type": "aimdk_msgs/msg/McLocomotionVelocity"
+    },
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/app_proxy",
+     "rel": "BEST_EFFORT",
+     "type": "aimdk_msgs/msg/McLocomotionVelocity"
+    },
+    {
+     "depth": 0,
+     "dur": "TRANSIENT_LOCAL",
+     "node": "/soc2_interaction_slave1577",
+     "rel": "BEST_EFFORT",
+     "type": "aimdk_msgs/msg/McLocomotionVelocity"
+    }
+   ],
+   "subscribers": [
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/soc1_drp_ros2_node2764",
+     "rel": "BEST_EFFORT",
+     "type": "aimdk_msgs/msg/McLocomotionVelocity"
+    },
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/soc0_drp_ros2_node2068",
+     "rel": "BEST_EFFORT",
+     "type": "aimdk_msgs/msg/McLocomotionVelocity"
+    },
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/mc_ros2_node3225",
+     "rel": "BEST_EFFORT",
+     "type": "aimdk_msgs/msg/McLocomotionVelocity"
+    },
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/soc2_drp_ros2_node2818",
+     "rel": "BEST_EFFORT",
+     "type": "aimdk_msgs/msg/McLocomotionVelocity"
+    }
+   ]
+  },
+  "/cmd_vel": {
+   "publishers": [
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/controller_server_ros_node",
+     "rel": "RELIABLE",
+     "type": "geometry_msgs/msg/Twist"
+    }
+   ],
+   "subscribers": []
+  },
+  "/qazbot_d1_map/cmd_vel": {
+   "publishers": [],
+   "subscribers": []
+  },
+  "/qazbot_d1_map/cmd_vel_authorized": {
+   "publishers": [],
+   "subscribers": []
+  },
+  "/qazbot_d1_map/cmd_vel_nav": {
+   "publishers": [],
+   "subscribers": []
+  },
+  "/qazbot_d1_map/goal_pose": {
+   "publishers": [],
+   "subscribers": []
+  },
+  "/qazbot_d1_map/initialpose": {
+   "publishers": [],
+   "subscribers": [
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/qazbot_d1_map/amcl",
+     "rel": "BEST_EFFORT",
+     "type": "geometry_msgs/msg/PoseWithCovarianceStamped"
+    }
+   ]
+  },
+  "/qazbot_d1_map/map": {
+   "publishers": [
+    {
+     "depth": 0,
+     "dur": "TRANSIENT_LOCAL",
+     "node": "/qazbot_d1_map/map_server",
+     "rel": "RELIABLE",
+     "type": "nav_msgs/msg/OccupancyGrid"
+    }
+   ],
+   "subscribers": [
+    {
+     "depth": 0,
+     "dur": "TRANSIENT_LOCAL",
+     "node": "/qazbot_d1_map/amcl",
+     "rel": "RELIABLE",
+     "type": "nav_msgs/msg/OccupancyGrid"
+    }
+   ]
+  },
+  "/qazbot_d1_map/motion_adapter/dry_run_cmd": {
+   "publishers": [],
+   "subscribers": []
+  },
+  "/qazbot_d1_map/tf": {
+   "publishers": [
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/qazbot_level_bridge",
+     "rel": "RELIABLE",
+     "type": "tf2_msgs/msg/TFMessage"
+    },
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/qazbot_d1_map/amcl",
+     "rel": "RELIABLE",
+     "type": "tf2_msgs/msg/TFMessage"
+    }
+   ],
+   "subscribers": [
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/qazbot_d1_map/transform_listener_impl_aaaadf19aca0",
+     "rel": "RELIABLE",
+     "type": "tf2_msgs/msg/TFMessage"
+    }
+   ]
+  },
+  "/qazbot_d1_map/tf_static": {
+   "publishers": [],
+   "subscribers": [
+    {
+     "depth": 0,
+     "dur": "TRANSIENT_LOCAL",
+     "node": "/qazbot_d1_map/transform_listener_impl_aaaadf19aca0",
+     "rel": "RELIABLE",
+     "type": "tf2_msgs/msg/TFMessage"
+    }
+   ]
+  },
+  "/qazbot_lio/odom_level": {
+   "publishers": [
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/qazbot_level_bridge",
+     "rel": "RELIABLE",
+     "type": "nav_msgs/msg/Odometry"
+    }
+   ],
+   "subscribers": []
+  },
+  "/qazbot_lio/scan": {
+   "publishers": [
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/qazbot_level_bridge",
+     "rel": "RELIABLE",
+     "type": "sensor_msgs/msg/LaserScan"
+    }
+   ],
+   "subscribers": [
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/qazbot_d1_map/amcl",
+     "rel": "BEST_EFFORT",
+     "type": "sensor_msgs/msg/LaserScan"
+    }
+   ]
+  },
+  "/qazbot_lio/tf": {
+   "publishers": [
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/qazbot_lio_mapping",
+     "rel": "RELIABLE",
+     "type": "tf2_msgs/msg/TFMessage"
+    }
+   ],
+   "subscribers": []
+  },
+  "/tf": {
+   "publishers": [
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/aimrt_perception_node4382",
+     "rel": "RELIABLE",
+     "type": "tf2_msgs/msg/TFMessage"
+    },
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/camera/camera",
+     "rel": "RELIABLE",
+     "type": "tf2_msgs/msg/TFMessage"
+    },
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/mc_ros2_node3225",
+     "rel": "RELIABLE",
+     "type": "tf2_msgs/msg/TFMessage"
+    }
+   ],
+   "subscribers": [
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/transform_listener_impl_aaaae1d2ba30",
+     "rel": "RELIABLE",
+     "type": "tf2_msgs/msg/TFMessage"
+    },
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/transform_listener_impl_aaaae257c840",
+     "rel": "RELIABLE",
+     "type": "tf2_msgs/msg/TFMessage"
+    },
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/soc1_drp_ros2_node2764",
+     "rel": "BEST_EFFORT",
+     "type": "tf2_msgs/msg/TFMessage"
+    },
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/transform_ros_node",
+     "rel": "RELIABLE",
+     "type": "tf2_msgs/msg/TFMessage"
+    },
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/tf_base_imu_subscriber",
+     "rel": "RELIABLE",
+     "type": "tf2_msgs/msg/TFMessage"
+    },
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/mc_ros2_node3225",
+     "rel": "BEST_EFFORT",
+     "type": "tf2_msgs/msg/TFMessage"
+    },
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/soc2_drp_ros2_node2818",
+     "rel": "BEST_EFFORT",
+     "type": "tf2_msgs/msg/TFMessage"
+    }
+   ]
+  },
+  "/tf_static": {
+   "publishers": [
+    {
+     "depth": 0,
+     "dur": "TRANSIENT_LOCAL",
+     "node": "/soc1_hal_sensor_orin216954",
+     "rel": "RELIABLE",
+     "type": "tf2_msgs/msg/TFMessage"
+    },
+    {
+     "depth": 0,
+     "dur": "TRANSIENT_LOCAL",
+     "node": "/soc1_hal_camera3236",
+     "rel": "RELIABLE",
+     "type": "tf2_msgs/msg/TFMessage"
+    },
+    {
+     "depth": 0,
+     "dur": "TRANSIENT_LOCAL",
+     "node": "/camera/camera",
+     "rel": "RELIABLE",
+     "type": "tf2_msgs/msg/TFMessage"
+    },
+    {
+     "depth": 0,
+     "dur": "TRANSIENT_LOCAL",
+     "node": "/static_transform_publisher_dJ13BTFkmmKIXWUU",
+     "rel": "RELIABLE",
+     "type": "tf2_msgs/msg/TFMessage"
+    },
+    {
+     "depth": 0,
+     "dur": "TRANSIENT_LOCAL",
+     "node": "/mc_ros2_node3225",
+     "rel": "RELIABLE",
+     "type": "tf2_msgs/msg/TFMessage"
+    },
+    {
+     "depth": 0,
+     "dur": "TRANSIENT_LOCAL",
+     "node": "/soc2_hal_sensor1819",
+     "rel": "RELIABLE",
+     "type": "tf2_msgs/msg/TFMessage"
+    }
+   ],
+   "subscribers": [
+    {
+     "depth": 0,
+     "dur": "TRANSIENT_LOCAL",
+     "node": "/transform_listener_impl_aaaae1d2ba30",
+     "rel": "RELIABLE",
+     "type": "tf2_msgs/msg/TFMessage"
+    },
+    {
+     "depth": 0,
+     "dur": "TRANSIENT_LOCAL",
+     "node": "/transform_listener_impl_aaaae257c840",
+     "rel": "RELIABLE",
+     "type": "tf2_msgs/msg/TFMessage"
+    },
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/soc1_drp_ros2_node2764",
+     "rel": "BEST_EFFORT",
+     "type": "tf2_msgs/msg/TFMessage"
+    },
+    {
+     "depth": 0,
+     "dur": "TRANSIENT_LOCAL",
+     "node": "/transform_ros_node",
+     "rel": "RELIABLE",
+     "type": "tf2_msgs/msg/TFMessage"
+    },
+    {
+     "depth": 0,
+     "dur": "TRANSIENT_LOCAL",
+     "node": "/tf_base_imu_subscriber",
+     "rel": "RELIABLE",
+     "type": "tf2_msgs/msg/TFMessage"
+    },
+    {
+     "depth": 0,
+     "dur": "VOLATILE",
+     "node": "/soc2_drp_ros2_node2818",
+     "rel": "BEST_EFFORT",
+     "type": "tf2_msgs/msg/TFMessage"
+    }
+   ]
+  }
+ },
+ "mc_common_state_once": {
+  "action_info": {
+   "action_desc": "STAND_DEFAULT",
+   "current_action": {
+    "value": 0
+   },
+   "status": {
+    "value": 100
+   }
+  },
+  "body_status": {
+   "value": 1
+  },
+  "fsm_state": {
+   "current_state": 4
+  },
+  "header": {
+   "frame_id": "",
+   "meas_stamp": {
+    "nanosec": 0,
+    "sec": 0
+   },
+   "sequence": 310679,
+   "stamp": {
+    "nanosec": 264119885,
+    "sec": 1792590198
+   }
+  },
+  "input_source": {
+   "name": "rc",
+   "priority": 80,
+   "timeout": 1000
+  },
+  "motion_status": {
+   "control_area": {
+    "value": 0
+   },
+   "motion": "",
+   "player_state": {
+    "value": 0
+   },
+   "type": {
+    "value": 0
+   }
+  },
+  "runtime_model": {
+   "left_hand_status": {
+    "value": 0
+   },
+   "right_hand_status": {
+    "value": 0
+   },
+   "waist_status": true
+  },
+  "servo_status": {
+   "head_pitch_offset": 0.0,
+   "head_yaw_offset": 0.0,
+   "squat_enable": false,
+   "squat_limit": 2,
+   "squat_offset": 0.0,
+   "waist_pitch_offset": 0.0,
+   "waist_roll_offset": 0.0,
+   "waist_yaw_offset": 0.0
+  },
+  "speed_status": {
+   "angular_bounds": {
+    "max_value": 1.0,
+    "min_value": -1.0
+   },
+   "forward_bounds": {
+    "max_value": 0.8,
+    "min_value": -1.0
+   },
+   "lateral_bounds": {
+    "max_value": 1.0,
+    "min_value": -1.0
+   },
+   "speed_mode": {
+    "value": 1
+   }
+  }
+ },
+ "mc_input_source_services": [
+  "/aimdk_5Fmsgs/srv/SetMcInputSource"
+ ],
+ "nodes": [
+  "/Ego",
+  "/EgoSwarm",
+  "/GridBased",
+  "/GridBasedAstar",
+  "/HighPrecisionTrackingController",
+  "/MPPIController",
+  "/SpinToGoal",
+  "/SpinToGoalCollisionAbort",
+  "/SpinToGoalNoAvoid",
+  "/SpinToGoalOdom",
+  "/SpinToNear",
+  "/SpinToNearExtend",
+  "/SpinToNearExtendCollisionAbort",
+  "/SpinToNearOdom",
+  "/SpinToStart",
+  "/SpinToStartOdom",
+  "/SpinToSwarmStart",
+  "/TaskPipelineVisualizeTask",
+  "/ToPose",
+  "/ToPoseLateral",
+  "/ToPoseLateralNoAvoid",
+  "/ToPoseLateralOdom",
+  "/ToPoseNoAvoid",
+  "/ToPoseOdom",
+  "/TrackingController",
+  "/TrajController",
+  "/aimrt_agent_node1944",
+  "/aimrt_auto_integrated_node4853",
+  "/aimrt_perception_node4382",
+  "/aimrt_planning_planning_node4271",
+  "/aimrt_planning_planning_node4571",
+  "/aimrt_slam_node4018",
+  "/app_proxy",
+  "/app_proxy_ros2_node",
+  "/behavior_tree_ros_node",
+  "/camera/camera",
+  "/camera/camera_container",
+  "/common_timed_vel_ros_node",
+  "/controller_server_ros_node",
+  "/costmap_ros_node",
+  "/display_proxy_node1485",
+  "/hal_ethercat_x22264",
+  "/imu_sub_node",
+  "/launch_ros_2411",
+  "/lx_webrtc_app_manager",
+  "/mc_ros2_node3225",
+  "/perception_ros_node",
+  "/planner_server_ros_node",
+  "/qazbot_d1_map/amcl",
+  "/qazbot_d1_map/lifecycle_manager_localization",
+  "/qazbot_d1_map/map_server",
+  "/qazbot_d1_map/transform_listener_impl_aaaadf19aca0",
+  "/qazbot_level_bridge",
+  "/qazbot_lio_mapping",
+  "/re_plan_check_server_ros_node",
+  "/ros2_bridge_node",
+  "/soc0_cloud_proxy3408",
+  "/soc0_drp_ros2_node2068",
+  "/soc0_hal_4852737",
+  "/soc0_hal_imu2504",
+  "/soc0_hal_pmu2583",
+  "/soc0_hds_slave3637",
+  "/soc0_housekeeper",
+  "/soc0_ota_master4137",
+  "/soc0_ota_mcu3921",
+  "/soc0_ota_slave4067",
+  "/soc0_rc3107",
+  "/soc0_robot_chores3742",
+  "/soc0_sm3940",
+  "/soc0_task_manager4532",
+  "/soc1_dm3876",
+  "/soc1_drp_ros2_node2764",
+  "/soc1_ec3781",
+  "/soc1_hal_camera3236",
+  "/soc1_hal_sensor_orin216954",
+  "/soc1_hds_master3566",
+  "/soc1_hds_slave3463",
+  "/soc1_housekeeper",
+  "/soc1_ota_mcu2932",
+  "/soc1_ota_slave3133",
+  "/soc1_robot_chores3654",
+  "/soc2_drp_ros2_node2818",
+  "/soc2_hal_audio2742",
+  "/soc2_hal_sensor1819",
+  "/soc2_hds_slave2314",
+  "/soc2_housekeeper",
+  "/soc2_interaction_slave1577",
+  "/soc2_ota_slave1953",
+  "/static_transform_publisher_dJ13BTFkmmKIXWUU",
+  "/tf_base_imu_subscriber",
+  "/transform_listener_impl_aaaae1d2ba30",
+  "/transform_listener_impl_aaaae257c840",
+  "/transform_ros_node"
+ ],
+ "our_nodes": {
+  "/qazbot_d1_map/amcl": {
+   "clients": [],
+   "publishers": [
+    "/parameter_events",
+    "/qazbot_d1_map/amcl/transition_event",
+    "/qazbot_d1_map/amcl_pose",
+    "/qazbot_d1_map/bond",
+    "/qazbot_d1_map/particle_cloud",
+    "/qazbot_d1_map/tf",
+    "/rosout"
+   ]
+  },
+  "/qazbot_d1_map/lifecycle_manager_localization": {
+   "clients": [
+    "/qazbot_d1_map/amcl/change_state",
+    "/qazbot_d1_map/amcl/get_state",
+    "/qazbot_d1_map/map_server/change_state",
+    "/qazbot_d1_map/map_server/get_state"
+   ],
+   "publishers": [
+    "/diagnostics",
+    "/parameter_events",
+    "/qazbot_d1_map/bond",
+    "/rosout"
+   ]
+  },
+  "/qazbot_d1_map/map_server": {
+   "clients": [],
+   "publishers": [
+    "/parameter_events",
+    "/qazbot_d1_map/bond",
+    "/qazbot_d1_map/map",
+    "/qazbot_d1_map/map_server/transition_event",
+    "/rosout"
+   ]
+  },
+  "/qazbot_d1_map/transform_listener_impl_aaaadf19aca0": {
+   "clients": [],
+   "publishers": [
+    "/rosout"
+   ]
+  },
+  "/qazbot_graph_snapshot": {
+   "clients": [],
+   "publishers": [
+    "/parameter_events",
+    "/rosout"
+   ]
+  },
+  "/qazbot_level_bridge": {
+   "clients": [],
+   "publishers": [
+    "/parameter_events",
+    "/qazbot_d1_map/tf",
+    "/qazbot_lio/odom_level",
+    "/qazbot_lio/scan",
+    "/rosout"
+   ]
+  },
+  "/qazbot_lio_mapping": {
+   "clients": [],
+   "publishers": [
+    "/parameter_events",
+    "/qazbot_lio/cloud_effected",
+    "/qazbot_lio/cloud_registered",
+    "/qazbot_lio/cloud_registered_body",
+    "/qazbot_lio/map",
+    "/qazbot_lio/odometry",
+    "/qazbot_lio/path",
+    "/qazbot_lio/tf",
+    "/rosout"
+   ]
+  }
+ },
+ "sample_s": 4.0,
+ "tf": {
+  "/qazbot_d1_map/tf": {
+   "map->odom": {
+    "hz": 5.75,
+    "last_stamp": 1792590203.111726,
+    "n": 23
+   },
+   "odom->base_footprint": {
+    "hz": 11.5,
+    "last_stamp": 1792590202.111726,
+    "n": 46
+   }
+  },
+  "/qazbot_d1_map/tf_static": {},
+  "/tf": {
+   "head_yaw_link->head_pitch_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2435224,
+    "n": 219
+   },
+   "left_ankle_pitch_link->left_ankle_roll_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "left_elbow_link->left_wrist_yaw_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "left_hip_pitch_link->left_hip_roll_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "left_hip_roll_link->left_hip_yaw_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "left_hip_yaw_link->left_knee_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "left_knee_link->left_ankle_pitch_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "left_shoulder_pitch_link->left_shoulder_roll_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "left_shoulder_roll_link->left_shoulder_yaw_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "left_shoulder_yaw_link->left_elbow_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "left_wrist_pitch_link->left_wrist_roll_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "left_wrist_yaw_link->left_wrist_pitch_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "pelvis->left_hip_pitch_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "pelvis->right_hip_pitch_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "pelvis->waist_yaw_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "right_ankle_pitch_link->right_ankle_roll_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "right_elbow_link->right_wrist_yaw_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "right_hip_pitch_link->right_hip_roll_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "right_hip_roll_link->right_hip_yaw_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "right_hip_yaw_link->right_knee_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "right_knee_link->right_ankle_pitch_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "right_shoulder_pitch_link->right_shoulder_roll_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "right_shoulder_roll_link->right_shoulder_yaw_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "right_shoulder_yaw_link->right_elbow_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "right_wrist_pitch_link->right_wrist_roll_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "right_wrist_yaw_link->right_wrist_pitch_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "torso_link->head_yaw_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2435224,
+    "n": 219
+   },
+   "torso_link->left_shoulder_pitch_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "torso_link->right_shoulder_pitch_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "waist_pitch_link->torso_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   },
+   "waist_yaw_link->waist_pitch_link": {
+    "hz": 54.75,
+    "last_stamp": 1792590202.2445214,
+    "n": 219
+   }
+  },
+  "/tf_static": {
+   "base_link->pelvis": {
+    "hz": 0.25,
+    "last_stamp": 0.0,
+    "n": 1
+   },
+   "camera_accel_frame->camera_accel_optical_frame": {
+    "hz": 0.25,
+    "last_stamp": 1792559108.3633142,
+    "n": 1
+   },
+   "camera_color_frame->camera_color_optical_frame": {
+    "hz": 0.25,
+    "last_stamp": 1792559108.3587189,
+    "n": 1
+   },
+   "camera_depth_frame->camera_accel_frame": {
+    "hz": 0.25,
+    "last_stamp": 1792559108.3633142,
+    "n": 1
+   },
+   "camera_depth_frame->camera_color_frame": {
+    "hz": 0.25,
+    "last_stamp": 1792559108.3587189,
+    "n": 1
+   },
+   "camera_depth_frame->camera_depth_optical_frame": {
+    "hz": 0.25,
+    "last_stamp": 1792559108.3613708,
+    "n": 1
+   },
+   "camera_depth_frame->camera_gyro_frame": {
+    "hz": 0.25,
+    "last_stamp": 1792559108.3650806,
+    "n": 1
+   },
+   "camera_gyro_frame->camera_gyro_optical_frame": {
+    "hz": 0.25,
+    "last_stamp": 1792559108.3650806,
+    "n": 1
+   },
+   "camera_link->camera_depth_frame": {
+    "hz": 0.25,
+    "last_stamp": 1792559108.3669496,
+    "n": 1
+   },
+   "head_pitch_link->imu_in_head_link": {
+    "hz": 0.25,
+    "last_stamp": 0.0,
+    "n": 1
+   },
+   "head_pitch_link->rgb_head_center": {
+    "hz": 0.25,
+    "last_stamp": 0.0,
+    "n": 1
+   },
+   "head_pitch_link->rgb_head_rear": {
+    "hz": 0.25,
+    "last_stamp": 0.0,
+    "n": 1
+   },
+   "head_pitch_link->rgbd_head_front": {
+    "hz": 0.25,
+    "last_stamp": 0.0,
+    "n": 1
+   },
+   "head_pitch_link->stereo_head_front": {
+    "hz": 0.25,
+    "last_stamp": 0.0,
+    "n": 1
+   },
+   "lidar_chest_front->lidar_imu_chest_front": {
+    "hz": 0.25,
+    "last_stamp": 1792576727.7192886,
+    "n": 1
+   },
+   "map->foot_contact": {
+    "hz": 0.25,
+    "last_stamp": 1792559118.5213904,
+    "n": 1
+   },
+   "pelvis->imu_in_pelvis_link": {
+    "hz": 0.25,
+    "last_stamp": 0.0,
+    "n": 1
+   },
+   "rgbd_head_front->rgbd_depth_head_front": {
+    "hz": 0.25,
+    "last_stamp": 1792559108.367002,
+    "n": 1
+   },
+   "stereo_head_front->stereo_head_front_right": {
+    "hz": 0.25,
+    "last_stamp": 1792559106.9441376,
+    "n": 1
+   },
+   "stereo_head_front->stereo_imu_head_front": {
+    "hz": 0.25,
+    "last_stamp": 1792559106.9612966,
+    "n": 1
+   },
+   "torso_link->imu_in_torso_link": {
+    "hz": 0.25,
+    "last_stamp": 0.0,
+    "n": 1
+   },
+   "torso_link->lidar_chest_front": {
+    "hz": 0.25,
+    "last_stamp": 0.0,
+    "n": 1
+   }
+  }
+ },
+ "topics": {
+  "/agent/process_audio_output": [
+   "aimdk_msgs/msg/ProcessedAudioOutput"
+  ],
+  "/aima/battery_state/pb_3Aaimdk_2Eprotocol_2EBmsState": [
+   "ros2_plugin_proto/msg/RosMsgWrapper"
+  ],
+  "/aima/hal/audio/capture": [
+   "aimdk_msgs/msg/AudioCapture"
+  ],
+  "/aima/hal/audio/focus_response": [
+   "aimdk_msgs/msg/FocusResponse"
+  ],
+  "/aima/hal/audio/mic_source": [
+   "aimdk_msgs/msg/MicSourceChange"
+  ],
+  "/aima/hal/audio/play_device": [
+   "aimdk_msgs/msg/PlayDeviceChange"
+  ],
+  "/aima/hal/audio/play_state": [
+   "aimdk_msgs/msg/PlayStateChange"
+  ],
+  "/aima/hal/audio/playback": [
+   "aimdk_msgs/msg/AudioPlayback"
+  ],
+  "/aima/hal/audio/volume": [
+   "aimdk_msgs/msg/VolumeChange"
+  ],
+  "/aima/hal/imu/chest/state": [
+   "sensor_msgs/msg/Imu"
+  ],
+  "/aima/hal/imu/torso/state": [
+   "sensor_msgs/msg/Imu"
+  ],
+  "/aima/hal/joint/arm/command": [
+   "aimdk_msgs/msg/JointCommandArray"
+  ],
+  "/aima/hal/joint/arm/state": [
+   "aimdk_msgs/msg/JointStateArray"
+  ],
+  "/aima/hal/joint/hand/command": [
+   "aimdk_msgs/msg/HandCommandArray"
+  ],
+  "/aima/hal/joint/hand/state": [
+   "aimdk_msgs/msg/HandStateArray"
+  ],
+  "/aima/hal/joint/head/command": [
+   "aimdk_msgs/msg/JointCommandArray"
+  ],
+  "/aima/hal/joint/head/state": [
+   "aimdk_msgs/msg/JointStateArray"
+  ],
+  "/aima/hal/joint/leg/command": [
+   "aimdk_msgs/msg/JointCommandArray"
+  ],
+  "/aima/hal/joint/leg/state": [
+   "aimdk_msgs/msg/JointStateArray"
+  ],
+  "/aima/hal/joint/norealtime/ddcu_joint/state": [
+   "aimdk_msgs/msg/JointNoRealTimeStateArray"
+  ],
+  "/aima/hal/joint/norealtime/udcu_joint/state": [
+   "aimdk_msgs/msg/JointNoRealTimeStateArray"
+  ],
+  "/aima/hal/joint/waist/command": [
+   "aimdk_msgs/msg/JointCommandArray"
+  ],
+  "/aima/hal/joint/waist/state": [
+   "aimdk_msgs/msg/JointStateArray"
+  ],
+  "/aima/hal/monitor/ddcu": [
+   "aimdk_msgs/msg/DcuMonitorData"
+  ],
+  "/aima/hal/monitor/udcu": [
+   "aimdk_msgs/msg/DcuMonitorData"
+  ],
+  "/aima/hal/pmu/led_state": [
+   "aimdk_msgs/msg/PmuLedState"
+  ],
+  "/aima/hal/pmu/state": [
+   "aimdk_msgs/msg/PmuState"
+  ],
+  "/aima/hal/sensor/gnss": [
+   "sensor_msgs/msg/NavSatFix"
+  ],
+  "/aima/hal/sensor/lidar_chest_front/imu": [
+   "sensor_msgs/msg/Imu"
+  ],
+  "/aima/hal/sensor/lidar_chest_front/lidar_pointcloud": [
+   "sensor_msgs/msg/PointCloud2"
+  ],
+  "/aima/hal/sensor/lidar_chest_front/lidar_pointcloud_down_sampling": [
+   "sensor_msgs/msg/PointCloud2"
+  ],
+  "/aima/hal/sensor/lidar_chest_front/lidar_raw_data": [
+   "aimdk_msgs/msg/LidarRawData"
+  ],
+  "/aima/hal/sensor/lidar_chest_front/lidar_status": [
+   "aimdk_msgs/msg/ModuleInfo"
+  ],
+  "/aima/hal/sensor/module_info": [
+   "aimdk_msgs/msg/ModuleInfo"
+  ],
+  "/aima/hal/sensor/rgb_head_front_center/camera_info": [
+   "sensor_msgs/msg/CameraInfo"
+  ],
+  "/aima/hal/sensor/rgb_head_front_center/rgb_image": [
+   "sensor_msgs/msg/Image"
+  ],
+  "/aima/hal/sensor/rgb_head_front_center/rgb_image/compressed": [
+   "sensor_msgs/msg/CompressedImage"
+  ],
+  "/aima/hal/sensor/rgb_head_front_center/rgb_image/h265": [
+   "aimdk_msgs/msg/H265Image"
+  ],
+  "/aima/hal/sensor/rgb_head_rear/camera_info": [
+   "sensor_msgs/msg/CameraInfo"
+  ],
+  "/aima/hal/sensor/rgb_head_rear/rgb_image": [
+   "sensor_msgs/msg/Image"
+  ],
+  "/aima/hal/sensor/rgb_head_rear/rgb_image/compressed": [
+   "sensor_msgs/msg/CompressedImage"
+  ],
+  "/aima/hal/sensor/rgb_head_rear/rgb_image/h265": [
+   "aimdk_msgs/msg/H265Image"
+  ],
+  "/aima/hal/sensor/rgbd_head_front/depth_camera_info": [
+   "sensor_msgs/msg/CameraInfo"
+  ],
+  "/aima/hal/sensor/rgbd_head_front/depth_image": [
+   "sensor_msgs/msg/Image"
+  ],
+  "/aima/hal/sensor/rgbd_head_front/imu": [
+   "sensor_msgs/msg/Imu"
+  ],
+  "/aima/hal/sensor/rgbd_head_front/rgb_camera_info": [
+   "sensor_msgs/msg/CameraInfo"
+  ],
+  "/aima/hal/sensor/rgbd_head_front/rgb_image": [
+   "sensor_msgs/msg/Image"
+  ],
+  "/aima/hal/sensor/rgbd_head_front/rgb_image/compressed": [
+   "sensor_msgs/msg/CompressedImage"
+  ],
+  "/aima/hal/sensor/rgbd_head_front/rgb_image/h265": [
+   "aimdk_msgs/msg/H265Image"
+  ],
+  "/aima/hal/sensor/stereo_head_front/imu": [
+   "sensor_msgs/msg/Imu"
+  ],
+  "/aima/hal/sensor/stereo_head_front_left/camera_info": [
+   "sensor_msgs/msg/CameraInfo"
+  ],
+  "/aima/hal/sensor/stereo_head_front_left/rgb_image": [
+   "sensor_msgs/msg/Image"
+  ],
+  "/aima/hal/sensor/stereo_head_front_left/rgb_image/compressed": [
+   "sensor_msgs/msg/CompressedImage"
+  ],
+  "/aima/hal/sensor/stereo_head_front_left/rgb_image/h265": [
+   "aimdk_msgs/msg/H265Image"
+  ],
+  "/aima/hal/sensor/stereo_head_front_right/camera_info": [
+   "sensor_msgs/msg/CameraInfo"
+  ],
+  "/aima/hal/sensor/stereo_head_front_right/rgb_image": [
+   "sensor_msgs/msg/Image"
+  ],
+  "/aima/hal/sensor/stereo_head_front_right/rgb_image/compressed": [
+   "sensor_msgs/msg/CompressedImage"
+  ],
+  "/aima/hal/sensor/stereo_head_front_right/rgb_image/h265": [
+   "aimdk_msgs/msg/H265Image"
+  ],
+  "/aima/hal/sensor/touch_head": [
+   "aimdk_msgs/msg/TouchState"
+  ],
+  "/aima/hds/alert_code_list": [
+   "aimdk_msgs/msg/AlertCodeArray"
+  ],
+  "/aima/hds/diag_code_list": [
+   "aimdk_msgs/msg/DiagnosticInfoArray"
+  ],
+  "/aima/hds/monitor/info": [
+   "aimdk_msgs/msg/HdsMonitor"
+  ],
+  "/aima/hds/post_proc/signal": [
+   "aimdk_msgs/msg/PostProcSigArray"
+  ],
+  "/aima/hds/process/info/soc0": [
+   "aimdk_msgs/msg/ProcessInfo"
+  ],
+  "/aima/hds/process/info/soc1": [
+   "aimdk_msgs/msg/ProcessInfo"
+  ],
+  "/aima/hds/process/info/soc2": [
+   "aimdk_msgs/msg/ProcessInfo"
+  ],
+  "/aima/internal/event/probe/soc0/hal_485": [
+   "aimdk_msgs/msg/EventProbeInfoArray"
+  ],
+  "/aima/internal/event/probe/soc0/hal_ethercat": [
+   "aimdk_msgs/msg/EventProbeInfoArray"
+  ],
+  "/aima/internal/event/probe/soc0/hal_imu": [
+   "aimdk_msgs/msg/EventProbeInfoArray"
+  ],
+  "/aima/internal/event/probe/soc0/mc": [
+   "aimdk_msgs/msg/EventProbeInfoArray"
+  ],
+  "/aima/internal/event/probe/soc0/sm": [
+   "aimdk_msgs/msg/EventProbeInfoArray"
+  ],
+  "/aima/internal/event/probe/soc0/task_manager": [
+   "aimdk_msgs/msg/EventProbeInfoArray"
+  ],
+  "/aima/internal/event/probe/soc1/hal_camera": [
+   "aimdk_msgs/msg/EventProbeInfoArray"
+  ],
+  "/aima/internal/event/probe/soc1/hal_sensor_orin": [
+   "aimdk_msgs/msg/EventProbeInfoArray"
+  ],
+  "/aima/internal/event/probe/soc1/perception": [
+   "aimdk_msgs/msg/EventProbeInfoArray"
+  ],
+  "/aima/internal/event/probe/soc2/hal_sensor": [
+   "aimdk_msgs/msg/EventProbeInfoArray"
+  ],
+  "/aima/internal/hds/diagnostics/soc0": [
+   "aimdk_msgs/msg/DiagnosticInfoArray"
+  ],
+  "/aima/internal/hds/diagnostics/soc1": [
+   "aimdk_msgs/msg/DiagnosticInfoArray"
+  ],
+  "/aima/internal/hds/diagnostics/soc2": [
+   "aimdk_msgs/msg/DiagnosticInfoArray"
+  ],
+  "/aima/internal/hds/master/alarm": [
+   "aimdk_msgs/msg/AlarmEventInfoArray"
+  ],
+  "/aima/internal/hds/slave/diagnostics": [
+   "aimdk_msgs/msg/DiagnosticInfoArray"
+  ],
+  "/aima/internal/hds/slave/monitor/process_info": [
+   "aimdk_msgs/msg/HdsMonitor"
+  ],
+  "/aima/mc/body_pose": [
+   "aimdk_msgs/msg/McBodyPose"
+  ],
+  "/aima/mc/common/state": [
+   "aimdk_msgs/msg/McCommonState"
+  ],
+  "/aima/mc/joint/retargeting": [
+   "aimdk_msgs/msg/McRetargetFrame"
+  ],
+  "/aima/mc/leg_odometry": [
+   "nav_msgs/msg/Odometry"
+  ],
+  "/aima/mc/locomotion/velocity": [
+   "aimdk_msgs/msg/McLocomotionVelocity"
+  ],
+  "/aima/mc/retarget_frame": [
+   "std_msgs/msg/Float32MultiArray"
+  ],
+  "/aima/mc/rl/debug": [
+   "aimdk_msgs/msg/McRLDebug"
+  ],
+  "/aima/mc_debug_f64": [
+   "std_msgs/msg/Float64MultiArray"
+  ],
+  "/aima/pnc/pnc_task_response": [
+   "aimdk_msgs/msg/PncTaskResponse"
+  ],
+  "/aima/pnc/pnc_task_response_mock": [
+   "std_msgs/msg/String"
+  ],
+  "/aima/sm/monitor_info": [
+   "aimdk_msgs/msg/SmSystemNode"
+  ],
+  "/aima/sm/system_state": [
+   "aimdk_msgs/msg/SmSystemState"
+  ],
+  "/aima/te/pnc_task_request": [
+   "aimdk_msgs/msg/PncTaskRequest"
+  ],
+  "/aima/teleop_bridge/vr_data": [
+   "aimdk_msgs/msg/VRData"
+  ],
+  "/aimrte/sm/node_state/pb_3Aaimdk_2Eprotocol_2ESmNodeStateChannel": [
+   "ros2_plugin_proto/msg/RosMsgWrapper"
+  ],
+  "/aruco/target_pose": [
+   "geometry_msgs/msg/PoseStamped"
+  ],
+  "/branch_trajectory": [
+   "visualization_msgs/msg/MarkerArray"
+  ],
+  "/camera/accel/imu_info": [
+   "orbbec_camera_msgs/msg/IMUInfo"
+  ],
+  "/camera/color/image_raw/compressed": [
+   "sensor_msgs/msg/CompressedImage"
+  ],
+  "/camera/color/image_raw/compressedDepth": [
+   "sensor_msgs/msg/CompressedImage"
+  ],
+  "/camera/color/image_raw/theora": [
+   "theora_image_transport/msg/Packet"
+  ],
+  "/camera/color/metadata": [
+   "orbbec_camera_msgs/msg/Metadata"
+  ],
+  "/camera/depth/image_raw/compressed": [
+   "sensor_msgs/msg/CompressedImage"
+  ],
+  "/camera/depth/image_raw/compressedDepth": [
+   "sensor_msgs/msg/CompressedImage"
+  ],
+  "/camera/depth/image_raw/theora": [
+   "theora_image_transport/msg/Packet"
+  ],
+  "/camera/depth/metadata": [
+   "orbbec_camera_msgs/msg/Metadata"
+  ],
+  "/camera/depth_filter_status": [
+   "std_msgs/msg/String"
+  ],
+  "/camera/depth_to_accel": [
+   "orbbec_camera_msgs/msg/Extrinsics"
+  ],
+  "/camera/depth_to_color": [
+   "orbbec_camera_msgs/msg/Extrinsics"
+  ],
+  "/camera/depth_to_gyro": [
+   "orbbec_camera_msgs/msg/Extrinsics"
+  ],
+  "/camera/gyro/imu_info": [
+   "orbbec_camera_msgs/msg/IMUInfo"
+  ],
+  "/clicked_point": [
+   "geometry_msgs/msg/PointStamped"
+  ],
+  "/cmd_vel": [
+   "geometry_msgs/msg/Twist"
+  ],
+  "/cmd_vel_dbg_in": [
+   "geometry_msgs/msg/Twist"
+  ],
+  "/cmd_vel_final": [
+   "geometry_msgs/msg/Twist"
+  ],
+  "/costmap_update_map": [
+   "nav_msgs/msg/OccupancyGrid"
+  ],
+  "/dbg_collision_check_path": [
+   "visualization_msgs/msg/MarkerArray"
+  ],
+  "/dbg_collision_pose": [
+   "visualization_msgs/msg/MarkerArray"
+  ],
+  "/dbg_control_errors": [
+   "std_msgs/msg/Float64MultiArray"
+  ],
+  "/dbg_control_outputs": [
+   "std_msgs/msg/Float64MultiArray"
+  ],
+  "/dbg_control_parameters": [
+   "std_msgs/msg/Float64MultiArray"
+  ],
+  "/dbg_current_state": [
+   "visualization_msgs/msg/Marker"
+  ],
+  "/dbg_ego_astar_path_pub": [
+   "visualization_msgs/msg/Marker"
+  ],
+  "/dbg_ego_local_targets_pub": [
+   "visualization_msgs/msg/Marker"
+  ],
+  "/dbg_lateral_lookahead_state": [
+   "visualization_msgs/msg/Marker"
+  ],
+  "/dbg_longitudinal_lookahead_state": [
+   "visualization_msgs/msg/Marker"
+  ],
+  "/dbg_lookahead_state": [
+   "visualization_msgs/msg/Marker"
+  ],
+  "/dbg_polygon_visualize": [
+   "visualization_msgs/msg/MarkerArray"
+  ],
+  "/dbg_static_map": [
+   "nav_msgs/msg/OccupancyGrid"
+  ],
+  "/dbg_task_pause_trigger": [
+   "geometry_msgs/msg/PointStamped"
+  ],
+  "/dbg_task_trigger": [
+   "geometry_msgs/msg/PoseStamped"
+  ],
+  "/dbg_task_trigger/auto_explore": [
+   "geometry_msgs/msg/PoseStamped"
+  ],
+  "/dbg_task_trigger/direct_navi_to_relative": [
+   "geometry_msgs/msg/PoseStamped"
+  ],
+  "/dbg_task_trigger/direct_navi_to_relative_goal": [
+   "geometry_msgs/msg/PoseStamped"
+  ],
+  "/dbg_task_trigger/linear_navi_to_goal": [
+   "geometry_msgs/msg/PoseStamped"
+  ],
+  "/dbg_task_trigger/linear_navi_to_pose_2d": [
+   "geometry_msgs/msg/PoseStamped"
+  ],
+  "/dbg_task_trigger/linear_navi_to_relative": [
+   "geometry_msgs/msg/PoseStamped"
+  ],
+  "/dbg_task_trigger/move_forward": [
+   "geometry_msgs/msg/PoseStamped"
+  ],
+  "/dbg_task_trigger/no_map_follow": [
+   "geometry_msgs/msg/PoseStamped"
+  ],
+  "/dbg_task_trigger/planning_navi_to_goal": [
+   "geometry_msgs/msg/PoseStamped"
+  ],
+  "/dbg_task_trigger/planning_navi_to_pose_2d": [
+   "geometry_msgs/msg/PoseStamped"
+  ],
+  "/dbg_task_trigger/precise_navi_to_goal": [
+   "geometry_msgs/msg/PoseStamped"
+  ],
+  "/dbg_task_trigger/relative_target_tracking": [
+   "geometry_msgs/msg/PoseStamped"
+  ],
+  "/dbg_task_trigger/spin_turn": [
+   "geometry_msgs/msg/PoseStamped"
+  ],
+  "/dbg_task_trigger/spin_turn_and_move_forward": [
+   "geometry_msgs/msg/PoseStamped"
+  ],
+  "/dbg_vx_control_errors": [
+   "std_msgs/msg/Float64MultiArray"
+  ],
+  "/dbg_vx_control_outputs": [
+   "std_msgs/msg/Float64MultiArray"
+  ],
+  "/dbg_wz_control_errors": [
+   "std_msgs/msg/Float64MultiArray"
+  ],
+  "/dbg_wz_control_outputs": [
+   "std_msgs/msg/Float64MultiArray"
+  ],
+  "/diagnostics": [
+   "diagnostic_msgs/msg/DiagnosticArray"
+  ],
+  "/example_module/debug": [
+   "std_msgs/msg/String"
+  ],
+  "/face_ui_proxy/status": [
+   "aimdk_msgs/msg/FaceEmojiStatus"
+  ],
+  "/goal_pose": [
+   "geometry_msgs/msg/PoseStamped"
+  ],
+  "/goal_pose2": [
+   "geometry_msgs/msg/PoseStamped"
+  ],
+  "/ground_line_trajectory": [
+   "visualization_msgs/msg/MarkerArray"
+  ],
+  "/heartbeat/loc_state/pb_3Aaimdk_2Eprotocol_2ELocStatusHeartBeat": [
+   "ros2_plugin_proto/msg/RosMsgWrapper"
+  ],
+  "/hybrid_astar_path": [
+   "nav_msgs/msg/Path"
+  ],
+  "/interaction/tts_status": [
+   "aimdk_msgs/msg/TtsStatus"
+  ],
+  "/loc/pcd_body": [
+   "sensor_msgs/msg/PointCloud2"
+  ],
+  "/loc_tele/current_pose/pb_3Aaimdk_2Eprotocol_2EPubCurrentPose": [
+   "ros2_plugin_proto/msg/RosMsgWrapper"
+  ],
+  "/loc_tele/relocalization_pcd/pb_3Aaimdk_2Eprotocol_2EPubRelocalizationRealtimeLidarPoints": [
+   "ros2_plugin_proto/msg/RosMsgWrapper"
+  ],
+  "/loc_tele/relocalization_result/pb_3Aaimdk_2Eprotocol_2EPubRelocalizationResult": [
+   "ros2_plugin_proto/msg/RosMsgWrapper"
+  ],
+  "/lx_webrtc_app/state": [
+   "std_msgs/msg/String"
+  ],
+  "/map": [
+   "nav_msgs/msg/OccupancyGrid"
+  ],
+  "/map_updates": [
+   "map_msgs/msg/OccupancyGridUpdate"
+  ],
+  "/mapping_tele/realtime_2d_map/pb_3Aaimdk_2Eprotocol_2EMap2DRealtimeMapData": [
+   "ros2_plugin_proto/msg/RosMsgWrapper"
+  ],
+  "/mapping_tele/saving_percent/pb_3Aaimdk_2Eprotocol_2EMapSavingProcessData": [
+   "ros2_plugin_proto/msg/RosMsgWrapper"
+  ],
+  "/mc/base/state/pb_3Aaimdk_2Eprotocol_2EMcStateChannel": [
+   "ros2_plugin_proto/msg/RosMsgWrapper"
+  ],
+  "/mc/upper_body_command": [
+   "aimdk_msgs/msg/UpperBodyCommandArray"
+  ],
+  "/monitor/monitor_info/pb_3Aaima_2Emonitor_2EMonitorInfo": [
+   "ros2_plugin_proto/msg/RosMsgWrapper"
+  ],
+  "/mono_perception/cruise_detection": [
+   "aimdk_msgs/msg/CruiseDetection"
+  ],
+  "/mono_perception/debug/input_image": [
+   "sensor_msgs/msg/CompressedImage"
+  ],
+  "/mono_perception/debug/line_color_map": [
+   "sensor_msgs/msg/CompressedImage"
+  ],
+  "/mono_perception/debug/line_viz": [
+   "visualization_msgs/msg/MarkerArray"
+  ],
+  "/mono_perception/debug/seg_mask": [
+   "sensor_msgs/msg/CompressedImage"
+  ],
+  "/motion/control/locomotion_velocity/pb_3Aaimdk_2Eprotocol_2EMcLocomotionVelocityChannel": [
+   "ros2_plugin_proto/msg/RosMsgWrapper"
+  ],
+  "/odom": [
+   "nav_msgs/msg/Odometry"
+  ],
+  "/ota/gateway/heartbeat": [
+   "aimdk_msgs/msg/OTAGatewayHeartbeatInfo"
+  ],
+  "/ota/gateway/heartbeat/pb_3Aaimdk_2Eprotocol_2EOTAGatewayHeartbeatChannel": [
+   "ros2_plugin_proto/msg/RosMsgWrapper"
+  ],
+  "/parameter_events": [
+   "rcl_interfaces/msg/ParameterEvent"
+  ],
+  "/path": [
+   "nav_msgs/msg/Path"
+  ],
+  "/path_local": [
+   "nav_msgs/msg/Path"
+  ],
+  "/perception/debug/fused_pcl": [
+   "sensor_msgs/msg/PointCloud2"
+  ],
+  "/perception/debug/left_fisheye_detection_viz": [
+   "sensor_msgs/msg/Image"
+  ],
+  "/perception/debug/obstacle_cluster": [
+   "sensor_msgs/msg/PointCloud2"
+  ],
+  "/perception/debug/obstacle_pcl": [
+   "sensor_msgs/msg/PointCloud2"
+  ],
+  "/perception/debug/obstacle_polygon": [
+   "visualization_msgs/msg/MarkerArray"
+  ],
+  "/perception/debug/obstacle_semantic": [
+   "sensor_msgs/msg/PointCloud2"
+  ],
+  "/perception/debug/rgbd_detection_viz": [
+   "sensor_msgs/msg/Image"
+  ],
+  "/perception/debug/rgbd_frustum": [
+   "visualization_msgs/msg/MarkerArray"
+  ],
+  "/perception/debug/rgbd_pcl": [
+   "sensor_msgs/msg/PointCloud2"
+  ],
+  "/perception/debug/robot_marker": [
+   "visualization_msgs/msg/MarkerArray"
+  ],
+  "/perception/grid_map": [
+   "grid_map_msgs/msg/GridMap"
+  ],
+  "/perception/tracked_obstacles": [
+   "aimdk_msgs/msg/TrackedObstacles"
+  ],
+  "/perception/vis_map": [
+   "grid_map_msgs/msg/GridMap"
+  ],
+  "/pipeline_polygon_visualize": [
+   "visualization_msgs/msg/MarkerArray"
+  ],
+  "/pnc/avoid_status/pb_3Aaimdk_2Eprotocol_2EPncAvoidStatusChannel": [
+   "ros2_plugin_proto/msg/RosMsgWrapper"
+  ],
+  "/pnc/cmd_vel_integration": [
+   "visualization_msgs/msg/MarkerArray"
+  ],
+  "/pnc/costmap_update/pb_3Aaimdk_2Eprotocol_2EOccupancyGrid": [
+   "ros2_plugin_proto/msg/RosMsgWrapper"
+  ],
+  "/pnc/estimate_odom": [
+   "nav_msgs/msg/Odometry"
+  ],
+  "/pnc/estimate_pose_vel": [
+   "geometry_msgs/msg/Twist"
+  ],
+  "/pnc/global_costmap/pb_3Aaimdk_2Eprotocol_2EOccupancyGrid": [
+   "ros2_plugin_proto/msg/RosMsgWrapper"
+  ],
+  "/pnc/path_publish/pb_3Aaimdk_2Eprotocol_2EPncPathChannel": [
+   "ros2_plugin_proto/msg/RosMsgWrapper"
+  ],
+  "/pnc/voice_control_status/pb_3Aaimdk_2Eprotocol_2EPncVoiceControlStatus": [
+   "ros2_plugin_proto/msg/RosMsgWrapper"
+  ],
+  "/qazbot_d1_map/amcl/transition_event": [
+   "lifecycle_msgs/msg/TransitionEvent"
+  ],
+  "/qazbot_d1_map/amcl_pose": [
+   "geometry_msgs/msg/PoseWithCovarianceStamped"
+  ],
+  "/qazbot_d1_map/bond": [
+   "bond/msg/Status"
+  ],
+  "/qazbot_d1_map/initialpose": [
+   "geometry_msgs/msg/PoseWithCovarianceStamped"
+  ],
+  "/qazbot_d1_map/map": [
+   "nav_msgs/msg/OccupancyGrid"
+  ],
+  "/qazbot_d1_map/map_server/transition_event": [
+   "lifecycle_msgs/msg/TransitionEvent"
+  ],
+  "/qazbot_d1_map/particle_cloud": [
+   "nav2_msgs/msg/ParticleCloud"
+  ],
+  "/qazbot_d1_map/tf": [
+   "tf2_msgs/msg/TFMessage"
+  ],
+  "/qazbot_d1_map/tf_static": [
+   "tf2_msgs/msg/TFMessage"
+  ],
+  "/qazbot_lio/cloud_effected": [
+   "sensor_msgs/msg/PointCloud2"
+  ],
+  "/qazbot_lio/cloud_registered": [
+   "sensor_msgs/msg/PointCloud2"
+  ],
+  "/qazbot_lio/cloud_registered_body": [
+   "sensor_msgs/msg/PointCloud2"
+  ],
+  "/qazbot_lio/map": [
+   "sensor_msgs/msg/PointCloud2"
+  ],
+  "/qazbot_lio/odom_level": [
+   "nav_msgs/msg/Odometry"
+  ],
+  "/qazbot_lio/odometry": [
+   "nav_msgs/msg/Odometry"
+  ],
+  "/qazbot_lio/path": [
+   "nav_msgs/msg/Path"
+  ],
+  "/qazbot_lio/scan": [
+   "sensor_msgs/msg/LaserScan"
+  ],
+  "/qazbot_lio/tf": [
+   "tf2_msgs/msg/TFMessage"
+  ],
+  "/ranger_base_node/odom": [
+   "nav_msgs/msg/Odometry"
+  ],
+  "/robot/current_language": [
+   "aimdk_msgs/msg/RobotLanguage"
+  ],
+  "/robot/network_info": [
+   "aimdk_msgs/msg/RobotNetworkInfo"
+  ],
+  "/robot/ps5_controller/capacity": [
+   "aimdk_msgs/msg/PscontrollerCapacity"
+  ],
+  "/root/ros2_bridge_node/controller_server_ros_node/MPPIController/critic_costs": [
+   "std_msgs/msg/Float32MultiArray"
+  ],
+  "/root/ros2_bridge_node/controller_server_ros_node/MPPIController/dbg_path": [
+   "nav_msgs/msg/Path"
+  ],
+  "/root/ros2_bridge_node/controller_server_ros_node/MPPIController/dbg_trajectories": [
+   "visualization_msgs/msg/MarkerArray"
+  ],
+  "/root/ros2_bridge_node/controller_server_ros_node/TrajController/dbg_path": [
+   "nav_msgs/msg/Path"
+  ],
+  "/root/ros2_bridge_node/controller_server_ros_node/TrajController/dbg_trajectories": [
+   "visualization_msgs/msg/MarkerArray"
+  ],
+  "/root/ros2_bridge_node/planner_server_ros_node/Ego/path": [
+   "nav_msgs/msg/Path"
+  ],
+  "/root/ros2_bridge_node/planner_server_ros_node/EgoSwarm/path": [
+   "nav_msgs/msg/Path"
+  ],
+  "/root/ros2_bridge_node/planner_server_ros_node/GridBased/dbg_pose": [
+   "geometry_msgs/msg/PoseStamped"
+  ],
+  "/root/ros2_bridge_node/planner_server_ros_node/GridBased/path": [
+   "nav_msgs/msg/Path"
+  ],
+  "/root/ros2_bridge_node/planner_server_ros_node/GridBased/potential": [
+   "nav_msgs/msg/OccupancyGrid"
+  ],
+  "/root/ros2_bridge_node/planner_server_ros_node/GridBasedAstar/dbg_pose": [
+   "geometry_msgs/msg/PoseStamped"
+  ],
+  "/root/ros2_bridge_node/planner_server_ros_node/GridBasedAstar/path": [
+   "nav_msgs/msg/Path"
+  ],
+  "/root/ros2_bridge_node/planner_server_ros_node/GridBasedAstar/potential": [
+   "nav_msgs/msg/OccupancyGrid"
+  ],
+  "/rosout": [
+   "rcl_interfaces/msg/Log"
+  ],
+  "/slam/lidar_odom": [
+   "nav_msgs/msg/Odometry"
+  ],
+  "/slam/localization/odometry": [
+   "nav_msgs/msg/Odometry"
+  ],
+  "/slam/mapping/odometry": [
+   "nav_msgs/msg/Odometry"
+  ],
+  "/speed_trajectory": [
+   "visualization_msgs/msg/MarkerArray"
+  ],
+  "/task_master/fb": [
+   "std_msgs/msg/UInt8"
+  ],
+  "/task_master/pause_resume": [
+   "std_msgs/msg/Bool"
+  ],
+  "/task_master/request": [
+   "std_msgs/msg/UInt8MultiArray"
+  ],
+  "/task_master/request_json": [
+   "std_msgs/msg/String"
+  ],
+  "/task_master/response": [
+   "std_msgs/msg/UInt8MultiArray"
+  ],
+  "/task_master/response_json": [
+   "std_msgs/msg/String"
+  ],
+  "/task_master/robot_info": [
+   "std_msgs/msg/UInt8MultiArray"
+  ],
+  "/task_master/state": [
+   "aimdk_msgs/msg/TaskMasterState"
+  ],
+  "/task_master/state_pb/pb_3Aaimdk_2Eprotocol_2Einterface_2ETaskMasterState": [
+   "ros2_plugin_proto/msg/RosMsgWrapper"
+  ],
+  "/task_master/tsm_state": [
+   "std_msgs/msg/String"
+  ],
+  "/task_master/worker_stop": [
+   "std_msgs/msg/Empty"
+  ],
+  "/task_master/worker_task/pb_3Aaimdk_2Eprotocol_2EWorkerTaskRequest": [
+   "ros2_plugin_proto/msg/RosMsgWrapper"
+  ],
+  "/task_worker/response/pb_3Aaimdk_2Eprotocol_2EWorkerTaskResponse": [
+   "ros2_plugin_proto/msg/RosMsgWrapper"
+  ],
+  "/tf": [
+   "tf2_msgs/msg/TFMessage"
+  ],
+  "/tf_static": [
+   "tf2_msgs/msg/TFMessage"
+  ],
+  "/trigger_plan": [
+   "std_msgs/msg/Bool"
+  ],
+  "/x2robot/net/isfiveg": [
+   "aimdk_msgs/msg/IsFiveG"
+  ],
+  "/x2robot/scan/bluetooth": [
+   "aimdk_msgs/msg/BluetoothInfoArray"
+  ]
+ },
+ "wall_time": "2026-10-21T21:43:22+0800"
+}

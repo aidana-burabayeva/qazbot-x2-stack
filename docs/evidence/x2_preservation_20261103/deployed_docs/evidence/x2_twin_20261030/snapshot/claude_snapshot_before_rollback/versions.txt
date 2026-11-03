@@ -1,0 +1,35 @@
+ROS_DISTRO=humble (/opt/ros/humble)
+ros-humble-nav2-common 1.1.18-1jammy.20250719.142921
+ros-humble-nav2-costmap-2d 1.1.18-1jammy.20250729.003124
+ros-humble-nav2-msgs 1.1.18-1jammy.20250719.143458
+ros-humble-nav2-util 1.1.18-1jammy.20250728.173319
+ros-humble-nav2-voxel-grid 1.1.18-1jammy.20250719.151209
+ros-humble-rclcpp 16.0.14-1jammy.20250719.113811
+ros-humble-rmw-fastrtps-cpp 6.2.8-1jammy.20250719.091658
+ros-humble-ros-base 0.10.0-1jammy.20250729.010040
+ros-humble-rosbag2 0.15.15-1jammy.20250722.013319
+## runtime Nav2 packages (qazbot_nav_deps / nav2_bt_deps / user_pkgs / nav_ext_ws)
+runtime/qazbot_nav_deps/root/opt/ros/humble nav2_controller 1.1.18
+runtime/qazbot_nav_deps/root/opt/ros/humble nav2_regulated_pure_pursuit_controller 1.1.18
+runtime/qazbot_nav_deps/root/opt/ros/humble nav2_velocity_smoother 1.1.18
+runtime/qazbot_nav_deps/root/opt/ros/humble nav2_amcl 1.1.18
+runtime/qazbot_nav_deps/root/opt/ros/humble nav2_planner 1.1.18
+runtime/qazbot_nav_deps/root/opt/ros/humble nav2_lifecycle_manager 1.1.18
+runtime/nav2_bt_deps/root/opt/ros/humble nav2_bt_navigator 1.1.18
+runtime/user_pkgs/opt/ros/humble nav2_map_server 1.1.18
+## kernel/L4T
+Linux agi 5.15.148-tegra #1 SMP PREEMPT Thu Jul 23 11:41:26 UTC 2026 aarch64 aarch64 aarch64 GNU/Linux
+# R36 (release), REVISION: 4.3, GCID: 38968081, BOARD: generic, EABI: aarch64, DATE: Wed Jan  8 01:49:37 UTC 2025
+## AgiBot software versions
+aimdk cobridge common config.yaml data_collect_task_manager dc debug_tools dm drp ec em entry factory_calibration firmware_version hal_sensor_orin hds housekeeper lx_webrtc_app metadata.yaml nav orbbec_camera orin_ota ota param robot_chores 
+/agibot/software/aimdk/version: aimdk v0.0.0-g14fe2e8 
+/agibot/software/common/version.json: {   "interface": "v1.1.0.4" }
+/agibot/software/factory_calibration/version.json: {   "interface": "v1.1.0.0",   "aimrte": "v0.9.2" } 
+/agibot/software/lx_webrtc_app/version.json: {   "interface": "v1.1.0.0",   "aimrte": "v0.9.2" } 
+/agibot/software/orbbec_camera/version.json: {   "aimrte": "v0.8.14",   "interface": "v0.9.0.5" } 
+platform_version:
+  content:
+    aimrte: v0.9.2.14
+--
+version: v1.1.5
+export AGIBOT_SOFTWARE_VERSION='v1.1.5'

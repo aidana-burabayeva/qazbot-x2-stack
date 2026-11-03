@@ -1,0 +1,45 @@
+{
+  "rows": [
+    {
+      "mode": "old_fifo",
+      "scan_samples": 24,
+      "cloud_samples": 42,
+      "scan_age_p95": 2.00676052570343,
+      "scan_age_max": 2.1010007858276367,
+      "scan_stale_fraction": 0.8333333333333334,
+      "cloud_age_p95": 2.164132034778595,
+      "source_stamps_increasing": true,
+      "source_stamps_unchanged": true
+    },
+    {
+      "mode": "default_latest",
+      "scan_samples": 41,
+      "cloud_samples": 41,
+      "scan_age_p95": 0.4600393772125244,
+      "scan_age_max": 0.46417737007141113,
+      "scan_stale_fraction": 0.0,
+      "cloud_age_p95": 0.2758033275604248,
+      "source_stamps_increasing": true,
+      "source_stamps_unchanged": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "enough_scans",
+      "ok": true
+    },
+    {
+      "name": "backlog_reproduced",
+      "ok": true
+    },
+    {
+      "name": "latest_bounded",
+      "ok": true
+    },
+    {
+      "name": "source_stamps_preserved",
+      "ok": true
+    }
+  ],
+  "scope": "controlled 180ms cloud callback at 10Hz; same real bridge and ROS DDS; not a FAST-LIO performance benchmark"
+}

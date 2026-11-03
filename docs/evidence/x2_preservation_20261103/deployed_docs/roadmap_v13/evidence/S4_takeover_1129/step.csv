@@ -1,0 +1,1 @@
+t_unix,t_rel,seq,phase,step,vx_cmd,wz_cmd,adapter_state,adapter_reason,motion_armed,trusted,odom_x,odom_y,odom_yaw_unwrapped,odom_age_s,dist_m,dyaw_deg,native_x,native_y,native_yaw_unwrapped,native_age_s,native_dist_m,native_dyaw_deg

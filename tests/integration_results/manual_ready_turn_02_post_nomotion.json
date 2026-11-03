@@ -1,0 +1,108 @@
+{
+  "one_nomotion_update": true,
+  "before": {
+    "trusted": false,
+    "ready": false,
+    "motion_ok": false,
+    "reasons": [
+      "not_ready:initialpose"
+    ],
+    "diagnostics": [
+      "T2_covariance",
+      "T3_particles",
+      "T4_scan_score",
+      "T6_no_anchor"
+    ],
+    "metrics": {
+      "sigma_xy": 0.506727323993026,
+      "sigma_yaw": 0.23473021405793112,
+      "cloud_std": 0.27259627128569336,
+      "second_mode_weight": 0.6792763157894737,
+      "scan_score": 0.43544639795796786,
+      "scan_floor": 0.5073741864294061,
+      "jump_xy": 0.0,
+      "jump_yaw": 0.0
+    },
+    "ready_cause": "initialpose",
+    "anchor": false,
+    "baseline": 0.6342177330367577,
+    "moving": false,
+    "map_sha256": "f6032f75ffd386361993a4b4864cf0816713fc27f6d037c88d929ae5d48562fb",
+    "map_ok": "",
+    "experimental": {
+      "degenerate_budget_m": 0.0,
+      "frozen_window_s": 1.0
+    }
+  },
+  "after": {
+    "localization_trust": {
+      "trusted": false,
+      "ready": false,
+      "motion_ok": false,
+      "reasons": [
+        "not_ready:initialpose"
+      ],
+      "diagnostics": [
+        "T2_covariance",
+        "T3_particles",
+        "T4_scan_score",
+        "T6_no_anchor"
+      ],
+      "metrics": {
+        "sigma_xy": 0.4754333419889571,
+        "sigma_yaw": 0.21852930626844227,
+        "cloud_std": 0.2826179641449441,
+        "second_mode_weight": 0.7091932457786111,
+        "scan_score": 0.44660027377308603,
+        "scan_floor": 0.5073741864294061,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      },
+      "ready_cause": "initialpose",
+      "anchor": false,
+      "baseline": 0.6342177330367577,
+      "moving": true,
+      "map_sha256": "f6032f75ffd386361993a4b4864cf0816713fc27f6d037c88d929ae5d48562fb",
+      "map_ok": "",
+      "experimental": {
+        "degenerate_budget_m": 0.0,
+        "frozen_window_s": 1.0
+      }
+    },
+    "goal_coordinator": {
+      "busy": false,
+      "latched": true,
+      "gate": false,
+      "fault": "operator_stop",
+      "source_zero": true,
+      "trusted": false,
+      "driver_ready": false,
+      "driver_mode": "live",
+      "ready": false,
+      "child_uuid": null
+    },
+    "motion_adapter": {
+      "state": "idle",
+      "reason": "driver_not_armed",
+      "latch": "",
+      "live": true,
+      "mode": "live",
+      "dry_run": false,
+      "mc_source": "rc",
+      "trusted": false,
+      "registration": "registered",
+      "registration_error": "",
+      "sdk_service_ready": true,
+      "motion_armed": false,
+      "ready": false,
+      "foreign_publishers": [],
+      "counters": {
+        "saturated": 0,
+        "rejected": 0,
+        "latched": 1,
+        "published": 2302
+      }
+    }
+  },
+  "movement_commands_sent": false
+}

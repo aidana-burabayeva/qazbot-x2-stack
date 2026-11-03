@@ -1,0 +1,240 @@
+{
+  "t_real": 1793101382.9923553,
+  "duration_s": 899.6528916649986,
+  "state": {
+    "trust": {
+      "trusted": false,
+      "ready": false,
+      "motion_ok": false,
+      "reasons": [
+        "not_ready:awaiting_initialpose_and_amcl"
+      ],
+      "diagnostics": [
+        "T1_amcl_pose_stale",
+        "T2_covariance",
+        "T3_particles",
+        "T4_no_baseline",
+        "T4_scan_score",
+        "T6_no_anchor"
+      ],
+      "metrics": {
+        "sigma_xy": 0.5016034405725224,
+        "sigma_yaw": 0.22242606783806224,
+        "cloud_std": 0.29934293985770727,
+        "second_mode_weight": 0.6139941690962102,
+        "scan_score": 0.10180737643166723,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      },
+      "admission_policy": "go2",
+      "initialized": false,
+      "ready_cause": "awaiting_initialpose_and_amcl",
+      "anchor": false,
+      "baseline": null,
+      "moving": false,
+      "map_sha256": "f6032f75ffd386361993a4b4864cf0816713fc27f6d037c88d929ae5d48562fb",
+      "map_ok": "",
+      "odom_source": "native_imu",
+      "odom_topic": "/qazbot_native/odom",
+      "stamp_rejections": {},
+      "input_callbacks": {
+        "_tf": {
+          "count": 70425,
+          "duration_s": 0.00027839299946208484,
+          "max_duration_s": 0.24532510199787794,
+          "received": 18979.963231143
+        },
+        "_odom": {
+          "count": 62138,
+          "duration_s": 8.153399903676473e-05,
+          "max_duration_s": 0.13443294700118713,
+          "received": 18979.968181731
+        },
+        "_map": {
+          "count": 1,
+          "duration_s": 0.0009495419981249142,
+          "max_duration_s": 0.0009495419981249142,
+          "received": 16885.03573722
+        },
+        "_scan": {
+          "count": 10440,
+          "duration_s": 0.001997770999878412,
+          "max_duration_s": 0.20023521799885202,
+          "received": 18979.88324029
+        },
+        "_initialpose": {
+          "count": 1,
+          "duration_s": 0.0031161420010903385,
+          "max_duration_s": 0.0031161420010903385,
+          "received": 17392.087327257
+        },
+        "_amcl": {
+          "count": 4,
+          "duration_s": 0.00017378800112055615,
+          "max_duration_s": 0.0003603750010370277,
+          "received": 18582.28936504
+        },
+        "_cloud": {
+          "count": 3,
+          "duration_s": 0.009992565999709768,
+          "max_duration_s": 0.01418370600003982,
+          "received": 18582.276952506
+        }
+      },
+      "input_ages": {
+        "scan": 0.1715839004937152,
+        "odom": 0.02883448265492916,
+        "odom_msg": 0.028843743333709426,
+        "map": 0.10272560299927136
+      },
+      "scan_frame": "base_footprint",
+      "scan_frame_rejections": 0,
+      "scan_points": 225,
+      "experimental": {
+        "degenerate_budget_m": 0.0,
+        "frozen_window_s": 1.0
+      }
+    },
+    "coordinator": {
+      "busy": false,
+      "latched": true,
+      "gate": false,
+      "fault": "operator_stop",
+      "source_zero": true,
+      "trusted": false,
+      "driver_ready": false,
+      "driver_mode": "live",
+      "ready": false,
+      "child_uuid": null
+    },
+    "amcl": {
+      "stamp": 1793100985.011771,
+      "frame": "map",
+      "pose": [
+        -5.998773879541755,
+        5.781200323735938,
+        -1.27442466463119
+      ]
+    },
+    "mc": {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "action": "STAND_DEFAULT"
+    },
+    "native_status": {
+      "t": 1793101382.1328797,
+      "mode": "native_imu",
+      "publish_tf": true,
+      "publish_rate_hz": 30.0,
+      "frames": [
+        "odom",
+        "base_footprint"
+      ],
+      "rates_hz": {
+        "leg": 168.1,
+        "accepted": 168.1,
+        "tf": 30.0,
+        "odom": 30.0,
+        "withheld_stale": 0.0
+      },
+      "messages": {
+        "leg": 349364,
+        "accepted": 349364,
+        "tf": 62675,
+        "odom": 62595,
+        "withheld_stale": 1
+      },
+      "age_s": 0.0157,
+      "last_published_age_s": 0.0157,
+      "fault": "",
+      "latched": "",
+      "guard": {
+        "ok": 349364,
+        "stamp_back": 0,
+        "foreign_frame": 0,
+        "non_finite": 0,
+        "tilt": 0,
+        "future": 0,
+        "duplicate": 0,
+        "origin_reset": 0,
+        "latched": 0,
+        "invalid_stamp": 0
+      },
+      "last_drop": ""
+    },
+    "adapter": {
+      "state": "latched",
+      "reason": "stop_requested",
+      "latch": "stop_requested",
+      "live": true,
+      "mode": "live",
+      "dry_run": false,
+      "mc_source": "rc",
+      "trusted": false,
+      "registration": "registered",
+      "registration_error": "",
+      "sdk_service_ready": true,
+      "motion_armed": false,
+      "ready": false,
+      "foreign_publishers": [],
+      "counters": {
+        "saturated": 0,
+        "rejected": 0,
+        "latched": 1,
+        "published": 60
+      }
+    }
+  },
+  "status_receive_ages_s": {
+    "trust": 0.004579813001328148,
+    "coordinator": 0.009095628000068245,
+    "amcl": 397.88943457799905,
+    "mc": 0.06606488699981128,
+    "native_status": 0.8557176920003258,
+    "adapter": 0.4895698500004073
+  },
+  "odom": {
+    "lio": {
+      "stamp": 1793101382.91186,
+      "frame": "odom",
+      "child": "base_footprint",
+      "xy": [
+        0.020610993463879165,
+        0.06956502386731686
+      ],
+      "speed": 0.01983471014131134,
+      "yaw_rate": -0.0007187599470994956
+    },
+    "native": {
+      "stamp": 1793101382.9830441,
+      "frame": "odom",
+      "child": "base_footprint",
+      "xy": [
+        -0.6816380161146589,
+        -2.666447110381455
+      ],
+      "speed": 0.00012869851269220657,
+      "yaw_rate": 2.2246292551348313e-06
+    }
+  },
+  "tf_edges": {
+    "odom->base_footprint": 1793101382.9830441,
+    "map->odom": 1793101383.810276
+  },
+  "odom_age_p50_p95_p99_max_s": {
+    "lio": [
+      0.04825448989868164,
+      0.08571987152099611,
+      0.10244864225387573,
+      0.13631844520568848
+    ],
+    "native": [
+      0.01604616641998291,
+      0.041244864463806166,
+      0.05026395082473751,
+      0.10315084457397461
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "checks": [],
+  "shutdown": {
+    "nav2": 0,
+    "model": 1,
+    "abnormal_children": 0
+  },
+  "smac_libraries": [],
+  "scope": "D1 grid + real Nav2 + ideal localization fixture + existing MC model; no AMCL/SDK qualification"
+}

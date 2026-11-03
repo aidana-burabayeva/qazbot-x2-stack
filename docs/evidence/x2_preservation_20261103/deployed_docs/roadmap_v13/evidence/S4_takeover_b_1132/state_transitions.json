@@ -1,0 +1,706 @@
+[
+  {
+    "t": 1793100602.3898346,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": true,
+      "initialized": true,
+      "motion_ok": true,
+      "reasons": [],
+      "metrics": {
+        "sigma_xy": 0.49260216932914863,
+        "sigma_yaw": 0.21722870098807476,
+        "cloud_std": 0.31256040782461275,
+        "second_mode_weight": 0.8790613718411547,
+        "scan_score": 0.14160165121996174,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100602.651255,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": true,
+      "initialized": true,
+      "motion_ok": false,
+      "reasons": [
+        "T1_scan_stale"
+      ],
+      "metrics": {
+        "sigma_xy": 0.49260216932914863,
+        "sigma_yaw": 0.21722870098807476,
+        "cloud_std": 0.31256040782461275,
+        "second_mode_weight": 0.8790613718411547,
+        "scan_score": 0.14160165121996174,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100602.8248782,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": true,
+      "initialized": true,
+      "motion_ok": true,
+      "reasons": [],
+      "metrics": {
+        "sigma_xy": 0.49260216932914863,
+        "sigma_yaw": 0.21722870098807476,
+        "cloud_std": 0.31256040782461275,
+        "second_mode_weight": 0.8790613718411547,
+        "scan_score": 0.15059577948551772,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100603.0025382,
+    "topic": "/qazbot_d1_map/motion_adapter/status",
+    "data": {
+      "state": "idle",
+      "reason": "driver_not_armed",
+      "latch": "",
+      "mc_source": "rc",
+      "motion_armed": false
+    }
+  },
+  {
+    "t": 1793100603.1270294,
+    "topic": "/aima/mc/common/state",
+    "data": {
+      "header": {
+        "stamp": {
+          "sec": 1793100603,
+          "nanosec": 124320098
+        },
+        "frame_id": "",
+        "sequence": 181463,
+        "meas_stamp": {
+          "sec": 0,
+          "nanosec": 0
+        }
+      },
+      "input_source": {
+        "name": "rc",
+        "priority": 80,
+        "timeout": 1000
+      },
+      "action_info": {
+        "current_action": {
+          "value": 0
+        },
+        "action_desc": "STAND_DEFAULT",
+        "status": {
+          "value": 100
+        }
+      },
+      "runtime_model": {
+        "waist_status": true,
+        "left_hand_status": {
+          "value": 0
+        },
+        "right_hand_status": {
+          "value": 0
+        }
+      },
+      "motion_status": {
+        "player_state": {
+          "value": 0
+        },
+        "control_area": {
+          "value": 0
+        },
+        "motion": "",
+        "type": {
+          "value": 0
+        }
+      },
+      "servo_status": {
+        "squat_enable": false,
+        "squat_offset": 0.0,
+        "squat_limit": 2,
+        "head_yaw_offset": 0.0,
+        "head_pitch_offset": 0.0,
+        "waist_yaw_offset": 0.0,
+        "waist_pitch_offset": 0.0,
+        "waist_roll_offset": 0.0
+      },
+      "fsm_state": {
+        "current_state": 4
+      },
+      "body_status": {
+        "value": 1
+      },
+      "speed_status": {
+        "speed_mode": {
+          "value": 1
+        },
+        "forward_bounds": {
+          "min_value": -1.0,
+          "max_value": 0.8
+        },
+        "lateral_bounds": {
+          "min_value": -1.0,
+          "max_value": 1.0
+        },
+        "angular_bounds": {
+          "min_value": -1.0,
+          "max_value": 1.0
+        }
+      }
+    }
+  },
+  {
+    "t": 1793100603.8054998,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": true,
+      "initialized": true,
+      "motion_ok": false,
+      "reasons": [
+        "T1_scan_stale"
+      ],
+      "metrics": {
+        "sigma_xy": 0.49260216932914863,
+        "sigma_yaw": 0.21722870098807476,
+        "cloud_std": 0.31256040782461275,
+        "second_mode_weight": 0.8790613718411547,
+        "scan_score": 0.16585701626535335,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100604.1908364,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": true,
+      "initialized": true,
+      "motion_ok": true,
+      "reasons": [],
+      "metrics": {
+        "sigma_xy": 0.49260216932914863,
+        "sigma_yaw": 0.21722870098807476,
+        "cloud_std": 0.31256040782461275,
+        "second_mode_weight": 0.8790613718411547,
+        "scan_score": 0.1318455198580971,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100604.4665306,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": true,
+      "initialized": true,
+      "motion_ok": false,
+      "reasons": [
+        "T1_scan_stale"
+      ],
+      "metrics": {
+        "sigma_xy": 0.49260216932914863,
+        "sigma_yaw": 0.21722870098807476,
+        "cloud_std": 0.31256040782461275,
+        "second_mode_weight": 0.8790613718411547,
+        "scan_score": 0.1318455198580971,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100604.606997,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": true,
+      "initialized": true,
+      "motion_ok": true,
+      "reasons": [],
+      "metrics": {
+        "sigma_xy": 0.49260216932914863,
+        "sigma_yaw": 0.21722870098807476,
+        "cloud_std": 0.31256040782461275,
+        "second_mode_weight": 0.8790613718411547,
+        "scan_score": 0.15780469778412654,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100604.8213863,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": true,
+      "initialized": true,
+      "motion_ok": false,
+      "reasons": [
+        "T1_scan_stale"
+      ],
+      "metrics": {
+        "sigma_xy": 0.49260216932914863,
+        "sigma_yaw": 0.21722870098807476,
+        "cloud_std": 0.31256040782461275,
+        "second_mode_weight": 0.8790613718411547,
+        "scan_score": 0.1628502629777266,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100604.9853446,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": true,
+      "initialized": true,
+      "motion_ok": true,
+      "reasons": [],
+      "metrics": {
+        "sigma_xy": 0.49260216932914863,
+        "sigma_yaw": 0.21722870098807476,
+        "cloud_std": 0.31256040782461275,
+        "second_mode_weight": 0.8790613718411547,
+        "scan_score": 0.1558529917027525,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100622.5988996,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": true,
+      "initialized": true,
+      "motion_ok": false,
+      "reasons": [
+        "T1_odom_message_stale"
+      ],
+      "metrics": {
+        "sigma_xy": 0.49260216932914863,
+        "sigma_yaw": 0.21722870098807476,
+        "cloud_std": 0.31256040782461275,
+        "second_mode_weight": 0.8790613718411547,
+        "scan_score": 0.19614711295902204,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100622.988222,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": true,
+      "initialized": true,
+      "motion_ok": true,
+      "reasons": [],
+      "metrics": {
+        "sigma_xy": 0.49260216932914863,
+        "sigma_yaw": 0.21722870098807476,
+        "cloud_std": 0.31256040782461275,
+        "second_mode_weight": 0.8790613718411547,
+        "scan_score": 0.20067646172959533,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100623.2320173,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": true,
+      "initialized": true,
+      "motion_ok": false,
+      "reasons": [
+        "T1_scan_stale"
+      ],
+      "metrics": {
+        "sigma_xy": 0.49260216932914863,
+        "sigma_yaw": 0.21722870098807476,
+        "cloud_std": 0.31256040782461275,
+        "second_mode_weight": 0.8790613718411547,
+        "scan_score": 0.20067646172959533,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100623.4034443,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": true,
+      "initialized": true,
+      "motion_ok": true,
+      "reasons": [],
+      "metrics": {
+        "sigma_xy": 0.49260216932914863,
+        "sigma_yaw": 0.21722870098807476,
+        "cloud_std": 0.31256040782461275,
+        "second_mode_weight": 0.8790613718411547,
+        "scan_score": 0.18161912773565742,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100623.8490787,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": true,
+      "initialized": true,
+      "motion_ok": false,
+      "reasons": [
+        "T1_scan_stale"
+      ],
+      "metrics": {
+        "sigma_xy": 0.49260216932914863,
+        "sigma_yaw": 0.21722870098807476,
+        "cloud_std": 0.31256040782461275,
+        "second_mode_weight": 0.8790613718411547,
+        "scan_score": 0.18161912773565742,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100624.4684439,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": true,
+      "initialized": true,
+      "motion_ok": false,
+      "reasons": [
+        "T1_tf_stale",
+        "T1_scan_stale"
+      ],
+      "metrics": {
+        "sigma_xy": 0.49260216932914863,
+        "sigma_yaw": 0.21722870098807476,
+        "cloud_std": 0.31256040782461275,
+        "second_mode_weight": 0.8790613718411547,
+        "scan_score": 0.18161912773565742,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100624.6032176,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": true,
+      "initialized": true,
+      "motion_ok": false,
+      "reasons": [
+        "T1_odom_stale",
+        "T1_tf_stale",
+        "T1_scan_stale"
+      ],
+      "metrics": {
+        "sigma_xy": 0.49260216932914863,
+        "sigma_yaw": 0.21722870098807476,
+        "cloud_std": 0.31256040782461275,
+        "second_mode_weight": 0.8790613718411547,
+        "scan_score": 0.18161912773565742,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100624.8222947,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": true,
+      "initialized": true,
+      "motion_ok": false,
+      "reasons": [
+        "T1_odom_message_stale",
+        "T1_scan_stale"
+      ],
+      "metrics": {
+        "sigma_xy": 0.49260216932914863,
+        "sigma_yaw": 0.21722870098807476,
+        "cloud_std": 0.31256040782461275,
+        "second_mode_weight": 0.8790613718411547,
+        "scan_score": 0.1945564923794362,
+        "scan_floor": 0.35,
+        "gap_jump_xy": 0.0,
+        "gap_jump_yaw": 0.0,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100625.0446084,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": true,
+      "initialized": true,
+      "motion_ok": true,
+      "reasons": [],
+      "metrics": {
+        "sigma_xy": 0.49260216932914863,
+        "sigma_yaw": 0.21722870098807476,
+        "cloud_std": 0.31256040782461275,
+        "second_mode_weight": 0.8790613718411547,
+        "scan_score": 0.19943234641029314,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100625.4005399,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": true,
+      "initialized": true,
+      "motion_ok": false,
+      "reasons": [
+        "T1_scan_stale"
+      ],
+      "metrics": {
+        "sigma_xy": 0.49260216932914863,
+        "sigma_yaw": 0.21722870098807476,
+        "cloud_std": 0.31256040782461275,
+        "second_mode_weight": 0.8790613718411547,
+        "scan_score": 0.19943234641029314,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100625.8100197,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": true,
+      "initialized": true,
+      "motion_ok": true,
+      "reasons": [],
+      "metrics": {
+        "sigma_xy": 0.49260216932914863,
+        "sigma_yaw": 0.21722870098807476,
+        "cloud_std": 0.31256040782461275,
+        "second_mode_weight": 0.8790613718411547,
+        "scan_score": 0.19221565039733274,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100626.6570995,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": true,
+      "initialized": true,
+      "motion_ok": false,
+      "reasons": [
+        "T1_odom_stale",
+        "T1_scan_stale"
+      ],
+      "metrics": {
+        "sigma_xy": 0.49260216932914863,
+        "sigma_yaw": 0.21722870098807476,
+        "cloud_std": 0.31256040782461275,
+        "second_mode_weight": 0.8790613718411547,
+        "scan_score": 0.1810713325935364,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100626.8551424,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": true,
+      "initialized": true,
+      "motion_ok": true,
+      "reasons": [],
+      "metrics": {
+        "sigma_xy": 0.49260216932914863,
+        "sigma_yaw": 0.21722870098807476,
+        "cloud_std": 0.31256040782461275,
+        "second_mode_weight": 0.8790613718411547,
+        "scan_score": 0.18840982752059773,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100628.505392,
+    "topic": "/qazbot_d1_map/motion_adapter/status",
+    "data": {
+      "state": "idle",
+      "reason": "no_command",
+      "latch": "",
+      "mc_source": "rc",
+      "motion_armed": true
+    }
+  },
+  {
+    "t": 1793100629.0056798,
+    "topic": "/qazbot_d1_map/motion_adapter/status",
+    "data": {
+      "state": "active",
+      "reason": "driving",
+      "latch": "",
+      "mc_source": "sdk_qazbot_v13_s4a_1127",
+      "motion_armed": true
+    }
+  },
+  {
+    "t": 1793100629.8239353,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": false,
+      "initialized": false,
+      "motion_ok": false,
+      "reasons": [
+        "T5_map_odom_jump",
+        "not_ready:awaiting_initialpose_and_amcl"
+      ],
+      "metrics": {
+        "sigma_xy": 0.5016034405725224,
+        "sigma_yaw": 0.22242606783806224,
+        "cloud_std": 0.30863457621496077,
+        "second_mode_weight": 0.7741935483870968,
+        "scan_score": 0.36764730329794204,
+        "scan_floor": 0.35,
+        "jump_xy": 0.10191641694328861,
+        "jump_yaw": 0.023774898416651258,
+        "jump_latched_xy": 0.10191641694328861,
+        "jump_latched_yaw": 0.023774898416651258
+      }
+    }
+  },
+  {
+    "t": 1793100629.990327,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": false,
+      "initialized": false,
+      "motion_ok": false,
+      "reasons": [
+        "not_ready:awaiting_initialpose_and_amcl"
+      ],
+      "metrics": {
+        "sigma_xy": 0.5016034405725224,
+        "sigma_yaw": 0.22242606783806224,
+        "cloud_std": 0.30863457621496077,
+        "second_mode_weight": 0.7741935483870968,
+        "scan_score": 0.32560200302087766,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100630.0017245,
+    "topic": "/qazbot_d1_map/motion_adapter/status",
+    "data": {
+      "state": "idle",
+      "reason": "no_command",
+      "latch": "",
+      "mc_source": "sdk_qazbot_v13_s4a_1127",
+      "motion_armed": true
+    }
+  },
+  {
+    "t": 1793100631.9999206,
+    "topic": "/qazbot_d1_map/motion_adapter/status",
+    "data": {
+      "state": "latched",
+      "reason": "stop_requested",
+      "latch": "stop_requested",
+      "mc_source": "rc",
+      "motion_armed": false
+    }
+  },
+  {
+    "t": 1793100632.587694,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": false,
+      "initialized": false,
+      "motion_ok": false,
+      "reasons": [
+        "T1_scan_stale",
+        "not_ready:awaiting_initialpose_and_amcl"
+      ],
+      "metrics": {
+        "sigma_xy": 0.5016034405725224,
+        "sigma_yaw": 0.22242606783806224,
+        "cloud_std": 0.30863457621496077,
+        "second_mode_weight": 0.7741935483870968,
+        "scan_score": 0.36144222015657546,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  },
+  {
+    "t": 1793100633.002079,
+    "topic": "/qazbot_d1_map/localization_trust/status",
+    "data": {
+      "ready": false,
+      "initialized": false,
+      "motion_ok": false,
+      "reasons": [
+        "not_ready:awaiting_initialpose_and_amcl"
+      ],
+      "metrics": {
+        "sigma_xy": 0.5016034405725224,
+        "sigma_yaw": 0.22242606783806224,
+        "cloud_std": 0.30863457621496077,
+        "second_mode_weight": 0.7741935483870968,
+        "scan_score": 0.3417121861144781,
+        "scan_floor": 0.35,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0
+      }
+    }
+  }
+]

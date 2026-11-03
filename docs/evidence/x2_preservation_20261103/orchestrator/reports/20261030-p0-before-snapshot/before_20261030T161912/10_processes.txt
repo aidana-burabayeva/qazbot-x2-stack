@@ -1,0 +1,117 @@
+    PID    PPID USER                      STARTED COMMAND
+      1       0 root     Fri Oct 30 13:40:49 2026 /sbin/init 2
+    367       1 root     Fri Oct 30 13:41:00 2026 /bin/bash /etc/systemd/nv-tee-supplicant.sh
+    369     367 root     Fri Oct 30 13:41:00 2026 /usr/sbin/tee-supplicant
+    376       1 root     Fri Oct 30 13:41:00 2026 /lib/systemd/systemd-udevd
+    704       1 root     Fri Oct 30 13:41:02 2026 /lib/systemd/systemd-journald
+    709       1 _rpc     Fri Oct 30 13:41:02 2026 /sbin/rpcbind -f -w
+    710       1 systemd+ Fri Oct 30 13:41:02 2026 /lib/systemd/systemd-resolved
+    713       1 root     Fri Oct 30 13:41:04 2026 /etc/systemd/system/agibot/QLog -m 100 -n 5 -s /var/log/qlog
+    716       1 message+ Fri Oct 30 13:41:04 2026 @dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+    730       1 root     Fri Oct 30 13:41:04 2026 /usr/libexec/iio-sensor-proxy
+    736       1 root     Fri Oct 30 13:41:04 2026 /usr/bin/python3 /usr/bin/networkd-dispatcher --run-startup-triggers
+    749       1 root     Fri Oct 30 13:41:04 2026 /usr/libexec/polkitd --no-debug
+    751       1 syslog   Fri Oct 30 13:41:04 2026 /usr/sbin/rsyslogd -n -iNONE
+    766       1 root     Fri Oct 30 13:41:04 2026 /lib/systemd/systemd-logind
+    770       1 root     Fri Oct 30 13:41:04 2026 /sbin/wpa_supplicant -u -s -O /run/wpa_supplicant -dd
+    791     715 avahi    Fri Oct 30 13:41:04 2026 avahi-daemon: chroot helper
+    822       1 root     Fri Oct 30 13:41:04 2026 /bin/bash /etc/systemd/system/agibot/camtrace_ctl.sh --run
+    899     822 root     Fri Oct 30 13:41:04 2026 awk -v rule_file=  BEGIN {   extra_n = 0   if (rule_file != "") {     while ((getline r < rule_file) > 0) {       if (r ~ /^[[:space:]]*$/ || r ~ /^[[:space:]]*#/) continue       extra[++extra_n] = r     }     close(rule_file)   } }  function is_error(l, i) {   if (l ~ /PXL_SOF syncpt timeout/) return 1   if (l ~ /MW_ACK_DONE syncpoint time out/) return 1   if (l ~ /Unhandled context fault/) return 1   if (l ~ /tag:CSIMUX_FRAME/) return 1   if (l ~ /tag:CHANSEL_FAULT_FE/) return 1   if (l ~ /tag:CHANSEL_FAULT/) return 1   if (l ~ /tag:CHANSEL_N
+    900     822 root     Fri Oct 30 13:41:04 2026 logger --id=822 -t camtrace -p user err
+   1087       1 root     Fri Oct 30 13:41:05 2026 /usr/sbin/NetworkManager --no-daemon
+   1088       1 root     Fri Oct 30 13:41:05 2026 /usr/sbin/fancontrol 1
+   1149       1 root     Fri Oct 30 13:41:05 2026 /usr/lib/bluetooth/bluetoothd -d --noplugin=audio,a2dp,avrcp
+   1189       1 root     Fri Oct 30 13:41:06 2026 /usr/sbin/dnsmasq --no-daemon --no-hosts --resolv-file=/run/resolvconf/resolv.conf --conf-file=/etc/dnsmasq-local_dns.conf
+   1190       1 root     Fri Oct 30 13:41:06 2026 /bin/bash /etc/S50/blink.sh
+   1193       1 root     Fri Oct 30 13:41:06 2026 /usr/sbin/nvargus-daemon
+   1196       1 root     Fri Oct 30 13:41:06 2026 /usr/sbin/nvs-service
+   1212       1 root     Fri Oct 30 13:41:06 2026 /usr/bin/containerd
+   1224       1 root     Fri Oct 30 13:41:06 2026 /usr/sbin/cron -f -P
+   1230       1 root     Fri Oct 30 13:41:06 2026 gpioset --mode=signal --background gpiochip0 105=1
+   1248       1 root     Fri Oct 30 13:41:06 2026 /sbin/agetty -o -p -- \u --noclear tty1 linux
+   1250       1 root     Fri Oct 30 13:41:06 2026 /sbin/agetty -o -p -- \u --keep-baud 115200,57600,38400,9600 ttyGS0 vt220
+   1258       1 root     Fri Oct 30 13:41:06 2026 /sbin/agetty -o -p -- \u --keep-baud 115200,57600,38400,9600 ttyTCU0 vt220
+   1259       1 root     Fri Oct 30 13:41:06 2026 gpioset --mode=signal --background gpiochip0 106=1
+   1273       1 root     Fri Oct 30 13:41:06 2026 sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups
+   1322       1 agi      Fri Oct 30 13:41:06 2026 /lib/systemd/systemd --user
+   1340    1322 agi      Fri Oct 30 13:41:06 2026 (sd-pam)
+   1486       1 root     Fri Oct 30 13:41:06 2026 /usr/sbin/nvphsd
+   1488    1486 root     Fri Oct 30 13:41:06 2026 /usr/sbin/nvphsd
+   1564       1 root     Fri Oct 30 13:41:06 2026 /bin/bash /etc/systemd/system/agibot/sys_time_sync_to_phc.sh sensor0
+   1591    1564 root     Fri Oct 30 13:41:06 2026 /bin/bash /etc/systemd/system/agibot/sys_time_sync_to_phc.sh sensor0
+   1594    1591 root     Fri Oct 30 13:41:06 2026 ptp4l -i sensor0 -f /etc/systemd/system/agibot/cfg/master0_time_sync.conf -H
+   1595    1322 agi      Fri Oct 30 13:41:06 2026 bash /home/agi/qazbot-speech/robot/lingxi_off.sh
+   1599       1 root     Fri Oct 30 13:41:06 2026 gpioset --mode=signal --background gpiochip0 41=1
+   1607    1322 agi      Fri Oct 30 13:41:06 2026 /home/agi/tailscale_1.102.3_arm64/tailscaled --state=/home/agi/tailscale_1.102.3_arm64/tailscaled.state --socket=/home/agi/tailscale_1.102.3_arm64/tailscaled.sock --tun=userspace-networking
+   1610       1 root     Fri Oct 30 13:41:06 2026 /bin/bash /etc/systemd/system/agibot/nfs_for_soc.sh 0
+   1623       1 root     Fri Oct 30 13:41:06 2026 gpioset --mode=signal --background gpiochip0 43=1
+   1641       1 root     Fri Oct 30 13:41:06 2026 gpioset --mode=signal --background gpiochip0 123=1
+   1644       1 root     Fri Oct 30 13:41:06 2026 /bin/bash /etc/systemd/system/agibot/nfs_for_soc.sh 2
+   1651       1 root     Fri Oct 30 13:41:06 2026 gpioset --mode=signal --background gpiochip0 124=1
+   1658       1 run      Fri Oct 30 13:41:06 2026 ssh -x -a -oClearAllForwardings=yes -oIdentityFile=/tmp/tmp.QmOH4mD7I4 -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -2 nfs@10.0.1.40 -s sftp
+   1666       1 run      Fri Oct 30 13:41:06 2026 ssh -x -a -oClearAllForwardings=yes -oIdentityFile=/tmp/tmp.Q0K9cXFM2z -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -2 nfs@10.0.1.42 -s sftp
+   1696    1564 root     Fri Oct 30 13:41:07 2026 /bin/bash /etc/systemd/system/agibot/sys_time_sync_to_phc.sh sensor0
+   1698    1696 root     Fri Oct 30 13:41:07 2026 phc2sys -s CLOCK_REALTIME -c /dev/ptp0 -O 0 -S 0.1 -n 0
+   1711       1 root     Fri Oct 30 13:41:08 2026 /bin/bash /etc/systemd/system/agibot/phc_time_sync_to_sys.sh develop0:1
+   1720       1 run      Fri Oct 30 13:41:08 2026 sshfs -o IdentityFile=/tmp/tmp.Q0K9cXFM2z -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null nfs@10.0.1.42:/agibot/data /agibot/nfs/soc2
+   1742    1711 root     Fri Oct 30 13:41:08 2026 /bin/bash /etc/systemd/system/agibot/phc_time_sync_to_sys.sh develop0:1
+   1743    1742 root     Fri Oct 30 13:41:08 2026 ptp4l -i develop0 -f /etc/systemd/system/agibot/cfg/slave1_time_sync.conf -H
+   1747       1 nfs      Fri Oct 30 13:41:08 2026 /lib/systemd/systemd --user
+   1748    1747 nfs      Fri Oct 30 13:41:08 2026 (sd-pam)
+   1843    1708 nfs      Fri Oct 30 13:41:08 2026 sshd: nfs@notty
+   1856    1711 root     Fri Oct 30 13:41:09 2026 /bin/bash /etc/systemd/system/agibot/phc_time_sync_to_sys.sh develop0:1
+   1858    1856 root     Fri Oct 30 13:41:09 2026 phc2sys -s /dev/ptp1 -c CLOCK_REALTIME -O 0 -S 0.1 -n 1
+   1865       1 root     Fri Oct 30 13:41:09 2026 /bin/bash /etc/systemd/system/agibot/software.sh
+   1870    1865 root     Fri Oct 30 13:41:09 2026 /bin/bash /agibot/software/entry/run_agibot.sh
+   2431       1 root     Fri Oct 30 13:41:10 2026 /bin/bash every_boot/400-net_heartbeat.sh
+   2640    1870 root     Fri Oct 30 13:41:10 2026 /agibot/software/em/bin/em-server -c cfg/.run_agibot.yaml
+   2696       1 run      Fri Oct 30 13:41:11 2026 /usr/bin/python3 /opt/ros/humble/bin/ros2 launch orbbec_camera gemini_330_series.launch.py
+   2743       1 run      Fri Oct 30 13:41:12 2026 /bin/sh /agibot/software/hal_sensor_orin/bin/em_run.sh
+   2794    1843 nfs      Fri Oct 30 13:41:12 2026 /usr/lib/openssh/sftp-server
+   2797    2743 run      Fri Oct 30 13:41:12 2026 ./aima-hal_sensor-app-main --cfg_file_path=cfg/hal_sensor_orin_t2d5.yaml --process_name=hal_sensor_orin
+   2872       1 run      Fri Oct 30 13:41:13 2026 /bin/sh /agibot/software/hal_sensor_orin/bin/em_run.sh
+   3037    2924 nfs      Fri Oct 30 13:41:14 2026 sshd: nfs@notty
+   3039    3037 nfs      Fri Oct 30 13:41:14 2026 /usr/lib/openssh/sftp-server
+   3041    2696 run      Fri Oct 30 13:41:14 2026 /opt/ros/humble/lib/rclcpp_components/component_container --ros-args -r __node:=camera_container -r __ns:=/camera
+   3056       1 run      Fri Oct 30 13:41:14 2026 /agibot/software/drp/bin/aima-drp-app --cfg_file_path=/agibot/software/drp/bin/cfg/drp.yaml
+   3269       1 run      Fri Oct 30 13:41:15 2026 sshfs -o IdentityFile=/tmp/tmp.QmOH4mD7I4 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null nfs@10.0.1.40:/agibot/data /agibot/nfs/soc0
+   3279       1 root     Fri Oct 30 13:41:15 2026 /agibot/software/ota/bin/aima_mcu_slave_app --cfg_file_path=/agibot/software/ota/bin/cfg/ota_slave_soc1_mcu.yaml
+   3395       1 root     Fri Oct 30 13:41:17 2026 /agibot/software/ota/bin/aima_sota_slave_app --cfg_file_path=/agibot/software/ota/bin/cfg/ota_slave_soc1_soc.yaml
+   3487       1 run      Fri Oct 30 13:41:18 2026 /bin/bash /agibot/software/housekeeper/bin/em_run.sh
+   3495    2872 run      Fri Oct 30 13:41:18 2026 ./aima-hal_sensor-app-main --cfg_file_path=cfg/hal_camera_orin_t2d5.yaml --process_name=hal_camera
+   3744       1 run      Fri Oct 30 13:41:19 2026 /agibot/software/hds/bin/aima-hds-slave --cfg_file_path=/agibot/software/hds/bin/cfg/hds_slave.yaml
+   3745    3487 run      Fri Oct 30 13:41:19 2026 /usr/bin/python3 /opt/ros/humble/bin/ros2 run housekeeper housekeeper --cfg cfg/lx2501_3.yaml
+   3780    3745 run      Fri Oct 30 13:41:19 2026 /usr/bin/python3 /agibot/software/housekeeper/housekeeper/lib/housekeeper/housekeeper --cfg cfg/lx2501_3.yaml
+   3855       1 run      Fri Oct 30 13:41:20 2026 /agibot/software/hds/bin/aima-hds-master --cfg_file_path=/agibot/software/hds/bin/cfg/hds_master.yaml
+   3953       1 run      Fri Oct 30 13:41:21 2026 /agibot/software/robot_chores/bin/robot-chores-app --cfg_file_path=/agibot/software/robot_chores/bin/cfg/robot_chores.yaml
+   4011       1 root     Fri Oct 30 13:41:22 2026 /bin/bash /tmp/auto_atop_record.sh
+   4088       1 run      Fri Oct 30 13:41:24 2026 /agibot/software/ec/bin/aima-ec-app --cfg_file_path=/agibot/software/ec/bin/cfg/ec.yaml
+   4209       1 run      Fri Oct 30 13:41:25 2026 /agibot/software/dm/bin/aima-dm-app --cfg_file_path=/agibot/software/dm/bin/cfg/dm.yaml
+   4304       1 run      Fri Oct 30 13:41:26 2026 /bin/bash /agibot/software/nav/scripts/slam/start_slam.sh
+   4408    4304 run      Fri Oct 30 13:41:26 2026 ./slam --cfg_file_path=../config/slam/slam_config.yaml
+   4455       1 run      Fri Oct 30 13:41:27 2026 /bin/bash /agibot/software/nav/scripts/map_manager/start_map_manager.sh
+   4628       1 run      Fri Oct 30 13:41:28 2026 /bin/bash /agibot/software/nav/scripts/perception/start_perception.sh
+   4691    4455 run      Fri Oct 30 13:41:29 2026 ./map_manager --cfg_file_path=../config/map_manager/map_manager_config.yaml
+   4801    4628 run      Fri Oct 30 13:41:29 2026 ./perception --cfg_file_path=../config/perception/perception_config.yaml
+   4832       1 run      Fri Oct 30 13:41:30 2026 /bin/bash /agibot/software/nav/scripts/vectorflux/start_vectorflux.sh
+   4926    4832 run      Fri Oct 30 13:41:30 2026 /usr/bin/python3 /opt/ros/humble/bin/ros2 run tf2_ros static_transform_publisher 0 0 -0.6 0 0 0 map foot_contact --ros-args -p use_sim_time:=false
+   4930    4832 run      Fri Oct 30 13:41:30 2026 ./vectorflux --cfg_file_path=../config/vectorflux/vectorflux_app_cfg.yaml
+   4960    4926 run      Fri Oct 30 13:41:30 2026 /opt/ros/humble/lib/tf2_ros/static_transform_publisher 0 0 -0.6 0 0 0 map foot_contact --ros-args -p use_sim_time:=false
+   5028       1 run      Fri Oct 30 13:41:31 2026 /bin/bash /agibot/software/nav/scripts/auto_integrated/start_auto_integrated.sh
+   5159       1 run      Fri Oct 30 13:41:32 2026 /bin/bash /agibot/software/lx_webrtc_app/bin/em_run.sh
+   5185    5028 run      Fri Oct 30 13:41:33 2026 ./auto_integrated --cfg_file_path=../config/auto_integrated/auto_integrated_config.yaml
+   5424    5159 run      Fri Oct 30 13:41:40 2026 /usr/bin/python3 /opt/ros/humble/bin/ros2 run lx_webrtc_app lx_webrtc_app
+   5428    5424 run      Fri Oct 30 13:41:40 2026 /usr/bin/python3 /agibot/software/lx_webrtc_app/bin/lx_webrtc_app/lib/lx_webrtc_app/lx_webrtc_app
+   9014    8917 agi      Fri Oct 30 13:45:17 2026 sshd: agi@notty
+   9015    9014 agi      Fri Oct 30 13:45:17 2026 -bash
+   9018    9015 agi      Fri Oct 30 13:45:17 2026 sh
+ 195127       1 agi      Fri Oct 30 16:16:47 2026 catatonit -P
+ 195139    1322 agi      Fri Oct 30 16:16:47 2026 /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+ 199481    1322 agi      Fri Oct 30 16:19:09 2026 python3 -u -m qazbot_speech --env /home/agi/.config/qazbot_speech/env --robot
+ 199540    3780 run      Fri Oct 30 16:19:10 2026 /bin/sh -c ping -c 1 -W 2 www.baidu.com
+ 199541  199540 run      Fri Oct 30 16:19:10 2026 ping -c 1 -W 2 www.baidu.com
+ 199551    3780 run      Fri Oct 30 16:19:11 2026 /bin/sh -c ping -c 1 -W 3.0 -n www.baidu.com
+ 199552  199551 run      Fri Oct 30 16:19:11 2026 ping -c 1 -W 3.0 -n www.baidu.com
+ 199565  199558 agi      Fri Oct 30 16:19:11 2026 ps -eo pid,ppid,user,lstart,args --sort=pid
+ 199566  199558 agi      Fri Oct 30 16:19:11 2026 grep -v -E \]$
+ 199568  199558 agi      Fri Oct 30 16:19:11 2026 cut -c1-600

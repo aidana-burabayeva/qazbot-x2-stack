@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+"""Read-only graph snapshot: publishers/subscribers (+QoS) for key topics, duplicate node names,
+lifecycle GetState (read-only query) for our managed nodes, one adapter status + coordinator status sample."""
+import json, time
+import rclpy
+from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy
+from lifecycle_msgs.srv import GetState
+from std_msgs.msg import String
+
+rclpy.init()
+n = rclpy.create_node('qazbot_graph_probe_ro')
+t0 = time.monotonic()
+while time.monotonic() - t0 < 6:          # discovery
+    rclpy.spin_once(n, timeout_sec=0.1)
+out = {}
+topics = ['/aima/mc/locomotion/velocity', '/cmd_vel', '/qazbot_d1_map/cmd_vel', '/qazbot_d1_map/cmd_vel_authorized',
+          '/qazbot_d1_map/localization_trust/status', '/qazbot_d1_map/localization_trust/trusted',
+          '/qazbot_d1_map/tf', '/qazbot_lio/odom_level', '/qazbot_lio/scan', '/qazbot_lio/odometry',
+          '/qazbot_d1_map/initialpose', '/initialpose', '/qazbot_d1_map/goal_pose', '/qazbot_d1_map/amcl_pose']
+def ep(i):
+    return f"{i.node_namespace.rstrip('/')}/{i.node_name} rel={i.qos_profile.reliability.name} dur={i.qos_profile.durability.name} depth={i.qos_profile.depth}"
+for t in topics:
+    out[t] = dict(pub=[ep(i) for i in n.get_publishers_info_by_topic(t)],
+                  sub=[ep(i) for i in n.get_subscriptions_info_by_topic(t)])
+names = [(ns.rstrip('/') + '/' + nm) for nm, ns in n.get_node_names_and_namespaces()]
+ours = sorted(x for x in names if x.startswith(('/qazbot', )))
+dups = sorted({x for x in names if names.count(x) > 1})
+out['our_nodes'] = ours
+out['duplicate_node_names'] = dups
+out['node_count'] = len(names)
+lc = {}
+for node in ['/qazbot_d1_map/map_server', '/qazbot_d1_map/amcl', '/qazbot_d1_map/nav2/controller_server',
+             '/qazbot_d1_map/nav2/planner_server', '/qazbot_d1_map/nav2/velocity_smoother', '/qazbot_d1_map/nav2/bt_navigator']:
+    c = n.create_client(GetState, node + '/get_state')
+    if not c.wait_for_service(timeout_sec=3.0):
+        lc[node] = 'no_service'; continue
+    f = c.call_async(GetState.Request())
+    t1 = time.monotonic()
+    while not f.done() and time.monotonic() - t1 < 3:
+        rclpy.spin_once(n, timeout_sec=0.05)
+    lc[node] = f.result().current_state.label if f.done() else 'timeout'
+out['lifecycle'] = lc
+samples = {}
+def mk(key):
+    return lambda m: samples.setdefault(key, m.data)
+qos = QoSProfile(depth=5, reliability=ReliabilityPolicy.RELIABLE)
+for key in ['/qazbot_d1_map/motion_adapter/status', '/qazbot_d1_map/goal_coordinator/status']:
+    n.create_subscription(String, key, mk(key), qos)
+t1 = time.monotonic()
+while time.monotonic() - t1 < 4 and len(samples) < 2:
+    rclpy.spin_once(n, timeout_sec=0.1)
+out['status_samples'] = samples
+print(json.dumps(out, indent=1))

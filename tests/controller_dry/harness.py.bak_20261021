@@ -1,0 +1,177 @@
+#!/usr/bin/env python3
+"""Closed-loop dry test: FollowPath (RPP) + velocity_smoother against sim_robot.py, private namespace, no MC.
+Usage: harness.py NS [max_linear max_angular accel_lim decel_lim]
+Checks per scenario: limits, lateral == 0, smoother accel bound, no sub-threshold crawl, goal reached / refused, zero after end.
+"""
+import json
+import math
+import sys
+import time
+
+import rclpy
+from action_msgs.msg import GoalStatus
+from geometry_msgs.msg import PoseStamped, Twist
+from nav_msgs.msg import Odometry, Path
+from nav2_msgs.action import FollowPath
+from rclpy.action import ActionClient
+from rclpy.node import Node
+from std_msgs.msg import Float64MultiArray
+
+NS = sys.argv[1]
+VMAX = float(sys.argv[2]) if len(sys.argv) > 2 else 0.3
+WMAX = float(sys.argv[3]) if len(sys.argv) > 3 else 0.5
+ACC = float(sys.argv[4]) if len(sys.argv) > 4 else 0.4
+DEC = float(sys.argv[5]) if len(sys.argv) > 5 else 0.6
+START_VX = 0.1
+
+
+class H(Node):
+    def __init__(self):
+        super().__init__('ctl_harness', namespace=NS)
+        self.nav, self.out, self.odom = [], [], None
+        self.create_subscription(Twist, 'cmd_vel_nav', lambda m: self.nav.append((time.monotonic(), m.linear.x, m.linear.y, m.angular.z)), 50)
+        self.create_subscription(Twist, 'cmd_vel', lambda m: self.out.append((time.monotonic(), m.linear.x, m.linear.y, m.angular.z)), 50)
+        self.create_subscription(Odometry, 'odom', self.on_odom, 10)
+        self.reset_pub = self.create_publisher(Float64MultiArray, 'sim_reset', 10)
+        self.cl = ActionClient(self, FollowPath, 'follow_path')
+
+    def on_odom(self, m):
+        q = m.pose.pose.orientation
+        self.odom = (m.pose.pose.position.x, m.pose.pose.position.y, 2 * math.atan2(q.z, q.w))
+
+    def spin(self, s):
+        end = time.monotonic() + s
+        while time.monotonic() < end:
+            rclpy.spin_once(self, timeout_sec=0.02)
+
+    def reset(self, x, y, yaw, wall=-1.0):
+        self.reset_pub.publish(Float64MultiArray(data=[x, y, yaw, wall]))
+        self.spin(1.0)
+
+    def path(self, pts):
+        p = Path()
+        p.header.frame_id = 'map'
+        for x, y, yaw in pts:
+            ps = PoseStamped()
+            ps.header.frame_id = 'map'
+            ps.pose.position.x, ps.pose.position.y = x, y
+            ps.pose.orientation.z, ps.pose.orientation.w = math.sin(yaw / 2), math.cos(yaw / 2)
+            p.poses.append(ps)
+        return p
+
+    def run(self, pts, timeout=40.0, cancel_after=None):
+        self.nav.clear(); self.out.clear()
+        goal = FollowPath.Goal()
+        goal.path = self.path(pts)
+        goal.controller_id = 'FollowPath'
+        goal.goal_checker_id = 'goal_checker'
+        fut = self.cl.send_goal_async(goal)
+        t0 = time.monotonic()
+        while not fut.done() and time.monotonic() - t0 < 5:
+            rclpy.spin_once(self, timeout_sec=0.05)
+        gh = fut.result()
+        if gh is None or not gh.accepted:
+            return 'REJECTED'
+        res = gh.get_result_async()
+        t0 = time.monotonic(); cancelled = False
+        while not res.done() and time.monotonic() - t0 < timeout:
+            rclpy.spin_once(self, timeout_sec=0.02)
+            if cancel_after and not cancelled and time.monotonic() - t0 > cancel_after:
+                gh.cancel_goal_async(); cancelled = True
+        status = res.result().status if res.done() else 'TIMEOUT'
+        self.spin(1.2)
+        return {GoalStatus.STATUS_SUCCEEDED: 'SUCCEEDED', GoalStatus.STATUS_ABORTED: 'ABORTED',
+                GoalStatus.STATUS_CANCELED: 'CANCELED'}.get(status, status)
+
+
+def stats(h):
+    o = h.out
+    sm = [(t, v, y, w) for t, v, y, w in o]
+    r = dict(n_out=len(o), n_nav=len(h.nav))
+    if not sm:
+        return r
+    r['vmax'] = max(abs(v) for _, v, _, _ in sm); r['vmin'] = min(v for _, v, _, _ in sm)
+    r['wmax'] = max(abs(w) for *_, w in sm); r['vy_max'] = max(abs(y) for _, _, y, _ in sm)
+    acc = dec = 0.0
+    for (t0, v0, _, _), (t1, v1, _, _) in zip(sm, sm[1:]):
+        if t1 - t0 > 1e-3 and t1 - t0 < 0.3:
+            a = (v1 - v0) / (t1 - t0)
+            acc, dec = max(acc, a), min(dec, a)
+    r['accel_max'] = acc; r['decel_max'] = dec
+    mv = [v for _, v, _, w in sm if 0 < abs(v) < START_VX and abs(w) < 0.05]
+    r['frames_subthreshold_vx'] = len(mv)
+    r['last_nonzero_age_s'] = None
+    r['tail'] = [(round(v, 3), round(w, 3)) for _, v, _, w in sm[-4:]]
+    r['tail_zero'] = all(abs(v) < 1e-3 and abs(w) < 1e-3 for _, v, _, w in sm[-2:])
+    return r
+
+
+def main():
+    rclpy.init()
+    h = H()
+    if not h.cl.wait_for_server(timeout_sec=30):
+        print(json.dumps({'error': 'follow_path action server not available'})); return 2
+    h.spin(2.0)
+    results, ok = {}, True
+
+    def check(name, cond, detail=''):
+        nonlocal ok
+        results.setdefault('checks', []).append({'name': name, 'ok': bool(cond), 'detail': detail})
+        ok = ok and bool(cond)
+
+    # S1: straight 1.5 m
+    h.reset(0, 0, 0)
+    r = h.run([(0.05 * i, 0.0, 0.0) for i in range(31)])
+    s = stats(h); results['S1_straight'] = dict(result=r, **s, final=h.odom)
+    check('S1 succeeded', r == 'SUCCEEDED', r)
+    check('S1 goal xy within 0.15', h.odom and math.hypot(h.odom[0] - 1.5, h.odom[1]) < 0.15, h.odom)
+    check('S1 vx <= max', s.get('vmax', 9) <= VMAX + 1e-6, s.get('vmax'))
+    check('S1 vy == 0', s.get('vy_max', 9) == 0.0, s.get('vy_max'))
+    check('S1 no reverse', s.get('vmin', -9) >= -1e-6, s.get('vmin'))
+    check('S1 smoother accel bound', s.get('accel_max', 9) <= ACC * 1.25, s.get('accel_max'))
+    check('S1 smoother decel bound', s.get('decel_max', -9) >= -DEC * 1.25, s.get('decel_max'))
+    check('S1 ends at zero', s.get('tail_zero'), '')
+
+    # S2: heading 90 deg off -> rotate in place first
+    h.reset(0, 0, 0)
+    r = h.run([(0.0, 0.05 * i, math.pi / 2) for i in range(21)])
+    s = stats(h); first = [(round(v, 2), round(w, 2)) for _, v, _, w in h.out[:200:25]]
+    results['S2_turn_in_place'] = dict(result=r, **s, final=h.odom, first_cmds=first)
+    check('S2 succeeded', r == 'SUCCEEDED', r)
+    check('S2 |wz| <= max', s.get('wmax', 9) <= WMAX + 1e-6, s.get('wmax'))
+    rot = [(v, w) for _, v, _, w in h.out[:60] if abs(w) > 0.05]
+    check('S2 rotates before driving', rot and max(abs(v) for v, _ in rot[:20]) < 0.05, str(rot[:3]))
+    check('S2 reaches goal', h.odom and math.hypot(h.odom[0], h.odom[1] - 1.0) < 0.2, h.odom)
+
+    # S4: cancel mid-path
+    h.reset(0, 0, 0)
+    r = h.run([(0.05 * i, 0.0, 0.0) for i in range(61)], cancel_after=3.0)
+    s = stats(h); x_at = h.odom
+    h.spin(2.0)
+    results['S4_cancel'] = dict(result=r, **s, final=h.odom)
+    check('S4 canceled', r == 'CANCELED', r)
+    check('S4 ends at zero', s.get('tail_zero'), '')
+    check('S4 no creep after cancel', h.odom and x_at and abs(h.odom[0] - x_at[0]) < 0.05, f'{x_at} -> {h.odom}')
+
+    # S5: goal already reached (zero-length path) must not command a start-threshold crawl
+    h.reset(0, 0, 0)
+    r = h.run([(0.0, 0.0, 0.0), (0.02, 0.0, 0.0)], timeout=10.0)
+    s = stats(h); results['S5_at_goal'] = dict(result=r, **s)
+    check('S5 no motion command at goal', s.get('vmax', 0) < 0.05, s.get('vmax'))
+
+    # S3: wall ahead, path goes through it -> must not reach the wall
+    h.reset(0, 0, 0, wall=1.3)
+    h.spin(2.0)
+    r = h.run([(0.05 * i, 0.0, 0.0) for i in range(41)], timeout=25.0)
+    s = stats(h); results['S3_wall'] = dict(result=r, **s, final=h.odom)
+    check('S3 not succeeded', r != 'SUCCEEDED', r)
+    check('S3 stopped before wall by more than 0.30 m', h.odom and 1.3 - h.odom[0] > 0.30, h.odom)
+    check('S3 ends at zero', s.get('tail_zero'), '')
+
+    results['ok'] = ok
+    print(json.dumps(results, indent=1, default=str))
+    return 0 if ok else 1
+
+
+if __name__ == '__main__':
+    sys.exit(main())

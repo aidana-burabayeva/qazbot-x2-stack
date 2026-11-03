@@ -1,0 +1,184 @@
+#!/usr/bin/env python3
+"""ROS wrapper for loc_trust.TrustEvaluator. Subscribes only (plus its own status topics); never publishes velocity.
+
+Namespace /qazbot_d1_map, node `localization_trust`:
+  in : amcl_pose, particle_cloud, /qazbot_lio/scan, /qazbot_d1_map/tf (map->odom, odom->base_footprint)
+  out: ~/trusted (Bool, 5 Hz), ~/status (String JSON: reasons + metrics)
+  srv: ~/confirm_anchor   operator verified the pose (floor mark / known start); fixes the T6 anchor
+       ~/arm_check        ambiguity of the score landscape around the pose (run standing, before a goal)
+       ~/baseline_start, ~/baseline_finish   median scan score at the confirmed standing pose (stage F0)
+"""
+import json
+import math
+import os
+import sys
+import time
+
+import numpy as np
+import rclpy
+from geometry_msgs.msg import PoseWithCovarianceStamped
+from nav2_msgs.msg import ParticleCloud
+from nav_msgs.msg import Odometry
+from rclpy.node import Node
+from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
+from sensor_msgs.msg import LaserScan
+from std_msgs.msg import Bool, String
+from std_srvs.srv import Trigger
+from tf2_msgs.msg import TFMessage
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from source_stamp import SourceStamp
+import loc_trust as L  # noqa: E402
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+
+
+def yaw_of(q):
+    return math.atan2(2 * (q.w * q.z + q.x * q.y), 1 - 2 * (q.y * q.y + q.z * q.z))
+
+
+class TrustNode(Node):
+    def __init__(self):
+        super().__init__('localization_trust', namespace='qazbot_d1_map')
+        p = self.declare_parameter
+        grid_yaml = p('map_yaml', os.path.join(HERE, '..', 'maps', 'first_map_nav2_v1', 'map.yaml')).value
+        cfg = L.TrustConfig(**{k: p(k, v).value for k, v in L.TrustConfig().__dict__.items()})
+        self.ev = L.TrustEvaluator(L.OccGrid.from_pgm(os.path.abspath(grid_yaml)), cfg)
+        self.cfg = cfg
+        self.mo = self.odom = None
+        self.mo_t = self.odom_t = self.odom_msg_t = self.amcl_t = self.scan_t = float('-inf')
+        self.cov = self.cloud = self.scan_pts = None
+        self.stamps = {k: SourceStamp() for k in ('map', 'odom', 'odom_msg', 'amcl', 'scan')}
+        self.odom_hist = []
+        self.baseline_scores = None
+        be = QoSProfile(depth=1, reliability=ReliabilityPolicy.BEST_EFFORT)
+        self.create_subscription(TFMessage, '/qazbot_d1_map/tf', self._tf, QoSProfile(depth=50))
+        self.create_subscription(PoseWithCovarianceStamped, 'amcl_pose', self._amcl,
+                                 QoSProfile(depth=1, reliability=ReliabilityPolicy.RELIABLE,
+                                            durability=DurabilityPolicy.TRANSIENT_LOCAL))
+        self.create_subscription(Odometry, '/qazbot_lio/odom_level', self._odom, be)
+        self.create_subscription(ParticleCloud, 'particle_cloud', self._cloud, be)
+        self.create_subscription(LaserScan, '/qazbot_lio/scan', self._scan, be)
+        self.pub_ok = self.create_publisher(Bool, '~/trusted', 10)
+        self.pub_status = self.create_publisher(String, '~/status', 10)
+        self.create_service(Trigger, '~/confirm_anchor', self._confirm)
+        self.create_service(Trigger, '~/arm_check', self._arm)
+        self.create_service(Trigger, '~/baseline_start', self._bl_start)
+        self.create_service(Trigger, '~/baseline_finish', self._bl_finish)
+        self.create_timer(0.2, self._tick)
+        self.get_logger().info(f'localization_trust started, map={grid_yaml}')
+
+    def _stamp(self, key, stamp, future=0.0):
+        source = stamp.sec + stamp.nanosec * 1e-9
+        return self.stamps[key].accept(source, self.get_clock().now().nanoseconds * 1e-9,
+                                       time.monotonic(), future)
+
+    def _tf(self, m):
+        now = time.monotonic()
+        for t in m.transforms:
+            pair = (t.header.frame_id, t.child_frame_id)
+            tr, q = t.transform.translation, t.transform.rotation
+            if pair == ('map', 'odom'):
+                self.mo, self.mo_t = (tr.x, tr.y, yaw_of(q)), self._stamp('map', t.header.stamp, 1.0)
+            elif pair == ('odom', 'base_footprint'):
+                self.odom_t = self._stamp('odom', t.header.stamp)
+                self.odom = (tr.x, tr.y, yaw_of(q))
+                self.odom_hist = [(a, b) for a, b in self.odom_hist if now - a <= 0.6] + [(now, self.odom)]
+
+    def _odom(self,m):
+        if m.header.frame_id!='odom' or m.child_frame_id!='base_footprint':
+            self.odom_msg_t=float('-inf');return
+        self.odom_msg_t=self._stamp('odom_msg',m.header.stamp)
+
+    def _amcl(self, m):
+        if m.header.frame_id!='map':
+            self.cov=None;self.amcl_t=float('-inf');return
+        self.cov, self.amcl_t = list(m.pose.covariance), self._stamp('amcl', m.header.stamp)
+
+    def _cloud(self, m):
+        if m.particles:
+            self.cloud = (np.array([[q.pose.position.x, q.pose.position.y] for q in m.particles]),
+                          np.array([q.weight for q in m.particles]))
+
+    def _scan(self, m):
+        if m.header.frame_id!='base_footprint':
+            self.scan_pts=None;self.scan_t=float('-inf');return
+        self.scan_pts = L.scan_endpoints(m.ranges, m.angle_min, m.angle_increment, self.cfg.rmin, self.cfg.rmax)
+        self.scan_t = self._stamp('scan', m.header.stamp)
+
+    def _moving(self):
+        if len(self.odom_hist) < 2:
+            return False
+        (t0, a), (t1, b) = self.odom_hist[0], self.odom_hist[-1]
+        dt = max(t1 - t0, 1e-3)
+        return (math.hypot(b[0] - a[0], b[1] - a[1]) / dt > 0.02) or (abs(L.wrap(b[2] - a[2])) / dt > 0.03)
+
+    def _inputs(self):
+        return L.Inputs(now=time.monotonic(), map_odom=self.mo, map_odom_stamp=self.mo_t, odom_base=self.odom, odom_stamp=self.odom_t, odom_msg_stamp=self.odom_msg_t,
+                        amcl_cov=self.cov, amcl_stamp=self.amcl_t,
+                        cloud_xy=None if self.cloud is None else self.cloud[0],
+                        cloud_w=None if self.cloud is None else self.cloud[1],
+                        scan_pts=self.scan_pts, scan_stamp=self.scan_t, moving=self._moving())
+
+    def _tick(self):
+        inp = self._inputs()
+        r = self.ev.evaluate(inp)
+        if self.baseline_scores is not None and 'scan_score' in r['metrics']:
+            self.baseline_scores.append(r['metrics']['scan_score'])
+        self.pub_ok.publish(Bool(data=bool(r['trusted'])))
+        self.pub_status.publish(String(data=json.dumps(dict(
+            r, anchor=self.ev.anchor is not None, baseline=self.ev.baseline, moving=inp.moving), default=float)))
+
+    def _ready(self, resp):
+        inp = self._inputs()
+        if (self.mo is None or self.odom is None or self.scan_pts is None or
+            not 0 <= inp.now - self.odom_t <= self.cfg.odom_max_age_s or
+            not 0 <= inp.now - self.odom_msg_t <= self.cfg.odom_max_age_s or
+            not 0 <= inp.now - self.scan_t <= self.cfg.scan_max_age_s or
+            not 0 <= inp.now - self.mo_t <= self.cfg.tf_max_age_s):
+            resp.success, resp.message = False, 'no map->odom / odom / scan yet'
+            return None
+        return inp
+
+    def _confirm(self, req, resp):
+        inp = self._ready(resp)
+        if inp is not None:
+            pose = self.ev.confirm_anchor(inp)
+            resp.success, resp.message = True, 'anchor (x, y, yaw) = (%.3f, %.3f, %.3f)' % pose
+        return resp
+
+    def _arm(self, req, resp):
+        inp = self._ready(resp)
+        if inp is not None:
+            a = self.ev.arm_check(inp)
+            resp.success = not a['ambiguous']
+            resp.message = json.dumps(a, default=float)
+        return resp
+
+    def _bl_start(self, req, resp):
+        self.baseline_scores, resp.success, resp.message = [], True, 'collecting scan scores; stand still at the confirmed pose'
+        return resp
+
+    def _bl_finish(self, req, resp):
+        if not self.baseline_scores or len(self.baseline_scores) < 20:
+            resp.success, resp.message = False, 'fewer than 20 samples'
+        else:
+            self.ev.set_baseline(self.baseline_scores)
+            resp.success = True
+            resp.message = 'baseline median %.3f from %d samples (min %.3f)' % (
+                self.ev.baseline, len(self.baseline_scores), min(self.baseline_scores))
+        self.baseline_scores = None
+        return resp
+
+
+def main():
+    rclpy.init()
+    node = TrustNode()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,23 @@
+{
+  "observation_s": 20.003636229999756,
+  "wall": 1793179729.6896372,
+  "raw_message_counts": {
+    "/aima/hal/sensor/lidar_chest_front/lidar_pointcloud": 200,
+    "/aima/hal/sensor/lidar_chest_front/imu": 3986
+  },
+  "publishers": {
+    "/aima/hal/sensor/lidar_chest_front/lidar_pointcloud": [
+      {
+        "node": "//soc1_hal_sensor_orin204720",
+        "gid": "010f881bb01f1c3500000000000011030000000000000000"
+      }
+    ],
+    "/aima/hal/sensor/lidar_chest_front/imu": [
+      {
+        "node": "//soc1_hal_sensor_orin204720",
+        "gid": "010f881bb01f1c3500000000000013030000000000000000"
+      }
+    ]
+  },
+  "error": null
+}

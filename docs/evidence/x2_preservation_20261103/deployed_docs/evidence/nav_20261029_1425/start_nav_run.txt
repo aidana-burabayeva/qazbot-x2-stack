@@ -1,0 +1,30 @@
+[14:28:07.970441466] profile 661979e23665ed3c nav_full=167fb63eb4867fc6 nav_control=67bbddbdb2bdc9b3 gc=aed37cb57ab03313 adapter=71db8ebd7520a8f1 source=sdk_qazbot_nav2_1029a
+[14:28:10.590606649] adapter started live (pid 17061)
+[14:29:53.011232478] nav_full: managed_active=1
+[14:29:58.911193446] adapter status before ADD: {"state": "idle", "reason": "registration_not_requested", "latch": "", "live": true, "mode": "live", "dry_run": false, "mc_source": "", "trusted": true, "registration": "not_requested", "registration_error": "", "sdk_service_ready": true, "motion_armed": false, "t1_pause": false, "ready": false, "foreign_publishers": [], "counters": {"saturated": 0, "rejected": 0, "latched": 0, "published": 0}}
+[14:29:58.931431611] ADD NOT sent: precondition failed
+[14:29:58.966999930] owned nav/motion: 17061 17194 17222 17250 17279 17300 17320 17343 
+[14:46:27.262584938] restart_gc: stopping nav_full launch 17194 (children: 17222 17250 17279 17300 17320 17343 ); adapter 17061 kept
+[14:47:00.395987315] restart_gc: INT leftovers: 17194 17222 17250 17279 17300 17320 17343 -> TERM
+[14:47:05.429604882] restart_gc: profile 661979e23665ed3c gc=aed37cb57ab03313
+[14:49:10.541850760] restart_gc: nav_full not active after 120 s
+[17:08:03.836708448] restart_gc: stopping nav_full launch 38688 (children: 38702 38722 38744 38768 38792 38810 ); adapter 17061 kept
+[17:08:36.697020775] restart_gc: INT leftovers: 38688 38702 38722 38744 38768 38792 38810 -> TERM
+[17:08:41.717774499] restart_gc: profile 661979e23665ed3c gc=aed37cb57ab03313
+[17:08:53.922522527] restart_gc: nav_full restarted pid 153012; owned_nav_pids.txt updated
+[17:12:34.355914832] restart_gc: stopping nav_full launch 153012 (children: 153021 153048 153075 153101 153125 153151 ); adapter 17061 kept
+[17:13:07.426501470] restart_gc: INT leftovers: 153012 153021 153048 153075 153101 153125 153151 -> TERM
+[17:13:12.454043858] restart_gc: profile 661979e23665ed3c gc=aed37cb57ab03313
+[17:13:24.626711655] restart_gc: nav_full restarted pid 156927; owned_nav_pids.txt updated
+[17:22:38.449147683] restart_gc: stopping nav_full launch 156927 (children: 156944 156969 156997 157016 157046 157063 ); adapter 17061 kept
+[17:23:11.267960983] restart_gc: INT leftovers: 156927 156944 156969 156997 157016 157046 157063 -> TERM
+[17:23:16.289443420] restart_gc: profile 661979e23665ed3c gc=aed37cb57ab03313
+[17:23:30.520496003] restart_gc: nav_full restarted pid 165883; owned_nav_pids.txt updated
+[18:17:09.709578913] restart_gc: stopping nav_full launch 165883 (children: 165901 165925 165954 165981 165999 166035 ); adapter 17061 kept
+[18:17:44.128370063] restart_gc: INT leftovers: 165883 165901 165925 165954 165981 165999 166035 -> TERM
+[18:17:49.298830182] restart_gc: profile 661979e23665ed3c gc=aed37cb57ab03313
+[18:18:03.595824280] restart_gc: nav_full restarted pid 213707; owned_nav_pids.txt updated
+[20:34:10.761367376] restart_gc: stopping nav_full launch 213707 (children: 213725 213744 213766 213794 213811 213838 ); adapter 17061 kept
+[20:34:44.981763738] restart_gc: INT leftovers: 213707 213725 213744 213766 213794 213811 213838 -> TERM
+[20:34:50.005389867] restart_gc: profile 661979e23665ed3c gc=aed37cb57ab03313
+[20:36:53.721122513] restart_gc: nav_full not active after 120 s

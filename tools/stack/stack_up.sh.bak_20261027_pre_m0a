@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+# Dry-run X2 navigation stack, start in the documented order (no new logic: the same detach.py commands as
+# docs/X2_QUICKSTART_BRINGUP_RU.md). NO motion: adapter live=false, no MC registration, no initialpose, no goals.
+# Usage: tools/stack/stack_up.sh [TAG]      (TAG default: date; logs/pids: logs/<stage>_<TAG>.{log,pid})
+# Each stage waits for its own "ready" log line (not a blind sleep) and aborts the sequence on failure.
+set -u
+QAZBOT_TRUST_POLICY="${QAZBOT_TRUST_POLICY:-strict}"
+case "$QAZBOT_TRUST_POLICY" in
+  strict|go2) ;;
+  *) echo 'QAZBOT_TRUST_POLICY must be strict or go2' >&2; exit 2 ;;
+esac
+NAV=/home/agi/control_backend/ws/src/navigation
+LOGS=/home/agi/control_backend/logs
+TAG="${1:-$(date +%Y%m%d_%H%M%S)}"
+BIN=/home/agi/control_backend/candidates/fast_lio_portable/install/fast_lio/lib/fast_lio/fastlio_mapping
+MAP=/home/agi/control_backend/ws/src/maps/first_map_nav2_v3/map.yaml
+MAP_SHA=f6032f75ffd386361993a4b4864cf0816713fc27f6d037c88d929ae5d48562fb
+PATTERN='fastlio_mapping|level_bridge|nav2_amcl/amcl|map_server|planner_server|controller_server|bt_navigator|velocity_smoother|lifecycle_manager|goal_coordinator|x2_motion_adapter|localization_trust'
+
+die() { echo "STACK_UP FAILED: $*" >&2; echo "stop what started: tools/stack/stack_down.sh $TAG" >&2; exit 1; }
+
+# wait_log FILE OK_REGEX BAD_REGEX TIMEOUT_S
+wait_log() {
+  local f=$1 ok=$2 bad=$3 t=$4 i=0
+  while [ $i -lt $((t * 2)) ]; do
+    if grep -qE "$ok" "$f" 2>/dev/null; then return 0; fi
+    if grep -qE "$bad" "$f" 2>/dev/null; then grep -E "$bad" "$f" | head -3 >&2; return 1; fi
+    sleep 0.5; i=$((i + 1))
+  done
+  return 1
+}
+
+# 0. preflight: nothing of ours running, map hash, binary present
+if pgrep -af "$PATTERN" | grep -v -E "pgrep|stack_up" ; then die "stack processes already running (see above)"; fi
+[ -x "$BIN" ] || die "FAST-LIO binary missing: $BIN"
+[ "$(sha256sum "$(dirname "$MAP")/map.pgm" | cut -d' ' -f1)" = "$MAP_SHA" ] || die "map v3 pgm sha256 mismatch"
+for s in localization trust adapter nav_full; do [ -e "$LOGS/${s}_$TAG.pid" ] && die "tag $TAG already used ($LOGS/${s}_$TAG.pid)"; done
+echo "$TAG" > "$LOGS/stack_last_tag"
+cd "$NAV" || die "no $NAV"
+
+# 1. localization: FAST-LIO (CPUs 5,6) + level_bridge + map_server + AMCL; seed disabled (nonexistent file)
+python3 detach.py "localization_$TAG" bash run_localization.sh lio_binary:=$BIN map_yaml:=$MAP lio_cpus:=5,6 \
+  seed_pose_file:=/nonexistent/qazbot_seed_disabled.json || die "detach localization"
+wait_log "$LOGS/localization_$TAG.log" 'Managed nodes are active' 'malformed|exited with code|Traceback|process has died' 90 \
+  || die "localization not active (log $LOGS/localization_$TAG.log)"
+grep -q 'levelled' "$LOGS/localization_$TAG.log" || die "level_bridge did not level (robot must STAND)"
+echo "localization active"; sleep 2
+
+# 2. trust: map v3 + expected sha; pose_store default '' (OFF)
+python3 detach.py "trust_$TAG" bash -c "source ./env.sh >/dev/null 2>&1; exec python3 localization_trust_node.py --ros-args -p map_yaml:=$MAP -p expected_map_sha256:=$MAP_SHA -p admission_policy:=$QAZBOT_TRUST_POLICY" \
+  || die "detach trust"
+wait_log "$LOGS/trust_$TAG.log" 'localization_trust started' 'Traceback|Error' 40 || die "trust not started (log $LOGS/trust_$TAG.log)"
+echo "trust started"; sleep 2
+
+# 3. adapter DRY-RUN (live=false; never ~/register)
+python3 detach.py "adapter_$TAG" bash run_x2_driver.sh -p live:=false || die "detach adapter"
+wait_log "$LOGS/adapter_$TAG.log" 'x2_motion_adapter started: live=False' 'Traceback|live=True' 40 \
+  || die "adapter not started dry-run (log $LOGS/adapter_$TAG.log)"
+echo "adapter started (dry_run)"; sleep 2
+
+# 4. Nav2 (planner, RPP, smoother, bt_navigator) + goal_coordinator, dry-run driver allowed
+ROBOT_RADIUS=0.454 python3 detach.py "nav_full_$TAG" bash run_nav_full.sh allow_dry_run_driver:=true map_yaml:=$MAP \
+  || die "detach nav_full"
+# Without an AMCL pose the global costmap waits for map->base_footprint (expected): planner_server stays in
+# activation and bt_navigator activates itself after the operator's 2D Pose Estimate.
+wait_log "$LOGS/nav_full_$TAG.log" 'Managed nodes are active|Timed out waiting for transform from base_footprint to map' \
+  'malformed|exited with code|Traceback|process has died' 120 || die "nav_full not up (log $LOGS/nav_full_$TAG.log)"
+if grep -q 'Managed nodes are active' "$LOGS/nav_full_$TAG.log"; then echo "nav_full active";
+else echo "nav_full up; planner waits for map->base_footprint: operator sets 2D Pose Estimate in RViz"; fi
+for s in localization trust adapter nav_full; do echo "$s pid $(cat "$LOGS/${s}_$TAG.pid") log $LOGS/${s}_$TAG.log"; done
+echo "STACK_UP OK tag=$TAG  (stop: tools/stack/stack_down.sh $TAG)"

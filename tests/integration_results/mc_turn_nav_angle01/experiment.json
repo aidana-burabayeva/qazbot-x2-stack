@@ -1,0 +1,6 @@
+{
+  "goal_checker_stateful": false,
+  "xy_tolerance": 0.1,
+  "yaw_tolerance": 0.1,
+  "amcl_overrides": {}
+}

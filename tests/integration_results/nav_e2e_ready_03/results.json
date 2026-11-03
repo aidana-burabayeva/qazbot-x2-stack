@@ -1,0 +1,3721 @@
+{
+  "checks": [
+    {
+      "name": "adapter_dry_run_mode",
+      "ok": true,
+      "detail": {
+        "state": "idle",
+        "reason": "driver_not_armed",
+        "latch": "",
+        "live": false,
+        "mode": "dry_run",
+        "dry_run": true,
+        "mc_source": "sdk_qazbot_nav2",
+        "trusted": false,
+        "registration": "dry_run",
+        "registration_error": "",
+        "sdk_service_ready": false,
+        "motion_armed": false,
+        "ready": false,
+        "foreign_publishers": [],
+        "counters": {
+          "saturated": 0,
+          "rejected": 0,
+          "latched": 0,
+          "published": 0
+        }
+      }
+    },
+    {
+      "name": "no_MC_velocity_publisher",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "no_registration_client",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no_owner_lock_in_dry_run",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "trust_sees_served_map_identical",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trust_map_is_nav2_v2",
+      "ok": true,
+      "detail": "545630c14f0e37cf2385af8780a09ad7a3fddf7765460c1624e645c42aee2e33"
+    },
+    {
+      "name": "ambiguity_budget_default_conservative",
+      "ok": true,
+      "detail": {
+        "degenerate_budget_m": 0.0,
+        "frozen_window_s": 1.0
+      }
+    },
+    {
+      "name": "trust_baseline_start",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "trust_baseline_finish",
+      "ok": true,
+      "detail": "baseline median 0.998 from 25 samples (min 0.998)"
+    },
+    {
+      "name": "trust_anchor_confirmed",
+      "ok": true,
+      "detail": "anchor (x, y, yaw) = (-1.275, -4.825, 0.000)"
+    },
+    {
+      "name": "real_trust_node_trusted",
+      "ok": true,
+      "detail": {
+        "frozen_msg_motion_m": 0.0,
+        "sigma_xy": 0.1,
+        "sigma_yaw": 0.06324555320336758,
+        "cloud_std": 0.07516901233673651,
+        "second_mode_weight": 0.0,
+        "scan_score": 0.9976922619337985,
+        "scan_floor": 0.7981538095470389,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0,
+        "anchor_err_xy": 0.0,
+        "anchor_err_yaw": 0.0,
+        "anchor_limit_xy": 0.15,
+        "path_since_anchor": 0.0
+      }
+    },
+    {
+      "name": "coordinator_accepts_dry_run_driver",
+      "ok": true,
+      "detail": {
+        "busy": false,
+        "latched": false,
+        "gate": false,
+        "fault": "",
+        "source_zero": true,
+        "trusted": true,
+        "driver_ready": true,
+        "driver_mode": "dry_run",
+        "ready": true,
+        "child_uuid": null
+      }
+    },
+    {
+      "name": "expected_smac_overlay_loaded",
+      "ok": true,
+      "detail": [
+        "/home/agi/control_backend/candidates/nav2_smac_bounds/install/nav2_smac_planner/lib/libnav2_smac_planner_2d.so"
+      ]
+    },
+    {
+      "name": "straight_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "straight_succeeded",
+      "ok": true,
+      "detail": 4
+    },
+    {
+      "name": "straight_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.099,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.003,
+          "value": [
+            0.09,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 51,
+        "model_max_speed": 0.009136059351261144,
+        "pose_drift": 0.0021495730542119007,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "straight_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          0.16309921667675267,
+          -4.825,
+          0.0
+        ],
+        "xy_error": 0.06190078332324733,
+        "yaw_error": 0.0,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "straight_limits",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "straight_adapter_idle_after",
+      "ok": true,
+      "detail": {
+        "state": "idle",
+        "reason": "no_command",
+        "latch": "",
+        "live": false,
+        "mode": "dry_run",
+        "dry_run": true,
+        "mc_source": "sdk_qazbot_nav2",
+        "trusted": true,
+        "registration": "dry_run",
+        "registration_error": "",
+        "sdk_service_ready": false,
+        "motion_armed": true,
+        "ready": true,
+        "foreign_publishers": [],
+        "counters": {
+          "saturated": 0,
+          "rejected": 0,
+          "latched": 0,
+          "published": 318
+        }
+      }
+    },
+    {
+      "name": "rotate_in_place_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "rotate_in_place_succeeded",
+      "ok": true,
+      "detail": 4
+    },
+    {
+      "name": "rotate_in_place_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.087,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.012,
+          "value": [
+            0.0,
+            0.0,
+            0.425
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 48,
+        "model_max_speed": 0.009054308987230954,
+        "pose_drift": 0.0,
+        "yaw_drift": 0.0021152515115945296,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "rotate_in_place_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -1.275,
+          -4.825,
+          1.63291041017941
+        ],
+        "xy_error": 0.0,
+        "yaw_error": 0.06211408338451352,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "rotate_in_place_limits",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "already_there_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "already_there_succeeded",
+      "ok": true,
+      "detail": 4
+    },
+    {
+      "name": "already_there_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": null,
+        "last_nonzero_cmd": null,
+        "nonzero_after_terminal": [],
+        "window_samples": 51,
+        "model_max_speed": 0.0,
+        "pose_drift": 0.0,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "already_there_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -1.275,
+          -4.825,
+          0.0
+        ],
+        "xy_error": 0.0,
+        "yaw_error": 0.0,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "already_there_no_motion",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "repeat_first_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "repeat_while_active_rejected",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "repeat_first_succeeded",
+      "ok": true,
+      "detail": 4
+    },
+    {
+      "name": "repeat_first_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.085,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.017,
+          "value": [
+            0.12,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 0.00868939773432839,
+        "pose_drift": 0.002044533728339293,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "repeat_first_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -0.43604229836935965,
+          -4.825,
+          0.0
+        ],
+        "xy_error": 0.06104229836935965,
+        "yaw_error": 0.0,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "repeat_again_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "repeat_again_succeeded",
+      "ok": true,
+      "detail": 4
+    },
+    {
+      "name": "repeat_again_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": null,
+        "last_nonzero_cmd": null,
+        "nonzero_after_terminal": [],
+        "window_samples": 49,
+        "model_max_speed": 3.587331603601504e-12,
+        "pose_drift": 8.392175843141558e-13,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "repeat_again_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -0.4360008715340323,
+          -4.825,
+          0.0
+        ],
+        "xy_error": 0.061000871534032275,
+        "yaw_error": 0.0,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "repeat_again_no_motion",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "cancel_goal_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "cancel_terminal",
+      "ok": true,
+      "detail": 5
+    },
+    {
+      "name": "cancel_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.041,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.05,
+          "value": [
+            0.25999999999999995,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 49,
+        "model_max_speed": 0.009124480938354064,
+        "pose_drift": 0.0021464732471527803,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "cancel_adapter_not_latched",
+      "ok": true,
+      "detail": {
+        "state": "idle",
+        "reason": "no_command",
+        "latch": "",
+        "live": false,
+        "mode": "dry_run",
+        "dry_run": true,
+        "mc_source": "sdk_qazbot_nav2",
+        "trusted": true,
+        "registration": "dry_run",
+        "registration_error": "",
+        "sdk_service_ready": false,
+        "motion_armed": true,
+        "ready": true,
+        "foreign_publishers": [],
+        "counters": {
+          "saturated": 0,
+          "rejected": 0,
+          "latched": 0,
+          "published": 803
+        }
+      }
+    },
+    {
+      "name": "resume_after_cancel",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "obstacle_goal_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "obstacle_goal_not_succeeded",
+      "ok": true,
+      "detail": {
+        "status": 6,
+        "fault": ""
+      }
+    },
+    {
+      "name": "obstacle_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.098,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": 0.002,
+          "value": [
+            0.12000000000000002,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 0.008991226848599999,
+        "pose_drift": 0.0021154291613765253,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "obstacle_safe_termination_adapter_idle",
+      "ok": true,
+      "detail": {
+        "a": "idle",
+        "fault": ""
+      }
+    },
+    {
+      "name": "obstacle_body_clearance",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -0.7091410267922419,
+          -4.825,
+          0.0
+        ],
+        "clearance": 0.7341410267922419
+      }
+    },
+    {
+      "name": "unreachable_accepted_for_evaluation",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "unreachable_aborted",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "unreachable_no_motion",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "left_accepted_for_planning",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "left_fails_without_crash",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "left_no_motion",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "right_accepted_for_planning",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "right_fails_without_crash",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "right_no_motion",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "bottom_accepted_for_planning",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "bottom_fails_without_crash",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "bottom_no_motion",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "top_accepted_for_planning",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "top_fails_without_crash",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "top_no_motion",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "occupied_accepted_for_planning",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "occupied_fails_without_crash",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "occupied_no_motion",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "rviz_goal_pose_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.032,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.062,
+          "value": [
+            0.12,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 0.008916745891181329,
+        "pose_drift": 0.0020977804203466954,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "rviz_goal_pose_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -0.8349999900471842,
+          -4.825,
+          0.0
+        ],
+        "xy_error": 0.05999999004718415,
+        "yaw_error": 0.0,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "takeover_goal_A_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "takeover_goal_A_terminal",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "takeover_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": -0.333,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.437,
+          "value": [
+            0.27999999999999997,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 51,
+        "model_max_speed": 0.008558092128623724,
+        "pose_drift": 0.002009803605727889,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "takeover_adapter_latched",
+      "ok": true,
+      "detail": {
+        "state": "latched",
+        "reason": "operator_takeover",
+        "latch": "operator_takeover",
+        "live": false,
+        "mode": "dry_run",
+        "dry_run": true,
+        "mc_source": "rc",
+        "trusted": true,
+        "registration": "dry_run",
+        "registration_error": "",
+        "sdk_service_ready": false,
+        "motion_armed": false,
+        "ready": false,
+        "foreign_publishers": [],
+        "counters": {
+          "saturated": 0,
+          "rejected": 0,
+          "latched": 1,
+          "published": 1107
+        }
+      }
+    },
+    {
+      "name": "takeover_internal_nav2_goal_terminal",
+      "ok": true,
+      "detail": 5
+    },
+    {
+      "name": "takeover_release_stays_latched",
+      "ok": true,
+      "detail": [
+        {
+          "state": "latched",
+          "reason": "operator_takeover",
+          "latch": "operator_takeover",
+          "live": false,
+          "mode": "dry_run",
+          "dry_run": true,
+          "mc_source": "sdk_qazbot_nav2",
+          "trusted": true,
+          "registration": "dry_run",
+          "registration_error": "",
+          "sdk_service_ready": false,
+          "motion_armed": false,
+          "ready": false,
+          "foreign_publishers": [],
+          "counters": {
+            "saturated": 0,
+            "rejected": 0,
+            "latched": 1,
+            "published": 1107
+          }
+        },
+        {
+          "busy": false,
+          "latched": true,
+          "gate": false,
+          "fault": "operator_takeover",
+          "source_zero": true,
+          "trusted": true,
+          "driver_ready": false,
+          "driver_mode": "dry_run",
+          "ready": false,
+          "child_uuid": null
+        }
+      ]
+    },
+    {
+      "name": "takeover_release_no_remotion",
+      "ok": true,
+      "detail": {
+        "late": [],
+        "p0": [
+          -1.1910997277739046,
+          -4.825,
+          0.0
+        ],
+        "p1": [
+          -1.1910990983000684,
+          -4.825,
+          0.0
+        ]
+      }
+    },
+    {
+      "name": "takeover_new_goal_refused_while_latched",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "takeover_explicit_resume",
+      "ok": true,
+      "detail": [
+        "resumed",
+        "ready for a NEW goal; no cached command/goal replay"
+      ]
+    },
+    {
+      "name": "takeover_resume_alone_no_remotion",
+      "ok": true,
+      "detail": {
+        "late": [],
+        "p0": [
+          -1.1910990977023839,
+          -4.825,
+          0.0
+        ],
+        "p1": [
+          -1.1910990967324404,
+          -4.825,
+          0.0
+        ]
+      }
+    },
+    {
+      "name": "takeover_goal_A_not_revived",
+      "ok": true,
+      "detail": {
+        "public": 6,
+        "internal": 5
+      }
+    },
+    {
+      "name": "takeover_goal_B_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "takeover_goal_B_succeeded",
+      "ok": true,
+      "detail": 4
+    },
+    {
+      "name": "takeover_goal_B_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.091,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.012,
+          "value": [
+            0.12,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 47,
+        "model_max_speed": 0.008717222752165266,
+        "pose_drift": 0.0020325993030572143,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "takeover_goal_B_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -0.8356641028549013,
+          -4.825,
+          0.0
+        ],
+        "xy_error": 0.060664102854901314,
+        "yaw_error": 0.0,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "scan_loss_goal_accepted",
+      "ok": true,
+      "detail": {
+        "trust": [],
+        "adapter": "no_command",
+        "coord": {
+          "busy": false,
+          "latched": false,
+          "gate": false,
+          "fault": "",
+          "source_zero": true,
+          "trusted": true,
+          "driver_ready": true,
+          "driver_mode": "dry_run",
+          "ready": false,
+          "child_uuid": null
+        }
+      }
+    },
+    {
+      "name": "scan_loss_aborts",
+      "ok": true,
+      "detail": {
+        "status": 6,
+        "fault": ""
+      }
+    },
+    {
+      "name": "scan_loss_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.025,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.054,
+          "value": [
+            0.3,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 0.00893687747899706,
+        "pose_drift": 0.002102811660056103,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "scan_loss_adapter_latched",
+      "ok": true,
+      "detail": "localization_untrusted"
+    },
+    {
+      "name": "scan_loss_recovery_stays_latched",
+      "ok": true,
+      "detail": {
+        "busy": false,
+        "latched": true,
+        "gate": false,
+        "fault": "localization_untrusted",
+        "source_zero": true,
+        "trusted": true,
+        "driver_ready": false,
+        "driver_mode": "dry_run",
+        "ready": false,
+        "child_uuid": null
+      }
+    },
+    {
+      "name": "scan_loss_after_recovery_no_remotion",
+      "ok": true,
+      "detail": {
+        "late": [],
+        "p0": [
+          -1.0592156304791318,
+          -4.825,
+          0.0
+        ],
+        "p1": [
+          -1.0592156304791216,
+          -4.825,
+          0.0
+        ]
+      }
+    },
+    {
+      "name": "scan_loss_old_goal_not_revived",
+      "ok": true,
+      "detail": {
+        "busy": false,
+        "latched": true,
+        "gate": false,
+        "fault": "localization_untrusted",
+        "source_zero": true,
+        "trusted": true,
+        "driver_ready": false,
+        "driver_mode": "dry_run",
+        "ready": false,
+        "child_uuid": null
+      }
+    },
+    {
+      "name": "scan_loss_resume_ready",
+      "ok": true,
+      "detail": "ready for a NEW goal; no cached command/goal replay"
+    },
+    {
+      "name": "odom_loss_goal_accepted",
+      "ok": true,
+      "detail": {
+        "trust": [],
+        "adapter": "driver_not_armed",
+        "coord": {
+          "busy": false,
+          "latched": false,
+          "gate": false,
+          "fault": "",
+          "source_zero": true,
+          "trusted": true,
+          "driver_ready": true,
+          "driver_mode": "dry_run",
+          "ready": false,
+          "child_uuid": null
+        }
+      }
+    },
+    {
+      "name": "odom_loss_aborts",
+      "ok": true,
+      "detail": {
+        "status": 6,
+        "fault": ""
+      }
+    },
+    {
+      "name": "odom_loss_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.058,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.019,
+          "value": [
+            0.3,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 49,
+        "model_max_speed": 0.008592402062460865,
+        "pose_drift": 0.0020134244360296982,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "odom_loss_adapter_latched",
+      "ok": true,
+      "detail": "localization_untrusted"
+    },
+    {
+      "name": "odom_loss_recovery_stays_latched",
+      "ok": true,
+      "detail": {
+        "busy": false,
+        "latched": true,
+        "gate": false,
+        "fault": "localization_untrusted",
+        "source_zero": true,
+        "trusted": true,
+        "driver_ready": false,
+        "driver_mode": "dry_run",
+        "ready": false,
+        "child_uuid": null
+      }
+    },
+    {
+      "name": "odom_loss_after_recovery_no_remotion",
+      "ok": true,
+      "detail": {
+        "late": [],
+        "p0": [
+          -0.9892453353367584,
+          -4.825,
+          0.0
+        ],
+        "p1": [
+          -0.9892453353367299,
+          -4.825,
+          0.0
+        ]
+      }
+    },
+    {
+      "name": "odom_loss_old_goal_not_revived",
+      "ok": true,
+      "detail": {
+        "busy": false,
+        "latched": true,
+        "gate": false,
+        "fault": "localization_untrusted",
+        "source_zero": true,
+        "trusted": true,
+        "driver_ready": false,
+        "driver_mode": "dry_run",
+        "ready": false,
+        "child_uuid": null
+      }
+    },
+    {
+      "name": "odom_loss_resume_ready",
+      "ok": true,
+      "detail": "ready for a NEW goal; no cached command/goal replay"
+    },
+    {
+      "name": "amcl_loss_goal_accepted",
+      "ok": true,
+      "detail": {
+        "trust": [],
+        "adapter": "driver_not_armed",
+        "coord": {
+          "busy": false,
+          "latched": false,
+          "gate": false,
+          "fault": "",
+          "source_zero": true,
+          "trusted": true,
+          "driver_ready": true,
+          "driver_mode": "dry_run",
+          "ready": false,
+          "child_uuid": null
+        }
+      }
+    }
+  ],
+  "failed": [],
+  "shutdown": {
+    "nav2": 0,
+    "adapter": 0,
+    "trust": 0,
+    "model": 0,
+    "abnormal_children": 0
+  },
+  "known_defects": {},
+  "smac_libraries": [
+    "/home/agi/control_backend/candidates/nav2_smac_bounds/install/nav2_smac_planner/lib/libnav2_smac_planner_2d.so"
+  ],
+  "trust_log": [
+    [
+      2917.722,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2917.917,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2918.103,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2918.309,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2918.504,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2918.701,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2918.904,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2919.104,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2919.303,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2919.501,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2919.713,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2919.903,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2920.108,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2920.302,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2920.501,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2920.702,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2920.905,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2921.108,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2921.308,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2921.512,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2921.703,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2921.902,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2922.109,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2922.312,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2922.506,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2922.705,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2922.91,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2923.131,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2923.312,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2923.506,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2923.702,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2923.914,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2924.106,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2924.308,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2924.508,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2924.717,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2924.949,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2925.107,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2925.307,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2925.514,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2925.708,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2925.918,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2926.113,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2926.303,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2926.507,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2926.705,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2926.904,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2927.109,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2927.313,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2927.523,
+      true,
+      [],
+      0.9965685813347032
+    ],
+    [
+      2927.729,
+      true,
+      [],
+      0.9965485145588827
+    ],
+    [
+      2927.922,
+      true,
+      [],
+      0.9965383929006977
+    ],
+    [
+      2928.112,
+      true,
+      [],
+      0.9919700134635231
+    ],
+    [
+      2928.309,
+      true,
+      [],
+      0.9919229167682945
+    ],
+    [
+      2928.557,
+      true,
+      [],
+      0.9941966173998913
+    ],
+    [
+      2928.717,
+      true,
+      [],
+      0.9930564234066935
+    ],
+    [
+      2928.914,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2929.116,
+      true,
+      [],
+      0.994264295331088
+    ],
+    [
+      2929.314,
+      true,
+      [],
+      0.9977123875564687
+    ],
+    [
+      2929.504,
+      true,
+      [],
+      0.9930970291177654
+    ],
+    [
+      2929.715,
+      true,
+      [],
+      0.9988561937782344
+    ],
+    [
+      2929.926,
+      true,
+      [],
+      0.9977321651856635
+    ],
+    [
+      2930.115,
+      true,
+      [],
+      0.9908495502258752
+    ],
+    [
+      2930.303,
+      true,
+      [],
+      0.998862805374892
+    ],
+    [
+      2930.517,
+      true,
+      [],
+      0.9988561937782344
+    ],
+    [
+      2930.703,
+      true,
+      [],
+      0.9977123875564687
+    ],
+    [
+      2930.906,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2931.111,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2931.305,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2931.509,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2931.706,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2931.908,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2932.108,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2932.311,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2932.506,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2932.722,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2932.923,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2933.124,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2933.32,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2933.511,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2933.714,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2933.902,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2934.111,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2934.321,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2934.506,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2934.712,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2934.912,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2935.116,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2935.332,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2935.524,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2935.717,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2935.904,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2936.103,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2936.334,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2936.514,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2936.737,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2936.907,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2937.12,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2937.305,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2937.517,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2937.711,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2937.906,
+      true,
+      [],
+      0.9977123875564687
+    ],
+    [
+      2938.11,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2938.316,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2938.514,
+      false,
+      [
+        "T1_scan_stale"
+      ],
+      1.0
+    ],
+    [
+      2938.706,
+      false,
+      [
+        "T1_scan_stale"
+      ],
+      1.0
+    ],
+    [
+      2938.902,
+      false,
+      [
+        "T1_scan_stale"
+      ],
+      1.0
+    ],
+    [
+      2939.108,
+      false,
+      [
+        "T1_scan_stale"
+      ],
+      1.0
+    ],
+    [
+      2939.304,
+      false,
+      [
+        "T1_scan_stale"
+      ],
+      1.0
+    ],
+    [
+      2939.505,
+      false,
+      [
+        "T1_scan_stale"
+      ],
+      1.0
+    ],
+    [
+      2939.708,
+      false,
+      [
+        "T1_scan_stale"
+      ],
+      1.0
+    ],
+    [
+      2939.907,
+      false,
+      [
+        "T1_scan_stale"
+      ],
+      1.0
+    ],
+    [
+      2940.104,
+      false,
+      [
+        "T1_scan_stale"
+      ],
+      1.0
+    ],
+    [
+      2940.302,
+      false,
+      [
+        "T1_scan_stale"
+      ],
+      1.0
+    ],
+    [
+      2940.51,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2940.703,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2940.905,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2941.103,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2941.311,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2941.502,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2941.711,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2941.905,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2942.103,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2942.308,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2942.511,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2942.709,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2942.902,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2943.108,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2943.306,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2943.507,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2943.705,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2943.904,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2944.104,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2944.312,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2944.515,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2944.71,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2944.901,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2945.103,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2945.305,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2945.501,
+      false,
+      [
+        "settling"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2945.701,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2945.904,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2946.104,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2946.303,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2946.503,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2946.701,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2946.902,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2947.108,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2947.306,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2947.503,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2947.702,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2947.903,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2948.109,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2948.321,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2948.502,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2948.702,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2948.903,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2949.117,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2949.303,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2949.502,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2949.702,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2949.918,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2950.117,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2950.332,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2950.511,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2950.712,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2950.909,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2951.121,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2951.322,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2951.504,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2951.722,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2951.923,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2952.105,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2952.314,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2952.503,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2952.708,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2952.923,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2953.113,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2953.323,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2953.522,
+      true,
+      [],
+      0.9631841552947492
+    ],
+    [
+      2953.714,
+      true,
+      [],
+      0.9954114362648704
+    ],
+    [
+      2953.915,
+      true,
+      [],
+      0.9931171543973055
+    ],
+    [
+      2954.113,
+      false,
+      [
+        "T1_odom_message_stale"
+      ],
+      0.9860718817597391
+    ],
+    [
+      2954.309,
+      false,
+      [
+        "T1_odom_message_stale"
+      ],
+      0.9988427372344489
+    ],
+    [
+      2954.51,
+      false,
+      [
+        "T1_odom_message_stale"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2954.703,
+      false,
+      [
+        "T1_odom_message_stale"
+      ],
+      0.994280968891172
+    ],
+    [
+      2954.903,
+      false,
+      [
+        "T1_odom_message_stale"
+      ],
+      0.9988528590662176
+    ],
+    [
+      2955.104,
+      false,
+      [
+        "T1_odom_message_stale"
+      ],
+      1.0
+    ],
+    [
+      2955.301,
+      false,
+      [
+        "T1_odom_message_stale"
+      ],
+      1.0
+    ],
+    [
+      2955.503,
+      false,
+      [
+        "T1_odom_message_stale"
+      ],
+      1.0
+    ],
+    [
+      2955.702,
+      false,
+      [
+        "T1_odom_message_stale"
+      ],
+      1.0
+    ],
+    [
+      2955.908,
+      false,
+      [
+        "T1_odom_message_stale"
+      ],
+      1.0
+    ],
+    [
+      2956.11,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2956.304,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2956.508,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2956.713,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2956.908,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2957.102,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2957.302,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2957.503,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2957.705,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2957.904,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2958.108,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2958.301,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2958.503,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2958.703,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2958.904,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2959.104,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2959.312,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2959.509,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2959.702,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2959.905,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2960.105,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2960.305,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2960.508,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2960.704,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2960.912,
+      false,
+      [
+        "settling"
+      ],
+      1.0
+    ],
+    [
+      2961.108,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2961.31,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2961.515,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2961.705,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2961.904,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2962.111,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2962.309,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2962.506,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2962.701,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2962.905,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2963.105,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2963.302,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2963.506,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2963.719,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2963.907,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2964.12,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2964.31,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2964.503,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2964.714,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2964.921,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2965.108,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2965.311,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2965.514,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2965.703,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2965.905,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2966.111,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2966.308,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2966.506,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2966.706,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2966.907,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2967.141,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2967.301,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2967.518,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2967.713,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2967.903,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2968.111,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2968.311,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2968.51,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2968.703,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2968.901,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2969.111,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2969.308,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2969.507,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2969.707,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2969.905,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2970.103,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2970.304,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2970.508,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2970.712,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2970.906,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2971.102,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2971.307,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2971.501,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2971.704,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2971.909,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2972.113,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2972.311,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2972.51,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2972.704,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2972.906,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2973.105,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2973.305,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2973.509,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2973.705,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2973.913,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2974.106,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2974.302,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2974.502,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2974.714,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2974.904,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2975.109,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2975.302,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2975.509,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2975.704,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2975.905,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2976.107,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2976.313,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2976.511,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2976.708,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2976.901,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2977.102,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2977.312,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2977.503,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2977.717,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2977.901,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2978.111,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2978.305,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2978.509,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2978.713,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2978.908,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2979.108,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2979.301,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2979.502,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2979.713,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2979.904,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2980.106,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2980.303,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2980.503,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2980.705,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2980.903,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2981.11,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2981.303,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2981.502,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2981.706,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2981.903,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2982.109,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2982.308,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2982.502,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2982.708,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2982.907,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2983.105,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2983.31,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2983.507,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2983.71,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2983.914,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2984.107,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2984.304,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2984.502,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2984.702,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2984.903,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2985.114,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2985.313,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2985.508,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2985.708,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2985.903,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2986.114,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2986.303,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2986.502,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2986.702,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2986.901,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2987.105,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2987.301,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2987.504,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2987.701,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2987.908,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2988.114,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2988.31,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2988.504,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2988.712,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2988.903,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2989.105,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2989.303,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2989.513,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2989.709,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2989.904,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2990.102,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2990.304,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2990.506,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2990.709,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2990.901,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2991.109,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2991.303,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2991.505,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2991.703,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2991.906,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2992.107,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2992.308,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2992.503,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2992.703,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2992.907,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2993.112,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2993.303,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2993.52,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2993.707,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2993.918,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2994.105,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2994.307,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2994.515,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2994.701,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2994.904,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2995.106,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2995.302,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2995.506,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2995.704,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2995.906,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2996.117,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2996.304,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2996.503,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2996.702,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2996.901,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2997.105,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2997.301,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2997.511,
+      true,
+      [],
+      0.9976922619337985
+    ]
+  ],
+  "scope": "D1 grid + real Nav2 + REAL x2_motion_adapter (dry run shadow) + REAL localization_trust (emulated AMCL outputs, D1 ray-cast scan) + kinematic model on adapter dry_run_cmd; domain 87"
+}

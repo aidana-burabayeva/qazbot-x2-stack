@@ -1,0 +1,82 @@
+{
+  "snapshot.py": {
+    "bytes": 2002,
+    "sha256": "8be0183ca1c5a7959db5364178d6aa17c98c0c17ae0fd2ae0990d75f0fa32d79"
+  },
+  "deployment.json": {
+    "bytes": 629,
+    "sha256": "bf87f9f395479897d253c271b6532ab297afd077a23f93e00c2b82f59223df78"
+  },
+  "passive_snapshot.json": {
+    "bytes": 11076,
+    "sha256": "ef2c6ad356f8f8b2a563d74f1daedc82b12806ec2666a22098a84d7ce2023e77"
+  },
+  "costmap.log.gz": {
+    "bytes": 33021,
+    "sha256": "8cfcab10caeaf06b7bc1003d225cc13de5c96c5b350275f962c9e76bfe2a1e40"
+  },
+  "obstacle_probe.py": {
+    "bytes": 2332,
+    "sha256": "93e89fd1559f29ce8b90f67797cae6f12de5df96707cf6bdfec97ade88026df0"
+  },
+  "observer_light.log.gz": {
+    "bytes": 26888,
+    "sha256": "f34b0413e23b8621272d1b48964c049bd504406754e49dfea36c466c9391fbf5"
+  },
+  "passive_observer_light.py": {
+    "bytes": 4697,
+    "sha256": "e41a77b33f8417825792f79964fb4f7b9634b5f7858e547e4d80195dd5d1f5b6"
+  },
+  "passive_observer.py": {
+    "bytes": 4711,
+    "sha256": "fca27f7b6a91564f834d0f35125645f2e6e80966d92ab7a0cf76530b56fac9a1"
+  },
+  "passive_observer.jsonl.gz": {
+    "bytes": 631402,
+    "sha256": "be2fd080774a4b7c59ff6b7c5a32a9dac4dee61208915d45ba881d972cb5566d"
+  },
+  "obstacle_probe.log.gz": {
+    "bytes": 27748,
+    "sha256": "b86714267be9b3cd12cab0902a528dda289d8175d87b74391beffb3c222eee55"
+  },
+  "obstacle_probe.jsonl.gz": {
+    "bytes": 4537810,
+    "sha256": "4df69043a7f42626a767290b16b780b72454eeee27d6270e92c67da67e6991a5"
+  },
+  "trust.log.gz": {
+    "bytes": 36598,
+    "sha256": "762943a44de2c697fc4d10de1ae31d391efa4b4e629561ba0090fc8609a618ce"
+  },
+  "passive_costmap.yaml": {
+    "bytes": 1417,
+    "sha256": "b2b4781b5ea3f99dbbb47de5276f9d486ec0e810d4efbc602e405ba17d6706ad"
+  },
+  "localization.log.gz": {
+    "bytes": 179267,
+    "sha256": "c0833b188a648ca3c34b9fbeb13ba3cc45198fb8ba1ab7658ce799fd1bb81e9c"
+  },
+  "finalize.py": {
+    "bytes": 2676,
+    "sha256": "024a93a6ebf7ea798361958c0eb783d3696230156414432ab15c3ad6c2a030c6"
+  },
+  "process_snapshot.txt": {
+    "bytes": 24719,
+    "sha256": "3a5402c3f1e77d426414927c4fbe1e4c5d3f448011f128ac171bd779e817bd2e"
+  },
+  "observer.log.gz": {
+    "bytes": 204610,
+    "sha256": "513d6bfa53eb6ee867ff85be1e1cce70fdda1f102cb42ed228f638dfcc97e2a2"
+  },
+  "process_snapshot_final.txt": {
+    "bytes": 253,
+    "sha256": "2acc65b59672c83d445f8e0a1ce311388a369b15e03e5d4aec449e61a444bef0"
+  },
+  "dds_udp_only.xml": {
+    "bytes": 924,
+    "sha256": "29d4c736a364691689ccc8f27c62f566c65af946df1b6fc9dd5ec03ae239ec63"
+  },
+  "freshness_events.json": {
+    "bytes": 13802,
+    "sha256": "b6dad8bc28b9e2d70c84c1869ea3459935ca9a653dbdc5b8097123ed7bc1f8ce"
+  }
+}

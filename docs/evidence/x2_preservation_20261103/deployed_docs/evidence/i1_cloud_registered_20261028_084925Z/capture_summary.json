@@ -1,0 +1,18 @@
+{
+  "counts": {
+    "/aima/mc/leg_odometry": 6306,
+    "/aima/hal/sensor/lidar_chest_front/imu": 437
+  },
+  "matched_clouds": 0,
+  "quota": 100,
+  "interrupted": false,
+  "quota_met": false,
+  "cloud_receipt_age_s": {
+    "max": null,
+    "p95": null
+  },
+  "files_sha256": {
+    "metadata.yaml": "3daf045574b8c8cc9c9dd9a05d58249c191cd714e90c651b47089ca5e496f039",
+    "i1_cloud_registered_20261028_084925Z_0.db3": "d0d200d277c0dd93a38ec664b43f3a2ccb61552c335c7fb68558512946607414"
+  }
+}

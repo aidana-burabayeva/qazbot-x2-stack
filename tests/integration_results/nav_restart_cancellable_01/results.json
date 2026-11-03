@@ -1,0 +1,50 @@
+{
+  "checks": [
+    {
+      "name": "goal_A_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "single_controller_before_fault",
+      "ok": true,
+      "detail": [
+        283229
+      ]
+    },
+    {
+      "name": "coherent_group_stopped",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "no_commands_after_group_exit",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "model_stopped",
+      "ok": true,
+      "detail": {
+        "before": [
+          -1.187104532891001,
+          -6.37499999602203,
+          7.845763018380412e-08
+        ],
+        "after": [
+          -1.184892491298139,
+          -6.3749999958466095,
+          8.007876194757807e-08
+        ]
+      }
+    }
+  ],
+  "shutdown": {
+    "nav2_restarted": 0,
+    "model": 0,
+    "abnormal_children": 2,
+    "debugger_fatal_signals": 0
+  },
+  "smac_libraries": [],
+  "scope": "D1 grid + real Nav2 + ideal localization fixture + existing MC model; no AMCL/SDK qualification"
+}

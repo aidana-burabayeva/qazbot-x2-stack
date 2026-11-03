@@ -15,7 +15,7 @@ Related: tools/d07/ (offline bag analysis scripts), tests/d05/cancel_latency/ (d
 
 ## Known corrections / open items
 - Bag d04_static_bag_183015 contained NO boxes (operator statement; raw log pd04_steps says otherwise; the operator statement prevails). D-07 is an OPEN safety blocker; the real-box check was NOT PERFORMED.
-- R1/R5 D-05 criteria C1/C2 used a minimum range of 0.695 m, which R3 found wrong (raw returns reach 0.105 m; the near limit is the lowest beam elevation, nearest floor return 0.49 m). C1/C2 are pending recomputation by a verifier.
+- R1/R5 D-05 criteria C1/C2 used a minimum range of 0.695 m, which R3 found wrong (raw returns reach 0.105 m; the near limit is the lowest beam elevation, nearest floor return 0.49 m). The previous C1 range allowance is invalid; arithmetic and model limitations are documented in the V continuation report. C2 remains conditional on unmeasured obstacle-ramp coast.
 - R5 T_nav is an estimate (sensing stage measured: 133/139 ms p50/p99), not measured end-to-end.
-- Collision Monitor (R2) and walking floor-noise (R3b) evaluations are IN PROGRESS and not included.
+- R2/R3b reports are now preserved under [orchestrator reports](../../evidence/x2_preservation_20261103/orchestrator/reports/). Their historical results do not replace hardware verification. Fresh emulator unit tests: 11 passed. See [V continuation and C1/C2 correction](../../evidence/x2_preservation_20261103/REPORT.md).
 - Licenses: aimdk_msgs/examples/py_examples have TODO license; spark-fast-lio is GPLv2 (no vendoring); byggmesterPRO has no license (ideas only).

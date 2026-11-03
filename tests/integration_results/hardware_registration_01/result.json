@@ -1,0 +1,515 @@
+{
+  "checks": [
+    {
+      "name": "standing_stable_RC_before",
+      "ok": true,
+      "detail": {
+        "source": "rc",
+        "body": 1,
+        "fsm": 4,
+        "received_s": 1792584790.867139
+      }
+    },
+    {
+      "name": "no_authorized_command_source",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "no_existing_adapter_endpoint",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "no_existing_sdk_velocity",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "waiting_unarmed_without_MC_endpoint",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "single_registration_request_submitted",
+      "ok": true,
+      "detail": "one request submitted; check status.registration for result"
+    },
+    {
+      "name": "SDK_registration_ack_success",
+      "ok": true,
+      "detail": {
+        "state": "idle",
+        "reason": "driver_not_armed",
+        "latch": "",
+        "live": true,
+        "mc_source": "rc",
+        "trusted": false,
+        "registration": "registered",
+        "registration_error": "",
+        "sdk_service_ready": true,
+        "motion_armed": false,
+        "ready": false,
+        "foreign_publishers": [],
+        "counters": {
+          "saturated": 0,
+          "rejected": 0,
+          "latched": 0,
+          "published": 0
+        }
+      }
+    },
+    {
+      "name": "motion_arm_remains_closed",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "MC_source_remains_RC",
+      "ok": true,
+      "detail": {
+        "source": "rc",
+        "body": 1,
+        "fsm": 4,
+        "received_s": 1792584796.4663925
+      }
+    },
+    {
+      "name": "no_sdk_velocity_messages",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "no_command_publisher_appeared",
+      "ok": true,
+      "detail": null
+    }
+  ],
+  "adapter_exit": 0,
+  "last_status": {
+    "state": "idle",
+    "reason": "driver_not_armed",
+    "latch": "",
+    "live": true,
+    "mc_source": "rc",
+    "trusted": false,
+    "registration": "registered",
+    "registration_error": "",
+    "sdk_service_ready": true,
+    "motion_armed": false,
+    "ready": false,
+    "foreign_publishers": [],
+    "counters": {
+      "saturated": 0,
+      "rejected": 0,
+      "latched": 0,
+      "published": 0
+    }
+  },
+  "error": null,
+  "SDK_velocity_messages": 0,
+  "total_velocity_messages_observed": 316,
+  "mc_states": [
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584790.467267
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584790.5678182
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584790.669285
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584790.7665923
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584790.867139
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584790.9672928
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584791.0657756
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584791.1654148
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584791.2658274
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584791.3662648
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584791.4659047
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584791.56921
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584791.6684678
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584791.765623
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584791.8706758
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584791.9663296
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584792.0655117
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584792.1656976
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584792.2658663
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584792.3682022
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584792.465839
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584792.5657158
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584792.6656225
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584792.7694788
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584792.8655381
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584792.9655585
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584793.0749378
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584793.1658156
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584793.2657657
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584793.3660405
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584793.4668949
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584793.616979
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584793.6696944
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584793.7719476
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584793.8670592
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584793.9694896
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584794.0707252
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584794.1657393
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584794.2767997
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584794.3886213
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584794.471781
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584794.5668247
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584794.6665301
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584794.7660353
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584794.8708148
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584794.9656625
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584795.0657127
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584795.1692402
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584795.2662234
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584795.3658159
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584795.4657133
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584795.5654168
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584795.665784
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584795.7656684
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584795.8655932
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584795.965687
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584796.0662823
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584796.1658962
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584796.2657006
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584796.3655715
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584796.4663925
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584796.9371603
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584796.9396386
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584796.9416184
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584796.9433427
+    },
+    {
+      "source": "rc",
+      "body": 1,
+      "fsm": 4,
+      "received_s": 1792584796.9695048
+    }
+  ],
+  "sdk_endpoint_after_stop": false,
+  "registration_action": "ADD",
+  "priority": 30,
+  "motion_arm_service_called": false,
+  "velocity_publisher_created_by_observer": false
+}

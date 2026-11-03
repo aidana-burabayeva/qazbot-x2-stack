@@ -1,0 +1,114 @@
+--- x2_motion_adapter.py	2026-10-29 19:33:49.802943855 +0800
++++ x2_motion_adapter.py.p23_candidate	2026-10-30 16:49:54.366589186 +0800
+@@ -68,7 +68,10 @@
+     # P20 2026-10-29 closed-loop yaw rate for PURE in-place turns (MC deadband/overspeed, reports p19/p20)
+     yaw_loop: bool = True
+     yaw_lin_eps: float = 0.02          # |vx| below this (and vy=0) counts as pure rotation
+-    yaw_w_min: float = 0.05            # |wz| at or below this is passed through unchanged
++    # P23 2026-10-30: was 0.05. RPP ramps wz at ~1.5 rad/s^2 (0.075 per 20 Hz cycle), so |wz| < 0.15 only occurs for
++    # <= 2 cycles while ramping/reversing; lifting it to u_min (0.6) kicked the robot at full turn speed, possibly
++    # against the current motion (live 1030: target +0.07 meas -0.35 -> u +0.60). Below this: raw pass-through.
++    yaw_w_min: float = 0.15            # |wz| at or below this is passed through unchanged (no u_min lift)
+     yaw_u_min_ccw: float = 0.6         # just above the sustained-turn threshold (calibration 18:40/18:50)
+     yaw_u_min_cw: float = 0.45
+     yaw_u_max: float = 1.0             # MC angular bound
+@@ -77,6 +80,9 @@
+     yaw_settle_s: float = 0.6          # MC dead time from stand ~0.5 s: no integration right after entry
+     yaw_overspeed: float = 1.3         # measured > this * target -> back off twice as fast
+     yaw_meas_max_age_s: float = 0.3    # older yaw-rate measurement -> pass-through
++    # P23: RPP interleaves pure rotation with vx ramps, the trust gate zeroes for 0.6-0.9 s, odom has 0.7 s gaps; the
++    # P20 loop reset on each of these, no pure-rotation run outlived yaw_settle_s and I stayed 0.00 (live 1030).
++    yaw_hold_s: float = 1.0            # keep I across interruptions up to this long when the target sign is unchanged
+ 
+     @property
+     def cmd_timeout_s(self):
+@@ -144,7 +150,9 @@
+ 
+ class YawRateLoop:
+     """Inner loop for pure in-place turns: u = sign(w) * clamp(u_ff(|w|) + I, u_min_dir, u_max), rate-limited.
+-    Integrator: anti-windup (conditional + clamp), frozen during the MC dead time, reset on sign change / exit."""
++    Integrator: anti-windup (conditional + clamp), frozen during the MC dead time. P23: an exit only PAUSES the loop
++    (output handed back, I kept and frozen); I is reset on a target sign change, a pause longer than yaw_hold_s, or
++    reset() (latch). After a stop-type pause the MC dead time applies again (I frozen for yaw_settle_s)."""
+ 
+     def __init__(self, cfg):
+         self.cfg = cfg
+@@ -153,13 +161,27 @@
+     def reset(self):
+         self.sign, self.integ, self.u, self.t_last, self.t_enter = 0, 0.0, None, None, None
+         self.active, self.target, self.meas = False, 0.0, None
++        self.t_pause, self.stopped = None, False
++
++    def pause(self, now, stopped):
++        """Loop not in control this tick. stopped: MC got zero / sub-deadband (dead time on resume)."""
++        if self.sign == 0:
++            return
++        if self.t_pause is None:
++            self.t_pause = now
++        self.stopped = self.stopped or stopped
++        self.active, self.u, self.t_last = False, None, None
+ 
+     def update(self, now, w_cmd, meas):
+         cfg = self.cfg
+         s = 1 if w_cmd > 0 else -1
+-        if s != self.sign:
++        if s != self.sign or (self.t_pause is not None and now - self.t_pause > cfg.yaw_hold_s):
+             self.reset()
+             self.sign, self.t_enter = s, now
++        elif self.t_pause is not None:              # resume within hold, same sign: keep I
++            if self.stopped:
++                self.t_enter = now                  # robot stopped -> MC dead time again, I frozen meanwhile
++            self.t_pause, self.stopped = None, False
+         r = abs(w_cmd)
+         u_min = cfg.yaw_u_min_ccw if s > 0 else cfg.yaw_u_min_cw
+         u_max = max(cfg.yaw_u_max, u_min)
+@@ -225,6 +247,7 @@
+         t1_ok: the trust status reports T1-only (freshness) loss with READY kept (or has not yet classified a new
+         loss): a localization-only fault then PAUSES (zero, IDLE) for up to t1_pause_max_s instead of latching."""
+         cfg, notes = self.cfg, []
++        self._t_step = now
+         was_active = self.state == ACTIVE
+         # 1. a latch persists, but flushes a zero burst once if we were driving
+         if self.state == LATCHED:
+@@ -297,6 +320,7 @@
+         return Decision(ACTIVE, publish=cmdout, reason='driving', notes=notes)
+ 
+     _ever_ours = False
++    _t_step = None
+ 
+     def _fault(self, now, mc, localized, loc_reason='', foreign_pub=''):
+         cfg = self.cfg
+@@ -322,13 +346,17 @@
+         by the closed-loop command. Otherwise pass-through and reset (no lingering integral)."""
+         cfg = self.cfg
+         vx, vy, wz = cmdout
+-        if not (cfg.yaw_loop and abs(vx) < cfg.yaw_lin_eps and vy == 0.0 and abs(wz) > cfg.yaw_w_min):
++        if not cfg.yaw_loop:
+             self.yaw.reset()
+             return cmdout
++        if not (abs(vx) < cfg.yaw_lin_eps and vy == 0.0 and abs(wz) > cfg.yaw_w_min):
++            # P23: pause, not reset. Robot still turning under a vx ramp -> no new dead time on resume.
++            self.yaw.pause(now, stopped=abs(wz) <= cfg.yaw_w_min)
++            return cmdout
+         if yaw_rate is None or not math.isfinite(yaw_rate):
+             self.counters['yaw_meas_stale'] += 1
+             notes.append('yaw_meas_stale')
+-            self.yaw.reset()
++            self.yaw.pause(now, stopped=True)
+             return cmdout
+         u = min(max(self.yaw.update(now, wz, yaw_rate), mc.ang[0]), mc.ang[1])
+         self.counters['yaw_loop'] += 1
+@@ -337,7 +365,12 @@
+ 
+     def _drain(self, d):
+         """Attach one zero message while a burst is pending (live: MC topic; dry run: ~/dry_run_cmd)."""
+-        self.yaw.reset()                 # every non-driving tick ends the loop: zero in -> zero out, no integral kept
++        # every non-driving tick hands the output back: zero in -> zero out. P23: I is kept (frozen) for yaw_hold_s
++        # across short stops (trust-gate pauses, command gaps); a latch clears it.
++        if self.state == LATCHED or self._t_step is None:
++            self.yaw.reset()
++        else:
++            self.yaw.pause(self._t_step, stopped=True)
+         if self.burst_left > 0:
+             self.burst_left -= 1
+             d.publish = (0.0, 0.0, 0.0)

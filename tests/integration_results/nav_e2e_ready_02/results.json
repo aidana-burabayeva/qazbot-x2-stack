@@ -1,0 +1,3393 @@
+{
+  "checks": [
+    {
+      "name": "adapter_dry_run_mode",
+      "ok": true,
+      "detail": {
+        "state": "idle",
+        "reason": "driver_not_armed",
+        "latch": "",
+        "live": false,
+        "mode": "dry_run",
+        "dry_run": true,
+        "mc_source": "sdk_qazbot_nav2",
+        "trusted": false,
+        "registration": "dry_run",
+        "registration_error": "",
+        "sdk_service_ready": false,
+        "motion_armed": false,
+        "ready": false,
+        "foreign_publishers": [],
+        "counters": {
+          "saturated": 0,
+          "rejected": 0,
+          "latched": 0,
+          "published": 0
+        }
+      }
+    },
+    {
+      "name": "no_MC_velocity_publisher",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "no_registration_client",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no_owner_lock_in_dry_run",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "trust_sees_served_map_identical",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "trust_map_is_nav2_v2",
+      "ok": true,
+      "detail": "545630c14f0e37cf2385af8780a09ad7a3fddf7765460c1624e645c42aee2e33"
+    },
+    {
+      "name": "ambiguity_budget_default_conservative",
+      "ok": true,
+      "detail": {
+        "degenerate_budget_m": 0.0,
+        "frozen_window_s": 1.0
+      }
+    },
+    {
+      "name": "trust_baseline_start",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "trust_baseline_finish",
+      "ok": true,
+      "detail": "baseline median 0.998 from 25 samples (min 0.998)"
+    },
+    {
+      "name": "trust_anchor_confirmed",
+      "ok": true,
+      "detail": "anchor (x, y, yaw) = (-1.275, -4.825, 0.000)"
+    },
+    {
+      "name": "real_trust_node_trusted",
+      "ok": true,
+      "detail": {
+        "frozen_msg_motion_m": 0.0,
+        "sigma_xy": 0.1,
+        "sigma_yaw": 0.06324555320336758,
+        "cloud_std": 0.06716781592408054,
+        "second_mode_weight": 0.0,
+        "scan_score": 0.9976922619337985,
+        "scan_floor": 0.7981538095470389,
+        "jump_xy": 0.0,
+        "jump_yaw": 0.0,
+        "anchor_err_xy": 0.0,
+        "anchor_err_yaw": 0.0,
+        "anchor_limit_xy": 0.15,
+        "path_since_anchor": 0.0
+      }
+    },
+    {
+      "name": "coordinator_accepts_dry_run_driver",
+      "ok": true,
+      "detail": {
+        "busy": false,
+        "latched": false,
+        "gate": false,
+        "fault": "",
+        "source_zero": true,
+        "trusted": true,
+        "driver_ready": true,
+        "driver_mode": "dry_run",
+        "ready": true,
+        "child_uuid": null
+      }
+    },
+    {
+      "name": "expected_smac_overlay_loaded",
+      "ok": true,
+      "detail": [
+        "/home/agi/control_backend/candidates/nav2_smac_bounds/install/nav2_smac_planner/lib/libnav2_smac_planner_2d.so"
+      ]
+    },
+    {
+      "name": "straight_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "straight_succeeded",
+      "ok": true,
+      "detail": 4
+    },
+    {
+      "name": "straight_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.082,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.015,
+          "value": [
+            0.09,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 0.009119380312949205,
+        "pose_drift": 0.0021453264608928824,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "straight_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          0.15999739908136476,
+          -4.825,
+          0.0
+        ],
+        "xy_error": 0.06500260091863524,
+        "yaw_error": 0.0,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "straight_limits",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "straight_adapter_idle_after",
+      "ok": true,
+      "detail": {
+        "state": "idle",
+        "reason": "no_command",
+        "latch": "",
+        "live": false,
+        "mode": "dry_run",
+        "dry_run": true,
+        "mc_source": "sdk_qazbot_nav2",
+        "trusted": true,
+        "registration": "dry_run",
+        "registration_error": "",
+        "sdk_service_ready": false,
+        "motion_armed": true,
+        "ready": true,
+        "foreign_publishers": [],
+        "counters": {
+          "saturated": 0,
+          "rejected": 0,
+          "latched": 0,
+          "published": 317
+        }
+      }
+    },
+    {
+      "name": "rotate_in_place_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "rotate_in_place_succeeded",
+      "ok": true,
+      "detail": 4
+    },
+    {
+      "name": "rotate_in_place_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.097,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": 0.002,
+          "value": [
+            0.0,
+            0.0,
+            0.5
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 48,
+        "model_max_speed": 0.008895632237493878,
+        "pose_drift": 0.0,
+        "yaw_drift": 0.0020820802372754077,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "rotate_in_place_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -1.275,
+          -4.825,
+          1.633595843181958
+        ],
+        "xy_error": 0.0,
+        "yaw_error": 0.06279951638706138,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "rotate_in_place_limits",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "already_there_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "already_there_succeeded",
+      "ok": true,
+      "detail": 4
+    },
+    {
+      "name": "already_there_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": null,
+        "last_nonzero_cmd": null,
+        "nonzero_after_terminal": [],
+        "window_samples": 51,
+        "model_max_speed": 0.0,
+        "pose_drift": 0.0,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "already_there_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -1.275,
+          -4.825,
+          0.0
+        ],
+        "xy_error": 0.0,
+        "yaw_error": 0.0,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "already_there_no_motion",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "repeat_first_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "repeat_while_active_rejected",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "repeat_first_succeeded",
+      "ok": true,
+      "detail": 4
+    },
+    {
+      "name": "repeat_first_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.089,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.009,
+          "value": [
+            0.12,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 49,
+        "model_max_speed": 0.00874454124258403,
+        "pose_drift": 0.0020553574628018323,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "repeat_first_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -0.43305093463838823,
+          -4.825,
+          0.0
+        ],
+        "xy_error": 0.05805093463838823,
+        "yaw_error": 0.0,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "repeat_again_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "repeat_again_succeeded",
+      "ok": true,
+      "detail": 4
+    },
+    {
+      "name": "repeat_again_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": null,
+        "last_nonzero_cmd": null,
+        "nonzero_after_terminal": [],
+        "window_samples": 51,
+        "model_max_speed": 4.5505541858977716e-12,
+        "pose_drift": 1.0715317522169698e-12,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "repeat_again_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -0.4330093450088735,
+          -4.825,
+          0.0
+        ],
+        "xy_error": 0.0580093450088735,
+        "yaw_error": 0.0,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "repeat_again_no_motion",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "cancel_goal_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "cancel_terminal",
+      "ok": true,
+      "detail": 5
+    },
+    {
+      "name": "cancel_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.072,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.022,
+          "value": [
+            0.25999999999999995,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 0.009023622865625304,
+        "pose_drift": 0.00211936033592508,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "cancel_adapter_not_latched",
+      "ok": true,
+      "detail": {
+        "state": "idle",
+        "reason": "no_command",
+        "latch": "",
+        "live": false,
+        "mode": "dry_run",
+        "dry_run": true,
+        "mc_source": "sdk_qazbot_nav2",
+        "trusted": true,
+        "registration": "dry_run",
+        "registration_error": "",
+        "sdk_service_ready": false,
+        "motion_armed": true,
+        "ready": true,
+        "foreign_publishers": [],
+        "counters": {
+          "saturated": 0,
+          "rejected": 0,
+          "latched": 0,
+          "published": 807
+        }
+      }
+    },
+    {
+      "name": "resume_after_cancel",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "obstacle_goal_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "obstacle_goal_not_succeeded",
+      "ok": true,
+      "detail": {
+        "status": 6,
+        "fault": ""
+      }
+    },
+    {
+      "name": "obstacle_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.095,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.015,
+          "value": [
+            0.15000000000000002,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 0.00901619170266322,
+        "pose_drift": 0.002119882878873547,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "obstacle_safe_termination_adapter_idle",
+      "ok": true,
+      "detail": {
+        "a": "idle",
+        "fault": ""
+      }
+    },
+    {
+      "name": "obstacle_body_clearance",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -0.7082606628708451,
+          -4.825,
+          0.0
+        ],
+        "clearance": 0.7332606628708451
+      }
+    },
+    {
+      "name": "unreachable_accepted_for_evaluation",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "unreachable_aborted",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "unreachable_no_motion",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "left_accepted_for_planning",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "left_fails_without_crash",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "left_no_motion",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "right_accepted_for_planning",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "right_fails_without_crash",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "right_no_motion",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "bottom_accepted_for_planning",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "bottom_fails_without_crash",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "bottom_no_motion",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "top_accepted_for_planning",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "top_fails_without_crash",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "top_no_motion",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "occupied_accepted_for_planning",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "occupied_fails_without_crash",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "occupied_no_motion",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "rviz_goal_pose_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": -0.045,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.118,
+          "value": [
+            0.09,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 51,
+        "model_max_speed": 0.009181165515125154,
+        "pose_drift": 0.0021632805610924954,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "rviz_goal_pose_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -0.8330927202811901,
+          -4.825,
+          0.0
+        ],
+        "xy_error": 0.05809272028119006,
+        "yaw_error": 0.0,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "takeover_goal_A_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "takeover_goal_A_terminal",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "takeover_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": -0.247,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": -0.334,
+          "value": [
+            0.3,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 0.008836869874973426,
+        "pose_drift": 0.0020770670241612166,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "takeover_adapter_latched",
+      "ok": true,
+      "detail": {
+        "state": "latched",
+        "reason": "operator_takeover",
+        "latch": "operator_takeover",
+        "live": false,
+        "mode": "dry_run",
+        "dry_run": true,
+        "mc_source": "rc",
+        "trusted": true,
+        "registration": "dry_run",
+        "registration_error": "",
+        "sdk_service_ready": false,
+        "motion_armed": false,
+        "ready": false,
+        "foreign_publishers": [],
+        "counters": {
+          "saturated": 0,
+          "rejected": 0,
+          "latched": 1,
+          "published": 1110
+        }
+      }
+    },
+    {
+      "name": "takeover_internal_nav2_goal_terminal",
+      "ok": true,
+      "detail": 5
+    },
+    {
+      "name": "takeover_release_stays_latched",
+      "ok": true,
+      "detail": [
+        {
+          "state": "latched",
+          "reason": "operator_takeover",
+          "latch": "operator_takeover",
+          "live": false,
+          "mode": "dry_run",
+          "dry_run": true,
+          "mc_source": "sdk_qazbot_nav2",
+          "trusted": true,
+          "registration": "dry_run",
+          "registration_error": "",
+          "sdk_service_ready": false,
+          "motion_armed": false,
+          "ready": false,
+          "foreign_publishers": [],
+          "counters": {
+            "saturated": 0,
+            "rejected": 0,
+            "latched": 1,
+            "published": 1110
+          }
+        },
+        {
+          "busy": false,
+          "latched": true,
+          "gate": false,
+          "fault": "operator_takeover",
+          "source_zero": true,
+          "trusted": true,
+          "driver_ready": false,
+          "driver_mode": "dry_run",
+          "ready": false,
+          "child_uuid": null
+        }
+      ]
+    },
+    {
+      "name": "takeover_release_no_remotion",
+      "ok": true,
+      "detail": {
+        "late": [],
+        "p0": [
+          -1.1698200439965452,
+          -4.825,
+          0.0
+        ],
+        "p1": [
+          -1.16981927666431,
+          -4.825,
+          0.0
+        ]
+      }
+    },
+    {
+      "name": "takeover_new_goal_refused_while_latched",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "takeover_explicit_resume",
+      "ok": true,
+      "detail": [
+        "resumed",
+        "ready for a NEW goal; no cached command/goal replay"
+      ]
+    },
+    {
+      "name": "takeover_resume_alone_no_remotion",
+      "ok": true,
+      "detail": {
+        "late": [],
+        "p0": [
+          -1.169819274943942,
+          -4.825,
+          0.0
+        ],
+        "p1": [
+          -1.169819274756544,
+          -4.825,
+          0.0
+        ]
+      }
+    },
+    {
+      "name": "takeover_goal_A_not_revived",
+      "ok": true,
+      "detail": {
+        "public": 6,
+        "internal": 5
+      }
+    },
+    {
+      "name": "takeover_goal_B_accepted",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "takeover_goal_B_succeeded",
+      "ok": true,
+      "detail": 4
+    },
+    {
+      "name": "takeover_goal_B_stop_criterion",
+      "ok": true,
+      "detail": {
+        "terminal_observed": true,
+        "last_cmd": {
+          "t_rel": 0.087,
+          "value": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "last_nonzero_cmd": {
+          "t_rel": 0.0,
+          "value": [
+            0.09,
+            0.0,
+            0.0
+          ]
+        },
+        "nonzero_after_terminal": [],
+        "window_samples": 50,
+        "model_max_speed": 0.009086237933473207,
+        "pose_drift": 0.002136699836678413,
+        "yaw_drift": 0.0,
+        "nonzero_in_window": 0
+      }
+    },
+    {
+      "name": "takeover_goal_B_model_pose",
+      "ok": true,
+      "detail": {
+        "pose": [
+          -0.8355679271696314,
+          -4.825,
+          0.0
+        ],
+        "xy_error": 0.06056792716963133,
+        "yaw_error": 0.0,
+        "tol": [
+          0.1,
+          0.1
+        ]
+      }
+    },
+    {
+      "name": "scan_loss_goal_accepted",
+      "ok": false,
+      "detail": {
+        "trust": [
+          "settling"
+        ],
+        "adapter": "no_command",
+        "coord": {
+          "busy": false,
+          "latched": false,
+          "gate": false,
+          "fault": "",
+          "source_zero": true,
+          "trusted": false,
+          "driver_ready": false,
+          "driver_mode": "dry_run",
+          "ready": false,
+          "child_uuid": null
+        }
+      }
+    }
+  ],
+  "failed": [
+    "scan_loss_goal_accepted"
+  ],
+  "shutdown": {
+    "nav2": 0,
+    "adapter": 0,
+    "trust": 0,
+    "model": 0,
+    "abnormal_children": 0
+  },
+  "known_defects": {},
+  "smac_libraries": [
+    "/home/agi/control_backend/candidates/nav2_smac_bounds/install/nav2_smac_planner/lib/libnav2_smac_planner_2d.so"
+  ],
+  "trust_log": [
+    [
+      2589.311,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2589.515,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2589.71,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2589.911,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2590.123,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2590.335,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2590.514,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2590.716,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2590.908,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2591.119,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2591.321,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2591.512,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2591.708,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2591.909,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2592.105,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2592.321,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2592.511,
+      true,
+      [],
+      0.9977190183171747
+    ],
+    [
+      2592.71,
+      true,
+      [],
+      0.9965585771986527
+    ],
+    [
+      2592.911,
+      true,
+      [],
+      0.9965585771986527
+    ],
+    [
+      2593.119,
+      true,
+      [],
+      0.9976990097059218
+    ],
+    [
+      2593.31,
+      true,
+      [],
+      0.9977057181324351
+    ],
+    [
+      2593.51,
+      true,
+      [],
+      0.9988561937782344
+    ],
+    [
+      2593.714,
+      true,
+      [],
+      0.9988561937782344
+    ],
+    [
+      2593.911,
+      true,
+      [],
+      0.9988561937782344
+    ],
+    [
+      2594.112,
+      true,
+      [],
+      0.9988561937782344
+    ],
+    [
+      2594.306,
+      true,
+      [],
+      0.9988561937782344
+    ],
+    [
+      2594.516,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2594.709,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2594.922,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2595.108,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2595.311,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2595.507,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2595.713,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2595.913,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2596.108,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2596.314,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2596.511,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2596.713,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2596.909,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2597.117,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2597.313,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2597.509,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2597.724,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2597.941,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2598.132,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2598.329,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2598.507,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2598.709,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2598.912,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2599.105,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2599.312,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2599.514,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2599.725,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2599.937,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2600.105,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2600.312,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2600.52,
+      true,
+      [],
+      0.9243784789425961
+    ],
+    [
+      2600.733,
+      true,
+      [],
+      0.9266862170087976
+    ],
+    [
+      2600.918,
+      true,
+      [],
+      0.9114747128620687
+    ],
+    [
+      2601.116,
+      true,
+      [],
+      0.9143999532311248
+    ],
+    [
+      2601.308,
+      true,
+      [],
+      0.9169364030199143
+    ],
+    [
+      2601.518,
+      true,
+      [],
+      0.9120104722423845
+    ],
+    [
+      2601.714,
+      true,
+      [],
+      0.9053517411151114
+    ],
+    [
+      2601.911,
+      true,
+      [],
+      0.9033215639254052
+    ],
+    [
+      2602.112,
+      true,
+      [],
+      0.9026429465297744
+    ],
+    [
+      2602.329,
+      true,
+      [],
+      0.8917077795892052
+    ],
+    [
+      2602.52,
+      true,
+      [],
+      0.8810037982474602
+    ],
+    [
+      2602.704,
+      true,
+      [],
+      0.8769541116729784
+    ],
+    [
+      2602.922,
+      true,
+      [],
+      0.8733696665876436
+    ],
+    [
+      2603.109,
+      true,
+      [],
+      0.8741754635615668
+    ],
+    [
+      2603.308,
+      true,
+      [],
+      0.869942196531792
+    ],
+    [
+      2603.508,
+      true,
+      [],
+      0.8684247265498917
+    ],
+    [
+      2603.708,
+      true,
+      [],
+      0.8703170028818443
+    ],
+    [
+      2603.911,
+      true,
+      [],
+      0.8703170028818443
+    ],
+    [
+      2604.107,
+      true,
+      [],
+      0.8703170028818443
+    ],
+    [
+      2604.312,
+      true,
+      [],
+      0.8703170028818443
+    ],
+    [
+      2604.507,
+      true,
+      [],
+      0.8703170028818443
+    ],
+    [
+      2604.705,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2604.903,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2605.129,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2605.316,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2605.509,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2605.713,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2605.916,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2606.115,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2606.318,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2606.51,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2606.706,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2606.917,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2607.128,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2607.312,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2607.528,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2607.711,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2607.916,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2608.11,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2608.32,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2608.512,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2608.736,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2608.945,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2609.132,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2609.314,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2609.514,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2609.721,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2609.91,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2610.109,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2610.327,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2610.511,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2610.719,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2610.915,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2611.115,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2611.323,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2611.507,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2611.707,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2611.906,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2612.114,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2612.307,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2612.508,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2612.718,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2612.911,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2613.112,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2613.306,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2613.512,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2613.71,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2613.915,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2614.113,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2614.312,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2614.512,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2614.709,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2614.909,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2615.113,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2615.309,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2615.513,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2615.716,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2615.929,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2616.105,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2616.313,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2616.515,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2616.709,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2616.91,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2617.112,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2617.334,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2617.514,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2617.718,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2617.919,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2618.129,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2618.312,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2618.51,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2618.709,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2618.917,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2619.113,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2619.309,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2619.51,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2619.713,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2619.909,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2620.107,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2620.308,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2620.506,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2620.721,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2620.921,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2621.115,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2621.308,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2621.511,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2621.708,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2621.915,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2622.108,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2622.311,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2622.521,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2622.71,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2622.914,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2623.117,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2623.312,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2623.509,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2623.707,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2623.912,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2624.112,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2624.31,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2624.508,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2624.709,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2624.914,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2625.11,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2625.316,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2625.508,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2625.721,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2625.91,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2626.116,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2626.306,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2626.513,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2626.712,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2626.913,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2627.121,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2627.308,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2627.512,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2627.715,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2627.91,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2628.115,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2628.313,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2628.51,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2628.706,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2628.914,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2629.11,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2629.31,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2629.509,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2629.717,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2629.91,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2630.107,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2630.308,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2630.521,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2630.715,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2630.907,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2631.108,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2631.323,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2631.512,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2631.707,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2631.908,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2632.109,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2632.319,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2632.511,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2632.72,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2632.905,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2633.13,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2633.315,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2633.507,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2633.712,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2633.914,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2634.108,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2634.308,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2634.505,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2634.713,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2634.909,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2635.106,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2635.311,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2635.506,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2635.712,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2635.919,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2636.113,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2636.31,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2636.508,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2636.743,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2636.915,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2637.117,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2637.32,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2637.519,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2637.711,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2637.912,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2638.113,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2638.316,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2638.508,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2638.712,
+      true,
+      [],
+      0.9840331282202227
+    ],
+    [
+      2638.928,
+      true,
+      [],
+      0.9977123875564687
+    ],
+    [
+      2639.113,
+      true,
+      [],
+      0.9908495502258752
+    ],
+    [
+      2639.316,
+      true,
+      [],
+      0.9977057181324351
+    ],
+    [
+      2639.534,
+      true,
+      [],
+      0.9884613096689921
+    ],
+    [
+      2639.723,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2639.911,
+      true,
+      [],
+      0.9988427372344489
+    ],
+    [
+      2640.115,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2640.324,
+      true,
+      [],
+      0.9977057181324351
+    ],
+    [
+      2640.507,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2640.707,
+      true,
+      [],
+      0.9988528590662176
+    ],
+    [
+      2640.915,
+      true,
+      [],
+      0.996578527475762
+    ],
+    [
+      2641.129,
+      true,
+      [],
+      0.995451221499568
+    ],
+    [
+      2641.318,
+      true,
+      [],
+      0.9988561937782344
+    ],
+    [
+      2641.51,
+      true,
+      [],
+      0.996578527475762
+    ],
+    [
+      2641.707,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2641.907,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2642.114,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2642.306,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2642.504,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2642.705,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2642.908,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2643.107,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2643.308,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2643.522,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2643.712,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2643.931,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2644.109,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2644.33,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2644.508,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2644.707,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2644.905,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2645.115,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2645.313,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2645.511,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2645.708,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2645.914,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2646.111,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2646.311,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2646.508,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2646.716,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2646.909,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2647.125,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2647.328,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2647.522,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2647.708,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2647.911,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2648.117,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2648.31,
+      true,
+      [],
+      0.998862805374892
+    ],
+    [
+      2648.519,
+      true,
+      [],
+      0.9827928859932638
+    ],
+    [
+      2648.711,
+      true,
+      [],
+      0.9977057181324351
+    ],
+    [
+      2648.913,
+      true,
+      [],
+      0.9976990097059218
+    ],
+    [
+      2649.106,
+      true,
+      [],
+      0.9988495048529609
+    ],
+    [
+      2649.306,
+      true,
+      [],
+      0.9976990097059218
+    ],
+    [
+      2649.511,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2649.708,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2649.907,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2650.112,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2650.308,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2650.506,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2650.711,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2650.905,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2651.114,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2651.311,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2651.512,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2651.711,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2651.909,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2652.115,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2652.306,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2652.506,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2652.709,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2652.914,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2653.106,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2653.309,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2653.507,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2653.709,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2653.909,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2654.107,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2654.307,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2654.506,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2654.709,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2654.912,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2655.11,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2655.309,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2655.547,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2655.71,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2655.904,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2656.117,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2656.311,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2656.509,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2656.709,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2656.908,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2657.12,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2657.305,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2657.507,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2657.707,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2657.924,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2658.109,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2658.317,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2658.515,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2658.716,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2658.916,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2659.126,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2659.306,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2659.524,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2659.721,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2659.909,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2660.111,
+      true,
+      [],
+      0.9977190183171747
+    ],
+    [
+      2660.318,
+      true,
+      [],
+      0.9977057181324351
+    ],
+    [
+      2660.54,
+      true,
+      [],
+      0.9954114362648704
+    ],
+    [
+      2660.708,
+      true,
+      [],
+      0.9965585771986527
+    ],
+    [
+      2660.906,
+      true,
+      [],
+      0.9965383929006977
+    ],
+    [
+      2661.117,
+      true,
+      [],
+      0.9919465339707264
+    ],
+    [
+      2661.31,
+      true,
+      [],
+      0.9907418978755913
+    ],
+    [
+      2661.507,
+      true,
+      [],
+      0.9931171543973055
+    ],
+    [
+      2661.708,
+      true,
+      [],
+      0.9919933564476408
+    ],
+    [
+      2661.907,
+      true,
+      [],
+      0.994280968891172
+    ],
+    [
+      2662.107,
+      true,
+      [],
+      0.9919700134635231
+    ],
+    [
+      2662.325,
+      true,
+      [],
+      0.996578527475762
+    ],
+    [
+      2662.518,
+      true,
+      [],
+      0.9852590737068133
+    ],
+    [
+      2662.713,
+      true,
+      [],
+      0.9965685813347032
+    ],
+    [
+      2662.906,
+      true,
+      [],
+      0.997725610749784
+    ],
+    [
+      2663.105,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2663.313,
+      true,
+      [],
+      0.9988561937782344
+    ],
+    [
+      2663.505,
+      true,
+      [],
+      0.9988561937782344
+    ],
+    [
+      2663.706,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2663.908,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2664.103,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2664.312,
+      true,
+      [],
+      1.0
+    ],
+    [
+      2664.508,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2664.709,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2664.911,
+      true,
+      [],
+      0.9976922619337985
+    ],
+    [
+      2665.112,
+      false,
+      [
+        "T1_tf_frozen"
+      ],
+      0.9976922619337985
+    ],
+    [
+      2665.308,
+      false,
+      [
+        "T1_tf_frozen"
+      ],
+      0.9976922619337985
+    ],
+    [
+      2665.508,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      2665.708,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      2665.913,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      2666.114,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      2666.312,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      2666.516,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      2666.714,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      2666.915,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      2667.118,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      2667.309,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      2667.509,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      2667.706,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      2667.906,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      2668.108,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      2668.31,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      2668.508,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      2668.71,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      2668.913,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ],
+    [
+      2669.115,
+      false,
+      [
+        "settling"
+      ],
+      0.9976922619337985
+    ]
+  ],
+  "scope": "D1 grid + real Nav2 + REAL x2_motion_adapter (dry run shadow) + REAL localization_trust (emulated AMCL outputs, D1 ray-cast scan) + kinematic model on adapter dry_run_cmd; domain 87"
+}

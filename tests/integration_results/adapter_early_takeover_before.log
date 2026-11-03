@@ -1,0 +1,17 @@
+test_observed_takeover_during_acquisition_window_latches_immediately (test_early_takeover.EarlyTakeover) ... FAIL
+
+======================================================================
+FAIL: test_observed_takeover_during_acquisition_window_latches_immediately (test_early_takeover.EarlyTakeover)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/agi/control_backend/tests/motion_adapter/test_early_takeover.py", line 11, in test_observed_takeover_during_acquisition_window_latches_immediately
+    self.assertEqual(decision.state,LATCHED)
+AssertionError: 'active' != 'latched'
+- active
++ latched
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.002s
+
+FAILED (failures=1)

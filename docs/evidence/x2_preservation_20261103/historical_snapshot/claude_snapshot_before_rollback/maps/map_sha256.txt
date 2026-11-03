@@ -1,0 +1,15 @@
+3a8e9fd9384422d91820b949ff9742f33ac17a5eda1756f06b19cb214741ea29  /home/agi/control_backend/ws/src/maps/first_map/meta.yaml
+545630c14f0e37cf2385af8780a09ad7a3fddf7765460c1624e645c42aee2e33  /home/agi/control_backend/ws/src/maps/first_map/map.pgm
+545630c14f0e37cf2385af8780a09ad7a3fddf7765460c1624e645c42aee2e33  /home/agi/control_backend/ws/src/maps/first_map_nav2_v2/map.pgm
+614ffdf85ee11d5a7d29c0a3580928c9ba0907413f6bcb2f81f9cec2ae22da1a  /home/agi/control_backend/ws/src/maps/d1_qazbot_20261029/meta.yaml
+6fc67526d5314447d3ffa25d4144310d78b5202a649e87d852735b87c9f320e5  /home/agi/control_backend/ws/src/maps/first_map_nav2_v3_despeckled/map.pgm
+72ee4094b394241e7b2761878774efbdd99e93731d7cb52709b2231c3975b354  /home/agi/control_backend/ws/src/maps/d1_qazbot_20261029/map.pgm
+a5938d701b8a0dcc41a280277bcc6ce3edd444d030237f042feeb078e9c9de54  /home/agi/control_backend/ws/src/maps/first_map/map.yaml
+c86aa2aaefbefcaa2ddee994572cf6d13dd777b37b8e070de947f7685be43c1b  /home/agi/control_backend/ws/src/maps/d1_qazbot_20261029/map.yaml
+c8dc416982de40c122bff85e6ea833517c871a082e2736c8a245741e4395b2e9  /home/agi/control_backend/ws/src/maps/d1_qazbot_20261029/map.yaml.orig_from_d1
+ecd2dbbdac398c3f8af4d2fc0fb166a0dfb5e1678c56b660bc718476d6a2d504  /home/agi/control_backend/ws/src/maps/d1_qazbot_20261029/tags.yaml
+f49dd066e7ed40699fb26558745d743383b49b16043b1d079af645d17d821e6d  /home/agi/control_backend/ws/src/maps/first_map_nav2_v2/map.yaml
+f49dd066e7ed40699fb26558745d743383b49b16043b1d079af645d17d821e6d  /home/agi/control_backend/ws/src/maps/first_map_nav2_v3_despeckled/map.yaml
+f49dd066e7ed40699fb26558745d743383b49b16043b1d079af645d17d821e6d  /home/agi/control_backend/ws/src/maps/first_map_nav2_v3/map.yaml
+f6032f75ffd386361993a4b4864cf0816713fc27f6d037c88d929ae5d48562fb  /home/agi/control_backend/ws/src/maps/first_map_nav2_v3/map.pgm
+# live map used by AMCL/Nav2 (map_server yaml_filename): /home/agi/control_backend/ws/src/maps/d1_qazbot_20261029/map.yaml

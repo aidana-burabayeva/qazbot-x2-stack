@@ -1,0 +1,8 @@
+{
+  "checks": [],
+  "shutdown": {
+    "nav2": -2,
+    "model": 0
+  },
+  "scope": "D1 grid + real Nav2 + ideal localization fixture + existing MC model; no AMCL/SDK qualification"
+}

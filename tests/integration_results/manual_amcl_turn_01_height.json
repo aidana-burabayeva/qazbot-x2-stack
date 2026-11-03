@@ -1,0 +1,100 @@
+{
+  "scope": "Offline stationary raw cloud, approximate scan-end association; not a deployed scan or proved localization.",
+  "raw_clouds": 50,
+  "source_odom_xy_span_m": 0.01238844502471579,
+  "height_peaks": [
+    {
+      "z_relative_imu": -0.9699999999999991,
+      "points": 187991
+    },
+    {
+      "z_relative_imu": -0.9899999999999991,
+      "points": 48200
+    },
+    {
+      "z_relative_imu": -0.9499999999999991,
+      "points": 33617
+    },
+    {
+      "z_relative_imu": -1.0099999999999991,
+      "points": 3068
+    },
+    {
+      "z_relative_imu": -0.929999999999999,
+      "points": 2438
+    },
+    {
+      "z_relative_imu": -0.5299999999999987,
+      "points": 778
+    },
+    {
+      "z_relative_imu": -0.5099999999999987,
+      "points": 727
+    },
+    {
+      "z_relative_imu": -0.909999999999999,
+      "points": 524
+    }
+  ],
+  "floor_fit": {
+    "z_relative_imu": -0.970000248218899,
+    "tilt_deg": 0.19359348177514565,
+    "points": 275890,
+    "p95_residual_m": 0.02278442198363338
+  },
+  "amcl_pose": [
+    1.3589499090337855,
+    -6.540323185207255,
+    1.8297284016513737
+  ],
+  "slices": [
+    {
+      "name": "current",
+      "rays": 241,
+      "height_relative_imu": [
+        -0.65,
+        0.8
+      ],
+      "score_10cm": 0.4898547662378593,
+      "median_distance_m": 0.1118033988749895,
+      "within_10cm": 0.4605809128630705,
+      "within_25cm": 0.7551867219917012
+    },
+    {
+      "name": "D1_halfband_5cm",
+      "rays": 112,
+      "height_relative_imu": [
+        -0.8050002482188989,
+        -0.705000248218899
+      ],
+      "score_10cm": 0.4409928351025821,
+      "median_distance_m": 0.14142135623730953,
+      "within_10cm": 0.36607142857142855,
+      "within_25cm": 0.7321428571428571
+    },
+    {
+      "name": "D1_halfband_10cm",
+      "rays": 151,
+      "height_relative_imu": [
+        -0.855000248218899,
+        -0.655000248218899
+      ],
+      "score_10cm": 0.4308493027065195,
+      "median_distance_m": 0.14142135623730953,
+      "within_10cm": 0.33774834437086093,
+      "within_25cm": 0.7218543046357616
+    },
+    {
+      "name": "D1_halfband_15cm",
+      "rays": 204,
+      "height_relative_imu": [
+        -0.905000248218899,
+        -0.605000248218899
+      ],
+      "score_10cm": 0.39287990862187394,
+      "median_distance_m": 0.158113883008419,
+      "within_10cm": 0.3382352941176471,
+      "within_25cm": 0.7058823529411765
+    }
+  ]
+}

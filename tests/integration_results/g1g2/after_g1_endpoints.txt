@@ -1,0 +1,8 @@
+PUBLISHER aimrt_planning_planning_node4590
+PUBLISHER app_proxy
+PUBLISHER soc0_rc3123
+PUBLISHER soc2_interaction_slave1592
+SUBSCRIPTION mc_ros2_node3117
+SUBSCRIPTION soc0_drp_ros2_node2089
+SUBSCRIPTION soc1_drp_ros2_node2866
+SUBSCRIPTION soc2_drp_ros2_node2831

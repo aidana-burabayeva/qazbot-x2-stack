@@ -1,0 +1,16 @@
+{"name": "adapter_dry_run_mode", "ok": true, "detail": {"state": "idle", "reason": "driver_not_armed", "latch": "", "live": false, "mode": "dry_run", "dry_run": true, "mc_source": "sdk_qazbot_nav2", "trusted": false, "registration": "dry_run", "registration_error": "", "sdk_service_ready": false, "motion_armed": false, "ready": false, "foreign_publishers": [], "counters": {"saturated": 0, "rejected": 0, "latched": 0, "published": 0}}}
+{"name": "no_MC_velocity_publisher", "ok": true, "detail": null}
+{"name": "no_registration_client", "ok": true, "detail": []}
+{"name": "no_owner_lock_in_dry_run", "ok": true, "detail": null}
+{"name": "trust_sees_served_map_identical", "ok": true, "detail": ""}
+{"name": "ambiguity_budget_default_conservative", "ok": true, "detail": {"degenerate_budget_m": 0.0, "frozen_window_s": 1.0}}
+{"name": "trust_baseline_start", "ok": true, "detail": null}
+{"name": "trust_baseline_finish", "ok": true, "detail": "baseline median 0.999 from 25 samples (min 0.999)"}
+{"name": "trust_anchor_confirmed", "ok": true, "detail": "anchor (x, y, yaw) = (-1.275, -6.375, 0.000)"}
+{"name": "real_trust_node_trusted", "ok": true, "detail": {"sigma_xy": 0.1, "sigma_yaw": 0.06324555320336758, "cloud_std": 0.06716781592408054, "second_mode_weight": 0.0, "scan_score": 0.9988040445583971, "scan_floor": 0.7990432356467178, "jump_xy": 0.0, "jump_yaw": 0.0, "anchor_err_xy": 0.0, "anchor_err_yaw": 0.0, "anchor_limit_xy": 0.15, "path_since_anchor": 0.0}}
+Traceback (most recent call last):
+  File "/home/agi/control_backend/tests/nav_e2e/run_suite_real.py", line 200, in <module>
+    wait(lambda: client.server_is_ready() and S['coord'].get('ready', False), 60)
+  File "/home/agi/control_backend/tests/nav_e2e/run_suite_real.py", line 82, in wait
+    if time.monotonic() > end: raise RuntimeError('observation deadline: ' + json.dumps(dict(c=S['coord'], a=S['adapter'], t=S['trust'].get('reasons'))))
+RuntimeError: observation deadline: {"c": {"busy": false, "latched": false, "gate": false, "fault": "", "source_zero": true, "trusted": true, "driver_ready": true, "driver_mode": "dry_run", "ready": false, "child_uuid": null}, "a": {"state": "idle", "reason": "driver_not_armed", "latch": "", "live": false, "mode": "dry_run", "dry_run": true, "mc_source": "sdk_qazbot_nav2", "trusted": true, "registration": "dry_run", "registration_error": "", "sdk_service_ready": false, "motion_armed": false, "ready": true, "foreign_publishers": [], "counters": {"saturated": 0, "rejected": 0, "latched": 0, "published": 0}}, "t": []}

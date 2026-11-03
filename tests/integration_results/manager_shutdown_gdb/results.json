@@ -1,0 +1,16 @@
+{
+  "checks": [
+    {
+      "name": "goal_A_accepted",
+      "ok": false,
+      "detail": null
+    }
+  ],
+  "shutdown": {
+    "nav2": 0,
+    "model": 0,
+    "abnormal_children": 0
+  },
+  "smac_libraries": [],
+  "scope": "D1 grid + real Nav2 + ideal localization fixture + existing MC model; no AMCL/SDK qualification"
+}

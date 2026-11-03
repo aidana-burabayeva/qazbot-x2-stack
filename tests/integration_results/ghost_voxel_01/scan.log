@@ -1,0 +1,7 @@
+[INFO] [1793021180.229187259] [costmap.costmap]: 
+	costmap lifecycle node launched. 
+	Waiting on external lifecycle transitions to activate
+	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [1793021180.229978092] [costmap.costmap]: Creating Costmap
+[INFO] [1793021200.702465245] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[INFO] [1793021200.703121148] [costmap.costmap]: Destroying

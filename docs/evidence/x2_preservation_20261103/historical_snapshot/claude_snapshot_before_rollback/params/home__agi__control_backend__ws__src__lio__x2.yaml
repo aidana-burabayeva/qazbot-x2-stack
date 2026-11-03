@@ -1,0 +1,67 @@
+# AgiBot X2: chest LiDAR (96 rings, ~103 deg wedge, 10 Hz, per-point
+# timestamp in ns) + the LiDAR's OWN IMU (lidar_imu_chest_front, 200 Hz,
+# BEST_EFFORT), rigid with the LiDAR.
+# Why not the torso IMU: it is published in base_link and does not follow
+# the chest in every posture (2026-10-19, robot lowered before it was stood
+# up: torso 0 deg, chest 20 deg, LiDAR IMU 22 deg). Standing and walking the
+# three agree to ~1 deg (torso 3.7, chest 4.1, LiDAR 4.9 deg), and the floor
+# and ceiling planes in the cloud match the LiDAR IMU gravity to 1-3 deg.
+# FAST-LIO's world is the first IMU frame: here its x axis is up (LiDAR IMU
+# x ~ vertical), z is not -- level it downstream (walk plane normal = world x).
+# Memory: everything that accumulates without a bound is OFF here --
+# path (grows every 10 frames), map_en (pcl_wait_pub keeps every scan),
+# pcd_save. The ikd-tree lives in a cube of cube_side_length around the
+# robot and points outside it are deleted; a new point enters the tree only
+# if its voxel is empty, so a standing robot adds nothing.
+/**:
+    ros__parameters:
+        feature_extract_enable: false
+        point_filter_num: 3
+        max_iteration: 3
+        filter_size_surf: 0.3
+        filter_size_map: 0.3
+        cube_side_length: 100.0
+        runtime_pos_log_enable: false
+        map_file_path: ""
+
+        common:
+            lid_topic:  "/aima/hal/sensor/lidar_chest_front/lidar_pointcloud"
+            imu_topic:  "/aima/hal/sensor/lidar_chest_front/imu"
+            time_sync_en: false
+            time_offset_lidar_to_imu: 0.0
+
+        preprocess:
+            lidar_type: 5                # AIMA (x2 patch)
+            scan_line: 96
+            scan_rate: 10
+            timestamp_unit: 3            # ns
+            blind: 0.5
+
+        mapping:
+            acc_cov: 0.1
+            gyr_cov: 0.1
+            b_acc_cov: 0.0001
+            b_gyr_cov: 0.0001
+            fov_degree:    110.0
+            det_range:     30.0
+            extrinsic_est_en:  false
+            # T_imu_lidar: inverse of the measured /tf_static transform on
+            # X2 .66, not the calibration of the reference robot .89.
+            # Full provenance: evidence/x2_extrinsics.json in the local audit.
+            extrinsic_T: [0.004274399951100347, -0.0157517995685339, -0.011211999692022804]
+            extrinsic_R: [-0.003843965609489519, -0.9999545839883389, 0.008720888091315271, 0.0008810920694298785, 0.008717562353234953, 0.9999616131549165, -0.9999922237723444, 0.0038515019571126463, 0.0008475420438577297]
+
+        publish:
+            path_en:  false
+            map_en: false
+            effect_map_en: false
+            scan_publish_en:  true
+            # Keep deskewed scan geometry for 5 cm map localization. Paired
+            # replay on .66: 137 identical estimator poses, median finite scan
+            # rays 210 dense versus 140 sparse (output publication only).
+            dense_publish_en: true
+            scan_bodyframe_pub_en: false
+
+        pcd_save:
+            pcd_save_en: false
+            interval: -1

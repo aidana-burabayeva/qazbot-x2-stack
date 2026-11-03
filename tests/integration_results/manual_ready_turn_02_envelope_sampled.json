@@ -1,0 +1,14 @@
+{
+  "samples": 69,
+  "stride_s_approx": 0.2,
+  "window": [
+    1792665916.6,
+    1792665930.4
+  ],
+  "max_sampled_radius": 0.3910310022864598,
+  "front": 0.24617431056870778,
+  "back": -0.268026284887764,
+  "left": 0.34347415730665753,
+  "right": -0.38831691468354435,
+  "scope": "this manual turn only; sampled estimate, not a qualified walking envelope"
+}
