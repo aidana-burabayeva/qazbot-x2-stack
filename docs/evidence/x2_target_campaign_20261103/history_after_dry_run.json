@@ -1,0 +1,13 @@
+{
+  "tasks": {
+    "before": 79,
+    "after": 79,
+    "identical": true
+  },
+  "results": {
+    "before": 11,
+    "after": 11,
+    "identical": true
+  },
+  "real_campaign_scope": null
+}

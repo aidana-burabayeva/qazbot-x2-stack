@@ -1,3 +1,9 @@
+# 2026-11-03 — targeted X2 campaign mechanism
+
+[Runbook](nightly/X2_BLOCKERS_CAMPAIGN.md): strict three-task eligibility in existing nq, Codex-only initial repro, serial execution, no general timer/triage expansion, no legacy task revival or lease release. 82 focused regressions PASS; dry-run preserves all 79 tasks and 11 results. Source integration and real runtime evidence are recorded separately; no engineering fix is claimed by this mechanism.
+
+---
+
 # 2026-11-03 — X2 selective baseline synchronization
 
 [Import evidence and limits](evidence/lab_import_x2_20261103/README.md). Separate import branch; 125 selected source/test/evidence files, no production wiring change. Hardware baseline remains robot/stable 1212d7e; preservation dd1d0af is engineering evidence. 73 baseline hashes preserved; C++ build, 23 core and 2 parity tests PASS. D05/Collision Monitor and D07 remain unresolved; raw bags and aimdk_msgs BLOCKED. Integration/publication status is recorded in the external session report; no campaign or SIM_VERIFIED claim.

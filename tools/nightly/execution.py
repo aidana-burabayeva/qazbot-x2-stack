@@ -137,6 +137,58 @@ def engineering_sandbox(argv, worktree, result_dir, writable_run=None):
             cmd+=['--bind',str(path),str(path)]
     return cmd+['--chdir',str(worktree),'--',*argv]
 
+# Campaign scope is independent of execution capability. ENGINEERING preflight remains mandatory.
+X2_CAMPAIGN = 'x2-blockers-20261103'
+X2_TASKS = ('x2_p0_preservation_restore', 'x2_p0_d05_collision_monitor', 'x2_p1_d04_cpp_d07')
+ACTIVE_TASK_STATES = ('RUNNING', 'DELEGATED', 'VERIFYING')
+
+
+def restricted(db):
+    return get(db, 'campaign_scope') is not None
+
+
+def scope_allows(db, name):
+    scope = get(db, 'campaign_scope')
+    return scope is None or (scope == X2_CAMPAIGN and name in X2_TASKS)
+
+
+def active_leases(db):
+    return [dict(r) for r in db.execute("SELECT name,state FROM tasks WHERE state IN ('RUNNING','DELEGATED','VERIFYING')").fetchall()]
+
+
+def scope_idle(db):
+    return not get(db, 'delegated_open', []) and not active_leases(db) and not db.execute("SELECT 1 FROM merge_queue WHERE state IN ('QUEUED','GATING') LIMIT 1").fetchone()
+
+
+def next_target(db):
+    if get(db, 'campaign_scope') != X2_CAMPAIGN:
+        return None
+    terminal = {'COMPLETED', 'FAILED', 'NEEDS_ENGINEERING', 'NEEDS_HARDWARE', 'NEEDS_APPROVAL', 'BLOCKED_EXECUTION'}
+    for name in X2_TASKS:
+        row = db.execute('SELECT state FROM tasks WHERE name=?', (name,)).fetchone()
+        if row is None:
+            return None  # incomplete allowlist preparation fails closed
+        if row['state'] not in terminal:
+            return name
+    return None
+
+
+def scope_dispatch_allowed(db, task):
+    if not scope_allows(db, task['name']):
+        return False
+    if not restricted(db):
+        return True
+    if (task['name'] != next_target(db) or task['kind'] != 'engineering'
+            or task_tier(task) != ENGINEERING or task['resource'] != 'engineering'):
+        return False
+    # Global serial admission, including old/foreign leases; never release them here.
+    return scope_idle(db)
+
+
+def require_scope_dispatch(db, task):
+    if not scope_dispatch_allowed(db, task):
+        raise RuntimeError('campaign scope/serial lease refuses dispatch: ' + task['name'])
+
 
 if __name__=='__main__':
     import argparse
