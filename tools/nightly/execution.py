@@ -149,7 +149,11 @@ def restricted(db):
 
 def scope_allows(db, name):
     scope = get(db, 'campaign_scope')
-    return scope is None or (scope == X2_CAMPAIGN and name in X2_TASKS)
+    if scope is None:return True
+    if scope != X2_CAMPAIGN:return False
+    if name in X2_TASKS:return True
+    import qualification
+    return qualification.x2_task(db, name) is not None
 
 
 def active_leases(db):
@@ -178,6 +182,12 @@ def scope_dispatch_allowed(db, task):
         return False
     if not restricted(db):
         return True
+    import qualification
+    l3 = qualification.x2_task(db, task['name'])
+    if l3:
+        return (l3['state']=='L3_READY' and task['kind']=='mechanical' and task_tier(task)==L3
+                and task['resource']=='sim' and scope_idle(db))
+    if qualification.x2_busy(db):return False
     if (task['name'] != next_target(db) or task['kind'] != 'engineering'
             or task_tier(task) != ENGINEERING or task['resource'] != 'engineering'):
         return False

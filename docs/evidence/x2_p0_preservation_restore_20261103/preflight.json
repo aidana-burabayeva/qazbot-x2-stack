@@ -1,0 +1,51 @@
+{
+  "utc": "2026-11-03T18:20:50.052773+00:00",
+  "attempt_root": "/home/adn/QazBot/control_backend_p20_twin02/run/nightly/attempts/x2_p0_preservation_restore.1.847fd9",
+  "attempt_initial_head": "eb6c314ebd711d1fb553698a1dd45b5a13797162",
+  "attempt_branch": {
+    "returncode": 0,
+    "stdout": "attempt/x2_p0_preservation_restore-1-847fd9\n",
+    "stderr": ""
+  },
+  "disk": {
+    "total": 261708951552,
+    "used": 243141427200,
+    "free": 5198921728
+  },
+  "read_only_local_worktrees": {
+    "/home/adn/QazBot/control_backend": {
+      "head": {
+        "returncode": 0,
+        "stdout": "c1880c38e68607279e6fb265f4a5d38ba53ef93c\n",
+        "stderr": ""
+      },
+      "status": {
+        "returncode": 0,
+        "stdout": " M .gitignore\n M docs/X2_QUICKSTART_BRINGUP_RU.md\n M tests/loc_trust/run_ros_synthetic.py\n M tests/nav_e2e/loc_model_fixture.py\n M tests/nav_e2e/run_suite_real.py\n?? AGENTS.md\n?? CLAUDE.md\n?? docs/HANDOFF.md\n?? docs/TEST_STATUS.md\n?? docs/evidence/I1_DATA_README.md\n?? docs/evidence/I1_capture_manifest_20261028.json\n?? docs/evidence/I1_costmap_ab_managed_shutdown_20261028.json\n?? docs/evidence/I1_costmap_ab_points4_20261028.json\n?? docs/evidence/I1_costmap_ab_points8_navudp_20261028.json\n?? docs/evidence/I1_deployment_plan_2d240dbd.json\n?? docs/evidence/I1_real_cloud_check_20261028.json\n?? docs/evidence/I1_real_cloud_final_20261028.json\n?? docs/evidence/I1_real_cloud_max_ray_20261028.json\n?? docs/evidence/hal_sensor_orin_20261028_165058.crash\n?? docs/evidence/hal_sensor_orin_pre_restore_20261028.log\n?? docs/evidence/i1_capture_x2_20261028.yaml\n?? docs/evidence/i1_cloud_registered_20261028_084925Z.capture.log\n?? docs/evidence/i1_cloud_registered_20261028_084925Z.lio.log\n?? docs/evidence/i1_cloud_registered_20261028_084925Z/\n?? docs/evidence/i1_cloud_registered_20261028_084925Z_r2.capture.log\n?? docs/evidence/i1_cloud_registered_20261028_084925Z_r2/\n?? docs/evidence/i1_cloud_registered_udp_20261028_092700Z/\n?? docs/evidence/i1_costmap_ab_20261028_points4/\n?? docs/evidence/i1_costmap_ab_20261028_points8_navudp/\n?? docs/evidence/i1_dds_vendor_probe_20261028.json\n?? docs/evidence/i1_dds_vendor_probe_20261028.log\n?? docs/evidence/i1_deploy_2d240dbd/\n?? docs/evidence/t5live1_graph_20261028.json\n?? docs/evidence/t5live1_localization_20261028.log.gz\n?? docs/evidence/t5live1_observer_20261028.jsonl.gz\n?? docs/evidence/t5live1_summary_20261028.json\n?? docs/evidence/t5live1_trust_20261028.log.gz\n?? ws/src/maps/main_office/\n",
+        "stderr": ""
+      }
+    },
+    "/home/adn/QazBot/control_backend_i1": {
+      "head": {
+        "returncode": 0,
+        "stdout": "c15dd6c6c8fe8d5e6cc1014c68bb9da51dd8a3fa\n",
+        "stderr": ""
+      },
+      "status": {
+        "returncode": 0,
+        "stdout": " M ws/src/lio/level_bridge.py\n M ws/src/navigation/nav_control.launch.py\n?? docs/I1_BOUNDED_CLEARING.md\n?? docs/evidence/I1_costmap_ab_managed_shutdown_20261028.json\n?? docs/evidence/I1_costmap_ab_points4_20261028.json\n?? docs/evidence/I1_costmap_ab_points8_navudp_20261028.json\n?? docs/evidence/I1_real_cloud_final_20261028.json\n?? tests/lio/CMakeLists.txt\n?? tests/lio/obstacle_layer_observation_regression.cpp\n?? tests/lio/test_i1_bounded_clearing.py\n?? tests/lio/test_i1_deployment.py\n?? tools/analyze_i1_cloud.py\n?? tools/capture_i1_cloud.py\n?? tools/deploy_i1.py\n?? tools/i1_capture_udp_only.xml\n?? tools/i1_costmap_ab.py\n?? tools/i1_nav_udp_only.xml\n?? tools/restore_hal_sensor.sh\n",
+        "stderr": ""
+      }
+    }
+  },
+  "digital_twin": {
+    "path": "/home/adn/QazBot/digital_twin",
+    "available": true
+  },
+  "scope": "Local checkout/status/resource checks only. No hardware or network inspection; external worktrees not modified.",
+  "scratch_cleanup": {
+    "remaining_children": [],
+    "status": "OFFLINE_VERIFIED",
+    "scope": "Only this session own scratch clones/build/install/symlink samples removed. Existing worktrees untouched."
+  }
+}

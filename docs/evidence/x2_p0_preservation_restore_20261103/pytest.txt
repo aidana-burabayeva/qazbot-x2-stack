@@ -1,0 +1,12 @@
+2026-11-03 — operator PC, isolated attempt 847fd97ac00648bf
+Classification: OFFLINE_VERIFIED
+Command:
+python3 -m pytest -q -p no:cacheprovider tests/preservation/test_restore.py tests/collision_monitor/test/test_cm_eval_lib.py
+Evidence capture used QAZBOT_RESTORE_EVIDENCE=docs/evidence/x2_p0_preservation_restore_20261103/verification.json
+
+......................                                                   [100%]
+22 passed in 50.64s
+
+11 restore checks (including four archive parameter cases) + 11 existing CM decision-emulator tests.
+Expected partial BLOCKED findings are recorded in verification.json; these are not full recovery acceptance.
+No graph, replay, simulated navigation or hardware qualification.

@@ -30,6 +30,7 @@ import mergeq  # noqa: E402
 import execution  # noqa: E402
 import lead  # noqa: E402
 import safety_guard
+import qualification
 
 ROOT = Path(os.environ.get('NIGHTLY_ROOT', Path(__file__).resolve().parents[2]))
 RUN = Path(os.environ.get('NIGHTLY_RUN', ROOT / 'run' / 'nightly'))
@@ -64,6 +65,7 @@ def connect():
     db.executescript(SCHEMA)
     store.init(db)
     mergeq.init(db)
+    qualification.x2_init(db)
     db.execute('CREATE TABLE IF NOT EXISTS router_stats(id INTEGER PRIMARY KEY, ts REAL, task TEXT, attempt INTEGER, cls TEXT, agent TEXT, model TEXT, effort TEXT, escalation INTEGER, outcome TEXT, seconds REAL, quota_before TEXT, quota_after TEXT)')
     cols = [r[1] for r in db.execute('PRAGMA table_info(tasks)')]
     if 'requires_result' not in cols:
@@ -167,7 +169,8 @@ def recover(db):
     """After any restart: finish what a crash left half-done (evidence <-> index), then RUNNING rows are orphans:
     kill survivors of our process groups, then requeue or park."""
     if execution.restricted(db):
-        if not execution.scope_idle(db):
+        qualification.x2_recover(db, ROOT, RUN)
+        if not execution.scope_idle(db) and not qualification.x2_retained_leases(db):
             raise SystemExit('targeted recovery refused: active task/merge leases retained; operator resolution required')
         return  # no killing, orphan adoption or old-task requeue in targeted scope
     for r_ in db.execute("SELECT id FROM tasks WHERE state='VERIFYING'").fetchall():
@@ -348,6 +351,18 @@ def finish(db, r, p, log, verdict):
     if full['kind'] == 'engineering' and verdict == 'ok':  # exit code 0 of an agent is not completion either
         why = 'no result file'
         if full['attempt_wt']:
+            # Keep D04/D07 as distinct commits without asking the agent to commit or touching shared branches.
+            if name==execution.X2_TASKS[2] and kv_get(db,'x2_auto_l3_enabled',False):
+                pending=find_result_file(full)
+                try:
+                    data=json.loads(pending.read_text()) if pending else {}
+                    groups=attempts.commit_components(full['attempt_wt'],name,full['attempts'],data.get('l3_fixes',[]))
+                    for plan in data.get('l3_fixes',[]):
+                        if plan.get('blocker') in groups:plan.update(groups[plan['blocker']])
+                    if groups:
+                        tmp=pending.with_suffix('.tmp');tmp.write_text(json.dumps(data));os.replace(tmp,pending)
+                except (OSError,ValueError,TypeError) as exc:
+                    ev(db,name,'COMPONENT_COMMIT_REFUSED',str(exc))
             attempts.commit(full['attempt_wt'], name, full['attempts'])  # the orchestrator, not the agent, commits and hashes
         f = find_result_file(full)
         if f:
@@ -847,6 +862,12 @@ def tick(db, cur):
         if now - beat > r['heartbeat_s']:  # no output and no heartbeat for heartbeat_s: genuinely stuck, not just slow
             os.killpg(p.pid, signal.SIGKILL); p.wait(); finish(db, r, p, log, 'hang'); return None
         return (r, p, log, sz, beat)
+    if execution.restricted(db):
+        try:
+            qualification.x2_advance(db, ROOT, RUN)
+        except Exception as exc:
+            ev(db, '*', 'L3_TRANSITION_ERROR', type(exc).__name__+': '+str(exc))
+            return None  # fail closed rather than dispatching through an unknown transition
     for r in ready(db):
         if r['kind'] == 'engineering':
             sel = select_agent(db, r)
