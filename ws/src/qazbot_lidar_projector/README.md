@@ -61,8 +61,9 @@ Logging: INFO once on levelling, WARN (throttled 5 s) on odometry clock step-bac
 
 ### TF ownership
 With `publish_tf: false` (running configuration, `odom_source:=native_imu`) the node creates **no** TF publisher; the single
-`odom -> base_footprint` owner is `native_odom_bridge.py`. With `odom_source:=lio` set `publish_tf: true` in a copy of the
-YAML (the Python launch derived this from `odom_source`; this package does not). Never have two owners.
+`odom -> base_footprint` owner is `native_odom_bridge.py`. With `odom_source:=lio` use the preset
+`config/lidar_projector_lio.yaml` (identical values, `publish_tf: true`): `params_file:=$(ros2 pkg prefix qazbot_lidar_projector)/share/qazbot_lidar_projector/config/lidar_projector_lio.yaml`
+(the Python launch derived this from `odom_source`; this package does not). Never have two owners.
 
 ## Behaviour notes (port fidelity)
 `-ffp-contract=off` is set for the library so that no fused multiply-add changes a rounding relative to numpy. Reproduced

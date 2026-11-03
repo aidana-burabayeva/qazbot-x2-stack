@@ -232,7 +232,9 @@ def compare_rows(py, cp, amb, dmax, stats, what, bins_py=None):
             elif amb[bp[i]] or amb[bc[j]]:
                 stats[what + '_explained'] += 1
                 dist = float(np.hypot(*(py[i, :2].astype(np.float64) - cp[j, :2])))
+                dr = abs(float(np.hypot(*py[i, :2].astype(np.float64))) - float(np.hypot(*cp[j, :2].astype(np.float64))))
                 stats[what + '_explained_max_dist_m'] = max(stats.get(what + '_explained_max_dist_m', 0.0), dist)
+                stats[what + '_explained_max_dr_m'] = max(stats.get(what + '_explained_max_dr_m', 0.0), dr)
             else:
                 stats[what + '_UNEXPLAINED'] += 1
             i += 1
@@ -349,6 +351,8 @@ def test_cpp_matches_python_candidate(events, range_max):
                     stats['obs_within_tol'] += 1
                 elif amb[bins_p[i]]:
                     stats['obs_explained'] += 1
+                    dist = float(np.hypot(*(op[i, :2].astype(np.float64) - cp_[j, :2])))
+                    stats['obs_explained_max_dist_m'] = max(stats.get('obs_explained_max_dist_m', 0.0), dist)
                 else:
                     stats['obs_UNEXPLAINED'] += 1
                 assert op[i, 2] == 0 and cp_[j, 2] == 0
@@ -373,3 +377,14 @@ def test_cpp_matches_python_candidate(events, range_max):
         if k.endswith('UNEXPLAINED'):
             assert v == 0, (k, v, stats)
     assert stats['range_equal'] + stats['range_within_ulp'] > 0.99 * N * len(clouds_cpp)
+    # A4: "explained" rows (ulp-level arg-max ties among clearing rays / bins next to a threshold) must stay small
+    # in number and in size. Within a bin the ray may only differ in bearing (<= one bin arc at range_max) and
+    # not in length (the length is the bin-wide min(end, obstacle) in both implementations).
+    bin_arc = range_max * 2 * math.pi / N
+    for what in ('obs', 'clr'):
+        assert stats.get(what + '_explained_max_dist_m', 0.0) <= bin_arc, (what, stats)
+    assert stats.get('clr_explained_max_dr_m', 0.0) <= 1e-5, stats
+    n_rows = stats['obs_within_tol'] + stats['obs_explained'] + stats['clr_within_tol'] + stats['clr_explained']
+    n_expl = stats['obs_explained'] + stats['clr_explained'] + stats['range_explained']
+    assert n_expl <= 0.05 * n_rows, (n_expl, n_rows, stats)
+    assert stats['range_explained'] <= 0.001 * N * len(clouds_cpp), stats
