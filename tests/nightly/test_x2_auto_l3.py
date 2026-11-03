@@ -1,5 +1,6 @@
 """Real SQLite/Git transition tests, synthetic unit fixtures only; no agents/ROS/Docker started."""
 import json
+import hashlib
 import subprocess
 import sys
 from pathlib import Path
@@ -16,6 +17,12 @@ def git(root,*args):
     p=subprocess.run(['git','-C',str(root),'-c','user.name=fixture','-c','user.email=fixture@localhost',*args],capture_output=True,text=True)
     assert p.returncode==0,p.stderr
     return p.stdout.strip()
+
+
+def seal(db,ev):
+    path=ev/'engineering_result.json';manifest=ev/'MANIFEST.json'
+    manifest.write_text(json.dumps({'files':{'engineering_result.json':hashlib.sha256(path.read_bytes()).hexdigest()}}))
+    db.execute("UPDATE results SET manifest_sha256=? WHERE result_key='unit-fix'",(hashlib.sha256(manifest.read_bytes()).hexdigest(),))
 
 
 @pytest.fixture
@@ -35,6 +42,8 @@ def candidate(db,monkeypatch):
     payload=dict(l3_fixes=[spec],diagnosis={k:'unit-fixture' for k in ('hypotheses','reproduction','causal_evidence','original_fail_retest','regression')})
     (evidence/'engineering_result.json').write_text(json.dumps(payload))
     db.execute("INSERT INTO results(result_key,run_id,task,attempt,scenario_id,verdict,evidence_path) VALUES('unit-fix','unit',?,1,'unit','PASS',?)",(producer,str(evidence)))
+    db.execute("UPDATE results SET metrics=? WHERE result_key='unit-fix'",(json.dumps({'git_sha':fix}),))
+    seal(db,evidence)
     db.execute("INSERT INTO root_causes(key,summary,status,evidence,task) VALUES('unit-cause','unit fixture','VERIFIED','unit evidence',?)",(producer,))
     db.execute("INSERT INTO merge_queue(task,repo,branch,sha,state,merge_sha) VALUES(?,?,?,?, 'INTEGRATED',?)",(producer,str(root),'fixture',fix,fix))
     monkeypatch.setattr(q,'x2_conditions',lambda root:dict(images={'stack':'stack','sim':'sim'},map='map',parameters='parameters',nav2='version'))
@@ -59,6 +68,7 @@ def test_no_promotion_from_completion_or_unintegrated_result(candidate):
 def test_verified_root_cause_and_recipe_are_mandatory(candidate):
     db,root,spec,ev=candidate
     (ev/'engineering_result.json').write_text('{}')
+    seal(db,ev)
     row=discover(candidate)
     assert row['state']=='L3_BLOCKED' and 'completion alone' in row['detail']
     assert list(nq.ready(db))[0]['name']==execution.X2_TASKS[0]  # independent work remains possible
@@ -145,6 +155,7 @@ def test_d04_d07_shared_commit_is_not_two_independent_fixes(candidate):
     db.execute('UPDATE tasks SET state="COMPLETED",phase="VERIFIED",attempts=1 WHERE name=?',(producer,));nq.kv_set(db,'verified_sha:'+producer,spec['fix_sha'])
     db.execute('UPDATE root_causes SET task=?',(producer,));db.execute('UPDATE results SET task=? WHERE result_key="unit-fix"',(producer,));db.execute('UPDATE merge_queue SET task=?',(producer,))
     payload=json.loads((ev/'engineering_result.json').read_text());payload['l3_fixes']=[dict(spec,blocker=b) for b in ('d04','d07')];(ev/'engineering_result.json').write_text(json.dumps(payload))
+    seal(db,ev)
     q.x2_discover(db,root,nq.RUN)
     assert db.execute("SELECT count(*) FROM x2_l3 WHERE state='L3_BLOCKED' AND detail LIKE '%independent%'").fetchone()[0]==2
 
@@ -183,3 +194,27 @@ def test_completed_l3_returns_engineering_and_new_fix_gets_fresh_capability(cand
     q.x2_advance(db,root,nq.RUN)
     assert nq.kv_get(db,'execution_authorization')['l3_remaining']==1
     assert db.execute("SELECT count(*) FROM tasks WHERE name LIKE 'x2_l3_%'").fetchone()[0]==2
+
+
+def test_tampered_stored_evidence_cannot_admit_l3(candidate):
+    db,root,spec,ev=candidate
+    data=json.loads((ev/'engineering_result.json').read_text());data['l3_fixes'][0]['safety_invariants']=False
+    (ev/'engineering_result.json').write_text(json.dumps(data))  # intentionally leave the durable manifest unchanged
+    row=discover(candidate)
+    assert row['state']=='L3_BLOCKED' and 'missing per-fix' in row['detail']
+
+
+def test_runtime_entry_requires_real_claim_before_any_process(candidate,monkeypatch):
+    db,root,*_=candidate;row=discover(candidate)
+    monkeypatch.setattr(q.subprocess,'run',lambda *a,**k:pytest.fail('runtime started without capability'))
+    with pytest.raises(SystemExit,match='execution refused'):
+        q.x2_runtime_fix(db,row,root,nq.RUN,nq.RUN)
+
+
+def test_moving_mc_requirement_is_never_substituted_with_lite(candidate,monkeypatch):
+    db,root,*_=candidate;row=discover(candidate)
+    spec=json.loads(row['spec']);spec['requires_mc']=True;row['spec']=json.dumps(spec)
+    monkeypatch.setattr(execution,'require',lambda *a,**k:{'name':row['task']})
+    monkeypatch.setattr(q.subprocess,'run',lambda *a,**k:pytest.fail('unqualified MC/lite runtime started'))
+    with pytest.raises(ValueError,match='lite substitution refused'):
+        q.x2_runtime_fix(db,row,root,nq.RUN,nq.RUN)

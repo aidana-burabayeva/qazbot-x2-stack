@@ -177,11 +177,16 @@ def x2_discover(db, root, run):
         result=db.execute("SELECT * FROM results WHERE task=? AND verdict='PASS' AND status='STORED' ORDER BY id DESC LIMIT 1",(producer,)).fetchone()
         merge=db.execute("SELECT * FROM merge_queue WHERE task=? AND sha=? AND state='INTEGRATED' ORDER BY id DESC LIMIT 1",(producer,verified)).fetchone()
         if not verified or not result or not merge or not _ancestor(root,merge['merge_sha'],source): continue
-        data_path=Path(result['evidence_path'])/'engineering_result.json'
-        if not data_path.is_file():
-            data_path=Path(run)/'work'/f"{producer}.{task['attempts']}"/'engineering_result.json'
-        try: data=json.loads(data_path.read_text())
-        except (ValueError,OSError): data={}
+        metrics=json.loads(result['metrics'] or '{}')
+        if result['attempt']!=task['attempts'] or metrics.get('git_sha')!=verified:continue
+        evidence=Path(result['evidence_path']);data_path=evidence/'engineering_result.json'
+        try:
+            manifest=evidence/'MANIFEST.json'
+            if hashlib.sha256(manifest.read_bytes()).hexdigest()!=result['manifest_sha256']:raise ValueError('stored manifest mismatch')
+            expected=json.loads(manifest.read_text())['files']['engineering_result.json']
+            if data_path.is_symlink() or hashlib.sha256(data_path.read_bytes()).hexdigest()!=expected:raise ValueError('stored engineering result hash mismatch')
+            data=json.loads(data_path.read_text())
+        except (ValueError,OSError,KeyError,TypeError):data={}
         plans=[p for p in data.get('l3_fixes',[]) if isinstance(p,dict) and p.get('blocker')==blocker]
         if not plans: plans=[dict(blocker=blocker,fix_sha=verified,blocked='missing per-fix l3_fixes recipe; completion alone is insufficient')]
         for spec in plans:
@@ -255,6 +260,8 @@ def x2_advance(db, root, run):
         if task and task['state']=='PENDING' and row['source_sha']!=mergeq.integration_head(root):
             db.execute("UPDATE tasks SET state='NEEDS_ENGINEERING',reason='stale L3 source authorization; no runtime started' WHERE name=?",(row['task'],))
             _x2_set(db,row['key'],'L3_BLOCKED','Git SHA changed before dispatch; qualification invalidated')
+            auth=execution.get(db,'execution_authorization',{});auth['mode']=execution.ENGINEERING
+            execution.put(db,'execution_authorization',auth);execution.put(db,'execution_mode',execution.ENGINEERING)
             continue
         if task and task['state']=='RUNNING':
             if row['state']!='L3_RUNNING':_x2_set(db,row['key'],'L3_RUNNING')
@@ -337,6 +344,7 @@ def x2_proof_fix(db, row, root, run, out):
                 if p.returncode:raise ValueError('baseline test overlay failed')
             xml=out/(label+'.xml');argv=_pytest(spec['tests'])+['--junitxml='+str(xml)]
             cmd=execution.engineering_sandbox(['bash','-c','source /opt/ros/humble/setup.bash; exec '+shlex.join(argv)],wt,out)
+            if Path(cmd[0]).name=='bwrap':cmd.insert(1,'--unshare-net')
             env=dict(os.environ,ROS_DOMAIN_ID='87',ROS_LOCALHOST_ONLY='1',PYTHONDONTWRITEBYTECODE='1',PYTEST_DISABLE_PLUGIN_AUTOLOAD='1')
             with (out/(label+'.log')).open('w') as log:
                 p=subprocess.run(cmd,cwd=wt,env=env,stdout=log,stderr=subprocess.STDOUT,timeout=600)
@@ -371,6 +379,7 @@ def x2_preflight_fix(db,row,root,run,out):
         contract=__import__('preflight').env_file(Path(root)/'digital_twin/scripts/contract/robot.env')
         errors+=check(db,Path(run)/'nightly_qualification.json',root,row['source_sha'],
                       report.get('robot_sha'),contract['ROBOT_MAP_SHA256'],conditions['images']['stack'],conditions['images']['sim'])
+        errors.append('MC moving-chain scope not available: existing capsule is stationary_official_mc; no lite substitution')
     return dict(ok=not errors,reason='; '.join(errors),report=report,conditions=conditions)
 
 
@@ -404,6 +413,7 @@ def x2_runtime_fix(db,row,root,run,out):
     task=execution.require(execution.L3,root=root,run=run)
     if task['name']!=row['task']:raise ValueError('L3 task does not own this fix')
     spec=json.loads(row['spec'])
+    if spec.get('requires_mc'):raise ValueError('qualified moving MC scope unavailable; lite substitution refused')
     if x2_case_conditions(root,spec)!=json.loads(row['conditions']):raise ValueError('test conditions changed after authorization')
     auth=execution.get(db,'execution_authorization',{})
     if auth.get('integration_sha')!=row['source_sha']:raise ValueError('stale source capability')
