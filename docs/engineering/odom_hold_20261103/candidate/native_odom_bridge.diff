@@ -1,0 +1,94 @@
+--- ../../ws/src/lio/native_odom_bridge.py	2026-10-27 17:32:28.828090814 +0800
++++ native_odom_bridge.py	2026-11-03 15:19:20.299390570 +0800
+@@ -26,6 +26,12 @@
+   sample older than max_age (0.2 s) when due               withheld
+   stamp went back                                          accepted, twist baseline cleared (as level_bridge)
+ 
++Standing hold (odom_hold.py, reports/20261103-odom-standing-hold.md; parameter standing_hold, default true): while MC
++reports standing (/aima/mc/common/state fsm 4, STAND_DEFAULT, RUNNING, body STAND) AND the raw leg pose is quiet over
++0.5 s, the published x, y are frozen (the vendor standing drift of ~1 cm/min is absorbed into a constant offset, so
++there is no jump when the hold ends); yaw is never held; the Odometry twist is zero while held. No state / no aimdk_msgs
++= no hold = the pass-through above. Guards act on the raw leg pose, before the hold.
++
+ Exactly one node may own odom -> base_footprint: localization.launch.py starts this one only with
+ odom_source:=native_imu and then runs level_bridge with publish_tf:=false. Math: native_odom.py.
+ """
+@@ -43,6 +49,7 @@
+ from tf2_ros import TransformBroadcaster
+ 
+ import native_odom as no
++import odom_hold as oh
+ 
+ MODES = ('native_imu',)            # native_base (base_link footprint) is step 2: needs the scan in that frame
+ ODOM_FRAME, BASE_FRAME = 'odom', 'base_footprint'
+@@ -79,10 +86,19 @@
+         status_topic = P('status_topic', '/qazbot_native/status')
+         self.guard = no.native_guard(float(P('max_age', no.NATIVE_MAX_AGE)))
+         self.twist, self.decim = no.Twist0p3(), no.Decimator(rate)
++        self.hold = oh.StandingHold() if bool(P('standing_hold', True)) else None
++        state_topic = P('state_topic', '/aima/mc/common/state')
+         self.tf = TransformBroadcaster(self) if self.publish_tf else None
+         self.pub_odom = self.create_publisher(Odometry, odom_topic, 20)
+         self.pub_status = self.create_publisher(String, status_topic, 10)
+         self.create_subscription(Odometry, leg_topic, self.on_leg, qos_profile_sensor_data)
++        if self.hold is not None:
++            try:
++                from aimdk_msgs.msg import McCommonState
++                self.create_subscription(McCommonState, state_topic, self.on_state, qos_profile_sensor_data)
++            except ImportError as e:
++                self.get_logger().error(f'standing hold ENABLED but aimdk_msgs import failed ({e}): hold DISABLED, odometry is pass-through (status hold=null)')
++                self.hold = None
+         self.n = dict(leg=0, accepted=0, tf=0, odom=0, withheld_stale=0)
+         self.n_prev, self.t_prev = dict(self.n), time.monotonic()
+         self.latch_logged = False
+@@ -91,11 +107,15 @@
+         self.get_logger().info(
+             f'native_odom_bridge started: mode={self.mode} publish_tf={self.publish_tf} {leg_topic} -> '
+             f'{"TF odom->base_footprint + " if self.publish_tf else ""}{odom_topic}, {rate:g} Hz, '
+-            f'max_age={self.guard.max_age:g} s')
++            f'max_age={self.guard.max_age:g} s standing_hold={self.hold is not None}')
+ 
+     def now(self):
+         return self.get_clock().now().nanoseconds * 1e-9
+ 
++    def on_state(self, m):
++        self.hold.set_state(self.now(), m.fsm_state.current_state, m.action_info.action_desc,
++                            m.action_info.status.value, m.body_status.value)
++
+     def on_leg(self, m):
+         self.n['leg'] += 1
+         now, stamp = self.now(), stamp_s(m.header)
+@@ -103,6 +123,8 @@
+         if st == 'stamp_back':
+             self.get_logger().warn('leg odometry stamp went back: clearing twist baseline')
+             self.twist.clear()
++            if self.hold is not None:
++                self.hold.clear_window()
+         elif st != 'ok':
+             if self.guard.latched and not self.latch_logged:
+                 self.latch_logged = True
+@@ -110,7 +132,12 @@
+             return
+         self.n['accepted'] += 1
+         _, x, y, z, yaw = self.guard.pose
++        held = False
++        if self.hold is not None:
++            x, y, held = self.hold.update(stamp, now, x, y, yaw)
+         tw = self.twist.add(stamp, x, y, yaw)
++        if held and tw is not None:
++            tw = (0.0, 0.0, 0.0)
+         if not self.decim.due(stamp):
+             return
+         if self.guard.fault(now):
+@@ -150,7 +177,10 @@
+                     frames=[ODOM_FRAME, BASE_FRAME], rates_hz=rates, messages=dict(self.n),
+                     age_s=round(now - g.stamp, 4) if g.pose else None,
+                     last_published_age_s=None if self.last_pub_stamp is None else round(now - self.last_pub_stamp, 4),
+-                    fault=g.fault(now), latched=g.latched, guard=dict(g.counts), last_drop=g.last_drop)
++                    fault=g.fault(now), latched=g.latched, guard=dict(g.counts), last_drop=g.last_drop,
++                    hold=None if self.hold is None else dict(held=self.hold.held, standing=self.hold.standing,
++                                                             offset_m=round(self.hold.offset(), 5),
++                                                             **self.hold.counts))
+ 
+     def on_status(self):
+         self.pub_status.publish(String(data=json.dumps(self.status())))

@@ -1,0 +1,12 @@
+--- ../../ws/src/navigation/localization.launch.py	2026-10-30 18:01:30.075961296 +0800
++++ localization.launch.py	2026-11-03 15:19:20.339389438 +0800
+@@ -129,7 +129,8 @@
+                                '--map-yaml', LaunchConfiguration('map_yaml')], output='screen',
+                           condition=LaunchConfigurationNotEquals('seed_pose_file', ''))
+     # native_imu only: the odom->base_footprint owner. Started last so the lio-mode start times are unchanged.
+-    native = ExecuteProcess(cmd=['python3', os.path.join(root, 'lio', 'native_odom_bridge.py'), '--ros-args',
++    native = ExecuteProcess(cmd=[os.path.join(root, 'navigation', 'run_native_odom_bridge.sh'),
++                                 os.path.join(root, 'lio', 'native_odom_bridge.py'), '--ros-args',
+                                  '-r', '__node:=qazbot_native_odom_bridge',
+                                  '-r', '/tf:=/qazbot_d1_map/tf',
+                                  '-r', '/tf_static:=/qazbot_d1_map/tf_static',
