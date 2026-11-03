@@ -1,0 +1,14 @@
+{
+  "id": 19,
+  "task": "import_x2_baseline_20261103",
+  "repo": "/home/adn/QazBot/control_backend_p20_twin02",
+  "branch": "lab/import-x2-20261103",
+  "sha": "ed91bae3fb6d142439284215448026d2ee6183b7",
+  "base_sha": null,
+  "state": "INTEGRATED",
+  "detail": "merged as 6af558da13ab",
+  "enq_ts": 1793724008.1368306,
+  "ts": 1793724359.3921914,
+  "merge_sha": "6af558da13ab1a7054610d7215e8b759add83ad6",
+  "wt": null
+}

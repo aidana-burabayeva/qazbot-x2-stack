@@ -35,10 +35,10 @@ Full diffs are alongside this report. main_office, AMCL/TF/frame-contract/Nightl
 ## Checks and limits
 
 - Pinned tree facts reconfirmed: 1417 LAB files, 3813 robot files; 673 common identical; 10 common different. No repeated independent audit.
-- 73/73 captured baseline files match SHA256. Every pre-existing production file matches the import base, including T1/T5, P20/P23, Motion Adapter and Goal Coordinator. D1 and main_office files match; see invariants.json.
+- 73/73 captured baseline files match SHA256. All 78 pre-existing production files match the import base, including T1/T5, P20/P23, Motion Adapter and Goal Coordinator. D1 and main_office files match; see invariants.json.
 - D1 map PGM SHA256 `72ee4094b394241e7b2761878774efbdd99e93731d7cb52709b2231c3975b354`; YAML `c86aa2aaefbefcaa2ddee994572cf6d13dd777b37b8e070de947f7685be43c1b`.
 - CMake configure/build with real installed ROS Humble dependencies PASS, external build/install bases. 23 pure core tests PASS; two compact-fixture C++/Python parity tests PASS. No launch_testing ROS execution.
-- Initial short regression: 77 passed, one new pointer freshness test failed; fixed by refreshing pointers after analysis. Focused sync regression subsequently 14 passed. Final checks/gate are recorded separately.
+- Initial short regression: 77 passed, one new pointer freshness test failed; fixed by refreshing pointers after analysis. Focused sync regression subsequently 14 passed. Final short D04/CM/parity run: **66 passed**; accounting/sync/labctl/preflight run: **49 passed**. First merge gate: **240 passed in 346.22 s**, CAS-integrated as `6af558da13ab1a7054610d7215e8b759add83ad6`. Follow-up source classification/accounting changes go through the same gate; final status is recorded externally.
 - 52 imported Python files compile; lab/labctl/preflight/source_state, D04 libraries, CM evaluator import with real dependencies. aimdk_msgs: BLOCKED (absent), no SDK stubs added. Existing harness stubs are imported historical test code, not SDK qualification.
 - D07/PD04 scripts with top-level I/O require original scratch/derived inputs and path adaptation: BLOCKED for execution/import. No fabricated import or replay success.
 - Three raw D04 bags (204153, 211835, 183015) were not found in LAB searches. Expected SHA256 and sizes are in tests/d04/BAGS.md; actual availability and SHA256 are BLOCKED, not verified. No X2 query or raw bag publication.
@@ -46,7 +46,7 @@ Full diffs are alongside this report. main_office, AMCL/TF/frame-contract/Nightl
 
 ## State contract
 
-robot/stable is the hardware baseline; preservation is engineering evidence; lab/stable is the integration ref; lab/control is the controller checkout. NIGHTLY_ROBOT_REF / preflight ROBOT_REF cannot select preservation/candidates as hardware. Preservation production additions/changes are inspected even when hardware SHA is already processed; matching integration blobs establish source presence. The D1 metadata exception requires identical PGM/YAML blobs. Analysis no longer advances the misleading legacy last_robot_integrated_sha alias. No task result or hardware status is accepted from preservation. Regression covers preservation-only new code, unchanged processed hardware and later explicit import.
+robot/stable is the hardware baseline; preservation is engineering evidence; lab/stable is the integration ref; lab/control is the controller checkout. NIGHTLY_ROBOT_REF / preflight ROBOT_REF cannot select preservation/candidates as hardware. Preservation production additions/changes are inspected even when hardware SHA is already processed; matching integration blobs establish source presence. Historical .bak/candidate files and package tests are reported separately from production paths. The D1 metadata exception requires identical PGM/YAML blobs. Analysis no longer advances the misleading legacy last_robot_integrated_sha alias. current_integration_sha resolves lab/stable rather than control HEAD. No task result or hardware status is accepted from preservation. Regression covers preservation-only new code, unchanged processed hardware and later explicit import.
 
 ## Readiness
 
