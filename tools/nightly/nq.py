@@ -351,6 +351,18 @@ def finish(db, r, p, log, verdict):
     if full['kind'] == 'engineering' and verdict == 'ok':  # exit code 0 of an agent is not completion either
         why = 'no result file'
         if full['attempt_wt']:
+            # Keep D04/D07 as distinct commits without asking the agent to commit or touching shared branches.
+            if name==execution.X2_TASKS[2] and kv_get(db,'x2_auto_l3_enabled',False):
+                pending=find_result_file(full)
+                try:
+                    data=json.loads(pending.read_text()) if pending else {}
+                    groups=attempts.commit_components(full['attempt_wt'],name,full['attempts'],data.get('l3_fixes',[]))
+                    for plan in data.get('l3_fixes',[]):
+                        if plan.get('blocker') in groups:plan.update(groups[plan['blocker']])
+                    if groups:
+                        tmp=pending.with_suffix('.tmp');tmp.write_text(json.dumps(data));os.replace(tmp,pending)
+                except (OSError,ValueError,TypeError) as exc:
+                    ev(db,name,'COMPONENT_COMMIT_REFUSED',str(exc))
             attempts.commit(full['attempt_wt'], name, full['attempts'])  # the orchestrator, not the agent, commits and hashes
         f = find_result_file(full)
         if f:
