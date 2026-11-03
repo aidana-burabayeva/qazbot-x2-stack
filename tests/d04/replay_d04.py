@@ -69,6 +69,11 @@ BAGS = {
                           cloud='/qazbot_lio/cloud_registered', odom='/qazbot_lio/odometry',
                           imu='/aima/hal/sensor/lidar_chest_front/imu',
                           obstacles='/qazbot_lio/scan_obstacles'),
+    # P-D04 real-object static test 2026-11-03 (12 min, raw + registered cloud, live costmap_raw = baseline A)
+    'static_183015': dict(db=os.path.join(BAGDIR, 'd04_static_bag_183015', 'd04_static_bag_183015_0.mcap'),
+                          cloud='/qazbot_lio/cloud_registered', odom='/qazbot_lio/odometry',
+                          imu='/aima/hal/sensor/lidar_chest_front/imu',
+                          obstacles='/qazbot_lio/scan_obstacles'),
     'replay_dense_01': dict(db=f'{LEGACY}/logs/replay_dense_01/bag/bag_0.db3',
                             cloud='/cloud_registered', odom='/Odometry', imu=None),
     'replay_portable_01': dict(db=f'{LEGACY}/logs/replay_portable_01/bag/bag_0.db3',

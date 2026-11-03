@@ -9,6 +9,9 @@ skip (pytest) or exit (replay_d04.py, nav2_real_costmap.py) with the missing pat
 |---|---|---|---|
 | d04_static_bag_204153 (`static_204153`) | `d04_static_bag_204153/d04_static_bag_204153_0.mcap` | 3700720716 | `2b7f7adf5204f0f47391095d85b8da94e80718e65b465abb0addd951ba76d4b7` |
 | d04_static_bag_211835 (`static_211835`) | `d04_static_bag_211835/d04_static_bag_211835_0.mcap` | 3698473010 | `6c953804ad1c27804933aca31c781d8e60367d4de775c3e79dfe245e8d4c86bf` |
+| d04_static_bag_183015 (`static_183015`) | `d04_static_bag_183015/d04_static_bag_183015_0.mcap` | 9039573139 | `bb90e41b65874adb14e01636e5f1cd18d75d130ba7b1d2a01eb930eadbc1546f` |
+
+`static_183015` = P-D04 real-object test 2026-11-03 (719 s, also raw `/aima/hal/sensor/lidar_chest_front/lidar_pointcloud`, not in the default replay set; analysis: `.orchestrator/reports/20261103-pd04-analysis.md`).
 
 Recorded with `tools/d04/record_d04_static.sh` (static robot, 300 s, includes live `scan_obstacles`/`scan_clearing`/`costmap_raw`).
 
