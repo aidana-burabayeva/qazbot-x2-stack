@@ -218,3 +218,65 @@ def test_moving_mc_requirement_is_never_substituted_with_lite(candidate,monkeypa
     monkeypatch.setattr(q.subprocess,'run',lambda *a,**k:pytest.fail('unqualified MC/lite runtime started'))
     with pytest.raises(ValueError,match='lite substitution refused'):
         q.x2_runtime_fix(db,row,root,nq.RUN,nq.RUN)
+
+
+def test_unconfirmed_teardown_holds_admission_until_container_absence_proven(candidate,monkeypatch):
+    db,root,*_=candidate;discover(candidate)
+    db.execute("UPDATE x2_l3 SET state='L3_BLOCKED',teardown_pending=1")
+    assert q.x2_busy(db) and list(nq.ready(db))==[]
+    monkeypatch.setattr(q.subprocess,'run',lambda *a,**k:SimpleNamespace(returncode=0,stdout='',stderr=''))
+    q.x2_recover(db,root,nq.RUN)
+    assert not q.x2_busy(db)
+    assert db.execute('SELECT state FROM x2_l3').fetchone()[0]=='L3_BLOCKED'
+
+
+def test_runtime_binds_explicit_inputs_readonly_and_cleans_only_own_project(candidate,monkeypatch):
+    import shutil
+    db,root,*_=candidate;row=discover(candidate)
+    raw=root/'recorded.bin';raw.write_bytes(b'unit-fixture')
+    spec=json.loads(row['spec']);spec['inputs']=[dict(path=str(raw),sha256=hashlib.sha256(raw.read_bytes()).hexdigest())]
+    row['spec']=json.dumps(spec);row['conditions']=json.dumps(q.x2_case_conditions(root,spec))
+    out=nq.RUN/'unit-runtime';out.mkdir();(root/'digital_twin').mkdir();(root/'digital_twin/.env.lab').write_text('TWIN_MAP=d1_qazbot_20261029\nTWIN_VERSION=dev\n')
+    monkeypatch.setattr(execution,'require',lambda *a,**k:{'name':row['task']})
+    monkeypatch.setattr(shutil,'disk_usage',lambda *a:SimpleNamespace(free=10*2**30))
+    execution.authorize(db,execution.L3,dict(mode=execution.L3,verdict='PASS',stamp='unit-fixture'),root,row['source_sha'])
+    original=subprocess.run;calls=[]
+    def run(argv,**kw):
+        if argv[0]=='git':return original(argv,**kw)
+        calls.append(argv)
+        if 'run' in argv:
+            (out/'runtime.xml').write_text('<testsuite><testcase classname="fixture" name="runtime"/></testsuite>')
+            (out/'runtime_contract.json').write_text(json.dumps(dict(fidelity='REAL_ROS2_NAV2',source_sha=row['source_sha'],nav2_version=spec['nav2_version'],safety_violations=0,cases={k:True for k in q.X2_CASES['d05']})))
+            (out/'graph_witness.json').write_text(json.dumps(dict(nodes=['controller_server','collision_monitor','goal_coordinator','motion_adapter'],topics={'/cloud':'sensor_msgs/msg/PointCloud2','/cmd':'geometry_msgs/msg/Twist'},counts={'/cloud':1,'/cmd':1},publisher_gids=['unit-gid'])))
+        return SimpleNamespace(returncode=0,stdout='',stderr='')
+    monkeypatch.setattr(subprocess,'run',run)
+    result=q.x2_runtime_fix(db,row,root,nq.RUN,out)
+    assert result['status']=='L3_PASS'  # mocked unit runtime, never a real qualification receipt
+    assert str(raw)+':'+str(raw)+':ro' in calls[0]
+    assert 'stack-lite' in calls[0] and '--no-deps' in calls[0]
+    assert calls[-1][-2:]==['down','--remove-orphans'] and '-v' not in calls[-1]
+
+
+def test_orchestrator_splits_disjoint_d04_d07_commits_without_shared_branch_updates(candidate):
+    db,root,*_=candidate
+    (root/'d04.txt').write_text('D04 fixture');(root/'d07.txt').write_text('D07 fixture')
+    before=git(root,'rev-parse','lab/stable')
+    groups=nq.attempts.commit_components(root,'unit',1,[dict(blocker='d04',files=['d04.txt']),dict(blocker='d07',files=['d07.txt'])])
+    assert groups['d04']['fix_sha']!=groups['d07']['fix_sha']
+    assert git(root,'diff-tree','--no-commit-id','--name-only','-r',groups['d04']['fix_sha'])=='d04.txt'
+    assert git(root,'diff-tree','--no-commit-id','--name-only','-r',groups['d07']['fix_sha'])=='d07.txt'
+    assert git(root,'rev-parse','lab/stable')==before
+
+
+def test_orchestrator_splits_shared_file_hunks_into_independent_commits(candidate):
+    import difflib
+    db,root,*_=candidate
+    before='d04=0\nd07=0\n';middle='d04=1\nd07=0\n';after='d04=1\nd07=1\n'
+    (root/'both.txt').write_text(before);git(root,'add','both.txt');git(root,'commit','-qm','unit shared baseline')
+    (root/'both.txt').write_text(after)
+    def patch(a,b):return ''.join(difflib.unified_diff(a.splitlines(True),b.splitlines(True),fromfile='a/both.txt',tofile='b/both.txt'))
+    plans=[dict(blocker='d04',files=['both.txt'],patch=patch(before,middle)),dict(blocker='d07',files=['both.txt'],patch=patch(middle,after))]
+    groups=nq.attempts.commit_components(root,'unit',1,plans)
+    assert git(root,'show',groups['d04']['fix_sha']+':both.txt')==middle.strip()
+    assert git(root,'show',groups['d07']['fix_sha']+':both.txt')==after.strip()
+    assert (root/'both.txt').read_text()==after

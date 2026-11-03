@@ -117,3 +117,37 @@ class VerifyJob:
             os.killpg(self.p.pid, signal.SIGKILL)
         except OSError:
             pass
+
+
+def commit_components(wt, name, attempt, plans):
+    """Commit explicitly disjoint D04/D07 groups in the existing private attempt only."""
+    if not isinstance(plans,list) or not all(isinstance(p,dict) for p in plans):raise ValueError('invalid component plans')
+    selected=[p for p in plans if p.get('blocker') in ('d04','d07') and not p.get('blocked') and p.get('files')]
+    if len(selected)<2:return {}
+    if len(selected)!=2 or {p['blocker'] for p in selected}!={'d04','d07'}:raise ValueError('exactly one D04 and one D07 group required')
+    _git(wt,'add','-A')
+    changed=set(_git(wt,'diff','--cached','--name-only')[1].splitlines())
+    used=set()
+    for plan in selected:
+        paths=plan['files']
+        if (not isinstance(paths,list) or not paths or not all(isinstance(p,str) and p in changed and not Path(p).is_absolute()
+                and '..' not in Path(p).parts and not p.startswith('.qazbot/') for p in paths)
+                or (used.intersection(paths) and not all(isinstance(p.get('patch'),str) and p['patch'] for p in selected))):
+            raise ValueError('independent D04/D07 commit groups must be explicit, changed and disjoint')
+        used.update(paths)
+    _git(wt,'restore','--staged','--source=HEAD','--','.')
+    results={}
+    for plan in selected:
+        before=head(wt)
+        if plan.get('patch'):
+            r=subprocess.run(['git','-C',str(wt),'apply','--cached','--whitespace=error','-'],input=plan['patch'],text=True,capture_output=True,timeout=60)
+            rc,out=r.returncode,r.stdout+r.stderr
+        else:
+            rc,out=_git(wt,'--literal-pathspecs','add','--',*plan['files'])
+        if rc:raise ValueError('cannot stage component group: '+out[-120:])
+        staged=set(_git(wt,'diff','--cached','--name-only')[1].splitlines())
+        if not staged or not staged.issubset(plan['files']):raise ValueError('component patch changes undeclared files')
+        rc,out=_git(wt,*IDENT,'commit','-q','-m',f"nightly {name}#{attempt}: independent {plan['blocker']} fix")
+        if rc:raise ValueError('cannot commit component group: '+out[-120:])
+        results[plan['blocker']]=dict(fix_sha=head(wt),baseline_sha=before)
+    return results

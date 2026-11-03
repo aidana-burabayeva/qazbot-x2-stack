@@ -78,6 +78,8 @@ def x2_init(db):
       key TEXT PRIMARY KEY, blocker TEXT NOT NULL, producer TEXT NOT NULL, fix_sha TEXT NOT NULL,
       source_sha TEXT NOT NULL, conditions TEXT NOT NULL, spec TEXT NOT NULL, state TEXT NOT NULL,
       detail TEXT, task TEXT UNIQUE, pid INTEGER, evidence TEXT, updated REAL)''')
+    if 'teardown_pending' not in [r[1] for r in db.execute('PRAGMA table_info(x2_l3)')]:
+        db.execute('ALTER TABLE x2_l3 ADD COLUMN teardown_pending INTEGER NOT NULL DEFAULT 0')
     db.execute("CREATE UNIQUE INDEX IF NOT EXISTS x2_l3_single_worker ON x2_l3((1)) WHERE state IN ('FIX_CHECKING','L3_PREFLIGHT','L3_READY','L3_RUNNING')")
 
 
@@ -86,7 +88,7 @@ def x2_exists(db):
 
 
 def x2_busy(db):
-    return x2_exists(db) and bool(db.execute("SELECT 1 FROM x2_l3 WHERE state IN ('FIX_CHECKING','L3_PREFLIGHT','L3_READY','L3_RUNNING')").fetchone())
+    return x2_exists(db) and bool(db.execute("SELECT 1 FROM x2_l3 WHERE state IN ('FIX_CHECKING','L3_PREFLIGHT','L3_READY','L3_RUNNING') OR teardown_pending=1").fetchone())
 
 
 def x2_task(db, name):
@@ -270,7 +272,8 @@ def x2_advance(db, root, run):
             try: result=json.loads(out.read_text())
             except (ValueError,OSError):result=dict(status='L3_BLOCKED',reason='no validated runtime outcome')
             if row['source_sha']!=mergeq.integration_head(root):result=dict(status='L3_BLOCKED',reason='Git SHA changed; stale qualification')
-            _x2_set(db,row['key'],result['status'],result.get('reason',''),evidence=str(out))
+            pending=result.get('teardown_confirmed') is False
+            _x2_set(db,row['key'],'L3_BLOCKED' if pending else result['status'],result.get('reason',''),evidence=str(out),teardown_pending=int(pending))
             auth=execution.get(db,'execution_authorization',{});auth['mode']=execution.ENGINEERING
             execution.put(db,'execution_authorization',auth);execution.put(db,'execution_mode',execution.ENGINEERING)
     if execution.active_leases(db):return
@@ -334,10 +337,10 @@ def x2_proof_fix(db, row, root, run, out):
             for block in iter(lambda:f.read(1024*1024),b''):h.update(block)
         if h.hexdigest()!=item['sha256']:raise ValueError('input SHA256 mismatch: '+str(path))
     try:
-        for label,sha in [('before',spec['baseline_sha']),('after',row['source_sha'])]:
+        for label,sha in [('before',spec['baseline_sha']),('after',row['fix_sha'])]:
             wt,branch=attempts.prepare(str(root),run,'x2_proof_'+label+'_'+row['key'][:12],1,row['key'][:16],sha)
             trees.append(wt)
-            if label=='before':
+            if label in ('before','after'):
                 paths=spec.get('test_files',spec['tests'])
                 if not all(_safe_file(p) and (p.startswith('tests/') or '/test/' in p) for p in paths):raise ValueError('only test files may be overlaid on the baseline')
                 p=_git(wt,'restore','--source='+row['source_sha'],'--',*paths)
@@ -423,7 +426,7 @@ def x2_runtime_fix(db,row,root,run,out):
     # with pinned source read-only and evidence writable; no host network or Docker socket binding.
     project='x2fix-'+row['key'][:16]
     compose=['docker','compose','-p',project,'-f',str(Path(root)/'digital_twin/docker/compose.yaml'),'--env-file',str(Path(root)/'digital_twin/.env.lab')]
-    env=dict(os.environ,**__import__('preflight').env_file(Path(root)/'digital_twin/.env.lab'),TWIN_VERSION='nightly',TWIN_BACKEND=str(root))
+    env=dict({**os.environ,**__import__('preflight').env_file(Path(root)/'digital_twin/.env.lab')},TWIN_VERSION='nightly',TWIN_BACKEND=str(root))
     source=Path(run)/'l3-fixes'/row['key']/'source'
     if not source.exists():
         p=_git(root,'worktree','add','--detach',str(source),row['source_sha'])
@@ -431,6 +434,8 @@ def x2_runtime_fix(db,row,root,run,out):
     if _git(source,'rev-parse','HEAD').stdout.decode().strip()!=row['source_sha']:raise ValueError('runtime source worktree mismatch')
     _x2_witness(out)
     (out/'witness.stop').unlink(missing_ok=True)
+    import shutil
+    if shutil.disk_usage(root).free<5*2**30:raise ValueError('disk below existing 5 GiB floor after pinning runtime source')
     argv=_pytest(spec['runtime_tests'])+['--junitxml=/qualification/runtime.xml']
     command=compose+['run','--rm','--no-deps','-v',str(source)+':/source:ro','-v',str(out)+':/qualification',
                      '-w','/source','-e','QAZBOT_L3_SOURCE_SHA='+row['source_sha'],'-e','QAZBOT_L3_FIX_SHA='+row['fix_sha'],'-e','QAZBOT_L3_BLOCKER='+row['blocker'],'-e','QAZBOT_SIM=1','-e','ROS_DOMAIN_ID=87','-e','ROS_LOCALHOST_ONLY=1',
@@ -438,19 +443,26 @@ def x2_runtime_fix(db,row,root,run,out):
                      'source /opt/ros/humble/setup.bash; source /opt/x2twin/overlay/setup.bash; '
                      'python3 /qualification/observe_graph.py & witness=$!; '+shlex.join(argv)+
                      '; result=$?; touch /qualification/witness.stop; wait "$witness"; exit "$result"']
-    error=None;rc=1
+    mounts=[]
+    for item in spec.get('inputs',[]):
+        path=Path(item['path']);path=path if path.is_absolute() else Path(root)/path
+        if not path.is_file() or ':' in str(path):raise ValueError('unavailable/unsupported read-only input mount: '+str(path))
+        mounts+=['-v',str(path)+':'+str(path)+':ro']
+    command[command.index('run')+1:command.index('run')+1]=mounts
+    error=None;rc=1;clean=False
     try:
         with (out/'runtime.log').open('w') as log:
             rc=subprocess.run(command,env=env,cwd=root,stdout=log,stderr=subprocess.STDOUT,timeout=600).returncode
     finally:
         p=subprocess.run(compose+['down','--remove-orphans'],env=env,cwd=root,capture_output=True,text=True,timeout=90)
         (out/'teardown.log').write_text(p.stdout+p.stderr)
-        if p.returncode:error='owned runtime teardown unverified'
+        clean=p.returncode==0
+        if not clean:error='owned runtime teardown unverified'
         lease.close()
     try:
         junit=_junit(out/'runtime.xml');record=json.loads((out/'runtime_contract.json').read_text())
         witness=json.loads((out/'graph_witness.json').read_text())
-    except (ValueError,OSError,ET.ParseError):return dict(status='L3_BLOCKED',reason=error or 'runtime dependencies/report unavailable; no qualified runtime result')
+    except (ValueError,OSError,ET.ParseError):return dict(status='L3_BLOCKED',reason=error or 'runtime dependencies/report unavailable; no qualified runtime result',teardown_confirmed=clean)
     required=X2_CASES[row['blocker']]
     valid=(rc==0 and junit['total']>0 and not any(junit[k] for k in ('failed','errors','skipped'))
            and record.get('fidelity')=='REAL_ROS2_NAV2' and record.get('source_sha')==row['source_sha']
@@ -466,7 +478,7 @@ def x2_runtime_fix(db,row,root,run,out):
         if row['blocker']=='d04':valid=valid and bool(observed & {'lidar_projector','qazbot_level_bridge'}) and 'sensor_msgs/msg/LaserScan' in message_types
     if _git(root,'rev-parse','lab/stable').stdout.decode().strip()!=row['source_sha']:return dict(status='L3_BLOCKED',reason='Git SHA changed; runtime outcome is stale')
     return dict(status='L3_PASS' if valid and not error else 'L3_FAIL',reason=error or ('' if valid else 'runtime assertions/coverage/safety contract failed'),
-                hardware_qualification='NEEDS_HARDWARE: no measured X2 braking or 21/45 cm box verification',record=record,junit=junit)
+                hardware_qualification='NEEDS_HARDWARE: no measured X2 braking or 21/45 cm box verification',record=record,junit=junit,teardown_confirmed=clean)
 
 
 def x2_retained_leases(db):
@@ -479,6 +491,10 @@ def x2_recover(db,root,run):
     """Recover durable outcomes; never duplicate or kill a live/uncertain runtime."""
     import nq
     if not x2_exists(db):return
+    for row in db.execute('SELECT * FROM x2_l3 WHERE teardown_pending=1').fetchall():
+        p=subprocess.run(['docker','ps','-q','--filter','label=com.docker.compose.project=x2fix-'+row['key'][:16]],capture_output=True,text=True,timeout=20)
+        if p.returncode==0 and not p.stdout.strip():
+            _x2_set(db,row['key'],'L3_BLOCKED','owned runtime teardown now confirmed; prior result remains unverified/failed',teardown_pending=0)
     for row in db.execute("SELECT t.* FROM tasks t JOIN x2_l3 q ON q.task=t.name WHERE t.state='RUNNING'").fetchall():
         record=x2_task(db,row['name']);out=Path(run)/'work'/f"{row['name']}.{row['attempts']}"/'l3_outcome.json'
         try:
@@ -522,8 +538,12 @@ def _x2_main():
     phase={'proof-fix':'proof','preflight-fix':'preflight','run-fix':'l3_outcome'}[a.command]
     try:result={'proof-fix':x2_proof_fix,'preflight-fix':x2_preflight_fix,'run-fix':x2_runtime_fix}[a.command](db,row,root,run,out)
     except (Exception,SystemExit) as exc:result=dict(ok=False,status='L3_BLOCKED',reason=type(exc).__name__+': '+str(exc))
+    if a.command=='run-fix' and 'teardown_confirmed' not in result:
+        result['teardown_confirmed']=False  # inspect the owned project before any other dispatch
     _atomic_json(out/(phase+'.json'),result)
     if a.command=='run-fix':
+        source=Path(run)/'l3-fixes'/a.key/'source'
+        if source.exists():_git(root,'worktree','remove','--force',str(source))
         _atomic_json(out/'result.json',dict(scenario_id='x2:'+row['blocker'],seed=row['key'],
                      verdict={'L3_PASS':'PASS','L3_FAIL':'FAIL'}.get(result.get('status'),'UNVERIFIED'),
                      metrics=dict(fidelity='L3',fix_sha=row['fix_sha'],git_sha=row['source_sha'],status=result.get('status')),
