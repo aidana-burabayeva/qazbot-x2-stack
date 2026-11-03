@@ -25,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import nq  # noqa: E402
 import mergeq  # noqa: E402
 import execution  # noqa: E402
+import source_state  # noqa: E402
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'operator_skills'))
 import opskills  # noqa: E402
 
@@ -80,6 +81,8 @@ def dc(*a, timeout=900, env=None):
 
 
 def robot_params():
+    if not source_state.hardware_ref(ROBOT_REF):
+        raise RuntimeError('ROBOT_REF must identify installed hardware, never preservation/candidate evidence')
     rc, o = git('show', f'{ROBOT_REF}:{SNAP}')
     if rc != 0:
         raise RuntimeError(f'{ROBOT_REF}:{SNAP} unavailable: {o[-100:]}')
@@ -130,7 +133,7 @@ def check_git():
             add('git.integration_vs_origin', 'PASS', f'{ih[:9]} == origin')
     dirty = [ln for ln in gout('status', '--porcelain').splitlines() if ln.strip()]
     add('git.tracked_clean', 'FAIL' if dirty else 'PASS', f'{len(dirty)} tracked/untracked modification(s): {dirty[:3]}' if dirty else 'no tracked or untracked modifications')
-    add('git.robot_ref', 'PASS' if gout('rev-parse', '-q', '--verify', ROBOT_REF) else 'FAIL', f'{ROBOT_REF} {gout("rev-parse", "--short", ROBOT_REF)}')
+    add('git.robot_ref', 'PASS' if source_state.hardware_ref(ROBOT_REF) and gout('rev-parse', '-q', '--verify', ROBOT_REF) else 'FAIL', f'{ROBOT_REF} {gout("rev-parse", "--short", ROBOT_REF)}')
 
 
 def integration_baseline_matches():
@@ -147,6 +150,8 @@ def integration_baseline_matches():
 
 
 def check_baseline():
+    evidence = source_state.preservation_status(ROOT, mergeq.integration_head(ROOT))
+    add('baseline.preservation_import', 'PASS' if evidence['status'] == 'SOURCE_MATCH' else 'WARN', json.dumps(evidence))
     ok = integration_baseline_matches()
     add('baseline.integration_sha256', 'PASS' if ok else 'FAIL', '73/73 integration Git blobs match snapshot' if ok else 'integration branch differs from captured robot files')
     rc, o = sh('digital_twin/scripts/contract/check_published.sh', env=None)

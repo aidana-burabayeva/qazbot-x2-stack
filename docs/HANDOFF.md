@@ -1,3 +1,9 @@
+# 2026-11-03 — X2 selective baseline synchronization
+
+[Import evidence and limits](evidence/lab_import_x2_20261103/README.md). Separate import branch; 125 selected source/test/evidence files, no production wiring change. Hardware baseline remains robot/stable 1212d7e; preservation dd1d0af is engineering evidence. 73 baseline hashes preserved; C++ build, 23 core and 2 parity tests PASS. D05/Collision Monitor and D07 remain unresolved; raw bags and aimdk_msgs BLOCKED. Integration/publication status is recorded in the external session report; no campaign or SIM_VERIFIED claim.
+
+---
+
 # 2026-11-01 — AMCL initialpose attempt 4, offline candidate
 
 Read [attempt evidence](evidence/amcl_initialpose_v3_attempt4_20261101/README.md).

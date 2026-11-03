@@ -1,0 +1,31 @@
+# Package DEFAULT parameters of lidar_projector = values of the running level_bridge.py
+# (localization.launch.py: range_max:=8.0 scan_every:=2, publish_tf:=false for odom_source native_imu).
+# Do not edit in place: copy and pass the copy with `params_file:=...`. All parameters are read at start-up.
+/**:
+  ros__parameters:
+    # bool. true: also broadcast TF odom -> base_footprint. false: /odom_level and scans only, so that
+    # native_odom_bridge.py stays the single odom->base_footprint owner (running deployment).
+    publish_tf: false
+    # double [m]. Scan / obstacle / clearing range limit (code default 25.0, running 8.0).
+    range_max: 8.0
+    # int [clouds]. Process every Nth /cloud_registered (code default 1, running 2 => 5 Hz from 10 Hz).
+    scan_every: 2
+    # double [m]. Nearer returns are ignored. Default 0.45.
+    range_min: 0.45
+    # double [m]. Slice lower bound relative to the LiDAR IMU (floor ~1.0 m below it). Default -0.65.
+    z_min: -0.65
+    # double [m]. Slice upper bound relative to the LiDAR IMU. Default 0.80.
+    z_max: 0.80
+    # double [m/m]. Lower bound rises by this much per metre of range (~2 deg of body sway). Default 0.035.
+    floor_margin_per_m: 0.035
+    # int [bins]. Bearing bins over [-pi, pi) (0.25 deg). Default 1440.
+    n_bins: 1440
+    # double [s]. IMU averaging window for the gravity levelling. Default 1.0.
+    level_s: 1.0
+    # double [s]. Pose baseline for the /odom_level twist. Default 0.3.
+    twist_baseline_s: 0.3
+    # double[3] [unit vector]. LiDAR forward (x) in lidar_imu_chest_front (inverse of /tf_static
+    # lidar_chest_front -> lidar_imu_chest_front).
+    lidar_fwd_in_imu: [-0.003843965609489519, 0.0008810920694298785, -0.9999922237723444]
+    # string. Lidar IMU topic, used for the first level_s seconds only.
+    imu_topic: /aima/hal/sensor/lidar_chest_front/imu

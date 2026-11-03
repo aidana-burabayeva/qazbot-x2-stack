@@ -1,0 +1,15 @@
+COMPILE PASS 52
+IMPORT PASS source_state
+IMPORT PASS lab
+IMPORT PASS labctl
+IMPORT PASS preflight
+IMPORT PASS costmap_emul
+IMPORT PASS replay_d04
+IMPORT PASS cm_eval_lib
+DEPENDENCY PASS rclpy
+DEPENDENCY PASS rosbag2_py
+DEPENDENCY PASS sensor_msgs_py
+DEPENDENCY BLOCKED aimdk_msgs No module named 'aimdk_msgs'
+DEPENDENCY PASS numpy
+DEPENDENCY PASS scipy
+D07/PD04 scripts with top-level file I/O and fixed X2/scratch paths: BLOCKED for execution/import without input data; compiled only; no replay attempted.

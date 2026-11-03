@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!-- OFFLINE evaluation of the official nav2_collision_monitor (Humble 1.1.18) on replayed X2 data.
+     Test-only. Run it ONLY in an isolated domain (tools/run_scenario.sh sets ROS_DOMAIN_ID=82,
+     ROS_LOCALHOST_ONLY=1). All parameters come from config/*.yaml; per-scenario changes are override YAMLs.
+     Everything lives under /cm_test/*; TF is isolated to /cm_test/tf and /cm_test/tf_static. -->
+<launch>
+  <arg name="cm_params" default="$(dirname)/../config/collision_monitor_x2_offline.yaml"/>
+  <arg name="cm_override" default="$(dirname)/../config/overrides/none.yaml"/>
+  <arg name="harness_params" default="$(dirname)/../config/harness.yaml"/>
+  <arg name="harness_override" default="$(dirname)/../config/overrides/none.yaml"/>
+  <arg name="run_override" default="$(dirname)/../config/overrides/none.yaml"/>
+  <arg name="use_gate" default="false"/>
+  <arg name="nodes_dir" default="$(dirname)/../nodes"/>
+
+  <node pkg="nav2_collision_monitor" exec="collision_monitor" name="collision_monitor" output="screen">
+    <param from="$(var cm_params)"/>
+    <param from="$(var cm_override)"/>
+    <remap from="/tf" to="/cm_test/tf"/>
+    <remap from="/tf_static" to="/cm_test/tf_static"/>
+  </node>
+
+  <executable name="cm_fixture_static_tf" output="screen"
+      cmd="python3 $(var nodes_dir)/cm_fixture_static_tf.py --ros-args -r /tf_static:=/cm_test/tf_static --params-file $(var harness_params) --params-file $(var harness_override)"/>
+
+  <executable name="cm_cmd_vel_source" output="screen"
+      cmd="python3 $(var nodes_dir)/cm_cmd_vel_source.py --ros-args --params-file $(var harness_params) --params-file $(var harness_override)"/>
+
+  <executable name="cm_probe" output="screen"
+      cmd="python3 $(var nodes_dir)/cm_probe.py --ros-args --params-file $(var harness_params) --params-file $(var harness_override) --params-file $(var run_override)"/>
+
+  <executable name="cm_topic_gate" output="screen" if="$(var use_gate)"
+      cmd="python3 $(var nodes_dir)/cm_topic_gate.py --ros-args --params-file $(var harness_params) --params-file $(var harness_override)"/>
+</launch>

@@ -23,6 +23,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import nq  # noqa: E402
 import execution
+import source_state
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'operator_skills'))
 import opskills  # noqa: E402
 
@@ -313,6 +314,8 @@ POINTER_KEYS = ('last_robot_processed_sha', 'last_robot_snapshot_sha', 'last_lab
 def write_pointers(db):
     d = {k: nq.kv_get(db, k) for k in POINTER_KEYS}
     d['stable_heads'] = {'robot/stable': gout('rev-parse', '-q', '--verify', 'refs/remotes/origin/robot/stable'), 'lab/stable': gout('rev-parse', '-q', '--verify', 'refs/heads/lab/stable') or gout('rev-parse', '-q', '--verify', 'refs/remotes/origin/lab/stable')}
+    d['source_state'] = source_state.preservation_status(ROOT, nq.mergeq.integration_head(ROOT))
+    d['pointer_contract'] = 'last_robot_processed_sha is analysis only; imports require per-path Git blob comparison'
     d['written'] = now_iso()
     (HW / 'SYNC_POINTERS.json').write_text(json.dumps(d, indent=1) + '\n')
 
@@ -458,10 +461,10 @@ FEEDBACK_FILES = ('docs/hardware/ROBOT_TO_LAB_FEEDBACK.md', 'docs/HANDOFF.md', '
 
 
 def latest_robot_ref():
-    """Newest published robot baseline branch (origin/baseline/x2-robot-*), or the operator override NIGHTLY_ROBOT_REF."""
+    """Installed hardware baseline; engineering preservation/candidates are separate sources."""
     ref = os.environ.get('NIGHTLY_ROBOT_REF')
     if ref:
-        return ref if rev_ok(ref) else None
+        return ref if source_state.hardware_ref(ref) and rev_ok(ref) else None
     if rev_ok('origin/robot/stable'):
         return 'origin/robot/stable'  # the permanent branch for the INSTALLED X2 state (never origin/main)
     out = gout('for-each-ref', '--sort=-committerdate', '--format=%(refname:short)', 'refs/remotes/origin/baseline/x2-robot-*')
@@ -476,14 +479,16 @@ def robot_sync(db):
     """Robot -> Lab: analyse only what the physical-robot branch published SINCE the last processed robot baseline.
     Reads with git show/diff from the remote ref (never merges, so diverged histories are harmless and the feedback file need not exist
     in the lab branch). The checkpoint moves only after every task was created."""
-    log = []
+    evidence = source_state.preservation_status(ROOT, nq.mergeq.integration_head(ROOT))
+    log = [f'PRESERVATION-SYNC {json.dumps(evidence, sort_keys=True)}'] if evidence['sha'] else []
+    # No production-import pointer is advanced by analysis, including an already processed hardware tip.
     ref = latest_robot_ref()
     if not ref:
         return ['ROBOT-SYNC no robot baseline ref (origin/baseline/x2-robot-*) found: nothing to analyse (not an error)']
     tip = gout('rev-parse', ref + '^{commit}')
     last = nq.kv_get(db, 'last_robot_processed_sha') or nq.kv_get(db, 'last_robot_integrated_sha')
     if last and tip == last:
-        return [f'ROBOT-SYNC {ref} {tip[:9]} already processed']
+        return log + [f'ROBOT-SYNC {ref} {tip[:9]} already processed (analysis only, not code import)']
     valid_last = bool(last) and rev_ok(last)
     if valid_last:
         mb = gout('merge-base', last, tip)
@@ -546,7 +551,7 @@ def robot_sync(db):
         if has_snapshot:
             nq.kv_set(db, 'last_robot_snapshot_sha', tip)
         nq.kv_set(db, 'last_robot_processed_sha', tip)  # only after everything above succeeded
-        nq.kv_set(db, 'last_robot_integrated_sha', tip)  # legacy alias
+        # Preserve the legacy pointer for audit; processing evidence does not integrate code.
         nq.kv_set(db, 'last_robot_ref', ref)
         log.append(f'ROBOT-SYNC created {len(made)} task(s): {made}; checkpoint last_robot_processed_sha={tip[:9]}')
     except Exception as e:
@@ -657,7 +662,8 @@ def cmd_resume(args):
             nq.kv_set(db, 'last_lab_reviewed_sha', fb['last_lab_reviewed_sha'])
         log.append(f"FEEDBACK robot reports integrated={str(fb.get('last_lab_integrated_sha'))[:9]} reviewed={str(fb.get('last_lab_reviewed_sha'))[:9]}")
     log.extend(robot_sync(db))
-    nq.kv_set(db, 'current_integration_sha', g['head'])
+    write_pointers(db)
+    nq.kv_set(db, 'current_integration_sha', nq.mergeq.integration_head(ROOT))
     # PRIORITIZE/restore parked work (a git problem never blocks independent sim tasks, but results on stale code are flagged)
     parked = nq.kv_get(db, 'parked', {})
     restored = 0

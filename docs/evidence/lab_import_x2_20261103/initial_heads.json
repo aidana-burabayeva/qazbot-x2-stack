@@ -1,0 +1,9 @@
+{
+  "lab/stable": "047b8b375d145a527c9e0e99e772aad018427158",
+  "lab/control": "69945ad745572acf512b93e53348f3718f32c510",
+  "origin/lab/stable": "55ad923eaeaaf2062cea86f613d82a278b639c37",
+  "origin/robot/stable": "1212d7eda003022d74c6ecc4a2c745fd48f57c2f",
+  "expected_lab_control": "1e7e3a2faac4c512fc7cf2f3768ffe02a1c80009",
+  "feedback": "617999a77b3af19a5dc80175e16b52066ea3c7db",
+  "preservation": "dd1d0af5bfb30733db33811a8cb0b3d8d632f13e"
+}
