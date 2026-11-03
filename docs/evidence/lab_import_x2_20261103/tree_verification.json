@@ -1,0 +1,17 @@
+{
+  "lab_files": 1417,
+  "robot_files": 3813,
+  "identical_common": 673,
+  "different_common": [
+    ".gitignore",
+    "CLAUDE.md",
+    "README.md",
+    "docs/HANDOFF.md",
+    "docs/TEST_STATUS.md",
+    "docs/hardware/ROBOT_TO_LAB_FEEDBACK.md",
+    "tools/operator_skills/robot_stable.py",
+    "tools/twin/amcl_sim.launch.py",
+    "tools/twin/replay_amcl.py",
+    "ws/src/maps/d1_qazbot_20261029/manifest.json"
+  ]
+}

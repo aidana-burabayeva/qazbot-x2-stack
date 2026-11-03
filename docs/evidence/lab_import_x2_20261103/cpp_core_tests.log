@@ -1,0 +1,82 @@
+Running main() from /opt/ros/humble/src/gtest_vendor/src/gtest_main.cc
+[==========] Running 23 tests from 10 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from Math
+[ RUN      ] Math.QuatToRotIdentityAndQuarterTurn
+[       OK ] Math.QuatToRotIdentityAndQuarterTurn (0 ms)
+[ RUN      ] Math.MatMulAgainstIdentity
+[       OK ] Math.MatMulAgainstIdentity (0 ms)
+[ RUN      ] Math.LevelRotationMapsUpToZAndIsOrthonormal
+[       OK ] Math.LevelRotationMapsUpToZAndIsOrthonormal (0 ms)
+[ RUN      ] Math.RotateCovarianceIdentityAndRotationInvariants
+[       OK ] Math.RotateCovarianceIdentityAndRotationInvariants (0 ms)
+[----------] 4 tests from Math (0 ms total)
+
+[----------] 2 tests from Leveller
+[ RUN      ] Leveller.WaitsForOrientationThenAveragesLevelSeconds
+[       OK ] Leveller.WaitsForOrientationThenAveragesLevelSeconds (0 ms)
+[ RUN      ] Leveller.RotatesAccelerationIntoWorldAndTreatsZeroStampAsUnset
+[       OK ] Leveller.RotatesAccelerationIntoWorldAndTreatsZeroStampAsUnset (0 ms)
+[----------] 2 tests from Leveller (0 ms total)
+
+[----------] 1 test from Pose
+[ RUN      ] Pose.YawFromLidarForwardAxis
+[       OK ] Pose.YawFromLidarForwardAxis (0 ms)
+[----------] 1 test from Pose (0 ms total)
+
+[----------] 4 tests from Tracker
+[ RUN      ] Tracker.CacheKeepsNewest50AndFindsByKey
+[       OK ] Tracker.CacheKeepsNewest50AndFindsByKey (0 ms)
+[ RUN      ] Tracker.TwistNeedsBaselineAndIsInChildFrame
+[       OK ] Tracker.TwistNeedsBaselineAndIsInChildFrame (0 ms)
+[ RUN      ] Tracker.AngularVelocityWrapsAround
+[       OK ] Tracker.AngularVelocityWrapsAround (0 ms)
+[ RUN      ] Tracker.ClockStepBackClearsCacheAndBaseline
+[       OK ] Tracker.ClockStepBackClearsCacheAndBaseline (0 ms)
+[----------] 4 tests from Tracker (0 ms total)
+
+[----------] 1 test from Bins
+[ RUN      ] Bins.IndexEdgesAndWrap
+[       OK ] Bins.IndexEdgesAndWrap (0 ms)
+[----------] 1 test from Bins (0 ms total)
+
+[----------] 1 test from Band
+[ RUN      ] Band.FloorMarginGrowsWithRange
+[       OK ] Band.FloorMarginGrowsWithRange (0 ms)
+[----------] 1 test from Band (0 ms total)
+
+[----------] 2 tests from Prepare
+[ RUN      ] Prepare.StridedViewNanSkippingAndLevelling
+[       OK ] Prepare.StridedViewNanSkippingAndLevelling (0 ms)
+[ RUN      ] Prepare.YawRotatesIntoBody
+[       OK ] Prepare.YawRotatesIntoBody (0 ms)
+[----------] 2 tests from Prepare (0 ms total)
+
+[----------] 2 tests from Scan
+[ RUN      ] Scan.NearestInBandPerBinWithRangeLimits
+[       OK ] Scan.NearestInBandPerBinWithRangeLimits (0 ms)
+[ RUN      ] Scan.ObstaclesInBinOrderAndEmptyScan
+[       OK ] Scan.ObstaclesInBinOrderAndEmptyScan (0 ms)
+[----------] 2 tests from Scan (0 ms total)
+
+[----------] 5 tests from Clearing
+[ RUN      ] Clearing.FloorReturnEndsAtBandExitAndNoPointNoRay
+[       OK ] Clearing.FloorReturnEndsAtBandExitAndNoPointNoRay (0 ms)
+[ RUN      ] Clearing.FarPointStopsJustShortOfRangeMaxAndCeilingExit
+[       OK ] Clearing.FarPointStopsJustShortOfRangeMaxAndCeilingExit (0 ms)
+[ RUN      ] Clearing.CappedJustShortOfNearestInBandHitInSameBin
+[       OK ] Clearing.CappedJustShortOfNearestInBandHitInSameBin (0 ms)
+[ RUN      ] Clearing.LongestRayWinsAndRaysUnderRangeMinAreDropped
+[       OK ] Clearing.LongestRayWinsAndRaysUnderRangeMinAreDropped (0 ms)
+[ RUN      ] Clearing.TieKeepsFirstPoint
+[       OK ] Clearing.TieKeepsFirstPoint (0 ms)
+[----------] 5 tests from Clearing (0 ms total)
+
+[----------] 1 test from Processor
+[ RUN      ] Processor.EndToEndAndEmptyCloud
+[       OK ] Processor.EndToEndAndEmptyCloud (0 ms)
+[----------] 1 test from Processor (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 23 tests from 10 test suites ran. (0 ms total)
+[  PASSED  ] 23 tests.

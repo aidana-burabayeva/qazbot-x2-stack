@@ -1,0 +1,57 @@
+# Default (package-level) parameters for the OFFLINE evaluation of the official nav2_collision_monitor
+# (ros-navigation/navigation2 tag 1.1.18, SHA 1c68c212db01f9f75fcb8263a0fbb5dfa711bdea, Apache-2.0).
+# Test-only: NOT a production X2 config. Do not edit per run; layer an override YAML instead
+# (see config/overrides/).
+#
+# Frames: base_footprint = floor projection of the LiDAR IMU (ws/src/lio/level_bridge.py), x = LiDAR forward.
+# Footprint X2_FOOTPRINT (ws/src/navigation/nav_control.launch.py:30): x -0.305..+0.17, y -0.372..+0.34.
+collision_monitor:
+  ros__parameters:
+    use_sim_time: true
+    base_frame_id: "base_footprint"
+    odom_frame_id: "odom"
+    cmd_vel_in_topic: "/cm_test/cmd_vel_in"
+    cmd_vel_out_topic: "/cm_test/cmd_vel_out"
+    # Blocking TF timeout inside the cmd_vel callback (nav2_util::getTransform) -> keep small.
+    transform_tolerance: 0.1
+    # LiDAR is 10 Hz (stamp->receive ~0.10 s in the bag); 0.5 s = ~4 missed clouds.
+    source_timeout: 0.5
+    # false: only the static base_footprint->lidar TF is needed (independent of LIO/odom TF).
+    base_shift_correction: false
+    stop_pub_timeout: 2.0
+    polygons: ["PolygonStop", "PolygonSlow", "FootprintApproach"]
+    # Stop zone: footprint front 0.17 + 0.48 m (D-05 budget at 0.30 m/s: 0.4 s lag 0.12 + brake
+    # 0.3^2/(2*0.6) 0.075 = 0.195 m, x1.61 overshoot = 0.31 m, + 0.2 s cloud age 0.06 m, + 0.1 m margin).
+    PolygonStop:
+      type: "polygon"
+      points: [0.65, 0.45, 0.65, -0.45, -0.32, -0.45, -0.32, 0.45]
+      action_type: "stop"
+      max_points: 3
+      visualize: false
+      enabled: true
+    PolygonSlow:
+      type: "polygon"
+      points: [1.50, 0.70, 1.50, -0.70, -0.32, -0.70, -0.32, 0.70]
+      action_type: "slowdown"
+      max_points: 3
+      slowdown_ratio: 0.3
+      visualize: false
+      enabled: true
+    # circle (static radius) instead of "polygon" type: a polygon approach footprint needs
+    # local_costmap/published_footprint, i.e. a costmap dependency we want to avoid.
+    FootprintApproach:
+      type: "circle"
+      radius: 0.45
+      action_type: "approach"
+      time_before_collision: 1.5
+      simulation_time_step: 0.1
+      max_points: 3
+      visualize: false
+      enabled: true
+    observation_sources: ["lidar"]
+    lidar:
+      type: "pointcloud"
+      topic: "/cm_test/lidar_pointcloud"
+      min_height: 0.05
+      max_height: 2.0
+      enabled: true

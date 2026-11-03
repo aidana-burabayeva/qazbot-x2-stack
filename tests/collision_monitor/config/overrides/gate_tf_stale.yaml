@@ -1,0 +1,5 @@
+# odom->base_footprint stops after 8 s (everything else in /qazbot_d1_map/tf keeps flowing).
+cm_topic_gate:
+  ros__parameters:
+    tf_drop: [8.0, 1000.0]
+    tf_drop_child: "base_footprint"
