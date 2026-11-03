@@ -1,3 +1,21 @@
+# 2026-11-03 — P0 preservation restore drill
+
+**RESTORE_BLOCKED; OFFLINE_VERIFIED only.** [Evidence and exact partial blockers](evidence/x2_p0_preservation_restore_20261103/README.md).
+Fresh existing-manifest drill: four archive SHA256 PASS; 18,431 tar regular files match content/size/mode;
+354 symlinks recreated without dereference; both Git bundles verify and preserved dd1d0af restores.
+All 1,974 selected deployed source/test/tooling files match SHA256 (73 omitted runtime locks);
+D1 673×903 map decodes, 413,052 unknown cells retained. Restored backend imports and isolated
+C++ projector configure/build/scratch-install PASS. Focused restore + independent D05 emulator: **22 PASS**.
+Three D04 bags have no verified independent copies in checked local roots; actual bag hashes BLOCKED.
+81 runtime link chains lack archived targets; aimdk_msgs host import BLOCKED, SDK archive retained.
+Historical inner backup remains partial; /opt, /agibot and firmware recovery is not established.
+D05 offline safety work is UNBLOCKED by bags; real-node stopping/fail-open evidence stays unresolved.
+No robot/network/ROS graph/replay/Nightly, no host dependency install or production edits. Codex alone;
+Claude review requires later independent authorization. Runtime evidence: L3_QUALIFICATION;
+hardware facts: NEEDS_HARDWARE. Orchestrator owns commits/publication; this worker commits nothing.
+
+---
+
 # 2026-11-03 — targeted X2 campaign mechanism
 
 [Runbook](nightly/X2_BLOCKERS_CAMPAIGN.md): strict three-task eligibility in existing nq, Codex-only initial repro, serial execution, no general timer/triage expansion, no legacy task revival or lease release. 82 focused regressions PASS; dry-run preserves all 79 tasks and 11 results. Source integration and real runtime evidence are recorded separately; no engineering fix is claimed by this mechanism.
