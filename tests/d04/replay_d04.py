@@ -3,8 +3,8 @@
 
 One command (documented in README.md next to this file):
     source /opt/ros/humble/setup.bash
-    nice -n 19 python3 /home/agi/control_backend/tests/d04/replay_d04.py \
-        --out /home/agi/control_backend/tests/d04/results
+    nice -n 19 python3 <repo>/tests/d04/replay_d04.py --level fit --out <repo>/tests/d04/results
+    (bags: env QAZBOT_D04_BAGS, see BAGS.md; repo root is resolved from __file__)
 
 What it does
 * Reads recorded /cloud_registered + LIO odometry (+ lidar IMU) straight from the
@@ -35,10 +35,15 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import costmap_emul as ce  # noqa: E402
 
-ROOT = '/home/agi/control_backend'
-RUNNING = f'{ROOT}/ws/src/lio/level_bridge.py'
-CANDIDATE = f'{ROOT}/candidates/d04/level_bridge.py'
-EXTRINSICS = f'{ROOT}/logs/x2_extrinsics.json'
+ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))      # repo root, resolved from this file
+RUNNING = os.path.join(ROOT, 'ws/src/lio/level_bridge.py')  # baseline A == running file (sha c817a5ed...)
+CANDIDATE = os.path.join(ROOT, 'docs/engineering/d04_d05_20261102/candidate/level_bridge.py')
+if not os.path.exists(CANDIDATE):                           # legacy layout of the robot's control_backend
+    CANDIDATE = os.path.join(ROOT, 'candidates/d04/level_bridge.py')
+EXTRINSICS = os.path.join(ROOT, 'docs/evidence/x2_extrinsics.json')
+# Bag locations (never inside the repo: 3.7 GB each). See BAGS.md for names, sizes and sha256.
+BAGDIR = os.environ.get('QAZBOT_D04_BAGS', '/home/agi/control_backend/docs/evidence/nav_20261102_live')
+LEGACY = os.environ.get('QAZBOT_D04_LEGACY', '/home/agi/control_backend')  # old (pre-live) bags only
 # Effective params (P1 report: live get_parameters == /home/agi/.ros/log/qazbot_ctl_t9htg14z.yaml)
 LAUNCH_RANGE_MAX = 8.0          # level_bridge range_max:=8.0
 SCAN_EVERY = 2                  # level_bridge scan_every:=2
@@ -51,28 +56,33 @@ MOTIONS = [(0.3, 0.0), (0.3, 0.3), (0.3, -0.3), (0.0, 0.6), (0.0, -0.6)]
 OLD_FOV = (-46.0, 44.5)
 
 BAGS = {
-    'udp_20261028': dict(db=f'{ROOT}/docs/evidence/i1_cloud_registered_udp_20261028_092700Z/'
+    'udp_20261028': dict(db=f'{LEGACY}/docs/evidence/i1_cloud_registered_udp_20261028_092700Z/'
                             'i1_cloud_registered_udp_20261028_092700Z_0.db3',
                          cloud='/qazbot_lio/cloud_registered', odom='/qazbot_lio/odometry',
                          imu='/aima/hal/sensor/lidar_chest_front/imu'),
     # live bags (mcap, ~3.5 GB each, recorded WITH the live scan_obstacles -> live-matched levelling)
-    'static_204153': dict(db=f'{ROOT}/docs/evidence/nav_20261102_live/d04_static_bag_204153/'
-                             'd04_static_bag_204153_0.mcap',
+    'static_204153': dict(db=os.path.join(BAGDIR, 'd04_static_bag_204153', 'd04_static_bag_204153_0.mcap'),
                           cloud='/qazbot_lio/cloud_registered', odom='/qazbot_lio/odometry',
                           imu='/aima/hal/sensor/lidar_chest_front/imu',
                           obstacles='/qazbot_lio/scan_obstacles'),
-    'static_211835': dict(db=f'{ROOT}/docs/evidence/nav_20261102_live/d04_static_bag_211835/'
-                             'd04_static_bag_211835_0.mcap',
+    'static_211835': dict(db=os.path.join(BAGDIR, 'd04_static_bag_211835', 'd04_static_bag_211835_0.mcap'),
                           cloud='/qazbot_lio/cloud_registered', odom='/qazbot_lio/odometry',
                           imu='/aima/hal/sensor/lidar_chest_front/imu',
                           obstacles='/qazbot_lio/scan_obstacles'),
-    'replay_dense_01': dict(db=f'{ROOT}/logs/replay_dense_01/bag/bag_0.db3',
+    'replay_dense_01': dict(db=f'{LEGACY}/logs/replay_dense_01/bag/bag_0.db3',
                             cloud='/cloud_registered', odom='/Odometry', imu=None),
-    'replay_portable_01': dict(db=f'{ROOT}/logs/replay_portable_01/bag/bag_0.db3',
+    'replay_portable_01': dict(db=f'{LEGACY}/logs/replay_portable_01/bag/bag_0.db3',
                                cloud='/cloud_registered', odom='/Odometry', imu=None),
-    'replay_dense_controlled_01': dict(db=f'{ROOT}/logs/replay_dense_controlled_01/bag/bag_0.db3',
+    'replay_dense_controlled_01': dict(db=f'{LEGACY}/logs/replay_dense_controlled_01/bag/bag_0.db3',
                                        cloud='/cloud_registered', odom='/Odometry', imu=None),
 }
+
+LIVE_BAGS = ['static_204153', 'static_211835']
+
+
+def bag_missing_reason(bagname):
+    db = BAGS[bagname]['db']
+    return None if os.path.exists(db) else f'bag {bagname} not found at {db} (set QAZBOT_D04_BAGS / QAZBOT_D04_LEGACY, see tests/d04/BAGS.md)'
 
 
 def load_bridge(path, name):
@@ -212,6 +222,23 @@ def floor_fit_up(P):
     return up
 
 
+def limit_clouds(n):
+    """Make read_bag stop after n cloud messages of the bag being read (early stop of the mcap scan)."""
+    global read_bag
+    orig = read_bag
+
+    def rb(db, topics):
+        cl = [b['cloud'] for b in BAGS.values() if b['db'] == db][0]
+        k = 0
+        for item in orig(db, topics):
+            yield item
+            if item[0] == cl:
+                k += 1
+                if k >= n:
+                    return
+    read_bag = rb
+
+
 def prepare(bagname, level='auto', n_fit=20):
     """Run the RUNNING node's on_imu/on_odom on the bag; return per-scan frames.
 
@@ -283,7 +310,7 @@ def prepare(bagname, level='auto', n_fit=20):
             pose = s.poses.get(key)
             if pose is None or s.R_lv is None:
                 continue
-            frames.append(dict(msg=m, pose=pose, R_lv=s.R_lv.copy(), key=key))
+            frames.append(dict(msg=m, pose=pose, R_lv=s.R_lv.copy(), key=key, R_wb=s.R_wb.copy()))
     PREP_INFO[bagname] = dict(level_source=level_src, fit=info)
     return frames, level_src, A
 
@@ -651,16 +678,11 @@ def coverage(frames, fz, A):
     return res
 
 
-def lidar_attitude(bagname, A):
-    """Pitch/roll of the LiDAR in the gravity-levelled frame from the bag's odometry."""
-    b = BAGS[bagname]
+def lidar_attitude(frames, A):
+    """Pitch/roll of the LiDAR in the gravity-levelled frame (odometry attitude at the first scan)."""
     ext = json.load(open(EXTRINSICS))
     R_il = np.array(ext['R_imu_lidar'])
-    frames, _, _ = prepare(bagname)
-    s = stub_node(A)
-    for t, ts, m in read_bag(b['db'], [b['odom']]):
-        R_wb = A.quat_to_rot(m.pose.pose.orientation)
-        break
+    R_wb = frames[0]['R_wb']
     R = frames[0]['R_lv'] @ R_wb @ R_il            # lidar axes in level frame
     yaw = frames[0]['pose'][2]
     c, s_ = math.cos(-yaw), math.sin(-yaw)
@@ -730,17 +752,26 @@ def summarize(res):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--out', default=os.path.join(HERE, 'results'))
-    ap.add_argument('--bags', nargs='*', default=list(BAGS))
+    ap.add_argument('--bags', nargs='*', default=LIVE_BAGS,
+                    help='default: the two registered live static bags; legacy bags: %s' % ', '.join(b for b in BAGS if b not in LIVE_BAGS))
     ap.add_argument('--scenarios', nargs='*', default=None)
+    ap.add_argument('--max-clouds', type=int, default=None,
+                    help='read only the first N cloud messages of each bag (10 Hz; 400 = 40 s). Default: whole bag')
     ap.add_argument('--no-collision', action='store_true')
     ap.add_argument('--level', default='auto',
                     help="R_lv source: auto (fit vs recorded scan_obstacles if in bag, default), fit, bag, or a JSON 3x3 file")
     args = ap.parse_args()
+    if args.max_clouds:
+        limit_clouds(args.max_clouds)
+    for b in args.bags:
+        why = bag_missing_reason(b)
+        if why:
+            sys.exit('ERROR: ' + why)
     os.makedirs(args.out, exist_ok=True)
     A = load_bridge(RUNNING, 'lb_running')
     C = load_bridge(CANDIDATE, 'lb_candidate')
     import hashlib
-    meta = dict(running_sha256=hashlib.sha256(open(RUNNING, 'rb').read()).hexdigest(),
+    meta = dict(max_clouds=args.max_clouds, level=args.level, running_sha256=hashlib.sha256(open(RUNNING, 'rb').read()).hexdigest(),
                 candidate_sha256=hashlib.sha256(open(CANDIDATE, 'rb').read()).hexdigest(),
                 bags={}, coverage={}, lidar_attitude={})
     res = {}
@@ -752,7 +783,7 @@ def main():
                                  levelling=PREP_INFO.get(bag), floor_z=fz)
         meta['coverage'][bag] = coverage(frames, fz, A)
         try:
-            meta['lidar_attitude'][bag] = lidar_attitude(bag, A)
+            meta['lidar_attitude'][bag] = lidar_attitude(frames, A)
         except Exception as e:                   # noqa: BLE001 (report, never hide)
             meta['lidar_attitude'][bag] = f'ERROR {e!r}'
         sc = scenarios(len(frames))

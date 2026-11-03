@@ -101,6 +101,9 @@ def _write_bag(path, with_obstacles):
     for i, (n, t) in enumerate(topics, 1):
         c.execute('insert into topics values(?,?,?,?,?)', (i, n, t, 'cdr', ''))
     rows = []
+    od0, _ = _pair(0, np.random.default_rng(3))      # on_imu needs R_wb from an odom first
+    od0.header.stamp.sec, od0.header.stamp.nanosec = 1, 0
+    rows.append((2, -1, serialize_message(od0)))
     for k in range(130):
         m = Imu()
         m.header.stamp.sec, m.header.stamp.nanosec = 99, 0

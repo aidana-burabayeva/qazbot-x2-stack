@@ -10,7 +10,7 @@ import pytest
 import replay_d04 as R
 
 BAG = 'udp_20261028'
-pytestmark = pytest.mark.skipif(not os.path.exists(R.BAGS[BAG]['db']), reason='bag not on disk')
+pytestmark = pytest.mark.skipif(R.bag_missing_reason(BAG) is not None, reason=R.bag_missing_reason(BAG) or '')
 
 
 @pytest.fixture(scope='module')

@@ -2,7 +2,7 @@
 
 Run (ROS env needed only for the module imports):
     source /opt/ros/humble/setup.bash
-    nice -n 19 python3 -m pytest -q /home/agi/control_backend/tests/d04
+    nice -n 19 python3 -m pytest -q <repo>/tests/d04
 """
 import ast
 import math

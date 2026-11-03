@@ -182,3 +182,11 @@ D-05 ROOT CAUSE: CONFIRMED — MC walks ≈1.64× the commanded forward speed at
 Secondary finding D-06: leg odometry under-reads distance by ≈8 % (FAST-LIO matches tape); affects native odom (Nav2/AMCL odom) scale.
 Historical 30.10 "measured" values were leg odom -> real speeds ≈8 % higher than listed.
 FIX CANDIDATE (not applied): measured inverse forward-speed map in adapter (feed-forward, like P20 u_ff) -> needs ≥3 tape points across 0.1–0.3 m/s; until then each map point is extrapolation.
+
+## Evening 2026-11-02: D-04/D-05 offline
+- Withdrawn conclusion: the earlier claim that marks re-appeared after the 18:50:20 local costmap clear (real returns beyond the clearing FOV) is withdrawn. /costmap was not republished while the robot was static, so the observation does not show re-marking.
+- Two static recordings: 204153 (during lab cleaning, uncontrolled; used as real data: 10 edge events, D-04 reproduced for baseline) and 211835 (controlled protocol 21:18:35-21:23:35, but the LiDAR saw 0 returns < 1 m, so no events: not effective, scenarios stay NOT_COVERED; re-record with an on-the-spot check of /qazbot_lio/scan).
+- Sit/stand health check (~21:45): processes unchanged, adapter live but idle and untrusted, tilt change 0.24 deg (< 0.5 deg), no floor ring in costmap, trust awaiting initialpose/AMCL.
+- Stack stopped via stop.sh at ~22:00.
+- Feedback branch robot/feedback-d04-d05-20261102 pushed (reports, harness tests/d04, candidate C, record script); robot/stable untouched.
+- Results: see docs/engineering/D04_D05_CPP_REPORT.md and candidates/d04/CANDIDATE.md (candidate C OFFLINE_VERIFIED, not deployed).
