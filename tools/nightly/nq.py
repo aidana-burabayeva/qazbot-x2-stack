@@ -128,6 +128,8 @@ def checkpoint(db, why):
 
 
 def enqueue(db, name, cmd, kind='mechanical', **kw):
+    if not execution.scope_allows(db, name):
+        return False
     if FORBIDDEN.search(cmd):
         raise SystemExit(f'refused: command looks like it targets the physical robot: {cmd}')
     cols = dict(cwd=str(ROOT), priority=50, deps='[]', resource=None, max_attempts=2, timeout_s=3600, heartbeat_s=900, state='PENDING', repro=None, reason=None)
@@ -164,6 +166,10 @@ def signature(task, log_tail):
 def recover(db):
     """After any restart: finish what a crash left half-done (evidence <-> index), then RUNNING rows are orphans:
     kill survivors of our process groups, then requeue or park."""
+    if execution.restricted(db):
+        if not execution.scope_idle(db):
+            raise SystemExit('targeted recovery refused: active task/merge leases retained; operator resolution required')
+        return  # no killing, orphan adoption or old-task requeue in targeted scope
     for r_ in db.execute("SELECT id FROM tasks WHERE state='VERIFYING'").fetchall():
         vp = kv_get(db, f"verifpid:{r_['id']}")
         if vp:
@@ -195,8 +201,11 @@ def ready(db):
     now = time.time()
     rows=db.execute("SELECT * FROM tasks WHERE state='PENDING' AND not_before<=? ORDER BY priority, id", (now,)).fetchall()
     # Do not hold a WAL read cursor over dispatch/provider work or another writer's commit.
-    if execution.managed(ROOT):rows=lead.order(db,rows)
+    rows = [r for r in rows if execution.scope_dispatch_allowed(db, r)]
+    if execution.managed(ROOT) and not execution.restricted(db):rows=lead.order(db,rows)
     for r in rows:
+        if not execution.scope_dispatch_allowed(db, r):
+            continue
         if not all(d in done for d in json.loads(r['deps'])):
             continue
         if execution.managed(ROOT):
@@ -222,6 +231,7 @@ def result_dir(name, attempt):
 
 
 def run_mechanical(db, r):
+    execution.require_scope_dispatch(db, r)
     name = r['name']
     if execution.managed(ROOT) and r['cmd']=='python3 tools/nightly/workflow.py audit --refresh':
         url=git('config','--get','remote.origin.url')
@@ -373,7 +383,7 @@ def finish(db, r, p, log, verdict):
 def agent_probe(db):
     """Facts about agents, from the real CLIs. Never assume availability; a recorded limit pauses engineering tasks only."""
     st = kv_get(db, 'agents', {})
-    for a in ('claude', 'codex'):
+    for a in (('codex',) if execution.restricted(db) else ('claude', 'codex')):
         v = agents.ADAPTERS[a].version()
         cur = st.get(a, {})
         cur.update(version=v, installed=bool(v))
@@ -445,9 +455,19 @@ def select_agent(db, r):
             capability=kv_get(db,'execution_capability:'+a+':'+str(c['model']),{})
             current_fp=lead.fingerprint(a,c['model'])
             if capability.get('fingerprint')!=current_fp:
-                lead.ensure_probe(db,sys.modules[__name__],a,c['model'])
-                probe_pending = True
-                continue
+                if execution.restricted(db):
+                    # Finite infrastructure qualification inside the one admitted task's routing step;
+                    # no extra queue task and no concurrent research worker.
+                    if not execution.scope_dispatch_allowed(db, r):
+                        return None
+                    result = lead.probe(sys.modules[__name__], a, c['model'], timeout_s=120)
+                    if not result['passed']:
+                        continue
+                    capability=kv_get(db,'execution_capability:'+a+':'+str(c['model']),{})
+                else:
+                    lead.ensure_probe(db,sys.modules[__name__],a,c['model'])
+                    probe_pending = True
+                    continue
             if capability.get('status')!='EXEC_VERIFIED':
                 continue
             if (provider_health and provider_health['status']=='BLOCKED' and
@@ -503,6 +523,7 @@ def result_contract(name, attempt, aid, rdir, cwd, isolated=False):
 def dispatch_codex(db, r):
     """Hand the task to the existing Codex session. Delivery is NOT execution. A write-ahead intent (DELEGATED/DISPATCHING with the token)
     is persisted BEFORE `codex queue` runs, so a crash or a timeout can never lose or duplicate the record of a possibly delivered message."""
+    execution.require_scope_dispatch(db, r)
     name, attempt, aid = r['name'], r['attempts'] + 1, agents.new_attempt_id()
     rdir = result_dir(name, attempt)
     rdir.mkdir(parents=True, exist_ok=True)
@@ -713,6 +734,8 @@ def poll_delegated(db, force=False):
         return
     kv_set(db, 'last_delegate_poll', time.time())
     for row in db.execute("SELECT * FROM tasks WHERE state IN ('DELEGATED','VERIFYING')").fetchall():
+        if not execution.scope_allows(db, row['name']):
+            continue
         try:
             _poll_verifying(db, row) if row['state'] == 'VERIFYING' else _poll_one(db, row)
         except Exception as e:
@@ -792,10 +815,14 @@ def tick(db, cur):
     """One scheduling step. cur = (row, Popen, log, last_size, last_progress) or None. Returns the new cur."""
     poll_delegated(db)
     try:
-        mergeq.step(db, RUN, lambda t, e, d='': ev(db, t, e, d))
+        pending = db.execute("SELECT task FROM merge_queue WHERE state IN ('QUEUED','GATING')").fetchall()
+        if all(execution.scope_allows(db, r['task']) for r in pending):
+            mergeq.step(db, RUN, lambda t, e, d='': ev(db, t, e, d))
     except Exception as e_:
         ev(db, '*', 'MERGEQ_ERROR', f'{type(e_).__name__}: {str(e_)[:200]}')
-    db.execute("UPDATE tasks SET state='PENDING', reason='reset reached: retrying' WHERE state='PAUSED_LIMIT' AND not_before<=?", (time.time(),))
+    for paused in db.execute("SELECT name FROM tasks WHERE state='PAUSED_LIMIT' AND not_before<=?", (time.time(),)).fetchall():
+        if execution.scope_allows(db, paused['name']):
+            db.execute("UPDATE tasks SET state='PENDING',reason='reset reached: retrying' WHERE name=?", (paused['name'],))
     if cur:
         r, p, log, size, prog = cur
         rc = p.poll()
@@ -928,6 +955,14 @@ def handoff_decision(db, full, rc, verdict, tail):
         kv_set(db, 'agents', st)
         if official and 0 < official - time.time() <= WAIT_RESET_MAX_S and full['priority'] > 10:
             wait_until = official + 5  # bounded wait for the same agent instead of a handoff (context stays warm, no handoff cost)
+    if cause == 'limit' and execution.restricted(db):
+        # This process has actually ended; retain its worktree/evidence. A provider limit is
+        # a pause, never a reason to fall back to Claude or to spend another request now.
+        saved=st.get(owner,{})
+        until=saved.get('retry_after') or saved.get('recheck_after')
+        db.execute('UPDATE tasks SET not_before=?,max_attempts=max_attempts+1 WHERE id=?', (until+5, full['id']))
+        kv_set(db, f"tried:{full['name']}", [])
+        return 'PAUSED_LIMIT', f'{owner} provider limit; checkpoint/worktree retained; wait until {until}'
     if wait_until:
         db.execute('UPDATE tasks SET not_before=?, max_attempts=max_attempts+1 WHERE id=?', (wait_until, full['id']))
         kv_set(db, f"tried:{full['name']}", [])
@@ -958,7 +993,10 @@ def revive_agents(db):
             s['status'] = 'unknown'
     kv_set(db, 'agents', st)
     if any(s.get('installed') and s.get('status') != 'usage_limited' for s in st.values()):
-        n = db.execute("UPDATE tasks SET state='PENDING' WHERE state='PAUSED_AGENT'").rowcount
+        n = 0
+        for row in db.execute("SELECT name FROM tasks WHERE state='PAUSED_AGENT'").fetchall():
+            if execution.scope_allows(db, row['name']):
+                n += db.execute("UPDATE tasks SET state='PENDING' WHERE name=?", (row['name'],)).rowcount
         if n:
             ev(db, '*', 'REVIVE', f'{n} PAUSED_AGENT -> PENDING')
 

@@ -3,7 +3,9 @@
 import argparse
 import fcntl
 import json
+import os
 import subprocess
+import sqlite3
 import sys
 from pathlib import Path
 
@@ -44,6 +46,13 @@ def call(*args):
 
 def prepare_campaign(db, mode=execution.ENGINEERING):
     """Idempotent names; keep legacy failures and never silently replay them."""
+    if execution.restricted(db):
+        if mode != execution.ENGINEERING:
+            raise ValueError('targeted campaign requires ENGINEERING capability')
+        import workflow
+        workflow.enqueue_targeted(db)
+        nq.checkpoint(db, 'Three-task targeted campaign prepared')
+        return
     for name, why in LEGACY.items():
         key = 'bootstrap_review:' + name
         if nq.kv_get(db, key) is None:
@@ -90,15 +99,28 @@ def runtime_qualification_errors(db):
                                contract['ROBOT_MAP_SHA256'], image('x2-twin-stack:nightly'), image('x2-twin-sim:nightly'))
 
 
-def start(mode=execution.ENGINEERING):
+def _start(mode=execution.ENGINEERING, campaign=None, resume=True):
+    if campaign is not None and (campaign != execution.X2_CAMPAIGN or mode != execution.ENGINEERING):
+        print('x2-blockers-20261103 requires --mode ENGINEERING', file=sys.stderr)
+        return 1
     if lab.sh('systemctl --user is-active qazbot-nightly.service')[1].strip() == 'active':
         db=nq.connect()
-        same=nq.kv_get(db,'execution_mode')==mode
+        same=nq.kv_get(db,'execution_mode')==mode and nq.kv_get(db,'campaign_scope')==campaign
         db.close()
+        if campaign is not None or not same:
+            print('Active daemon retained; stop/resolve it explicitly before switching campaign.', file=sys.stderr)
+            return 1
         if same:
             ok,why=lab.verify_started(timeout=5)
             print(why)
             return 0 if ok else 1
+    if campaign is not None:
+        db=nq.connect()
+        idle=execution.scope_idle(db)
+        db.close()
+        if not idle:
+            print('Targeted start refused: task/merge leases retained; no recovery or lease release.', file=sys.stderr)
+            return 1
     # Sync the control checkout before the image is built. Integration itself must never be checked out.
     if nq.mergeq.checked_out_at(ROOT, 'refs/heads/' + nq.mergeq.branch_name()):
         print('Refused: lab/stable is checked out. Use the separate lab/control checkout.', file=sys.stderr)
@@ -109,12 +131,26 @@ def start(mode=execution.ENGINEERING):
     if err:
         print(err, file=sys.stderr)
         return 1
-    rc = doctor(mode)
+    previous_campaign = os.environ.get('NIGHTLY_CAMPAIGN')
+    try:
+        if campaign is not None:
+            os.environ['NIGHTLY_CAMPAIGN'] = campaign
+        else:
+            os.environ.pop('NIGHTLY_CAMPAIGN', None)
+        rc = doctor(mode)
+    finally:
+        if previous_campaign is None:
+            os.environ.pop('NIGHTLY_CAMPAIGN', None)
+        else:
+            os.environ['NIGHTLY_CAMPAIGN'] = previous_campaign
     if rc:
         print('Preflight failed; no agents, daemon or timer started. See run/nightly/preflight/latest.md.', flush=True)
         return rc
     # Prevent a ref move during preflight from certifying an image built from old code.
     report = json.loads((RUN / 'preflight/latest.json').read_text())
+    if campaign is not None and report.get('campaign_scope') != campaign:
+        print('Preflight campaign mismatch; no start.', file=sys.stderr)
+        return 1
     if (report['git_head'] != lab.gout('rev-parse', 'HEAD')
             or report['integration'] != nq.mergeq.integration_head(ROOT)):
         print('Git changed during preflight; start refused. Run start again.', file=sys.stderr)
@@ -127,6 +163,11 @@ def start(mode=execution.ENGINEERING):
         return 1
     db.execute('BEGIN IMMEDIATE')
     try:
+        if campaign is not None and not execution.scope_idle(db):
+            raise ValueError('targeted start refused: active task/merge lease appeared during preflight')
+        nq.kv_set(db, 'campaign_scope', campaign)
+        if campaign is not None:
+            nq.kv_set(db, 'frozen', True)  # prevent service autorestart racing the explicit resume
         execution.authorize(db,mode,report,ROOT,nq.mergeq.integration_head(ROOT))
         prepare_campaign(db,mode)
         db.commit()
@@ -135,7 +176,42 @@ def start(mode=execution.ENGINEERING):
         raise
     finally:
         db.close()
+    if not resume:
+        return None
     return call(sys.executable, str(ROOT / 'tools/nightly/lab.py'), 'resume', '--no-fetch')
+
+
+def start(mode=execution.ENGINEERING, campaign=None):
+    if campaign is None:
+        return _start(mode)
+    RUN.mkdir(parents=True, exist_ok=True)
+    with (RUN/'orchestrator.lock').open('a') as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            print('Targeted start refused: existing orchestrator lease retained.', file=sys.stderr)
+            return 1
+        rc = _start(mode, campaign, resume=False)
+    # Release only our temporary admission lock before existing systemd lifecycle takes it.
+    if rc is not None:
+        return rc
+    return call(sys.executable, str(ROOT / 'tools/nightly/lab.py'), 'resume', '--no-fetch')
+
+
+def plan(campaign):
+    if campaign != execution.X2_CAMPAIGN:
+        raise ValueError('plan requires --campaign x2-blockers-20261103')
+    # A SQLite backup of a read-only connection goes to RAM, not to the live queue.
+    source=sqlite3.connect((RUN/'queue.db').resolve().as_uri()+'?mode=ro', uri=True)
+    shadow=sqlite3.connect(':memory:', isolation_level=None)
+    shadow.row_factory=sqlite3.Row
+    try:
+        source.backup(shadow)
+        import workflow
+        print(json.dumps(workflow.target_plan(shadow), indent=2))
+    finally:
+        shadow.close(); source.close()
+    return 0
 
 
 def status():
@@ -157,9 +233,16 @@ def status():
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument('command', choices=('doctor', 'start', 'stop', 'status'))
+    ap.add_argument('command', choices=('doctor', 'start', 'stop', 'status', 'plan'))
     ap.add_argument('--mode',choices=execution.MODES,default=execution.ENGINEERING)
+    ap.add_argument('--campaign', choices=(execution.X2_CAMPAIGN,))
     a = ap.parse_args()
+    if a.command == 'plan':
+        if a.mode != execution.ENGINEERING or not a.campaign:
+            ap.error('plan requires --mode ENGINEERING --campaign x2-blockers-20261103')
+        return plan(a.campaign)
+    if a.campaign and a.command != 'start':
+        ap.error('--campaign is supported by start and plan only')
     RUN.mkdir(parents=True, exist_ok=True)
     # Serializes terminal lifecycle commands only; nq.py remains the sole orchestrator.
     with (RUN / 'labctl.lock').open('a') as lock:
@@ -170,7 +253,7 @@ def main():
             return 2
         if a.command == 'stop':
             return call(sys.executable, str(ROOT / 'tools/nightly/lab.py'), 'stop', '--no-notify')
-        rc={'doctor': lambda:doctor(a.mode), 'start':lambda:start(a.mode), 'status': status}[a.command]()
+        rc={'doctor': lambda:doctor(a.mode), 'start':lambda:start(a.mode, a.campaign), 'status': status}[a.command]()
         if a.command=='start':
             (RUN/'last_start_attempt.json').write_text(json.dumps(dict(mode=a.mode,status='START_FAILED' if rc else 'VERIFIED_START',exit_code=rc,ts=__import__('time').time()))+'\n')
         return rc
