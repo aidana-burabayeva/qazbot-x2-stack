@@ -112,10 +112,10 @@ def generate_launch_description():
                           'base_frame_id': 'base_footprint', 'map_topic': 'map',
                           # odometry trusted more than laser per operator 2026-10-28; tuning later
                           'scan_topic': '/qazbot_lio/scan', 'max_beams': 180,
-                          'alpha1': 0.1, 'alpha2': 0.1, 'alpha3': 0.1, 'alpha4': 0.1, 'alpha5': 0.1,
+                          'alpha1': 0.3, 'alpha2': 0.2, 'alpha3': 0.15, 'alpha4': 0.15, 'alpha5': 0.15,  # 2026-10-30: map now good; walking gait yaw noise
                           'recovery_alpha_slow': 0.0, 'recovery_alpha_fast': 0.0,
                           # P12 operator 2026-10-28: smaller, more frequent corrections (default 0.25 m / 0.2 rad)
-                          'update_min_d': 0.10, 'update_min_a': 0.10,
+                          'update_min_d': 0.10, 'update_min_a': 0.05,
                           'robot_model_type': 'nav2_amcl::OmniMotionModel'}]),
         Node(package='nav2_lifecycle_manager', executable='lifecycle_manager', namespace=ns,
              name='lifecycle_manager_localization', output='screen',
