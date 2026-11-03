@@ -663,7 +663,7 @@ def cmd_resume(args):
         log.append(f"FEEDBACK robot reports integrated={str(fb.get('last_lab_integrated_sha'))[:9]} reviewed={str(fb.get('last_lab_reviewed_sha'))[:9]}")
     log.extend(robot_sync(db))
     write_pointers(db)
-    nq.kv_set(db, 'current_integration_sha', g['head'])
+    nq.kv_set(db, 'current_integration_sha', nq.mergeq.integration_head(ROOT))
     # PRIORITIZE/restore parked work (a git problem never blocks independent sim tasks, but results on stale code are flagged)
     parked = nq.kv_get(db, 'parked', {})
     restored = 0

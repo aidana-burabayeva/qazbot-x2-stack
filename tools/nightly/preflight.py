@@ -133,7 +133,7 @@ def check_git():
             add('git.integration_vs_origin', 'PASS', f'{ih[:9]} == origin')
     dirty = [ln for ln in gout('status', '--porcelain').splitlines() if ln.strip()]
     add('git.tracked_clean', 'FAIL' if dirty else 'PASS', f'{len(dirty)} tracked/untracked modification(s): {dirty[:3]}' if dirty else 'no tracked or untracked modifications')
-    add('git.robot_ref', 'PASS' if gout('rev-parse', '-q', '--verify', ROBOT_REF) else 'FAIL', f'{ROBOT_REF} {gout("rev-parse", "--short", ROBOT_REF)}')
+    add('git.robot_ref', 'PASS' if source_state.hardware_ref(ROBOT_REF) and gout('rev-parse', '-q', '--verify', ROBOT_REF) else 'FAIL', f'{ROBOT_REF} {gout("rev-parse", "--short", ROBOT_REF)}')
 
 
 def integration_baseline_matches():

@@ -197,7 +197,10 @@ def test_preservation_only_code_detected_even_when_hardware_already_processed(la
     resume(e)
     legacy = kv(w, 'last_robot_integrated_sha')
     tip = publish_robot(remote, tmp, 'robot/preservation-20261103',
-                        {'ws/src/qazbot_lidar_projector/new.cpp': '// evidence only\n'}, parent='robot/stable')
+                        {'ws/src/qazbot_lidar_projector/new.cpp': '// evidence only\n',
+                         'ws/src/lio/old.py.bak_pre_fix': 'historical\n',
+                         'ws/src/navigation/foo.py.p23_candidate': 'candidate\n',
+                         'ws/src/qazbot_lidar_projector/test/check.py': 'fixture\n'}, parent='robot/stable')
     stop(e)
     r = resume(e)
     assert 'IMPORT_PENDING' in r.stdout and 'ws/src/qazbot_lidar_projector/new.cpp' in r.stdout
@@ -215,6 +218,7 @@ def test_preservation_only_code_detected_even_when_hardware_already_processed(la
     g(w, 'update-ref', 'refs/heads/lab/stable', g(w, 'rev-parse', 'HEAD'))
     stop(e); r = resume(e)
     assert 'SOURCE_MATCH' in r.stdout and kv(w, 'last_robot_processed_sha') == installed
+    assert kv(w, 'current_integration_sha') == g(w, 'rev-parse', 'lab/stable')
 
 
 def test_preservation_cannot_override_installed_hardware(lab):

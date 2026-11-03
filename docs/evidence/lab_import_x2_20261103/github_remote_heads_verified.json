@@ -1,0 +1,8 @@
+{
+  "method": "connected GitHub fetch_commit with branch refs; independent of failed shell DNS",
+  "heads": {
+    "lab/stable": "55ad923eaeaaf2062cea86f613d82a278b639c37",
+    "robot/stable": "1212d7eda003022d74c6ecc4a2c745fd48f57c2f",
+    "robot/preservation-20261103": "dd1d0af5bfb30733db33811a8cb0b3d8d632f13e"
+  }
+}
