@@ -1,0 +1,113 @@
+# qazbot_lidar_projector
+
+C++17 port of `candidates/d04/level_bridge.py` (D-04 variant C). **Replaces `ws/src/lio/level_bridge.py`** (not deployed yet:
+status OFFLINE_VERIFIED). Pure port: same algorithm, same topics, types, QoS, frame ids and stamps.
+
+FAST-LIO's world is its first IMU frame (not level). The node levels it from the LiDAR IMU gravity, publishes the
+gravity-levelled planar pose (`/odom_level`, optional TF `odom -> base_footprint`) and projects the deskewed
+`/cloud_registered` into the base frame as a 2D `LaserScan`, an obstacle cloud and a clearing-ray cloud.
+
+Layout: `include/qazbot_lidar_projector/lidar_projection.hpp` + `src/lidar_projection.cpp` (library `lidar_projection`,
+no ROS types: levelling, pose, twist, band, bins, ranges, obstacle points, clearing endpoints);
+`src/lidar_projector_node.cpp` (thin node, composable component `qazbot_lidar_projector::LidarProjectorNode`);
+`src/lidar_projector_main.cpp` (executable, `SingleThreadedExecutor`).
+
+## Node `lidar_projector`
+### Usage
+```
+ros2 launch qazbot_lidar_projector lidar_projector.launch.xml            # production remaps, package YAML
+ros2 launch qazbot_lidar_projector lidar_projector.launch.xml params_file:=/path/my_copy.yaml node_name:=qazbot_level_bridge
+ros2 run qazbot_lidar_projector lidar_projector                          # default (unremapped) topic names
+ros2 component load /ComponentManager qazbot_lidar_projector qazbot_lidar_projector::LidarProjectorNode
+```
+Launch arguments (no parameter values in the launch file): `params_file`, `node_name` (default `lidar_projector`; use
+`qazbot_level_bridge` to keep the old graph name that `tools/stack/check.sh` / `odom_owner_probe.py` look for),
+`odometry_topic`, `cloud_topic`, `scan_topic`, `odom_level_topic`, `tf_topic`, `use_sim_time`.
+Defaults of the remaps equal `localization.launch.py`: `/Odometry -> /qazbot_lio/odometry`, `/cloud_registered ->
+/qazbot_lio/cloud_registered`, `/scan -> /qazbot_lio/scan`, `/odom_level -> /qazbot_lio/odom_level`,
+`/tf -> /qazbot_d1_map/tf`.
+
+### API (names before remapping; QoS identical to the Python node)
+| Direction | Topic | Type | QoS |
+|---|---|---|---|
+| sub | `/Odometry` | `nav_msgs/Odometry` | RELIABLE, KEEP_LAST 100 |
+| sub | `/cloud_registered` | `sensor_msgs/PointCloud2` (float32 x/y/z, any layout; zero-copy ConstSharedPtr) | RELIABLE, KEEP_LAST 20 |
+| sub | `imu_topic` (`/aima/hal/sensor/lidar_chest_front/imu`) | `sensor_msgs/Imu` | BEST_EFFORT, KEEP_LAST 400; **dropped after levelling** |
+| pub | `/scan` | `sensor_msgs/LaserScan`, frame `base_footprint`, stamp = cloud stamp | RELIABLE, VOLATILE, 20 |
+| pub | `<scan>_obstacles` (`/scan_obstacles`) | `sensor_msgs/PointCloud2` xyz32, `base_footprint`, nearest in-slice return per bin (marking) | RELIABLE, VOLATILE, 20 |
+| pub | `<scan>_clearing` (`/scan_clearing`) | `sensor_msgs/PointCloud2` xyz32, `base_footprint`, conservative ray endpoints (clearing only) | RELIABLE, VOLATILE, 20 |
+| pub | `/odom_level` | `nav_msgs/Odometry` (`odom` -> `base_footprint`, twist over a 0.3 s baseline, covariance rotated into the level frame) | RELIABLE, VOLATILE, 50 |
+| pub (only `publish_tf: true`) | `/tf` | `tf2_msgs/TFMessage` `odom -> base_footprint` | tf2 default |
+No services or actions. Exactly these outputs (no extra topics). `<scan>_*` follows the resolved/remapped `/scan` name.
+
+### Parameters (all read at start-up; not changed at runtime, so no parameter callbacks)
+Package defaults are in `config/lidar_projector.yaml` (= values of the running node: `range_max 8.0`, `scan_every 2`,
+`publish_tf false`). Do not edit it in place; pass a copy with `params_file`. Code defaults (when a parameter is absent) are the
+Python node's: `publish_tf true`, `range_max 25.0`, `scan_every 1`.
+| Name | Type | Unit | YAML / running | Description |
+|---|---|---|---|---|
+| `publish_tf` | bool | - | false | Broadcast TF `odom -> base_footprint`. false when `native_odom_bridge.py` owns that TF |
+| `range_max` | double | m | 8.0 | Scan / obstacle / clearing range limit |
+| `scan_every` | int | clouds | 2 | Process every Nth cloud (counted from the first cloud received, including clouds before levelling). `<1` is clamped to 1 with a warning (Python would raise ZeroDivisionError) |
+| `range_min` | double | m | 0.45 | Nearer returns ignored |
+| `z_min` / `z_max` | double | m | -0.65 / 0.80 | Slice bounds relative to the LiDAR IMU |
+| `floor_margin_per_m` | double | m/m | 0.035 | Lower bound rises with range (sway margin) |
+| `n_bins` | int | bins | 1440 | Bearing bins over [-pi, pi); `<1` falls back to 1440 |
+| `level_s` | double | s | 1.0 | Gravity averaging window |
+| `twist_baseline_s` | double | s | 0.3 | Pose baseline for the twist |
+| `lidar_fwd_in_imu` | double[3] | unit vec | [-0.0038440, 0.00088109, -0.99999222] | LiDAR forward axis in the LiDAR IMU frame |
+| `imu_topic` | string | - | `/aima/hal/sensor/lidar_chest_front/imu` | IMU used for levelling |
+Logging: INFO once on levelling, WARN (throttled 5 s) on odometry clock step-back and on malformed clouds; nothing per cloud.
+
+### TF ownership
+With `publish_tf: false` (running configuration, `odom_source:=native_imu`) the node creates **no** TF publisher; the single
+`odom -> base_footprint` owner is `native_odom_bridge.py`. With `odom_source:=lio` set `publish_tf: true` in a copy of the
+YAML (the Python launch derived this from `odom_source`; this package does not). Never have two owners.
+
+## Behaviour notes (port fidelity)
+`-ffp-contract=off` is set for the library so that no fused multiply-add changes a rounding relative to numpy. Reproduced
+Python details: `t_acc0 or t` (stamp 0.0 re-arms), unnormalised quaternion, pose cache of newest 50 keyed by integer ns,
+cache + twist baseline cleared when the odometry stamp goes back, `is_dense == false` => NaN points skipped, non-finite points
+dropped, first point wins ties (stable lexsort), `a == pi` wraps to bin 0, `nextafter` caps in the clearing endpoints,
+`/odom_level` only once a full baseline exists.
+
+## Build, test
+```
+cd /home/agi/control_backend
+nice -n 19 colcon build --packages-select qazbot_lidar_projector --base-paths ws/src/qazbot_lidar_projector \
+  --build-base ws_cpp_build/build --install-base ws_cpp_build/install --parallel-workers 1   # MAKEFLAGS=-j2
+ROS_DOMAIN_ID=77 colcon test ... same bases ...        # never domain 0
+# coverage: add --cmake-args -DENABLE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug with separate bases, then gcov
+```
+Tests: `test_lidar_projection` (gtest, 23 cases, 100 % line coverage of `lidar_projection.cpp`); `test_parity.py` (C++ library vs
+the Python candidate on `test/data/static_204153_w50.bin`: 50 clouds, 981 IMU, bag `d04_static_bag_204153`, t0+60 s; R_lv from the
+fixture's own first IMU second, not the live R_lv; tolerances derived in the module docstring);
+`test_integration.py` (launch_testing via the XML launch, ROS_DOMAIN_ID 77, event-based waits only; compares the node output
+with the library dump, checks topics/types/frames/QoS/no TF publisher/IMU subscription dropped). `test/tools/` holds the
+fixture extractor and `bench_compare.py`.
+
+### Results (offline, 2026-11-03)
+Parity: scan ranges bit-identical in 112 320 of 112 320 bins (both range_max 8.0 and 25.0); obstacle points within 1 float32
+ulp + derived error in all rows; /odom_level pose, twist and covariance within the derived bounds; clearing points: all rows within
+tolerance except 660 of 17 272 rows (3.8 %, range_max 8.0 only) where either implementation may keep a different one of several rays
+of one bin that tie at `nextafter(range_max)` within rounding (max endpoint difference 1.05 cm, less than a 5 cm costmap cell).
+Benchmark (X2, live stack running, nice 19, same 39 clouds x 20 passes): per-cloud compute Python `on_cloud` p50/p95/p99
+4.72/5.02/5.17 ms vs C++ `CloudProcessor::process` 0.87/0.93/1.03 ms; whole process CPU per processed cloud 13.6 vs 2.3 ms; peak RSS
+102 MB vs 66 MB.
+
+## Deploy (NOT done)
+1. Build as above into the workspace. 2. Offline replay with `tests/d04/replay_d04.py` and a C++-output adapter (lethal-cell parity).
+3. Stop `level_bridge.py` (one publisher per topic; running both duplicates `/qazbot_lio/scan*` and, with `publish_tf`, TF).
+4. Start `lidar_projector.launch.xml node_name:=qazbot_level_bridge` (copy of the YAML with `publish_tf` matching `odom_source`).
+5. Check `tools/stack/check.sh` (single odom->base_footprint owner) and the scan rate (5 Hz).
+
+## Rollback
+Stop the C++ node and start the unchanged `ws/src/lio/level_bridge.py` with the original arguments from `localization.launch.py`.
+The Python file is not modified by this package.
+
+## Limitations
+* Reads only little-endian FLOAT32 x/y/z (as FAST-LIO publishes); other clouds are dropped with a throttled WARN.
+* Levelling uses the first IMU second after start; parity used the fixture's levelling, not the live R_lv of the running process.
+* Parameters are start-up only. Intra-process composition is possible (component), but the consumers (costmaps) are other processes.
+* Parity evidence is one static 5 s window of one bag; the live-matched R_lv (V1 report) was not available to this task.
+* Package licence in `package.xml` is a placeholder (`Proprietary`).

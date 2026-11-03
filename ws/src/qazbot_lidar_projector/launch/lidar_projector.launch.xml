@@ -1,0 +1,22 @@
+<launch>
+  <!-- Parameters come from the YAML (package default or a user copy); nothing is hard-coded here. -->
+  <arg name="params_file" default="$(find-pkg-share qazbot_lidar_projector)/config/lidar_projector.yaml"
+       description="parameter YAML (copy the package default to change values)"/>
+  <!-- Drop-in for the Python node: pass node_name:=qazbot_level_bridge to keep the old graph name. -->
+  <arg name="node_name" default="lidar_projector"/>
+  <arg name="odometry_topic" default="/qazbot_lio/odometry"/>
+  <arg name="cloud_topic" default="/qazbot_lio/cloud_registered"/>
+  <arg name="scan_topic" default="/qazbot_lio/scan"/>
+  <arg name="odom_level_topic" default="/qazbot_lio/odom_level"/>
+  <arg name="tf_topic" default="/qazbot_d1_map/tf"/>
+  <arg name="use_sim_time" default="false"/>
+  <node pkg="qazbot_lidar_projector" exec="lidar_projector" name="$(var node_name)" output="screen">
+    <param from="$(var params_file)"/>
+    <param name="use_sim_time" value="$(var use_sim_time)"/>
+    <remap from="/Odometry" to="$(var odometry_topic)"/>
+    <remap from="/cloud_registered" to="$(var cloud_topic)"/>
+    <remap from="/scan" to="$(var scan_topic)"/>
+    <remap from="/odom_level" to="$(var odom_level_topic)"/>
+    <remap from="/tf" to="$(var tf_topic)"/>
+  </node>
+</launch>
