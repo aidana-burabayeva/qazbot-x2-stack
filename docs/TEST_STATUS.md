@@ -1,3 +1,9 @@
+# 2026-11-03 — per-fix automatic L3 continuation
+
+[Contract and recipe](nightly/X2_AUTO_L3.md): same x2-blockers campaign, accepted per-fix proofs/CAS required, fresh ordinary single-use L3 capability per run, independent D04/D07, strict preflight and real runtime witness. Missing prerequisites remain L3_BLOCKED; no hardware PASS. 49 focused transition/scope/qualification tests PASS. Integration/live activation evidence is recorded separately.
+
+---
+
 # 2026-11-03 — P0 preservation restore drill
 
 **RESTORE_BLOCKED; OFFLINE_VERIFIED only.** [Evidence and exact partial blockers](evidence/x2_p0_preservation_restore_20261103/README.md).

@@ -233,10 +233,20 @@ def status():
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument('command', choices=('doctor', 'start', 'stop', 'status', 'plan'))
+    ap.add_argument('command', choices=('doctor', 'start', 'stop', 'status', 'plan', 'enable-auto-l3', 'l3-status'))
     ap.add_argument('--mode',choices=execution.MODES,default=execution.ENGINEERING)
     ap.add_argument('--campaign', choices=(execution.X2_CAMPAIGN,))
     a = ap.parse_args()
+    if a.command == 'l3-status':
+        db=nq.connect();qualification.x2_init(db)
+        print(json.dumps([dict(r) for r in db.execute('SELECT blocker,fix_sha,state,detail,evidence FROM x2_l3 ORDER BY updated')],indent=2));db.close();return 0
+    if a.command == 'enable-auto-l3':
+        db=nq.connect()
+        if nq.kv_get(db,'campaign_scope') != execution.X2_CAMPAIGN:
+            raise SystemExit('existing x2-blockers-20261103 campaign required')
+        nq.kv_set(db,'x2_auto_l3_enabled',True)
+        nq.ev(db,'*','AUTO_L3_AUTHORIZED','Operator-approved offline-only continuation; fresh ordinary preflight/capability required per fix')
+        db.close();return 0
     if a.command == 'plan':
         if a.mode != execution.ENGINEERING or not a.campaign:
             ap.error('plan requires --mode ENGINEERING --campaign x2-blockers-20261103')

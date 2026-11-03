@@ -150,6 +150,7 @@ def cmd_status(args):
 def freeze(db):
     nq.kv_set(db, 'frozen', True)
     nq.kv_set(db, 'lab_state', 'STOPPING')
+    __import__('qualification').x2_stop(db)
     nq.ev(db, '*', 'FREEZE', 'operator stop')
 
 
