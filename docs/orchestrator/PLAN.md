@@ -1,0 +1,28 @@
+# PLAN — 20261103-reuse-first (see TASK.md)
+Previous: reports/PLAN_20261102-d04-costmap-source.archived.md
+
+## Tasks
+| # | Task | Status | Agent | Model/effort | Reason |
+|---|---|---|---|---|---|
+| R1 | W1 AIMDK MC + D-05 + W6 safety criteria + W2 smoother/Ruckig | DONE (reports/20261103-reuse-R1-aimdk-d05.md) | robotics-debugger | opus/high | safety-critical motion model |
+| R2 | W3 Collision Monitor offline (domain 82) | DONE (reports/20261103-reuse-R2-collision-monitor.md) | general-purpose | opus/high | safety layer, real Nav2 test |
+| R3 | W4 D-07 raw E1R low objects + projector | DONE (reports/20261103-reuse-R3-d07.md) | robotics-debugger | opus/high | perception safety root cause |
+| R4 | W5 MPPI + W7 licenses (repos) | DONE (reports/20261103-reuse-R4-licenses-mppi.md) | general-purpose | sonnet/medium | doc/license lookup |
+| V | Independent verification of R1-R5 + C1/C2 recompute | RUNNING | robotics-verifier | opus/high | safety decisions |
+
+## Continuation
+Resume: "продолжи задачу 20261103-reuse-first из .orchestrator/PLAN.md"
+- R1 hit 30-turn limit w/o report → resumed (write report first).
+- R4 DONE: same commit 9ad1ad8a (tree 154eea81) both repos, root MIT; aimdk_msgs/examples/py_examples license TODO; spark-fast-lio GPLv2 (no vendoring); ruckig MIT identical to local; local AIMDK newer SDK, no LICENSE. Nav2 1.1.18 from extracted debs (runtime/qazbot_nav_deps, nav_ext_ws); collision_monitor NOT on host. MPPI official deb; baseline 3ee109a frozen.
+- R1 DONE: 0.2 min = demo choice (CONFIRMED vendor docs v1.1.0); MC start threshold first step only (fwd ~0.1 m/s), D-05 overspeed not explained by it. Examples copy REJECT (prio 40 = pnc, no sdk_ prefix, no zero on shutdown, INFO spam); retry ADAPT; aimdk_msgs USE; smoother USE as-is; Ruckig REJECT. D-05 C1/C2 NOT MET at 0.30 (hypothesis latency). BLOCKED B1 (no admitted cruise-stop method; cancel path unverified), B2 (no detection→zero latency tool).
+- R5 launched: offline B1/B2 unblock — GC/adapter cancel behaviour in isolated dry harness + T_nav latency from recorded bag (robotics-debugger opus/high; safety timing).
+- USER CORRECTION 11-03: bag 183015 had NO boxes (operator only). Boxes placed later, unrecorded; now 21 cm RIGHT, 45 cm LEFT (physical, unrecorded). R2/R3 notified. F-PD04 doc fix (general-purpose sonnet/medium, precise doc fix) → reports/20261103-pd04-correction.md, separate commit in feedback worktree, no push. D-07 = OPEN safety blocker (code threshold fact; real-box check NOT PERFORMED).
+- Future box experiment protocol (user): start recording → confirm raw PointCloud2 arriving AND saved → only then ask user to place items → log time of each action. No motion/goals/installs without permission.
+- F-PD04 DONE (reports/20261103-pd04-correction.md): orchestrator-verified commit eede7b9 (agent misreported f41dc85 = parent), 2 doc files only, not pushed. Raw pd04_steps log says boxes 21/45 — untouched, discrepancy noted; operator statement prevails.
+- R3 DONE: D-07 = code limit (band 0.35-0.43 m above floor) + FAST-LIO point_filter_num 3 (~3x fewer low returns), not sensor limit within |b|<=45° (~0.4->3 m). Beyond ~±58° and near sides: no beams. Raw min range 0.105 m (0.695 claim WRONG → R1 C1 derivation must be recomputed). Static floor noise sd 0.7-1.4 cm, p99.9 ≤4.4 cm; candidate floor-relative 0.07 m + ≥3 pts/5 cm cell → 0 FP frames static (walking NOT CHECKED). C++ 3 dropped scans = exact-stamp odom lookup before odom arrives (17 late-odom stamps); fix: hold cloud until odom + throttled counter.
+- R3b launched: walking floor-noise/FP on existing manual_amcl_* bags (general-purpose sonnet/medium, scripted analysis).
+- R5 DONE (reports/20261103-reuse-R5-d05-cancel-latency.md): GC cancel/stop = abrupt step (1 zero on cmd_vel_authorized, latch goal_cancelled; adapter 5 zeros @50 Hz, no DISABLE/DELETE). Admissible for P-D05 only as step-stop class; obstacle-stop (RPP→smoother -0.6 m/s²) class still BLOCKED. P23 lives in control_backend/ws/src/navigation/x2_motion_adapter.py (not in qazbot-x2-stack HEAD 982f618). scan_obstacles latency 133/139 ms p50/p99; T_nav estimated 0.29 typ / 0.56 worst (not measured; dry harness r5/run.sh not run, host load 16). NOTE: C1/C2 used 0.525 m from WRONG min range 0.695 (R3: raw 0.105 m) → verifier must recompute.
+- G1 push launched (general-purpose sonnet/medium; mechanical git+docs): reports → docs/engineering/reuse_first_20261103, tools/d07, tests/d05/cancel_latency, D04_D05_CPP_REPORT update; separate commits; ff push robot/feedback-d04-d05-20261102. R2/R3b excluded (in progress) → push later.
+- G1 DONE: pushed ff f41dc85..5b08afc (eede7b9, 927d039 docs, b71057c tools/d07, 5b08afc tests/d05); ls-remote verified by orchestrator.
+- R2 DONE: ADAPT. Official 1.1.18 (SHA 1c68c212, Apache-2.0) built in scratch overlay; not installed. Person F/L-edge/crossing 100%, release 1 cloud after leave (costmap-independent), 0 FP/4980 at min_height 0.05; STOP latency p50 0.132/p99 0.138 s from cloud stamp. FAIL-OPEN: dropout/no cloud/stale TF pass 0.30 m/s. Blind >-57°, no rear. Needs: freshness interlock in GC (or backport jazzy d5d768b invalid source→STOP), static TF base_footprint→lidar_chest_front, base_shift_correction=false, STOP-only until D-05. Harness control_backend/tests/collision_monitor (11 tests).
+- R3b DONE (reports/20261103-reuse-R3b-walking-fp.md): manual_amcl_* bags NOT real walking (2-3 % moving frames). Moving residual ≈ static (p99.9 3-7.5 cm); plane tilt p99 ≤3.3°. Object-free frames: T=0.07/0.10 + ≥3 pts/cell → 0 FP; T=0.05 → 0.3 %. Fixed plane + 3° tilt → ~10 cm error at 2 m → need per-frame/levelled plane or range limit >1.3 m. True walking recording still needed (hardware).

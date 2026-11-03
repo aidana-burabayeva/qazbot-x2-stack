@@ -1,0 +1,4 @@
+collision_monitor:
+  ros__parameters:
+    lidar:
+      min_height: 0.10

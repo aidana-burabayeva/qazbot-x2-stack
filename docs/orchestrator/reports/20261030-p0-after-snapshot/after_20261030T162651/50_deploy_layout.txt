@@ -1,0 +1,44 @@
+/home/agi/control_backend:
+total 43704
+drwxrwxr-x 15 agi agi     4096 Oct 28 19:14 .
+drwxr-x---  1 agi agi     4096 Oct 30 16:26 ..
+drwxrwxr-x  3 agi agi     4096 Oct 28 14:19 backups
+drwxrwxr-x  8 agi agi     4096 Oct 27 15:39 candidates
+drwxrwxr-x  3 agi agi     4096 Oct 27 21:07 candidates_v13
+drwxrwxr-x  5 agi agi     4096 Oct 27 18:22 docs
+drwxrwxr-x 43 agi agi    16384 Oct 28 20:54 logs
+-rw-rw-r--  1 agi agi     3323 Oct 20 18:33 passive_probe.py
+drwxrwxr-x  3 agi agi     4096 Oct 22 19:23 .pytest_cache
+drwxrwxr-x 11 agi agi     4096 Oct 30 14:59 qazbot-x2-stack
+-rw-rw-r--  1 agi agi     4150 Oct 21 22:03 README.md
+-rw-rw-r--  1 agi agi     1790 Oct 21 21:58 README.md.bak_20261021_pre_docsB
+drwxrwxr-x  2 agi agi     4096 Oct 21 20:13 run
+drwxrwxr-x  6 agi agi     4096 Oct 20 21:22 runtime
+-rw-rw-r--  1 agi agi 44657903 Oct 20 18:36 runtime_arm64.tar.gz
+drwxrwxr-x 14 agi agi     4096 Oct 27 16:45 tests
+drwxrwxr-x  7 agi agi     4096 Oct 27 16:14 tools
+drwxrwxr-x  3 agi agi     4096 Oct 23 20:43 vendor_snapshots
+drwxrwxr-x  3 agi agi     4096 Oct 20 18:31 ws
+
+/home/agi/control_backend/run:
+total 12
+drwxrwxr-x  2 agi agi 4096 Oct 21 20:13 .
+drwxrwxr-x 15 agi agi 4096 Oct 28 19:14 ..
+-rw-r--r--  1 agi agi   36 Oct 30 16:25 x2_motion_owner.lock
+
+/home/agi/control_backend/runtime:
+total 1760
+drwxrwxr-x  6 agi agi    4096 Oct 20 21:22 .
+drwxrwxr-x 15 agi agi    4096 Oct 28 19:14 ..
+drwxrwxr-x  6 agi agi    4096 Oct 16 21:08 fast_lio
+-rwxr-xr-x  1 agi agi 1776800 Oct 19 18:22 fastlio_mapping
+drwxrwxr-x  3 agi agi    4096 Oct 20 21:22 nav2_bt_deps
+drwxrwxr-x  4 agi agi    4096 Oct 20 16:59 qazbot_nav_deps
+drwxr-xr-x  5 agi agi    4096 Oct 19 14:14 user_pkgs
+
+/home/agi/control_backend/ws:
+total 12
+drwxrwxr-x  3 agi agi 4096 Oct 20 18:31 .
+drwxrwxr-x 15 agi agi 4096 Oct 28 19:14 ..
+drwxrwxr-x  5 agi agi 4096 Oct 21 14:49 src
+pid=208744 since=2026-10-30 16:25:09

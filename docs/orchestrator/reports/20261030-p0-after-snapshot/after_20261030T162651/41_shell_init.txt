@@ -1,0 +1,9 @@
+d669b6a83c62f0d3159621811692a97db7ec63b8554966ace8cb8b98ef4cd6f2  /home/agi/.bashrc
+28b4a453b68dde64f814e94bab14ee651f4f162e15dd9920490aa1d49f05d2a4  /home/agi/.profile
+35c7cf781f12108a2970ffa2e6fec06444aafa547e60c9b95aab42206e6d7e80  /home/agi/.aima/env/bashrc
+/home/agi/.bashrc:105:    . ~/.bash_aliases
+/home/agi/.bashrc:110:# sources /etc/bash.bashrc).
+/home/agi/.bashrc:113:    . /usr/share/bash-completion/bash_completion
+/home/agi/.bashrc:115:    . /etc/bash_completion
+/home/agi/.bashrc:124:  . ~/.aima/env/bashrc
+/home/agi/.profile:15:	. "$HOME/.bashrc"

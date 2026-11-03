@@ -1,0 +1,213 @@
+PID=713 USER=root EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/etc/systemd/system/agibot/QLog -m 100 -n 5 -s /var/log/qlog 
+PID=736 USER=root EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/usr/bin/python3 /usr/bin/networkd-dispatcher --run-startup-triggers 
+PID=822 USER=root EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/bin/bash /etc/systemd/system/agibot/camtrace_ctl.sh --run 
+PID=1212 USER=root EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/usr/bin/containerd 
+PID=1564 USER=root EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/bin/bash /etc/systemd/system/agibot/sys_time_sync_to_phc.sh sensor0 
+PID=1591 USER=root EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/bin/bash /etc/systemd/system/agibot/sys_time_sync_to_phc.sh sensor0 
+PID=1594 USER=root EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=ptp4l -i sensor0 -f /etc/systemd/system/agibot/cfg/master0_time_sync.conf -H 
+PID=1595 USER=agi EXE=/usr/bin/bash CWD=/home/agi ENVHASH=e3b0c44298fc1c14
+  CMD=bash /home/agi/qazbot-speech/robot/lingxi_off.sh 
+  ENV 
+PID=1610 USER=root EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/bin/bash /etc/systemd/system/agibot/nfs_for_soc.sh 0 
+PID=1644 USER=root EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/bin/bash /etc/systemd/system/agibot/nfs_for_soc.sh 2 
+PID=1696 USER=root EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/bin/bash /etc/systemd/system/agibot/sys_time_sync_to_phc.sh sensor0 
+PID=1711 USER=root EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/bin/bash /etc/systemd/system/agibot/phc_time_sync_to_sys.sh develop0:1 
+PID=1720 USER=run EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=sshfs -o IdentityFile=/tmp/tmp.Q0K9cXFM2z -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null nfs@10.0.1.42:/agibot/data /agibot/nfs/soc2 
+PID=1742 USER=root EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/bin/bash /etc/systemd/system/agibot/phc_time_sync_to_sys.sh develop0:1 
+PID=1743 USER=root EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=ptp4l -i develop0 -f /etc/systemd/system/agibot/cfg/slave1_time_sync.conf -H 
+PID=1856 USER=root EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/bin/bash /etc/systemd/system/agibot/phc_time_sync_to_sys.sh develop0:1 
+PID=1865 USER=root EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/bin/bash /etc/systemd/system/agibot/software.sh 
+PID=1870 USER=root EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/bin/bash /agibot/software/entry/run_agibot.sh 
+PID=2640 USER=root EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/agibot/software/em/bin/em-server -c cfg/.run_agibot.yaml 
+PID=2743 USER=run EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/bin/sh /agibot/software/hal_sensor_orin/bin/em_run.sh 
+PID=2797 USER=run EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=./aima-hal_sensor-app-main --cfg_file_path=cfg/hal_sensor_orin_t2d5.yaml --process_name=hal_sensor_orin 
+PID=3269 USER=run EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=sshfs -o IdentityFile=/tmp/tmp.QmOH4mD7I4 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null nfs@10.0.1.40:/agibot/data /agibot/nfs/soc0 
+PID=3279 USER=root EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/agibot/software/ota/bin/aima_mcu_slave_app --cfg_file_path=/agibot/software/ota/bin/cfg/ota_slave_soc1_mcu.yaml 
+PID=3395 USER=root EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/agibot/software/ota/bin/aima_sota_slave_app --cfg_file_path=/agibot/software/ota/bin/cfg/ota_slave_soc1_soc.yaml 
+PID=3487 USER=run EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/bin/bash /agibot/software/housekeeper/bin/em_run.sh 
+PID=3744 USER=run EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/agibot/software/hds/bin/aima-hds-slave --cfg_file_path=/agibot/software/hds/bin/cfg/hds_slave.yaml 
+PID=3745 USER=run EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/usr/bin/python3 /opt/ros/humble/bin/ros2 run housekeeper housekeeper --cfg cfg/lx2501_3.yaml 
+PID=3780 USER=run EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/usr/bin/python3 /agibot/software/housekeeper/housekeeper/lib/housekeeper/housekeeper --cfg cfg/lx2501_3.yaml 
+PID=3855 USER=run EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/agibot/software/hds/bin/aima-hds-master --cfg_file_path=/agibot/software/hds/bin/cfg/hds_master.yaml 
+PID=3953 USER=run EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/agibot/software/robot_chores/bin/robot-chores-app --cfg_file_path=/agibot/software/robot_chores/bin/cfg/robot_chores.yaml 
+PID=4088 USER=run EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/agibot/software/ec/bin/aima-ec-app --cfg_file_path=/agibot/software/ec/bin/cfg/ec.yaml 
+PID=4209 USER=run EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/agibot/software/dm/bin/aima-dm-app --cfg_file_path=/agibot/software/dm/bin/cfg/dm.yaml 
+PID=4304 USER=run EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/bin/bash /agibot/software/nav/scripts/slam/start_slam.sh 
+PID=4408 USER=run EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=./slam --cfg_file_path=../config/slam/slam_config.yaml 
+PID=4455 USER=run EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/bin/bash /agibot/software/nav/scripts/map_manager/start_map_manager.sh 
+PID=4691 USER=run EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=./map_manager --cfg_file_path=../config/map_manager/map_manager_config.yaml 
+PID=4832 USER=run EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/bin/bash /agibot/software/nav/scripts/vectorflux/start_vectorflux.sh 
+PID=4926 USER=run EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/usr/bin/python3 /opt/ros/humble/bin/ros2 run tf2_ros static_transform_publisher 0 0 -0.6 0 0 0 map foot_contact --ros-args -p use_sim_time:=false 
+PID=4930 USER=run EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=./vectorflux --cfg_file_path=../config/vectorflux/vectorflux_app_cfg.yaml 
+PID=4960 USER=run EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/opt/ros/humble/lib/tf2_ros/static_transform_publisher 0 0 -0.6 0 0 0 map foot_contact --ros-args -p use_sim_time:=false 
+PID=5028 USER=run EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=/bin/bash /agibot/software/nav/scripts/auto_integrated/start_auto_integrated.sh 
+PID=5185 USER=run EXE=EPERM CWD=EPERM ENVHASH=EPERM
+  CMD=./auto_integrated --cfg_file_path=../config/auto_integrated/auto_integrated_config.yaml 
+PID=207979 USER=agi EXE=/usr/bin/python3.10 CWD=/home/agi/control_backend/ws/src/navigation ENVHASH=635a331717aa3f02
+  CMD=/usr/bin/python3 /opt/ros/humble/bin/ros2 launch /home/agi/control_backend/ws/src/navigation/localization.launch.py lio_binary:=/home/agi/control_backend/candidates/fast_lio_portable/install/fast_lio/lib/fast_lio/fastlio_mapping map_yaml:=/home/agi/control_backend/ws/src/maps/d1_qazbot_20261029/map.yaml lio_cpus:=5,6 seed_pose_file:=/nonexistent/qazbot_seed_disabled.json odom_source:=native_imu 
+  ENV AMENT_PREFIX_PATH=/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble:/home/agi/control_backend/runtime/fast_lio:/opt/ros/humble
+  ENV FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/nav_20261030_1623/dds_nav_two_iface_log.xml
+  ENV LD_LIBRARY_PATH=/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/fast_lio/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu/lapack:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib
+  ENV PYTHONPATH=/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages
+  ENV ROS_DOMAIN_ID=0
+  ENV ROS_LOCALHOST_ONLY=0
+PID=207992 USER=agi EXE=/home/agi/control_backend/candidates/fast_lio_portable/install/fast_lio/lib/fast_lio/fastlio_mapping CWD=/home/agi/control_backend/ws/src/navigation ENVHASH=635a331717aa3f02
+  CMD=/home/agi/control_backend/candidates/fast_lio_portable/install/fast_lio/lib/fast_lio/fastlio_mapping --ros-args -r __node:=qazbot_lio_mapping --params-file /home/agi/control_backend/ws/src/lio/x2.yaml -r /Odometry:=/qazbot_lio/odometry -r /cloud_registered:=/qazbot_lio/cloud_registered -r /cloud_registered_body:=/qazbot_lio/cloud_registered_body -r /cloud_effected:=/qazbot_lio/cloud_effected -r /Laser_map:=/qazbot_lio/map -r /path:=/qazbot_lio/path -r /tf:=/qazbot_lio/tf -r map_save:=/qazbot_lio
+  ENV AMENT_PREFIX_PATH=/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble:/home/agi/control_backend/runtime/fast_lio:/opt/ros/humble
+  ENV FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/nav_20261030_1623/dds_nav_two_iface_log.xml
+  ENV LD_LIBRARY_PATH=/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/fast_lio/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu/lapack:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib
+  ENV PYTHONPATH=/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages
+  ENV ROS_DOMAIN_ID=0
+  ENV ROS_LOCALHOST_ONLY=0
+PID=208019 USER=agi EXE=/usr/bin/python3.10 CWD=/home/agi/control_backend/ws/src/navigation ENVHASH=635a331717aa3f02
+  CMD=python3 /home/agi/control_backend/ws/src/lio/level_bridge.py --ros-args -r __node:=qazbot_level_bridge -r /Odometry:=/qazbot_lio/odometry -r /cloud_registered:=/qazbot_lio/cloud_registered -r /scan:=/qazbot_lio/scan -r /odom_level:=/qazbot_lio/odom_level -r /tf:=/qazbot_d1_map/tf -r /tf_static:=/qazbot_d1_map/tf_static -p range_max:=8.0 -p scan_every:=2 -p publish_tf:=false 
+  ENV AMENT_PREFIX_PATH=/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble:/home/agi/control_backend/runtime/fast_lio:/opt/ros/humble
+  ENV FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/nav_20261030_1623/dds_nav_two_iface_log.xml
+  ENV LD_LIBRARY_PATH=/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/fast_lio/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu/lapack:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib
+  ENV PYTHONPATH=/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages
+  ENV ROS_DOMAIN_ID=0
+  ENV ROS_LOCALHOST_ONLY=0
+PID=208044 USER=agi EXE=/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib/nav2_map_server/map_server CWD=/home/agi/control_backend/ws/src/navigation ENVHASH=635a331717aa3f02
+  CMD=/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib/nav2_map_server/map_server --ros-args -r __node:=map_server -r __ns:=/qazbot_d1_map --params-file /tmp/launch_params_0ffrag53 -r /tf:=/qazbot_d1_map/tf -r /tf_static:=/qazbot_d1_map/tf_static 
+  ENV AMENT_PREFIX_PATH=/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble:/home/agi/control_backend/runtime/fast_lio:/opt/ros/humble
+  ENV FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/nav_20261030_1623/dds_nav_two_iface_log.xml
+  ENV LD_LIBRARY_PATH=/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/fast_lio/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu/lapack:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib
+  ENV PYTHONPATH=/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages
+  ENV ROS_DOMAIN_ID=0
+  ENV ROS_LOCALHOST_ONLY=0
+PID=208088 USER=agi EXE=/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/nav2_amcl/amcl CWD=/home/agi/control_backend/ws/src/navigation ENVHASH=635a331717aa3f02
+  CMD=/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/nav2_amcl/amcl --ros-args -r __node:=amcl -r __ns:=/qazbot_d1_map --params-file /tmp/launch_params_fw1yd4_i -r /tf:=/qazbot_d1_map/tf -r /tf_static:=/qazbot_d1_map/tf_static 
+  ENV AMENT_PREFIX_PATH=/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble:/home/agi/control_backend/runtime/fast_lio:/opt/ros/humble
+  ENV FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/nav_20261030_1623/dds_nav_two_iface_log.xml
+  ENV LD_LIBRARY_PATH=/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/fast_lio/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu/lapack:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib
+  ENV PYTHONPATH=/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages
+  ENV ROS_DOMAIN_ID=0
+  ENV ROS_LOCALHOST_ONLY=0
+PID=208107 USER=agi EXE=/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/nav2_lifecycle_manager/lifecycle_manager CWD=/home/agi/control_backend/ws/src/navigation ENVHASH=635a331717aa3f02
+  CMD=/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/nav2_lifecycle_manager/lifecycle_manager --ros-args -r __node:=lifecycle_manager_localization -r __ns:=/qazbot_d1_map --params-file /tmp/launch_params_y_knvyq5 
+  ENV AMENT_PREFIX_PATH=/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble:/home/agi/control_backend/runtime/fast_lio:/opt/ros/humble
+  ENV FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/nav_20261030_1623/dds_nav_two_iface_log.xml
+  ENV LD_LIBRARY_PATH=/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/fast_lio/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu/lapack:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib
+  ENV PYTHONPATH=/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages
+  ENV ROS_DOMAIN_ID=0
+  ENV ROS_LOCALHOST_ONLY=0
+PID=208149 USER=agi EXE=/usr/bin/python3.10 CWD=/home/agi/control_backend/ws/src/navigation ENVHASH=635a331717aa3f02
+  CMD=python3 /home/agi/control_backend/ws/src/lio/native_odom_bridge.py --ros-args -r __node:=qazbot_native_odom_bridge -r /tf:=/qazbot_d1_map/tf -r /tf_static:=/qazbot_d1_map/tf_static -p mode:=native_imu -p publish_tf:=true -p publish_rate_hz:=30.0 -p leg_topic:=/aima/mc/leg_odometry 
+  ENV AMENT_PREFIX_PATH=/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble:/home/agi/control_backend/runtime/fast_lio:/opt/ros/humble
+  ENV FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/nav_20261030_1623/dds_nav_two_iface_log.xml
+  ENV LD_LIBRARY_PATH=/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/fast_lio/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu/lapack:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib
+  ENV PYTHONPATH=/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages
+  ENV ROS_DOMAIN_ID=0
+  ENV ROS_LOCALHOST_ONLY=0
+PID=208237 USER=agi EXE=/usr/bin/python3.10 CWD=/home/agi/control_backend/ws/src/navigation ENVHASH=635a331717aa3f02
+  CMD=python3 localization_trust_node.py --ros-args -p map_yaml:=/home/agi/control_backend/ws/src/maps/d1_qazbot_20261029/map.yaml -p expected_map_sha256:=72ee4094b394241e7b2761878774efbdd99e93731d7cb52709b2231c3975b354 -p admission_policy:=go2 -p odom_source:=native_imu -p odom_topic:=/qazbot_native/odom -p jump_xy_max:=1.0 -p jump_yaw_max:=0.5 
+  ENV AMENT_PREFIX_PATH=/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble:/home/agi/control_backend/runtime/fast_lio:/opt/ros/humble
+  ENV FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/nav_20261030_1623/dds_nav_two_iface_log.xml
+  ENV LD_LIBRARY_PATH=/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/fast_lio/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu/lapack:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib
+  ENV PYTHONPATH=/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages
+  ENV ROS_DOMAIN_ID=0
+  ENV ROS_LOCALHOST_ONLY=0
+PID=208744 USER=agi EXE=/usr/bin/python3.10 CWD=/home/agi/control_backend/ws/src/navigation ENVHASH=e2a0d658cddd1209
+  CMD=python3 /home/agi/control_backend/ws/src/navigation/x2_motion_adapter.py --ros-args -r __ns:=/qazbot_d1_map -p live:=true -p priority:=30 -p source_name:=sdk_qazbot_nav2_1030a 
+  ENV AMENT_PREFIX_PATH=/agibot/software/common:/home/agi/control_backend/ws/src/navigation/../../../candidates/nav2_smac_bounds/install/nav2_smac_planner:/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble:/home/agi/control_backend/runtime/fast_lio:/opt/ros/humble
+  ENV FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/nav_20261030_1623/dds_nav_two_iface_log.xml
+  ENV LD_LIBRARY_PATH=/agibot/software/common/lib:/home/agi/control_backend/ws/src/navigation/../../../candidates/nav2_smac_bounds/install/nav2_smac_planner/lib:/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/fast_lio/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu/lapack:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib
+  ENV PYTHONPATH=/agibot/software/common/local/lib/python3.10/dist-packages:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages
+  ENV ROS_DOMAIN_ID=0
+  ENV ROS_LOCALHOST_ONLY=0
+PID=208869 USER=agi EXE=/usr/bin/python3.10 CWD=/home/agi/control_backend/ws/src/navigation ENVHASH=e2a0d658cddd1209
+  CMD=/usr/bin/python3 /opt/ros/humble/bin/ros2 launch /home/agi/control_backend/ws/src/navigation/nav_full.launch.py robot_radius:=0.454 scan_topic:=/qazbot_lio/scan odom_topic:=/qazbot_native/odom map_yaml:=/home/agi/control_backend/ws/src/maps/d1_qazbot_20261029/map.yaml max_linear:=0.3 max_angular:=0.6 xy_tol:=0.20 yaw_tol:=0.35 goal_checker_stateful:=true allow_dry_run_driver:=false 
+  ENV AMENT_PREFIX_PATH=/agibot/software/common:/home/agi/control_backend/ws/src/navigation/../../../candidates/nav2_smac_bounds/install/nav2_smac_planner:/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble:/home/agi/control_backend/runtime/fast_lio:/opt/ros/humble
+  ENV FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/nav_20261030_1623/dds_nav_two_iface_log.xml
+  ENV LD_LIBRARY_PATH=/agibot/software/common/lib:/home/agi/control_backend/ws/src/navigation/../../../candidates/nav2_smac_bounds/install/nav2_smac_planner/lib:/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/fast_lio/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu/lapack:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib
+  ENV PYTHONPATH=/agibot/software/common/local/lib/python3.10/dist-packages:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages
+  ENV ROS_DOMAIN_ID=0
+  ENV ROS_LOCALHOST_ONLY=0
+PID=208899 USER=agi EXE=/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/nav2_controller/controller_server CWD=/home/agi/control_backend/ws/src/navigation ENVHASH=e2a0d658cddd1209
+  CMD=/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/nav2_controller/controller_server --ros-args -r __node:=controller_server -r __ns:=/qazbot_d1_map/nav2 --params-file /home/agi/.ros/log/qazbot_ctl_icvd7mkj.yaml -r /tf:=/qazbot_d1_map/tf -r /tf_static:=/qazbot_d1_map/tf_static -r cmd_vel:=cmd_vel_nav 
+  ENV AMENT_PREFIX_PATH=/agibot/software/common:/home/agi/control_backend/ws/src/navigation/../../../candidates/nav2_smac_bounds/install/nav2_smac_planner:/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble:/home/agi/control_backend/runtime/fast_lio:/opt/ros/humble
+  ENV FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/nav_20261030_1623/dds_nav_two_iface_log.xml
+  ENV LD_LIBRARY_PATH=/agibot/software/common/lib:/home/agi/control_backend/ws/src/navigation/../../../candidates/nav2_smac_bounds/install/nav2_smac_planner/lib:/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/fast_lio/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu/lapack:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib
+  ENV PYTHONPATH=/agibot/software/common/local/lib/python3.10/dist-packages:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages
+  ENV ROS_DOMAIN_ID=0
+  ENV ROS_LOCALHOST_ONLY=0
+PID=208925 USER=agi EXE=/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/nav2_velocity_smoother/velocity_smoother CWD=/home/agi/control_backend/ws/src/navigation ENVHASH=e2a0d658cddd1209
+  CMD=/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/nav2_velocity_smoother/velocity_smoother --ros-args -r __node:=velocity_smoother -r __ns:=/qazbot_d1_map/nav2 --params-file /home/agi/.ros/log/qazbot_ctl_icvd7mkj.yaml -r /tf:=/qazbot_d1_map/tf -r /tf_static:=/qazbot_d1_map/tf_static -r cmd_vel:=cmd_vel_nav -r cmd_vel_smoothed:=/qazbot_d1_map/cmd_vel 
+  ENV AMENT_PREFIX_PATH=/agibot/software/common:/home/agi/control_backend/ws/src/navigation/../../../candidates/nav2_smac_bounds/install/nav2_smac_planner:/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble:/home/agi/control_backend/runtime/fast_lio:/opt/ros/humble
+  ENV FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/nav_20261030_1623/dds_nav_two_iface_log.xml
+  ENV LD_LIBRARY_PATH=/agibot/software/common/lib:/home/agi/control_backend/ws/src/navigation/../../../candidates/nav2_smac_bounds/install/nav2_smac_planner/lib:/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/fast_lio/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu/lapack:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib
+  ENV PYTHONPATH=/agibot/software/common/local/lib/python3.10/dist-packages:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages
+  ENV ROS_DOMAIN_ID=0
+  ENV ROS_LOCALHOST_ONLY=0
+PID=208946 USER=agi EXE=/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/nav2_planner/planner_server CWD=/home/agi/control_backend/ws/src/navigation ENVHASH=e2a0d658cddd1209
+  CMD=/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/nav2_planner/planner_server --ros-args -r __node:=planner_server -r __ns:=/qazbot_d1_map/nav2 --params-file /home/agi/.ros/log/qazbot_plan_mkss71xr.yaml -r /tf:=/qazbot_d1_map/tf -r /tf_static:=/qazbot_d1_map/tf_static 
+  ENV AMENT_PREFIX_PATH=/agibot/software/common:/home/agi/control_backend/ws/src/navigation/../../../candidates/nav2_smac_bounds/install/nav2_smac_planner:/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble:/home/agi/control_backend/runtime/fast_lio:/opt/ros/humble
+  ENV FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/nav_20261030_1623/dds_nav_two_iface_log.xml
+  ENV LD_LIBRARY_PATH=/agibot/software/common/lib:/home/agi/control_backend/ws/src/navigation/../../../candidates/nav2_smac_bounds/install/nav2_smac_planner/lib:/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/fast_lio/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu/lapack:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib
+  ENV PYTHONPATH=/agibot/software/common/local/lib/python3.10/dist-packages:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages
+  ENV ROS_DOMAIN_ID=0
+  ENV ROS_LOCALHOST_ONLY=0
+PID=208977 USER=agi EXE=/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble/lib/nav2_bt_navigator/bt_navigator CWD=/home/agi/control_backend/ws/src/navigation ENVHASH=e2a0d658cddd1209
+  CMD=/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble/lib/nav2_bt_navigator/bt_navigator --ros-args -r __node:=bt_navigator -r __ns:=/qazbot_d1_map/nav2 --params-file /home/agi/.ros/log/qazbot_plan_mkss71xr.yaml -r /tf:=/qazbot_d1_map/tf -r /tf_static:=/qazbot_d1_map/tf_static 
+  ENV AMENT_PREFIX_PATH=/agibot/software/common:/home/agi/control_backend/ws/src/navigation/../../../candidates/nav2_smac_bounds/install/nav2_smac_planner:/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble:/home/agi/control_backend/runtime/fast_lio:/opt/ros/humble
+  ENV FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/nav_20261030_1623/dds_nav_two_iface_log.xml
+  ENV LD_LIBRARY_PATH=/agibot/software/common/lib:/home/agi/control_backend/ws/src/navigation/../../../candidates/nav2_smac_bounds/install/nav2_smac_planner/lib:/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/fast_lio/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu/lapack:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib
+  ENV PYTHONPATH=/agibot/software/common/local/lib/python3.10/dist-packages:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages
+  ENV ROS_DOMAIN_ID=0
+  ENV ROS_LOCALHOST_ONLY=0
+PID=209023 USER=agi EXE=/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/nav2_lifecycle_manager/lifecycle_manager CWD=/home/agi/control_backend/ws/src/navigation ENVHASH=e2a0d658cddd1209
+  CMD=/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/nav2_lifecycle_manager/lifecycle_manager --ros-args -r __node:=lifecycle_manager_navigation -r __ns:=/qazbot_d1_map/nav2 --params-file /tmp/launch_params_9a3rhyzf 
+  ENV AMENT_PREFIX_PATH=/agibot/software/common:/home/agi/control_backend/ws/src/navigation/../../../candidates/nav2_smac_bounds/install/nav2_smac_planner:/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble:/home/agi/control_backend/runtime/fast_lio:/opt/ros/humble
+  ENV FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/nav_20261030_1623/dds_nav_two_iface_log.xml
+  ENV LD_LIBRARY_PATH=/agibot/software/common/lib:/home/agi/control_backend/ws/src/navigation/../../../candidates/nav2_smac_bounds/install/nav2_smac_planner/lib:/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/fast_lio/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu/lapack:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib
+  ENV PYTHONPATH=/agibot/software/common/local/lib/python3.10/dist-packages:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages
+  ENV ROS_DOMAIN_ID=0
+  ENV ROS_LOCALHOST_ONLY=0
+PID=209049 USER=agi EXE=/usr/bin/python3.10 CWD=/home/agi/control_backend/ws/src/navigation ENVHASH=e2a0d658cddd1209
+  CMD=python3 /home/agi/control_backend/ws/src/navigation/goal_coordinator.py --ros-args -r __ns:=/qazbot_d1_map -p allow_dry_run_driver:=false 
+  ENV AMENT_PREFIX_PATH=/agibot/software/common:/home/agi/control_backend/ws/src/navigation/../../../candidates/nav2_smac_bounds/install/nav2_smac_planner:/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble:/home/agi/control_backend/runtime/fast_lio:/opt/ros/humble
+  ENV FASTRTPS_DEFAULT_PROFILES_FILE=/home/agi/control_backend/docs/evidence/nav_20261030_1623/dds_nav_two_iface_log.xml
+  ENV LD_LIBRARY_PATH=/agibot/software/common/lib:/home/agi/control_backend/ws/src/navigation/../../../candidates/nav2_smac_bounds/install/nav2_smac_planner/lib:/home/agi/control_backend/runtime/nav2_bt_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/fast_lio/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib:/home/agi/control_backend/runtime/qazbot_nav_deps/root/opt/ros/humble/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu:/home/agi/control_backend/runtime/user_pkgs/usr/lib/aarch64-linux-gnu/lapack:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib
+  ENV PYTHONPATH=/agibot/software/common/local/lib/python3.10/dist-packages:/home/agi/control_backend/runtime/user_pkgs/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages
+  ENV ROS_DOMAIN_ID=0
+  ENV ROS_LOCALHOST_ONLY=0
