@@ -1,0 +1,42 @@
+# Default parameters of the offline harness nodes (test-only). Override per scenario with config/overrides/*.yaml.
+cm_cmd_vel_source:
+  ros__parameters:
+    use_sim_time: true
+    topic: "/cm_test/cmd_vel_in"
+    rate_hz: 20.0
+    linear_x: 0.30
+    angular_z: 0.0
+    # Stop publishing after this many sim seconds (<= 0: never). Used for the "cmd_vel_in stops" check.
+    stop_after_s: -1.0
+
+cm_fixture_static_tf:
+  ros__parameters:
+    use_sim_time: true
+    # base_footprint -> lidar_chest_front, fitted offline from bag d04_static_bag_183015 (floor plane in
+    # the raw cloud, x = LiDAR x projected on the floor, origin = LiDAR IMU projected on the floor).
+    # LiDAR origin 0.9705 m above floor, pitch -4.28 deg. Static robot only (no body sway).
+    parent_frame: "base_footprint"
+    child_frame: "lidar_chest_front"
+    translation: [0.011491, -0.015693, 0.970494]
+    rotation_xyzw: [0.708989, -0.026304, -0.026481, -0.704231]
+
+cm_topic_gate:
+  ros__parameters:
+    use_sim_time: true
+    cloud_in: "/cm_test/lidar_pointcloud_raw"
+    cloud_out: "/cm_test/lidar_pointcloud"
+    tf_in: "/cm_test/tf_raw"
+    tf_out: "/cm_test/tf"
+    # Drop windows in sim seconds relative to the first message seen by the gate: [start, end, start, end, ...]
+    cloud_drop: [0.0, 0.0]
+    tf_drop: [0.0, 0.0]
+    # Only drop TF transforms whose child is this frame (empty = drop all).
+    tf_drop_child: "base_footprint"
+
+cm_probe:
+  ros__parameters:
+    use_sim_time: true
+    cloud_topic: "/cm_test/lidar_pointcloud"
+    cmd_in_topic: "/cm_test/cmd_vel_in"
+    cmd_out_topic: "/cm_test/cmd_vel_out"
+    output_csv: "/tmp/cm_probe.csv"

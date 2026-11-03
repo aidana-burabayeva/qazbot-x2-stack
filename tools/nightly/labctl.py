@@ -57,7 +57,7 @@ def prepare_campaign(db, mode=execution.ENGINEERING):
             and preflight.integration_baseline_matches()):
         nq.kv_set(db, 'bootstrap_legacy_robot_pointer', nq.kv_get(db, 'last_robot_integrated_sha'))
         nq.kv_set(db, 'last_robot_processed_sha', tip)
-        nq.kv_set(db, 'last_robot_integrated_sha', tip)
+        # Analysis checkpoint only; never synthesize a production-import receipt.
         nq.ev(db, '*', 'BOOTSTRAP_ROBOT_REVIEW', 'Reviewed snapshot files verified on integration; explicit campaign replaces duplicate historical parity/blocker tasks: ' + tip)
     if mode==execution.ENGINEERING:
         import workflow

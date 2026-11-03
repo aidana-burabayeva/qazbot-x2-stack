@@ -1,0 +1,4 @@
+# Cloud dropout 8..14 s after the first gated message (6 s gap, > source_timeout 0.5 s).
+cm_topic_gate:
+  ros__parameters:
+    cloud_drop: [8.0, 14.0]

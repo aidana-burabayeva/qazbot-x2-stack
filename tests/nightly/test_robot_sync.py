@@ -188,3 +188,41 @@ def test_stop_publishes_lab_stable_and_writes_all_five_pointers(lab):
     for k in ('last_robot_processed_sha', 'last_robot_snapshot_sha', 'last_lab_published_sha', 'last_lab_reviewed_sha', 'last_hardware_verified_candidate_sha'):
         assert k in ptr
     assert kv(w, 'last_lab_published_sha') == g(w, 'rev-parse', 'lab/stable')
+
+
+def test_preservation_only_code_detected_even_when_hardware_already_processed(lab):
+    w, remote, e, tmp = lab
+    stop(e)
+    installed = publish_robot(remote, tmp, 'robot/stable', {'ws/src/lio/installed.py': 'installed=1\n'})
+    resume(e)
+    legacy = kv(w, 'last_robot_integrated_sha')
+    tip = publish_robot(remote, tmp, 'robot/preservation-20261103',
+                        {'ws/src/qazbot_lidar_projector/new.cpp': '// evidence only\n'}, parent='robot/stable')
+    stop(e)
+    r = resume(e)
+    assert 'IMPORT_PENDING' in r.stdout and 'ws/src/qazbot_lidar_projector/new.cpp' in r.stdout
+    assert tip in r.stdout and 'already processed' in r.stdout
+    assert kv(w, 'last_robot_processed_sha') == installed
+    assert kv(w, 'last_robot_integrated_sha') == legacy
+    assert not (w / 'ws/src/qazbot_lidar_projector/new.cpp').exists()
+    ptr = json.loads((w / 'docs/hardware/SYNC_POINTERS.json').read_text())
+    assert ptr['stable_heads']['robot/stable'] == installed
+    assert ptr['source_state']['sha'] == tip and ptr['source_state']['status'] == 'IMPORT_PENDING'
+    # An explicit import is established from actual integration blobs, independent of analysis pointers.
+    g(w, 'branch', 'lab/stable')
+    g(w, 'restore', '--source='+tip, '--', 'ws/src/qazbot_lidar_projector/new.cpp')
+    g(w, 'add', 'ws/src/qazbot_lidar_projector/new.cpp'); g(w, 'commit', '-qm', 'selective import')
+    g(w, 'update-ref', 'refs/heads/lab/stable', g(w, 'rev-parse', 'HEAD'))
+    stop(e); r = resume(e)
+    assert 'SOURCE_MATCH' in r.stdout and kv(w, 'last_robot_processed_sha') == installed
+
+
+def test_preservation_cannot_override_installed_hardware(lab):
+    w, remote, e, tmp = lab
+    stop(e)
+    installed = publish_robot(remote, tmp, 'robot/stable', {'ws/src/lio/installed.py': 'a=1\n'})
+    publish_robot(remote, tmp, 'robot/preservation-20261103',
+                  {'docs/hardware/candidate_results/fake.json': json.dumps(dict(id='fake', status='HW_VERIFIED', candidate_sha='f'*40))}, parent='robot/stable')
+    r = resume(dict(e, NIGHTLY_ROBOT_REF='origin/robot/preservation-20261103'))
+    assert kv(w, 'last_robot_processed_sha') is None
+    assert kv(w, 'last_hardware_verified_candidate_sha') is None

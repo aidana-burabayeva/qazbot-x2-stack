@@ -1,0 +1,4 @@
+# Variant: time-shift correction through odom TF (depends on odom->base_footprint freshness).
+collision_monitor:
+  ros__parameters:
+    base_shift_correction: true

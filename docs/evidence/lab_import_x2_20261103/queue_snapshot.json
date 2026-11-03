@@ -1,0 +1,42 @@
+{
+  "snapshot": "/home/adn/QazBot/x2_import_evidence_20261103/queue.snapshot.db",
+  "sha256": "aaec0ffbfacebe6272d87b7535b74718de63d2c3082e8ec14a6e97d609ac5d74",
+  "integrity_check": "ok",
+  "tasks": [
+    [
+      "BLOCKED_EXECUTION",
+      1
+    ],
+    [
+      "COMPLETED",
+      58
+    ],
+    [
+      "NEEDS_APPROVAL",
+      2
+    ],
+    [
+      "NEEDS_ENGINEERING",
+      9
+    ],
+    [
+      "NEEDS_HARDWARE",
+      2
+    ],
+    [
+      "PAUSED_LIMIT",
+      3
+    ],
+    [
+      "PENDING",
+      4
+    ]
+  ],
+  "kv": {
+    "current_integration_sha": "\"1792d3dd2a8a72cd4fbacef3e3c9b526ff5763ef\"",
+    "frozen": "false",
+    "lab_state": "\"RUNNING_ENGINEERING\"",
+    "last_robot_integrated_sha": "\"1212d7eda003022d74c6ecc4a2c745fd48f57c2f\"",
+    "last_robot_processed_sha": "\"1212d7eda003022d74c6ecc4a2c745fd48f57c2f\""
+  }
+}
