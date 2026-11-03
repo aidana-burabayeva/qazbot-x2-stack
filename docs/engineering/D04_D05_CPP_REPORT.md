@@ -40,3 +40,11 @@ Status D-05: ROOT_CAUSE_FOUND, NEEDS_DATA; D-06: SUPPORTED, fix direction open (
 
 ## C++ scope
 candidates/d04/CPP_MIGRATION_SCOPE.md: pure library (levelling, band, obstacle points, clearing endpoints) + composable node, intra-process, config YAML, XML launch, SingleThreadedExecutor, gtest >= 90 %, parity test against tests/d04 and candidate C. Status: in progress (scope only, no C++ in this cycle; new package ws/src/qazbot_level_bridge is being worked on by another agent).
+
+## 2026-11-03 reuse-first + corrections
+Details: [reuse_first_20261103/README.md](reuse_first_20261103/README.md).
+- D-04 person results unchanged (person F PASS A=C; person leaves C PASS / A FAIL).
+- P-D04 box claims WITHDRAWN: bag d04_static_bag_183015 contained no boxes (operator statement). Box checks are NOT PERFORMED.
+- D-07 (low objects) OPEN. Root cause: code height band (0.329 + 0.035*r m) plus FAST-LIO point_filter_num 3. LiDAR-only is partially solvable (theory). Candidate: floor-relative 0.07 m threshold with >=3 points per 5 cm cell (analysis only, not implemented, not verified on real boxes).
+- C++ projector: 3 dropped scans = exact-stamp odom lookup before odom arrival (fix direction only, not implemented).
+- D-05: AIMDK 0.2 m/s minimum is demo-only (not an MC limit); the smoother is kept; Ruckig rejected; GoalCoordinator cancel = abrupt step stop; acceptance criteria pending (C1/C2 recomputation, T_nav end-to-end not measured).
