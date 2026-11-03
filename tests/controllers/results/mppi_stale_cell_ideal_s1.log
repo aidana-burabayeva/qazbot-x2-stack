@@ -1,0 +1,113 @@
+[INFO] [launch]: All log files can be found below /home/agi/.ros/log/2026-11-03-15-05-02-838435-agi-74842
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [controller_server-1]: process started with pid [74855]
+[INFO] [velocity_smoother-2]: process started with pid [74857]
+[INFO] [lifecycle_manager-3]: process started with pid [74859]
+[lifecycle_manager-3] [INFO] [1793689503.096360536] [lifecycle_manager_cmp]: Creating
+[lifecycle_manager-3] [INFO] [1793689503.101483880] [lifecycle_manager_cmp]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[velocity_smoother-2] [INFO] [1793689503.104717709] [velocity_smoother]: 
+[velocity_smoother-2] 	velocity_smoother lifecycle node launched. 
+[velocity_smoother-2] 	Waiting on external lifecycle transitions to activate
+[velocity_smoother-2] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-1] [INFO] [1793689503.110598376] [controller_server]: 
+[controller_server-1] 	controller_server lifecycle node launched. 
+[controller_server-1] 	Waiting on external lifecycle transitions to activate
+[controller_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-1] [INFO] [1793689503.115023083] [controller_server]: Creating controller server
+[controller_server-1] [INFO] [1793689503.133187212] [local_costmap.local_costmap]: 
+[controller_server-1] 	local_costmap lifecycle node launched. 
+[controller_server-1] 	Waiting on external lifecycle transitions to activate
+[controller_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-1] [INFO] [1793689503.134091891] [local_costmap.local_costmap]: Creating Costmap
+[lifecycle_manager-3] [INFO] [1793689503.198622812] [lifecycle_manager_cmp]: [34m[1mStarting managed nodes bringup...[0m[0m
+[lifecycle_manager-3] [INFO] [1793689503.198698714] [lifecycle_manager_cmp]: [34m[1mConfiguring controller_server[0m[0m
+[controller_server-1] [INFO] [1793689503.199864761] [controller_server]: Configuring controller interface
+[controller_server-1] [INFO] [1793689503.200077299] [controller_server]: getting goal checker plugins..
+[controller_server-1] [INFO] [1793689503.200204368] [controller_server]: Controller frequency set to 20.0000Hz
+[controller_server-1] [INFO] [1793689503.200255566] [local_costmap.local_costmap]: Configuring
+[controller_server-1] [INFO] [1793689503.206463360] [local_costmap.local_costmap]: Using plugin "obstacle_layer"
+[controller_server-1] [INFO] [1793689503.211231033] [local_costmap.local_costmap]: Subscribed to Topics: scan bounded_rays
+[controller_server-1] [INFO] [1793689503.216798941] [local_costmap.local_costmap]: Initialized plugin "obstacle_layer"
+[controller_server-1] [INFO] [1793689503.216855291] [local_costmap.local_costmap]: Using plugin "inflation_layer"
+[controller_server-1] [INFO] [1793689503.217924253] [local_costmap.local_costmap]: Initialized plugin "inflation_layer"
+[controller_server-1] [INFO] [1793689503.231671035] [controller_server]: Created progress_checker : progress_checker of type nav2_controller::PoseProgressChecker
+[controller_server-1] [INFO] [1793689503.232467364] [controller_server]: Created goal checker : goal_checker of type nav2_controller::SimpleGoalChecker
+[controller_server-1] [INFO] [1793689503.232711581] [controller_server]: Controller Server has goal_checker  goal checkers available.
+[controller_server-1] [INFO] [1793689503.233824702] [controller_server]: Created controller : FollowPath of type nav2_mppi_controller::MPPIController
+[controller_server-1] [INFO] [1793689503.234675846] [controller_server]: Controller period is equal to model dt. Control sequence shifting is ON
+[controller_server-1] [INFO] [1793689503.236240506] [controller_server]: ConstraintCritic instantiated with 1 power and 4.000000 weight.
+[controller_server-1] [INFO] [1793689503.236287801] [controller_server]: Critic loaded : mppi::critics::ConstraintCritic
+[controller_server-1] [INFO] [1793689503.236863113] [controller_server]: ObstaclesCritic instantiated with 1 power and 20.000000 / 1.500000 weights. Critic will collision check based on footprint cost.
+[controller_server-1] [INFO] [1793689503.236901064] [controller_server]: Critic loaded : mppi::critics::ObstaclesCritic
+[controller_server-1] [INFO] [1793689503.237136609] [controller_server]: GoalCritic instantiated with 1 power and 5.000000 weight.
+[controller_server-1] [INFO] [1793689503.237161824] [controller_server]: Critic loaded : mppi::critics::GoalCritic
+[controller_server-1] [INFO] [1793689503.237383162] [controller_server]: GoalAngleCritic instantiated with 1 power, 3.000000 weight, and 0.500000 angular threshold.
+[controller_server-1] [INFO] [1793689503.237409305] [controller_server]: Critic loaded : mppi::critics::GoalAngleCritic
+[controller_server-1] [INFO] [1793689503.237855693] [controller_server]: ReferenceTrajectoryCritic instantiated with 1 power and 14.000000 weight
+[controller_server-1] [INFO] [1793689503.237888716] [controller_server]: Critic loaded : mppi::critics::PathAlignCritic
+[controller_server-1] [INFO] [1793689503.238212195] [controller_server]: Critic loaded : mppi::critics::PathFollowCritic
+[controller_server-1] [INFO] [1793689503.238615895] [controller_server]: PathAngleCritic instantiated with 1 power and 2.000000 weight. Reversing not allowed.
+[controller_server-1] [INFO] [1793689503.238641623] [controller_server]: Critic loaded : mppi::critics::PathAngleCritic
+[controller_server-1] [INFO] [1793689503.239045643] [controller_server]: PreferForwardCritic instantiated with 1 power and 5.000000 weight.
+[controller_server-1] [INFO] [1793689503.239075626] [controller_server]: Critic loaded : mppi::critics::PreferForwardCritic
+[controller_server-1] [INFO] [1793689503.243836580] [controller_server]: Optimizer reset
+[controller_server-1] [INFO] [1793689503.247030635] [MPPIController]: Configured MPPI Controller: FollowPath
+[controller_server-1] [INFO] [1793689503.247063978] [controller_server]: Controller Server has FollowPath  controllers available.
+[lifecycle_manager-3] [INFO] [1793689503.257885529] [lifecycle_manager_cmp]: [34m[1mConfiguring velocity_smoother[0m[0m
+[velocity_smoother-2] [INFO] [1793689503.258300782] [velocity_smoother]: Configuring velocity smoother
+[lifecycle_manager-3] [INFO] [1793689503.261972166] [lifecycle_manager_cmp]: [34m[1mActivating controller_server[0m[0m
+[controller_server-1] [INFO] [1793689503.262256446] [controller_server]: Activating
+[controller_server-1] [INFO] [1793689503.262387291] [local_costmap.local_costmap]: Activating
+[controller_server-1] [INFO] [1793689503.262412026] [local_costmap.local_costmap]: Checking transform
+[controller_server-1] [INFO] [1793689503.262561270] [local_costmap.local_costmap]: start
+[controller_server-1] [WARN] [1793689503.464745184] [controller_server]: Parameter controller_server.verbose not found
+[controller_server-1] [INFO] [1793689503.467756427] [controller_server]: Optimizer reset
+[controller_server-1] [INFO] [1793689503.468050883] [MPPIController]: Activated MPPI Controller: FollowPath
+[controller_server-1] [INFO] [1793689503.468090338] [controller_server]: Creating bond (controller_server) to lifecycle manager.
+[lifecycle_manager-3] [INFO] [1793689503.574930693] [lifecycle_manager_cmp]: Server controller_server connected with bond.
+[lifecycle_manager-3] [INFO] [1793689503.575010115] [lifecycle_manager_cmp]: [34m[1mActivating velocity_smoother[0m[0m
+[velocity_smoother-2] [INFO] [1793689503.575357785] [velocity_smoother]: Activating
+[velocity_smoother-2] [INFO] [1793689503.575452406] [velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
+[lifecycle_manager-3] [INFO] [1793689503.681517479] [lifecycle_manager_cmp]: Server velocity_smoother connected with bond.
+[lifecycle_manager-3] [INFO] [1793689503.681593316] [lifecycle_manager_cmp]: [34m[1mManaged nodes are active[0m[0m
+[lifecycle_manager-3] [INFO] [1793689503.681614756] [lifecycle_manager_cmp]: [34m[1mCreating bond timer...[0m[0m
+[controller_server-1] [INFO] [1793689510.348867327] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1793689510.351634320] [controller_server]: Optimizer reset
+[controller_server-1] [ERROR] [1793689525.349193797] [controller_server]: Failed to make progress
+[controller_server-1] [WARN] [1793689525.349353472] [controller_server]: [follow_path] [ActionServer] Aborting handle.
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[INFO] [lifecycle_manager-3]: sending signal 'SIGINT' to process[lifecycle_manager-3]
+[INFO] [velocity_smoother-2]: sending signal 'SIGINT' to process[velocity_smoother-2]
+[INFO] [controller_server-1]: sending signal 'SIGINT' to process[controller_server-1]
+[controller_server-1] [INFO] [1793689525.564916730] [rclcpp]: signal_handler(signum=2)
+[controller_server-1] [INFO] [1793689525.565038967] [controller_server]: Running Nav2 LifecycleNode rcl preshutdown (controller_server)
+[controller_server-1] [INFO] [1793689525.565148851] [controller_server]: Deactivating
+[controller_server-1] [INFO] [1793689525.565191122] [MPPIController]: Deactivated MPPI Controller: FollowPath
+[controller_server-1] [INFO] [1793689525.565218545] [local_costmap.local_costmap]: Deactivating
+[velocity_smoother-2] [INFO] [1793689525.564915802] [rclcpp]: signal_handler(signum=2)
+[velocity_smoother-2] [INFO] [1793689525.565122516] [velocity_smoother]: Running Nav2 LifecycleNode rcl preshutdown (velocity_smoother)
+[velocity_smoother-2] [INFO] [1793689525.565236497] [velocity_smoother]: Deactivating
+[velocity_smoother-2] [INFO] [1793689525.565272528] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[lifecycle_manager-3] [INFO] [1793689525.564917434] [rclcpp]: signal_handler(signum=2)
+[lifecycle_manager-3] [INFO] [1793689525.565093333] [lifecycle_manager_cmp]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_cmp)
+[lifecycle_manager-3] [INFO] [1793689525.565165331] [lifecycle_manager_cmp]: [34m[1mTerminating bond timer...[0m[0m
+[lifecycle_manager-3] [INFO] [1793689525.568484725] [rclcpp]: signal_handler(signum=2)
+[velocity_smoother-2] [INFO] [1793689525.569207201] [rclcpp]: signal_handler(signum=2)
+[controller_server-1] [INFO] [1793689525.569928364] [rclcpp]: signal_handler(signum=2)
+[velocity_smoother-2] [INFO] [1793689525.575648907] [velocity_smoother]: Cleaning up
+[velocity_smoother-2] [INFO] [1793689525.575733193] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[velocity_smoother-2] [INFO] [1793689525.579160616] [velocity_smoother]: Destroying
+[lifecycle_manager-3] [INFO] [1793689525.590217680] [lifecycle_manager_cmp]: Destroying lifecycle_manager_cmp
+[controller_server-1] [INFO] [1793689525.662889551] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[controller_server-1] [INFO] [1793689525.673224013] [controller_server]: Cleaning up
+[controller_server-1] [INFO] [1793689525.673391721] [MPPIController]: Cleaned up MPPI Controller: FollowPath
+[controller_server-1] [INFO] [1793689525.673710208] [local_costmap.local_costmap]: Cleaning up
+[controller_server-1] [INFO] [1793689525.685775181] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[controller_server-1] [INFO] [1793689525.687786836] [local_costmap.local_costmap]: Destroying
+[controller_server-1] [INFO] [1793689525.692869286] [controller_server]: Destroying
+[INFO] [velocity_smoother-2]: process has finished cleanly [pid 74857]
+[velocity_smoother-2] Failed to delete participant
+[INFO] [lifecycle_manager-3]: process has finished cleanly [pid 74859]
+[lifecycle_manager-3] Failed to delete participant
+[INFO] [controller_server-1]: process has finished cleanly [pid 74855]
+[controller_server-1] Failed to delete participant

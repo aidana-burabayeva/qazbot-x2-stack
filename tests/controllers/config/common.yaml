@@ -1,0 +1,85 @@
+# Shared params for the offline controller comparison (20261103-controller-compare).
+# Source of truth: LIVE dump /home/agi/.ros/log/qazbot_ctl_t9htg14z.yaml (controller_server, local_costmap,
+# velocity_smoother). Differences vs live are ONLY topic names (private sim graph) and lifecycle_manager.
+# Footprint, padding, inflation, ObstacleLayer sources, goal/progress checkers: UNCHANGED.
+controller_server:
+  ros__parameters:
+    use_sim_time: false
+    controller_frequency: 20.0
+    controller_plugins: ["FollowPath"]
+    failure_tolerance: 10.0
+    goal_checker_plugins: ["goal_checker"]
+    goal_checker:
+      plugin: nav2_controller::SimpleGoalChecker
+      stateful: true
+      xy_goal_tolerance: 0.35
+      yaw_goal_tolerance: 0.17
+    min_theta_velocity_threshold: 0.001
+    min_x_velocity_threshold: 0.001
+    min_y_velocity_threshold: 0.0
+    odom_topic: /odom
+    progress_checker_plugin: progress_checker
+    progress_checker:
+      plugin: nav2_controller::PoseProgressChecker
+      movement_time_allowance: 15.0
+      required_movement_angle: 0.25
+      required_movement_radius: 0.1
+
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      use_sim_time: false
+      footprint: '[[0.17, 0.229], [0.008, 0.34], [-0.182, 0.34], [-0.305, 0.229], [-0.305, -0.261], [-0.182, -0.372], [0.008, -0.372], [0.17, -0.261]]'
+      footprint_padding: 0.01
+      global_frame: odom
+      robot_base_frame: base_footprint
+      rolling_window: true
+      width: 4
+      height: 4
+      resolution: 0.05
+      update_frequency: 5.0
+      publish_frequency: 2.0
+      plugins: ["obstacle_layer", "inflation_layer"]
+      obstacle_layer:
+        plugin: nav2_costmap_2d::ObstacleLayer
+        observation_sources: scan bounded_rays
+        scan:
+          topic: /scan_obstacles
+          data_type: PointCloud2
+          marking: true
+          clearing: false
+          inf_is_valid: false
+          obstacle_max_range: 3.0
+          raytrace_max_range: 3.5
+        bounded_rays:
+          topic: /scan_clearing
+          data_type: PointCloud2
+          marking: false
+          clearing: true
+          raytrace_max_range: 3.5
+      inflation_layer:
+        plugin: nav2_costmap_2d::InflationLayer
+        inflation_radius: 0.5
+        cost_scaling_factor: 3.0
+
+velocity_smoother:
+  ros__parameters:
+    use_sim_time: false
+    smoothing_frequency: 20.0
+    scale_velocities: false
+    feedback: OPEN_LOOP
+    max_velocity: [0.3, 0.0, 0.6]
+    min_velocity: [0.0, 0.0, -0.6]
+    max_accel: [0.4, 0.0, 1.0]
+    max_decel: [-0.6, 0.0, -1.5]
+    deadband_velocity: [0.0, 0.0, 0.0]
+    odom_topic: /odom
+    odom_duration: 0.1
+    velocity_timeout: 0.5
+
+lifecycle_manager_cmp:
+  ros__parameters:
+    use_sim_time: false
+    autostart: true
+    node_names: ["controller_server", "velocity_smoother"]
+    bond_timeout: 4.0

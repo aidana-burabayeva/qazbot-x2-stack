@@ -1,0 +1,45 @@
+# DWB candidate (dwb_core::DWBLocalPlanner, Humble 1.1.18). Conservative, consistent with live limits:
+#   vx 0..0.3 (RPP desired_linear_vel / smoother max), |wz| <= 0.6 (smoother max, RPP rotate_to_heading).
+#   Accel/decel = LIVE velocity_smoother values (0.4/-0.6 m/s^2, 1.0/-1.5 rad/s^2): MC accel is NOT measured
+#   (D-05 has only lag ~0.4 s / coast), so the smoother values are used and stated as such.
+#   Collision: ObstacleFootprint critic (full padded footprint vs local costmap), no reversing.
+controller_server:
+  ros__parameters:
+    FollowPath:
+      plugin: dwb_core::DWBLocalPlanner
+      debug_trajectory_details: false
+      min_vel_x: 0.0
+      min_vel_y: 0.0
+      max_vel_x: 0.3
+      max_vel_y: 0.0
+      max_vel_theta: 0.6
+      min_speed_xy: 0.0
+      max_speed_xy: 0.3
+      min_speed_theta: 0.0
+      acc_lim_x: 0.4
+      acc_lim_y: 0.0
+      acc_lim_theta: 1.0
+      decel_lim_x: -0.6
+      decel_lim_y: 0.0
+      decel_lim_theta: -1.5
+      vx_samples: 20
+      vy_samples: 1
+      vtheta_samples: 20
+      sim_time: 1.7
+      linear_granularity: 0.05
+      angular_granularity: 0.025
+      transform_tolerance: 0.2
+      xy_goal_tolerance: 0.35
+      trans_stopped_velocity: 0.1
+      short_circuit_trajectory_evaluation: true
+      critics: ["RotateToGoal", "Oscillation", "ObstacleFootprint", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
+      ObstacleFootprint.scale: 0.02
+      PathAlign.scale: 32.0
+      PathAlign.forward_point_distance: 0.1
+      GoalAlign.scale: 24.0
+      GoalAlign.forward_point_distance: 0.1
+      PathDist.scale: 32.0
+      GoalDist.scale: 24.0
+      RotateToGoal.scale: 32.0
+      RotateToGoal.slowing_factor: 5.0
+      RotateToGoal.lookahead_time: -1.0

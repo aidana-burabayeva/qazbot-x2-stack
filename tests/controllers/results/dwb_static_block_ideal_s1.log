@@ -1,0 +1,104 @@
+[INFO] [launch]: All log files can be found below /home/agi/.ros/log/2026-11-03-15-01-19-304032-agi-71246
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [controller_server-1]: process started with pid [71251]
+[INFO] [velocity_smoother-2]: process started with pid [71253]
+[INFO] [lifecycle_manager-3]: process started with pid [71255]
+[lifecycle_manager-3] [INFO] [1793689279.578877298] [lifecycle_manager_cmp]: Creating
+[controller_server-1] [INFO] [1793689279.580416007] [controller_server]: 
+[controller_server-1] 	controller_server lifecycle node launched. 
+[controller_server-1] 	Waiting on external lifecycle transitions to activate
+[controller_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[lifecycle_manager-3] [INFO] [1793689279.584834218] [lifecycle_manager_cmp]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[controller_server-1] [INFO] [1793689279.585180832] [controller_server]: Creating controller server
+[velocity_smoother-2] [INFO] [1793689279.585125282] [velocity_smoother]: 
+[velocity_smoother-2] 	velocity_smoother lifecycle node launched. 
+[velocity_smoother-2] 	Waiting on external lifecycle transitions to activate
+[velocity_smoother-2] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-1] [INFO] [1793689279.608694184] [local_costmap.local_costmap]: 
+[controller_server-1] 	local_costmap lifecycle node launched. 
+[controller_server-1] 	Waiting on external lifecycle transitions to activate
+[controller_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-1] [INFO] [1793689279.609577871] [local_costmap.local_costmap]: Creating Costmap
+[lifecycle_manager-3] [INFO] [1793689279.658886462] [lifecycle_manager_cmp]: [34m[1mStarting managed nodes bringup...[0m[0m
+[lifecycle_manager-3] [INFO] [1793689279.659042106] [lifecycle_manager_cmp]: [34m[1mConfiguring controller_server[0m[0m
+[controller_server-1] [INFO] [1793689279.659560523] [controller_server]: Configuring controller interface
+[controller_server-1] [INFO] [1793689279.659786885] [controller_server]: getting goal checker plugins..
+[controller_server-1] [INFO] [1793689279.659935105] [controller_server]: Controller frequency set to 20.0000Hz
+[controller_server-1] [INFO] [1793689279.659998111] [local_costmap.local_costmap]: Configuring
+[controller_server-1] [INFO] [1793689279.668205175] [local_costmap.local_costmap]: Using plugin "obstacle_layer"
+[controller_server-1] [INFO] [1793689279.673410628] [local_costmap.local_costmap]: Subscribed to Topics: scan bounded_rays
+[controller_server-1] [INFO] [1793689279.679284990] [local_costmap.local_costmap]: Initialized plugin "obstacle_layer"
+[controller_server-1] [INFO] [1793689279.679360412] [local_costmap.local_costmap]: Using plugin "inflation_layer"
+[controller_server-1] [INFO] [1793689279.680174725] [local_costmap.local_costmap]: Initialized plugin "inflation_layer"
+[controller_server-1] [INFO] [1793689279.697235683] [controller_server]: Created progress_checker : progress_checker of type nav2_controller::PoseProgressChecker
+[controller_server-1] [INFO] [1793689279.698195496] [controller_server]: Created goal checker : goal_checker of type nav2_controller::SimpleGoalChecker
+[controller_server-1] [INFO] [1793689279.698486752] [controller_server]: Controller Server has goal_checker  goal checkers available.
+[controller_server-1] [INFO] [1793689279.701243666] [controller_server]: Created controller : FollowPath of type dwb_core::DWBLocalPlanner
+[controller_server-1] [INFO] [1793689279.701871904] [controller_server]: Setting transform_tolerance to 0.200000
+[controller_server-1] [INFO] [1793689279.713995914] [controller_server]: Using critic "RotateToGoal" (dwb_critics::RotateToGoalCritic)
+[controller_server-1] [INFO] [1793689279.714399231] [controller_server]: Critic plugin initialized
+[controller_server-1] [INFO] [1793689279.714522427] [controller_server]: Using critic "Oscillation" (dwb_critics::OscillationCritic)
+[controller_server-1] [INFO] [1793689279.714787924] [controller_server]: Critic plugin initialized
+[controller_server-1] [INFO] [1793689279.714883569] [controller_server]: Using critic "ObstacleFootprint" (dwb_critics::ObstacleFootprintCritic)
+[controller_server-1] [INFO] [1793689279.715837110] [controller_server]: Critic plugin initialized
+[controller_server-1] [INFO] [1793689279.716024977] [controller_server]: Using critic "GoalAlign" (dwb_critics::GoalAlignCritic)
+[controller_server-1] [INFO] [1793689279.716348648] [controller_server]: Critic plugin initialized
+[controller_server-1] [INFO] [1793689279.716455333] [controller_server]: Using critic "PathAlign" (dwb_critics::PathAlignCritic)
+[controller_server-1] [INFO] [1793689279.716675710] [controller_server]: Critic plugin initialized
+[controller_server-1] [INFO] [1793689279.716764188] [controller_server]: Using critic "PathDist" (dwb_critics::PathDistCritic)
+[controller_server-1] [INFO] [1793689279.716928823] [controller_server]: Critic plugin initialized
+[controller_server-1] [INFO] [1793689279.717016309] [controller_server]: Using critic "GoalDist" (dwb_critics::GoalDistCritic)
+[controller_server-1] [INFO] [1793689279.717196080] [controller_server]: Critic plugin initialized
+[controller_server-1] [INFO] [1793689279.717222991] [controller_server]: Controller Server has FollowPath  controllers available.
+[lifecycle_manager-3] [INFO] [1793689279.729880809] [lifecycle_manager_cmp]: [34m[1mConfiguring velocity_smoother[0m[0m
+[velocity_smoother-2] [INFO] [1793689279.730345852] [velocity_smoother]: Configuring velocity smoother
+[lifecycle_manager-3] [INFO] [1793689279.735422349] [lifecycle_manager_cmp]: [34m[1mActivating controller_server[0m[0m
+[controller_server-1] [INFO] [1793689279.735755684] [controller_server]: Activating
+[controller_server-1] [INFO] [1793689279.735826402] [local_costmap.local_costmap]: Activating
+[controller_server-1] [INFO] [1793689279.735849697] [local_costmap.local_costmap]: Checking transform
+[controller_server-1] [INFO] [1793689279.736164504] [local_costmap.local_costmap]: start
+[controller_server-1] [INFO] [1793689279.939201362] [controller_server]: Creating bond (controller_server) to lifecycle manager.
+[lifecycle_manager-3] [INFO] [1793689280.045791375] [lifecycle_manager_cmp]: Server controller_server connected with bond.
+[lifecycle_manager-3] [INFO] [1793689280.045886221] [lifecycle_manager_cmp]: [34m[1mActivating velocity_smoother[0m[0m
+[velocity_smoother-2] [INFO] [1793689280.046329408] [velocity_smoother]: Activating
+[velocity_smoother-2] [INFO] [1793689280.046429245] [velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
+[lifecycle_manager-3] [INFO] [1793689280.155328762] [lifecycle_manager_cmp]: Server velocity_smoother connected with bond.
+[lifecycle_manager-3] [INFO] [1793689280.155432279] [lifecycle_manager_cmp]: [34m[1mManaged nodes are active[0m[0m
+[lifecycle_manager-3] [INFO] [1793689280.155454230] [lifecycle_manager_cmp]: [34m[1mCreating bond timer...[0m[0m
+[controller_server-1] [INFO] [1793689284.247339632] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [ERROR] [1793689311.047873862] [controller_server]: Failed to make progress
+[controller_server-1] [WARN] [1793689311.048047905] [controller_server]: [follow_path] [ActionServer] Aborting handle.
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[velocity_smoother-2] [INFO] [1793689311.440472636] [rclcpp]: signal_handler(signum=2)
+[velocity_smoother-2] [INFO] [1793689311.440694901] [velocity_smoother]: Running Nav2 LifecycleNode rcl preshutdown (velocity_smoother)
+[lifecycle_manager-3] [INFO] [1793689311.440473084] [rclcpp]: signal_handler(signum=2)
+[lifecycle_manager-3] [INFO] [1793689311.440628439] [lifecycle_manager_cmp]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_cmp)
+[lifecycle_manager-3] [INFO] [1793689311.440715541] [lifecycle_manager_cmp]: [34m[1mTerminating bond timer...[0m[0m
+[controller_server-1] [INFO] [1793689311.440472668] [rclcpp]: signal_handler(signum=2)
+[controller_server-1] [INFO] [1793689311.440644151] [controller_server]: Running Nav2 LifecycleNode rcl preshutdown (controller_server)
+[INFO] [lifecycle_manager-3]: sending signal 'SIGINT' to process[lifecycle_manager-3]
+[INFO] [velocity_smoother-2]: sending signal 'SIGINT' to process[velocity_smoother-2]
+[INFO] [controller_server-1]: sending signal 'SIGINT' to process[controller_server-1]
+[velocity_smoother-2] [INFO] [1793689311.440797395] [velocity_smoother]: Deactivating
+[velocity_smoother-2] [INFO] [1793689311.440837233] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[controller_server-1] [INFO] [1793689311.440815314] [controller_server]: Deactivating
+[controller_server-1] [INFO] [1793689311.440882032] [local_costmap.local_costmap]: Deactivating
+[lifecycle_manager-3] [INFO] [1793689311.448056488] [rclcpp]: signal_handler(signum=2)
+[velocity_smoother-2] [INFO] [1793689311.448747957] [rclcpp]: signal_handler(signum=2)
+[controller_server-1] [INFO] [1793689311.449356548] [rclcpp]: signal_handler(signum=2)
+[velocity_smoother-2] [INFO] [1793689311.451215440] [velocity_smoother]: Cleaning up
+[velocity_smoother-2] [INFO] [1793689311.451289166] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[velocity_smoother-2] [INFO] [1793689311.454395607] [velocity_smoother]: Destroying
+[lifecycle_manager-3] [INFO] [1793689311.466278668] [lifecycle_manager_cmp]: Destroying lifecycle_manager_cmp
+[controller_server-1] [INFO] [1793689311.536472581] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[controller_server-1] [INFO] [1793689311.546759110] [controller_server]: Cleaning up
+[controller_server-1] [INFO] [1793689311.547332534] [local_costmap.local_costmap]: Cleaning up
+[controller_server-1] [INFO] [1793689311.559561185] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[controller_server-1] [INFO] [1793689311.564047652] [local_costmap.local_costmap]: Destroying
+[controller_server-1] [INFO] [1793689311.569470188] [controller_server]: Destroying
+[INFO] [velocity_smoother-2]: process has finished cleanly [pid 71253]
+[velocity_smoother-2] Failed to delete participant
+[INFO] [lifecycle_manager-3]: process has finished cleanly [pid 71255]
+[lifecycle_manager-3] Failed to delete participant
+[INFO] [controller_server-1]: process has finished cleanly [pid 71251]
+[controller_server-1] Failed to delete participant

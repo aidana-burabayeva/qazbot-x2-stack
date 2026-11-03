@@ -1,0 +1,150 @@
+[INFO] [launch]: All log files can be found below /home/agi/.ros/log/2026-11-03-16-32-52-113120-agi-144441
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [controller_server-1]: process started with pid [144452]
+[INFO] [velocity_smoother-2]: process started with pid [144454]
+[INFO] [lifecycle_manager-3]: process started with pid [144456]
+[lifecycle_manager-3] [INFO] [1793694772.363867782] [lifecycle_manager_cmp]: Creating
+[controller_server-1] [INFO] [1793694772.369252525] [controller_server]: 
+[controller_server-1] 	controller_server lifecycle node launched. 
+[controller_server-1] 	Waiting on external lifecycle transitions to activate
+[controller_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[velocity_smoother-2] [INFO] [1793694772.369252397] [velocity_smoother]: 
+[velocity_smoother-2] 	velocity_smoother lifecycle node launched. 
+[velocity_smoother-2] 	Waiting on external lifecycle transitions to activate
+[velocity_smoother-2] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[lifecycle_manager-3] [INFO] [1793694772.369287948] [lifecycle_manager_cmp]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[controller_server-1] [INFO] [1793694772.373943975] [controller_server]: Creating controller server
+[controller_server-1] [INFO] [1793694772.391868903] [local_costmap.local_costmap]: 
+[controller_server-1] 	local_costmap lifecycle node launched. 
+[controller_server-1] 	Waiting on external lifecycle transitions to activate
+[controller_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-1] [INFO] [1793694772.392786861] [local_costmap.local_costmap]: Creating Costmap
+[lifecycle_manager-3] [INFO] [1793694772.466585393] [lifecycle_manager_cmp]: [34m[1mStarting managed nodes bringup...[0m[0m
+[lifecycle_manager-3] [INFO] [1793694772.466660591] [lifecycle_manager_cmp]: [34m[1mConfiguring controller_server[0m[0m
+[controller_server-1] [INFO] [1793694772.467068547] [controller_server]: Configuring controller interface
+[controller_server-1] [INFO] [1793694772.467252350] [controller_server]: getting goal checker plugins..
+[controller_server-1] [INFO] [1793694772.467388026] [controller_server]: Controller frequency set to 20.0000Hz
+[controller_server-1] [INFO] [1793694772.467446360] [local_costmap.local_costmap]: Configuring
+[controller_server-1] [INFO] [1793694772.473625032] [local_costmap.local_costmap]: Using plugin "obstacle_layer"
+[controller_server-1] [INFO] [1793694772.478385184] [local_costmap.local_costmap]: Subscribed to Topics: scan bounded_rays
+[controller_server-1] [INFO] [1793694772.484302039] [local_costmap.local_costmap]: Initialized plugin "obstacle_layer"
+[controller_server-1] [INFO] [1793694772.484361909] [local_costmap.local_costmap]: Using plugin "inflation_layer"
+[controller_server-1] [INFO] [1793694772.484885830] [local_costmap.local_costmap]: Initialized plugin "inflation_layer"
+[controller_server-1] [INFO] [1793694772.498540928] [controller_server]: Created progress_checker : progress_checker of type nav2_controller::PoseProgressChecker
+[controller_server-1] [INFO] [1793694772.499353097] [controller_server]: Created goal checker : goal_checker of type nav2_controller::SimpleGoalChecker
+[controller_server-1] [INFO] [1793694772.499599458] [controller_server]: Controller Server has goal_checker  goal checkers available.
+[controller_server-1] [INFO] [1793694772.502040988] [controller_server]: Created controller : FollowPath of type dwb_core::DWBLocalPlanner
+[controller_server-1] [INFO] [1793694772.502621388] [controller_server]: Setting transform_tolerance to 0.200000
+[controller_server-1] [INFO] [1793694772.511536077] [controller_server]: Using critic "RotateToGoal" (dwb_critics::RotateToGoalCritic)
+[controller_server-1] [INFO] [1793694772.511922498] [controller_server]: Critic plugin initialized
+[controller_server-1] [INFO] [1793694772.512044511] [controller_server]: Using critic "Oscillation" (dwb_critics::OscillationCritic)
+[controller_server-1] [INFO] [1793694772.512613519] [controller_server]: Critic plugin initialized
+[controller_server-1] [INFO] [1793694772.512825832] [controller_server]: Using critic "ObstacleFootprint" (dwb_critics::ObstacleFootprintCritic)
+[controller_server-1] [INFO] [1793694772.513001507] [controller_server]: Critic plugin initialized
+[controller_server-1] [INFO] [1793694772.513116416] [controller_server]: Using critic "GoalAlign" (dwb_critics::GoalAlignCritic)
+[controller_server-1] [INFO] [1793694772.513395160] [controller_server]: Critic plugin initialized
+[controller_server-1] [INFO] [1793694772.513490485] [controller_server]: Using critic "PathAlign" (dwb_critics::PathAlignCritic)
+[controller_server-1] [INFO] [1793694772.513704239] [controller_server]: Critic plugin initialized
+[controller_server-1] [INFO] [1793694772.513793677] [controller_server]: Using critic "PathDist" (dwb_critics::PathDistCritic)
+[controller_server-1] [INFO] [1793694772.513969640] [controller_server]: Critic plugin initialized
+[controller_server-1] [INFO] [1793694772.514061541] [controller_server]: Using critic "GoalDist" (dwb_critics::GoalDistCritic)
+[controller_server-1] [INFO] [1793694772.514225568] [controller_server]: Critic plugin initialized
+[controller_server-1] [INFO] [1793694772.514256480] [controller_server]: Controller Server has FollowPath  controllers available.
+[lifecycle_manager-3] [INFO] [1793694772.526401125] [lifecycle_manager_cmp]: [34m[1mConfiguring velocity_smoother[0m[0m
+[velocity_smoother-2] [INFO] [1793694772.526788538] [velocity_smoother]: Configuring velocity smoother
+[lifecycle_manager-3] [INFO] [1793694772.530852326] [lifecycle_manager_cmp]: [34m[1mActivating controller_server[0m[0m
+[controller_server-1] [INFO] [1793694772.531065184] [controller_server]: Activating
+[controller_server-1] [INFO] [1793694772.531124190] [local_costmap.local_costmap]: Activating
+[controller_server-1] [INFO] [1793694772.531144989] [local_costmap.local_costmap]: Checking transform
+[controller_server-1] [INFO] [1793694772.531307033] [local_costmap.local_costmap]: start
+[controller_server-1] [INFO] [1793694772.733538542] [controller_server]: Creating bond (controller_server) to lifecycle manager.
+[lifecycle_manager-3] [INFO] [1793694772.840012833] [lifecycle_manager_cmp]: Server controller_server connected with bond.
+[lifecycle_manager-3] [INFO] [1793694772.840086206] [lifecycle_manager_cmp]: [34m[1mActivating velocity_smoother[0m[0m
+[velocity_smoother-2] [INFO] [1793694772.840442771] [velocity_smoother]: Activating
+[velocity_smoother-2] [INFO] [1793694772.840544656] [velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
+[lifecycle_manager-3] [INFO] [1793694772.946624239] [lifecycle_manager_cmp]: Server velocity_smoother connected with bond.
+[lifecycle_manager-3] [INFO] [1793694772.946697357] [lifecycle_manager_cmp]: [34m[1mManaged nodes are active[0m[0m
+[lifecycle_manager-3] [INFO] [1793694772.946718349] [lifecycle_manager_cmp]: [34m[1mCreating bond timer...[0m[0m
+[controller_server-1] [INFO] [1793694778.107092120] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [WARN] [1793694784.516709370] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694784.566460932] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694784.616618849] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694784.666652226] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694784.716574855] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694784.766557484] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694785.515263384] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694785.565299547] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694785.615278369] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694785.665295845] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694785.715263054] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694785.765131272] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694785.815086462] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694785.865255631] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694785.915281956] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694785.965283993] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694786.015136595] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694786.065482687] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694786.115187357] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694786.165460074] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694786.215104106] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694786.265193693] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694786.315264688] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694786.365167209] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694786.415149727] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694786.465148660] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694786.515107403] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694786.565243356] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694786.615147445] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694786.665311973] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694786.715101411] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694786.765146879] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694786.815079998] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694786.865130458] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694786.915121688] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694786.965102102] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694787.015087604] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694787.065136752] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694787.115224331] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694787.165171562] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694787.215067658] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694787.265355936] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694787.315249344] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694787.365158208] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694787.415146462] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694787.467872974] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [WARN] [1793694787.516018688] [controller_server]: No valid trajectories out of 419! 
+[controller_server-1] [INFO] [1793694797.063132507] [controller_server]: Reached the goal!
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[INFO] [lifecycle_manager-3]: sending signal 'SIGINT' to process[lifecycle_manager-3]
+[INFO] [velocity_smoother-2]: sending signal 'SIGINT' to process[velocity_smoother-2]
+[INFO] [controller_server-1]: sending signal 'SIGINT' to process[controller_server-1]
+[controller_server-1] [INFO] [1793694797.357588160] [rclcpp]: signal_handler(signum=2)
+[controller_server-1] [INFO] [1793694797.357762491] [controller_server]: Running Nav2 LifecycleNode rcl preshutdown (controller_server)
+[controller_server-1] [INFO] [1793694797.357948886] [controller_server]: Deactivating
+[controller_server-1] [INFO] [1793694797.358006164] [local_costmap.local_costmap]: Deactivating
+[velocity_smoother-2] [INFO] [1793694797.357587872] [rclcpp]: signal_handler(signum=2)
+[velocity_smoother-2] [INFO] [1793694797.357797306] [velocity_smoother]: Running Nav2 LifecycleNode rcl preshutdown (velocity_smoother)
+[velocity_smoother-2] [INFO] [1793694797.357899768] [velocity_smoother]: Deactivating
+[velocity_smoother-2] [INFO] [1793694797.357933847] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[lifecycle_manager-3] [INFO] [1793694797.357587936] [rclcpp]: signal_handler(signum=2)
+[lifecycle_manager-3] [INFO] [1793694797.357774491] [lifecycle_manager_cmp]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_cmp)
+[lifecycle_manager-3] [INFO] [1793694797.357839833] [lifecycle_manager_cmp]: [34m[1mTerminating bond timer...[0m[0m
+[lifecycle_manager-3] [INFO] [1793694797.361458481] [rclcpp]: signal_handler(signum=2)
+[velocity_smoother-2] [INFO] [1793694797.362349944] [rclcpp]: signal_handler(signum=2)
+[controller_server-1] [INFO] [1793694797.363699729] [rclcpp]: signal_handler(signum=2)
+[velocity_smoother-2] [INFO] [1793694797.368461897] [velocity_smoother]: Cleaning up
+[velocity_smoother-2] [INFO] [1793694797.368608580] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[velocity_smoother-2] [INFO] [1793694797.371648621] [velocity_smoother]: Destroying
+[lifecycle_manager-3] [INFO] [1793694797.385182825] [lifecycle_manager_cmp]: Destroying lifecycle_manager_cmp
+[INFO] [velocity_smoother-2]: process has finished cleanly [pid 144454]
+[velocity_smoother-2] Failed to delete participant
+[INFO] [lifecycle_manager-3]: process has finished cleanly [pid 144456]
+[lifecycle_manager-3] Failed to delete participant
+[controller_server-1] [INFO] [1793694797.531623587] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[controller_server-1] [INFO] [1793694797.541888764] [controller_server]: Cleaning up
+[controller_server-1] [INFO] [1793694797.542358351] [local_costmap.local_costmap]: Cleaning up
+[controller_server-1] [INFO] [1793694797.555817421] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[controller_server-1] [INFO] [1793694797.557610522] [local_costmap.local_costmap]: Destroying
+[controller_server-1] [INFO] [1793694797.564263675] [controller_server]: Destroying
+[INFO] [controller_server-1]: process has finished cleanly [pid 144452]
+[controller_server-1] Failed to delete participant

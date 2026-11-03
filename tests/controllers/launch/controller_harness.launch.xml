@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!-- Offline controller comparison: controller_server + velocity_smoother + lifecycle manager (installed Nav2 Humble
+     1.1.18 binaries). All parameters come from config files; controller_yaml selects RPP / DWB / MPPI.
+     Topics: controller -> /cmd_vel_nav -> velocity_smoother -> /cmd_vel (sim input). -->
+<launch>
+  <arg name="common_yaml"/>
+  <arg name="controller_yaml"/>
+  <arg name="cs_log_level" default="info"/>
+  <node pkg="nav2_controller" exec="controller_server" name="controller_server" output="screen"
+        ros_args="--log-level $(var cs_log_level)">
+    <param from="$(var common_yaml)"/>
+    <param from="$(var controller_yaml)"/>
+    <remap from="cmd_vel" to="/cmd_vel_nav"/>
+  </node>
+  <node pkg="nav2_velocity_smoother" exec="velocity_smoother" name="velocity_smoother" output="screen">
+    <param from="$(var common_yaml)"/>
+    <remap from="cmd_vel" to="/cmd_vel_nav"/>
+    <remap from="cmd_vel_smoothed" to="/cmd_vel"/>
+  </node>
+  <node pkg="nav2_lifecycle_manager" exec="lifecycle_manager" name="lifecycle_manager_cmp" output="screen">
+    <param from="$(var common_yaml)"/>
+  </node>
+</launch>
