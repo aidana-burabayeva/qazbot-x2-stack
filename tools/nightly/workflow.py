@@ -20,6 +20,8 @@ AREAS=(('amcl_initialpose','Replay the saved AMCL initialpose episodes; reproduc
 
 
 def enqueue_engineering(db):
+    if execution.restricted(db):
+        return
     for index,(area,prompt) in enumerate(AREAS):
         name='engineering_'+area+'_v3'
         if nq.enqueue(db,name,'true',kind='engineering',execution_tier=execution.ENGINEERING,resource='engineering',priority=5+index,
@@ -30,6 +32,65 @@ def enqueue_engineering(db):
         if nq.enqueue(db,review,'true',kind='engineering',execution_tier=execution.ENGINEERING,resource='engineering',priority=20+index,deps=[name],
                       repro='--agents=codex,claude Independently review '+name+' using stored evidence and its verified SHA. Rerun tests and reject unsupported simulation/hardware claims. Offline only.'):
             db.execute('UPDATE tasks SET base_from=?,task_type=?,requires_result=1 WHERE name=?',(name,'root_cause_analysis',review))
+
+
+
+TARGETS = (
+    (execution.X2_TASKS[0], 0, 'P0 Preservation & Restore',
+     'Source /home/adn/QazBot/x2_preservation_20261103/: use existing Git/SHA256 manifests, not a new robot inventory. '
+     'Confirm restoration of current production sources; restore the Git bundle in a separate scratch directory; '
+     'verify tar readability, permissions and symlinks; external dependencies; restored D1 map readability; '
+     'backend imports; isolated C++ projector build when dependencies exist. '
+     'Verify independent copies of all three D04 bags and their SHA256; identify dependencies missing from Git/backup. '
+     'Do not bulk-copy large archives before checking resources. Do not weaken sandbox if private archives are inaccessible: '
+     'mark the exact part BLOCKED and prepare a minimal authorized read-only host verification procedure. '
+     'Result must be RESTORE_VERIFIED or evidence-backed RESTORE_BLOCKED; missing bags must not prevent independent D05 safety work.'),
+    (execution.X2_TASKS[1], 1, 'P0 D-05 / Collision Monitor',
+     'Use tests/collision_monitor/, tests/d05/cancel_latency/, R1/R2/R5/correction reports and existing T1, Goal Coordinator and Motion Adapter. '
+     'Confirmed issues: fail-open on lost cloud and lost TF; unknown actual stopping time; commanded/actual speed mismatch; unproven C1/C2. '
+     'First assess stock Nav2 Humble and existing QazBot mechanisms; measure actual installed Nav2 version and compatibility with historical 1.1.18. '
+     'Implement sensor/TF freshness contract, held safe STOP, sensor-recovery behavior, and cancel/stop contract through existing safety gates. '
+     'Separate MEASURED, ESTIMATED and UNKNOWN stopping-distance terms. Reproduce original FAIL then before/after regressions. '
+     'Do not create another Motion Adapter or parallel MC command path, weaken T1/T5, footprint/collision thresholds, or claim hardware safety PASS without physical braking measurements. '
+     'Missing bags/SDK block only dependent checks; continue independently supported safety tests. No SDK fakes. Separate safety/perception/localization/MC commits.'),
+    (execution.X2_TASKS[2], 20, 'P1 D-04 C++ / D-07',
+     'D04: use imported qazbot_lidar_projector; establish the cause of three missed C++ publications using timestamps, QoS, DDS fragmentation, TF and odometry pairing. '
+     'Retain parity with Python candidate C and single TF ownership; minimally fix only a proven defect. '
+     'Do not invent a cause if original recording is absent; mark that causal question BLOCKED. '
+     'D07: evaluate stock Nav2 ObstacleLayer/VoxelLayer; fix exclusion of low obstacles while preserving floor filtering, marking/clearing and SLAM LaserScan. '
+     'Test synthetic low obstacles, floor tilt and sensor dropout. Bag d04_static_bag_183015 contains no claimed boxes; synthetic PASS is not hardware PASS. '
+     'D04 and D07 must be independent commits. No rejected odom_hold or unreviewed planar-refactor import, deployment, or safety-threshold relaxation.'),
+)
+
+def enqueue_targeted(db):
+    if nq.kv_get(db, 'campaign_scope') != execution.X2_CAMPAIGN:
+        raise ValueError('explicit x2-blockers campaign scope required')
+    for name, priority, title, prompt in TARGETS:
+        if nq.enqueue(db, name, 'true', kind='engineering', execution_tier=execution.ENGINEERING,
+                      resource='engineering', priority=priority, max_attempts=2,
+                      timeout_s=3600, heartbeat_s=900,
+                      repro='--agents=codex '+title+': '+prompt+
+                      ' Work alone in the existing isolated attempt. No subagents, parallel research group, hardware access, movement, installs, ROS goals or full replay/Nightly. '
+                      'Use the existing model router with Codex only. Claude is held for a later independently confirmed review phase; never infer availability from 06:00. '
+                      'Record OFFLINE_VERIFIED only; return the existing result contract with exact tests/evidence and partial BLOCKED findings. No SIM_VERIFIED or hardware claims.'):
+            db.execute('UPDATE tasks SET task_type=?,complexity=?,risk=?,requires_result=1 WHERE name=?',
+                       ('root_cause_analysis', 'high', 'high', name))
+    return list(execution.X2_TASKS)
+
+
+def target_plan(db):
+    """Pure planning on a caller-owned SQLite memory snapshot; never probes or dispatches."""
+    nq.kv_set(db, 'campaign_scope', execution.X2_CAMPAIGN)
+    enqueue_targeted(db)
+    tasks = [dict(db.execute('SELECT name,state,priority,resource,execution_tier FROM tasks WHERE name=?', (n,)).fetchone())
+             for n in execution.X2_TASKS]
+    excluded = [r['name'] for r in db.execute('SELECT name FROM tasks ORDER BY id') if not execution.scope_allows(db, r['name'])]
+    return dict(campaign=execution.X2_CAMPAIGN, mode=execution.ENGINEERING, dry_run=True,
+                agents_started=0, max_parallel=1, tasks=tasks, excluded_tasks=excluded,
+                next_task=execution.next_target(db), active_leases=execution.active_leases(db),
+                start_blocked_by_leases=not execution.scope_idle(db),
+                authorization='requires fresh real ENGINEERING preflight at operator start',
+                automatic_general_enqueue=False)
 
 
 def init(db):
@@ -48,6 +109,9 @@ def ingest(db, event):
     if db.execute('SELECT 1 FROM failure_events WHERE event_id=?',(eid,)).fetchone():
         return sig
     db.execute('INSERT INTO failure_events VALUES(?,?,?,?)',(eid,sig,encoded,time.time()))
+    if execution.restricted(db):
+        nq.ev(db, '*', 'SCOPED_FAILURE_EVIDENCE', eid)
+        return sig  # preserve evidence without creating unrelated tasks/reviews
     hardware=event.get('needs_hardware') is True
     name=('hardware_fact_' if hardware else 'engineering_defect_')+sig
     previous=db.execute('SELECT state FROM tasks WHERE name=?',(name,)).fetchone()
@@ -117,6 +181,8 @@ def audit(db, refresh=False):
 
 
 def daily(db):
+    if execution.restricted(db):
+        return []  # targeted scope has no daily/general task expansion
     if nq.kv_get(db,'frozen',False):
         return []
     ok,why=execution.allowed(db,nq.ROOT,execution.ENGINEERING)

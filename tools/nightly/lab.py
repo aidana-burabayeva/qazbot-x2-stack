@@ -175,7 +175,9 @@ def stop_units(args):
 def park_tasks(db):
     """Running tasks: kill their process groups, requeue-on-resume. Pending/paused: parked as-is. Previous state kept for resume."""
     parked = nq.kv_get(db, 'parked', {})
-    for r in db.execute("SELECT id FROM tasks WHERE state='VERIFYING'").fetchall():  # verification jobs are children we started: stop them, resume restarts them
+    for r in db.execute("SELECT id,name FROM tasks WHERE state='VERIFYING'").fetchall():
+        if not execution.scope_allows(db, r['name']):
+            continue
         vp = nq.kv_get(db, f"verifpid:{r['id']}")
         if vp:
             try:
@@ -183,6 +185,8 @@ def park_tasks(db):
             except (ProcessLookupError, PermissionError):
                 pass
     for r in db.execute("SELECT * FROM tasks WHERE state IN ('RUNNING','PENDING','PAUSED_AGENT','PAUSED_LIMIT','INTERRUPTED','VERIFYING')").fetchall():
+        if not execution.scope_allows(db, r['name']):
+            continue
         if r['state'] == 'RUNNING' and r['pid']:
             for sig in ('SIGTERM', 'SIGKILL'):
                 try:
@@ -479,6 +483,8 @@ def robot_sync(db):
     """Robot -> Lab: analyse only what the physical-robot branch published SINCE the last processed robot baseline.
     Reads with git show/diff from the remote ref (never merges, so diverged histories are harmless and the feedback file need not exist
     in the lab branch). The checkpoint moves only after every task was created."""
+    if execution.restricted(db):
+        return ['ROBOT-SYNC skipped: targeted campaign has no generic robot triage']
     evidence = source_state.preservation_status(ROOT, nq.mergeq.integration_head(ROOT))
     log = [f'PRESERVATION-SYNC {json.dumps(evidence, sort_keys=True)}'] if evidence['sha'] else []
     # No production-import pointer is advanced by analysis, including an already processed hardware tip.
@@ -607,6 +613,9 @@ def verify_started(timeout=40):
 
 def cmd_resume(args):
     db = nq.connect()
+    scoped = execution.restricted(db)
+    if scoped and not execution.scope_idle(db):
+        raise SystemExit('targeted resume refused: existing task/merge leases retained')
     if not (args.no_start or args.no_systemd) and execution.managed(ROOT):
         ok,why=execution.allowed(db,ROOT,execution.ENGINEERING)
         if not ok:
@@ -636,7 +645,7 @@ def cmd_resume(args):
     # DIFF since the last integrated point (stop sha, else the robot-integrated sha)
     base = nq.kv_get(db, 'last_lab_stop_sha')
     new_tasks = []
-    if base and git('cat-file', '-e', base)[0] == 0:
+    if not scoped and base and git('cat-file', '-e', base)[0] == 0:
         paths = gout('diff', '--name-only', f'{base}..HEAD').splitlines()
         subjects = gout('log', '--format=%s', f'{base}..HEAD').splitlines()
         subjects = [s for s in subjects if not s.startswith('lab-stop:')]
@@ -646,6 +655,8 @@ def cmd_resume(args):
     else:
         log.append('DIFF no valid last_lab_stop_sha: nothing compared (UNVERIFIED baseline)')
     ups = g['upstream']
+    if divergence and scoped:
+        raise SystemExit('targeted resume refused: '+divergence)
     if divergence:
         new_tasks.append((f"integrate_{g['head'][:9]}", divergence, 'NEEDS_APPROVAL', 5))
     for name, why, klass, prio in new_tasks:
@@ -662,16 +673,19 @@ def cmd_resume(args):
             nq.kv_set(db, 'last_lab_reviewed_sha', fb['last_lab_reviewed_sha'])
         log.append(f"FEEDBACK robot reports integrated={str(fb.get('last_lab_integrated_sha'))[:9]} reviewed={str(fb.get('last_lab_reviewed_sha'))[:9]}")
     log.extend(robot_sync(db))
-    write_pointers(db)
+    if not scoped:
+        write_pointers(db)
     nq.kv_set(db, 'current_integration_sha', nq.mergeq.integration_head(ROOT))
     # PRIORITIZE/restore parked work (a git problem never blocks independent sim tasks, but results on stale code are flagged)
     parked = nq.kv_get(db, 'parked', {})
     restored = 0
     for name, prev in parked.items():
+        if not execution.scope_allows(db, name):
+            continue
         n = db.execute("UPDATE tasks SET state=?, reason=? WHERE name=? AND state='NEEDS_APPROVAL' AND reason LIKE 'LAB_STOP%'",
                        (prev, 'restored by resume' + (f' [STALE-CODE: {divergence}]' if divergence else ''), name)).rowcount
         restored += n
-    nq.kv_set(db, 'parked', {})
+    nq.kv_set(db, 'parked', {k:v for k,v in parked.items() if not execution.scope_allows(db,k)})
     nq.kv_set(db, 'frozen', False)
     nq.kv_set(db, 'delegated_open', [])
     nq.kv_set(db, 'lab_state', 'STARTING' if not (args.no_start or args.no_systemd) else 'RESUMED_NOT_STARTED')  # RUNNING only after verification

@@ -115,7 +115,7 @@ def claude_final_text(text):
     return str(final.get('result','')).strip()
 
 
-def probe(nq,provider,model=None):
+def probe(nq,provider,model=None,timeout_s=None):
     """Explicit, finite capability qualification. Never inferred from quota/app-server/version."""
     import os
     from pathlib import Path
@@ -138,7 +138,10 @@ def probe(nq,provider,model=None):
     with log.open('wb') as f:
         process=subprocess.Popen(argv,cwd=wt,env=env,stdin=subprocess.DEVNULL,stdout=f,stderr=subprocess.STDOUT)
         (out/'process.json').write_text(json.dumps({'pid':process.pid,'state':'RUNNING','started':time.time()}))
-        rc=process.wait()  # same queue wall/heartbeat limits when dispatched by nq; no new retry/watchdog
+        try:
+            rc=process.wait(timeout=timeout_s)
+        except subprocess.TimeoutExpired:
+            process.kill(); process.wait(); rc=124
     text=log.read_text(errors='replace')
     # A prompt echo is insufficient: Codex must publish a completed assistant message/turn.
     if provider=='codex':
@@ -153,9 +156,9 @@ def probe(nq,provider,model=None):
     nq.kv_set(db,'execution_capability:'+provider+':'+str(model),dict(fingerprint=fingerprint(provider,model),status='EXEC_VERIFIED' if passed else 'BLOCKED',ts=time.time(),evidence=str(log)))
     report=dict(provider=provider,model=model,source_sha=sha,worktree=wt,branch=branch,rc=rc,passed=passed,category=category,evidence=str(log),sandbox='execution.engineering_sandbox',command=command.replace(marker,'<challenge>'))
     (out/'receipt.json').write_text(json.dumps(report,indent=2)+'\n')
-    if passed:
+    if passed and not execution.restricted(db):
         for r in db.execute("SELECT * FROM tasks WHERE state IN ('BLOCKED_EXECUTION','PAUSED_AGENT')").fetchall():
-            if provider in nq.db_get_agents(r):
+            if execution.scope_allows(db, r['name']) and provider in nq.db_get_agents(r):
                 nq.kv_set(db,'tried:'+r['name'],[])
                 db.execute("UPDATE tasks SET state='PENDING',reason=? WHERE id=?",('execution capability restored: '+str(out/'receipt.json'),r['id']))
                 nq.ev(db,r['name'],'CAPABILITY_RESTORED',str(out/'receipt.json'))

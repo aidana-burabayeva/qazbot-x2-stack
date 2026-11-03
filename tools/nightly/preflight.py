@@ -204,7 +204,8 @@ def check_ssh_scan():
 
 
 def check_agents():
-    for a in ('claude', 'codex'):
+    providers = ('codex',) if os.environ.get('NIGHTLY_CAMPAIGN') == execution.X2_CAMPAIGN else ('claude', 'codex')
+    for a in providers:
         try:
             v = nq.agents.ADAPTERS[a].version()
         except Exception as e:  # noqa: BLE001
@@ -490,7 +491,7 @@ def report(kind, started):
     if START_HEAD and (gout('rev-parse', 'HEAD') != START_HEAD or mergeq.integration_head(ROOT) != START_INTEGRATION):
         add('git.changed_during_preflight', 'FAIL', 'Git refs moved during checks; rebuild and recheck')
         verdict = 'FAIL'
-    doc = dict(kind=kind, mode=MODE, vendor_identity=next((r.get('hashes') for r in RES if r['name']=='vendor.identity'),{}), images={key:next((r['detail'].split()[0] for r in RES if r['name']==name and r['status']=='PASS' and r['detail'].split()),None) for key,name in (('stack','sim.image_id'),('sim','sim.official_image_id'))}, verdict=verdict, stamp=stamp, started=started, seconds=round(time.time() - started, 1), git_head=START_HEAD or gout('rev-parse', 'HEAD'), code_dirty=bool(gout('status', '--porcelain')),
+    doc = dict(kind=kind, mode=MODE, campaign_scope=os.environ.get('NIGHTLY_CAMPAIGN'), vendor_identity=next((r.get('hashes') for r in RES if r['name']=='vendor.identity'),{}), images={key:next((r['detail'].split()[0] for r in RES if r['name']==name and r['status']=='PASS' and r['detail'].split()),None) for key,name in (('stack','sim.image_id'),('sim','sim.official_image_id'))}, verdict=verdict, stamp=stamp, started=started, seconds=round(time.time() - started, 1), git_head=START_HEAD or gout('rev-parse', 'HEAD'), code_dirty=bool(gout('status', '--porcelain')),
                integration=START_INTEGRATION or gout('rev-parse', f'refs/heads/{mergeq.branch_name()}'), robot_ref=ROBOT_REF, robot_sha=gout('rev-parse', ROBOT_REF), checks=RES)
     (d / f'{stamp}_{kind}.json').write_text(json.dumps(doc, indent=1, default=str))
     (d / 'latest.json').write_text(json.dumps(doc, indent=1, default=str))
