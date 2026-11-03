@@ -23,9 +23,10 @@ Sequence (CLAUDE calls each step after confirming in live scan that the object i
 | 3 | Chair (seat ≥ 0.45 m) on L | 30 s, then remove | seen while present |
 | 4 | Person stands on F, then walks to S (into blind side) and stays 20 s, then leaves | — | seen at F, lost at S |
 | 5 | Box ≥ 0.40 m tall on R | 30 s, remove | seen while present |
-| 6 | Box ~0.25 m tall on F (D-07 probe) | 30 s, remove | expected NOT seen (D-07) |
+| 6 | D-07 height ladder on F (1.0 m ahead), one at a time: box 0.15 m → 0.25 m → 0.35 m → 0.45 m tall (≥ 0.3 m wide, matte, not glass) | 20 s each, remove before next | per box: seen / not seen in scan_obstacles and in raw cloud |
+| 6b | Repeat the 0.35 m box at 0.6 m and at 1.5 m ahead | 20 s each | detection threshold vs range |
 | 7 | Nobody near | 30 s | end |
-Total ≈ 6 min.
+Total ≈ 8 min. Box heights measured with tape by the operator and told to CLAUDE before placing.
 
 Recorded (CLAUDE, tools/d04/record_d04_static.sh): raw + registered cloud, lidar IMU, TF, odometry (LIO + native), scan/scan_obstacles/scan_clearing, local costmap_raw + updates. Plus a timestamped step log.
 
@@ -36,49 +37,55 @@ PASS/FAIL (offline replay of A and C on this recording, levelling fitted to live
 | Steps 1, 2 (person leaves edge) | C: edge cells cleared within 1 update after leaving; A: expected stale (reproduces D-04) |
 | Step 3/5 still present | C never clears a cell of an object still present at object level; 0 clears on RPP footprint outline |
 | Step 4 blind exit | cells at S NOT cleared by C (absence of observation ≠ free) |
-| Step 6 | documented result for D-07 (no PASS claim) |
+| Step 6/6b (D-07) | measured minimum detected height per range, raw cloud vs scan_obstacles; any box present in raw cloud but absent from scan_obstacles = D-07 confirmed (input for a separate D-07 fix, no PASS claim) |
 | Step 0/7 | no new lethal cells < 1.5 m without an object (no floor/reflection marks) |
 FAIL = any lost present object, any clear in a blind bearing, or new false marks in empty zone.
 
 After the test: stop stack via stop.sh. Do NOT relocate the robot while the stack is running (D-04b).
 
-## P-D05 — MC speed calibration with tape (robot walks straight)
-Purpose: actual speed vs command in LOW speed_mode at 0.10–0.60 m/s; stopping distance; D-06 leg odometry.
-Prerequisite (CLAUDE, before asking for OK): fixed-command source script through the existing adapter path (no adapter changes), duration-limited, RC takeover wins; verified in dry-run.
+## P-D05 — MC speed calibration via Nav2 goals (robot walks straight)
+Decision 2026-11-03: option B (operator RViz goals). Direct `cmd_vel_authorized` publishing (tools/d05/const_cmd.py) is REJECTED.
+Purpose: actual speed vs command in LOW speed_mode; stopping distance; D-06 leg odometry — with GC admission, gate,
+Trust/T1, adapter arming per goal and MC checks unchanged in the path.
+Tool: `tools/d05/nav2_calib/nav2_calib.py` (README there). Per run it only publishes `nav2_msgs/SpeedLimit` (percentage ≤ 100 %,
+can only lower RPP's 0.30), records, waits for the operator goal, restores the limit, writes metadata. No goals, no velocity, no services.
+Ramp = live velocity_smoother: +0.4 m/s² / −0.6 m/s² (x). Envelope today 0.30 (RPP desired = smoother max_velocity):
+points > 0.30 are NOT possible without raising both limits = separate decision.
 
-Setup (OPERATOR):
-- Straight free corridor ≥ 8 m, flat floor, nobody in front.
-- Tape on floor: START line, then marks every 1 m up to 7 m.
-- Reference point on the body: chest LiDAR front edge, projected to floor with a plumb line or straight edge. Same point for every run.
-- RC in hand; stopping = RC takeover.
+Setup (OPERATOR): straight free corridor ≥ 6 m, flat, nobody in front. Tape START + 1 m marks to 5 m.
+Reference point: chest LiDAR front edge projected to the floor, same for every run. RC in hand; stop = RC takeover.
+Robot on START, on the corridor centreline, heading along it (≤ 0.3 rad error, else RPP rotates in place first).
+Goal (RViz, map frame): on the centreline 4.4 m ahead, heading = corridor direction (xy tolerance live 0.35 → ~4 m walked).
 
-Sequence per run (≈ 1 min): place robot with reference on START, facing the corridor → CLAUDE starts recording + command (2 s settle + steady segment) → robot stops by itself at end of command → operator marks reference-point stop position → CLAUDE logs tape value.
-| Run | cmd vx (m/s) | Command duration | Tape | Repeats |
-|---|---|---|---|---|
-| 1–2 | 0.30 (anchor) | 10 s | yes | 2 |
-| 3–4 | 0.10 | 12 s | no | 2 |
-| 5–6 | 0.15 | 12 s | yes | 2 |
-| 7–8 | 0.20 | 10 s | no | 2 |
-| 9–10 | 0.25 | 10 s | no | 2 |
-| 11–12 | 0.40 | 8 s | no | 2 |
-| 13–14 | 0.50 | 8 s | yes | 2 |
-| 15–16 | 0.60 | 7 s | no | 2 |
-Order: anchor first, then low → high. Command durations are capped so expected travel ≤ 6 m at the measured 1.6× gain.
-Total ≈ 25 min.
+Per run (≈ 1.5 min): CLAUDE runs `nav2_calib.py --run-id rNN_vvv --target-vx V --path-len-m 4.4` → "READY" →
+OPERATOR sends the goal → robot ramps, walks, approach-slows (last 0.6 m, only for V > 0.12), stops →
+operator marks the stop position → CLAUDE notes tape into the metadata JSON → reposition (stack stays up).
 
-Recorded (CLAUDE): /aima/mc/locomotion/velocity, /aima/mc/common/state, /aima/mc/leg_odometry, /qazbot_lio/odometry, /qazbot_native/odom, adapter status/cmd (best_effort QoS override, no clouds).
+### Run 1 — first check (only this run until GO)
+0.30 m/s (100 %, anchor, comparable with LIVE-2/10-30), one pass, 4.4 m goal. Expected: ~6.5 s steady at ~0.48 m/s real.
+| # | GO criterion (all required) | Source |
+|---|---|---|
+| 1 | Goal admitted by GC (busy), adapter armed by GC (`motion_armed` true), no manual service call | GC/adapter status |
+| 2 | Controller output ≤ limit (meta `limit_honored`); `cmd_vel` = `cmd_vel_authorized` = MC sdk vx while gate open | bag |
+| 3 | Steady command 0.30 ± 0.005 for ≥ 4 s on `cmd_vel` (meta `steady_cmd_s`) | bag/meta |
+| 4 | Ramp up and down present, within +0.44 / −0.66 m/s² (meta `ramp_within_limits`) | bag/meta |
+| 5 | Steady v_LIO / cmd in 1.48–1.67 (D1 pooled 1.61) | LIO |
+| 6 | Stop distance (LIO, first zero on `cmd_vel_authorized` → standstill) ≤ 0.20 m | LIO |
+| 7 | GC fault "" / not latched at end, adapter latch "" throughout, no foreign publisher, no non-zero `rc`, no T1 pause, speed_mode 1 | bag |
+| 8 | LIO displacement vs tape (START → stop mark) ≤ 3 % | tape |
+| 9 | Lateral drift ≤ 0.3 m, normal gait; speed limit restored (meta event `limit_restored`) | operator/meta |
+NO-GO on any miss: stop, analyse, no further runs. Criterion 5 outside range = MC behaviour changed (mode/gait), not a tool issue.
 
-Stop criteria (abort immediately, RC takeover):
-- Reference point within 1 m of corridor end or any person/object in the path.
-- Lateral drift > 0.3 m from the corridor line, stumbling, or unusual gait.
-- Adapter/MC status not as expected (ownership lost, latch, foreign publisher).
-- Measured speed > 1.0 m/s at any point.
+### Runs 2+ (after GO, separate OK)
+0.25, 0.20, 0.15, 0.10 (2 × each, then 0.30 repeat), same 4.4 m goal. Tape on 0.15 and 0.30 repeat. Extra GO for the
+first reduced run: controller output = target ± 0.002 (lowering proven on the real binary in dry test only).
+A run with GC pause/trip, rotate-in-place at start or path curvature (radius < 0.9 m → RPP slows) is invalid → repeat.
 
-Result criteria:
-| Item | Accept |
-|---|---|
-| FAST-LIO vs tape (0.15/0.30/0.50) | error ≤ 3 % (else LIO not valid as reference) |
-| Repeat spread per point | ≤ 5 % |
-| Curve | monotonic; minimum walking command identified (or shown absent) |
-| Stopping distance | measured per point (tape stop − position at command end) |
-Output: speed table, minimum stable speed, stopping distance, leg/LIO ratio per point → decision A (inverse map) / C (limits set to real speeds).
+Recorded (`record_calib.sh`): `nav2/cmd_vel_nav` → `cmd_vel` → `cmd_vel_authorized` → `/aima/mc/locomotion/velocity`
+(commanded chain), `/qazbot_lio/odometry`, `/aima/mc/leg_odometry`, `/qazbot_native/odom`, MC state, speed_limit,
+GC/adapter/trust status, `nav2/plan`, goal/action status (best_effort overrides on vendor/odom topics, no clouds/TF).
+
+Stop criteria (RC takeover): reference within 1 m of corridor end or anything in the path; drift > 0.3 m, stumble,
+unusual gait; adapter/GC latch or foreign publisher; robot visibly faster than a brisk walk (operator judgement, RC takeover). Speed > 1.0 m/s is checked after the run from LIO and is NO-GO for the next run.
+Result: speed table, minimum stable speed (or its absence down to 0.10), stopping distance, leg/LIO per point →
+decision A (inverse map, only inside measured range) / C (limits set to real speeds).

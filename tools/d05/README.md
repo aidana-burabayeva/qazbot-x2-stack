@@ -1,5 +1,7 @@
 # tools/d05 — fixed-command source for protocol P-D05 (MC speed calibration, tape)
 
+**REJECTED 2026-11-03 for P-D05 (user decision: calibration via Nav2 goals, see `nav2_calib/`). Do not use on hardware.**
+
 Prepared 2026-11-03, NOT run on hardware. Protocol: `docs/hardware/protocols/HW_PROTOCOLS_20261103.md` (P-D05).
 Python tooling (not a control node). Parameters are CLI arguments by explicit task requirement
 (`--help` is the reference); there is no launch/config file.
