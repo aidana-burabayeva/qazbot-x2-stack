@@ -148,8 +148,8 @@ Visualization Manager:
         History Policy: Keep Last
       Value: true
     - Class: rviz_default_plugins/Map
-      Name: Local costmap (off by default, Wi-Fi load)
-      Enabled: false
+      Name: Local costmap
+      Enabled: true
       Alpha: 0.5
       Color Scheme: costmap
       Draw Behind: false
@@ -157,6 +157,55 @@ Visualization Manager:
         Value: /qazbot_d1_map/nav2/local_costmap/costmap
         Depth: 1
         Reliability Policy: Reliable
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+      Value: true
+    - Class: rviz_default_plugins/Map
+      Name: Global costmap
+      Enabled: true
+      Alpha: 0.4
+      Color Scheme: costmap
+      Draw Behind: false
+      Topic:
+        Value: /qazbot_d1_map/nav2/global_costmap/costmap
+        Depth: 1
+        Reliability Policy: Reliable
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+      Value: true
+    - Class: rviz_default_plugins/PointCloud2
+      Name: scan_obstacles (costmap marking)
+      Enabled: true
+      Alpha: 1
+      Color Transformer: FlatColor
+      Color: 255; 170; 0
+      Position Transformer: XYZ
+      Size (Pixels): 3
+      Size (m): 0.05
+      Style: Flat Squares
+      Decay Time: 0
+      Topic:
+        Value: /qazbot_lio/scan_obstacles
+        Depth: 5
+        Reliability Policy: Best Effort
+        Durability Policy: Volatile
+        History Policy: Keep Last
+      Value: true
+    - Class: rviz_default_plugins/PointCloud2
+      Name: scan_clearing (costmap clearing)
+      Enabled: false
+      Alpha: 0.5
+      Color Transformer: FlatColor
+      Color: 0; 170; 255
+      Position Transformer: XYZ
+      Size (Pixels): 2
+      Size (m): 0.03
+      Style: Points
+      Decay Time: 0
+      Topic:
+        Value: /qazbot_lio/scan_clearing
+        Depth: 5
+        Reliability Policy: Best Effort
         Durability Policy: Volatile
         History Policy: Keep Last
       Value: false
