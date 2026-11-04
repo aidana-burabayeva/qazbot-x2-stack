@@ -7,6 +7,11 @@ odom_source (reports/20261027-native-odom-nav2-design.md 3.6) selects the ONE ow
                  /qazbot_lio/odom_level unchanged. Consumers of the odometry topic must then use /qazbot_native/odom
                  (run_nav_full.sh QAZBOT_ODOM_TOPIC, trust -p odom_topic; tools/stack/stack_up.sh does both).
   Anything else (native_base: step 2, scan not yet in a base_link frame) is refused.
+
+projector_prefix (T1 2026-11-04) selects the FAST-LIO -> 2D bridge. '' (default) = python lio/level_bridge.py exactly as
+before (rollback path). A colcon install prefix of qazbot_lidar_projector = the C++ projector, started with the SAME
+node name qazbot_level_bridge, the SAME remaps and publish_tf (LevelBridgePublishTf) as the python bridge, plus
+--params-file projector_params. Exactly one of the two is started, so topic/TF ownership is unchanged.
 """
 import os
 import re
@@ -17,10 +22,10 @@ from launch_stagger import staggered  # noqa: E402
 import pose_store  # noqa: E402
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, RegisterEventHandler, EmitEvent
-from launch.conditions import LaunchConfigurationEquals, LaunchConfigurationNotEquals
+from launch.conditions import IfCondition, LaunchConfigurationEquals, LaunchConfigurationNotEquals
 from launch.event_handlers import OnProcessExit
 from launch.events import Shutdown
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import EnvironmentVariable, LaunchConfiguration, PathJoinSubstitution
 from launch import Substitution
 from launch.utilities import perform_substitutions
 from launch_ros.actions import Node
@@ -62,6 +67,22 @@ class LevelBridgePublishTf(Substitution):
         return 'true' if source == 'lio' else 'false'
 
 
+class ProjectorSelected(Substitution):
+    """'true' when projector_prefix is set (C++ qazbot_lidar_projector), else 'false' (python level_bridge)."""
+
+    def __init__(self, prefix, params, want):
+        super().__init__()
+        self.prefix, self.params, self.want = prefix, params, want
+
+    def perform(self, context):
+        prefix = perform_substitutions(context, [self.prefix]).strip()
+        if prefix and not os.access(os.path.join(prefix, 'lib', 'qazbot_lidar_projector', 'lidar_projector'), os.X_OK):
+            raise ValueError(f'projector_prefix {prefix!r} has no lib/qazbot_lidar_projector/lidar_projector')
+        if prefix and not os.path.isfile(perform_substitutions(context, [self.params]).strip()):
+            raise ValueError('projector_prefix needs projector_params:=<copied YAML>')
+        return 'true' if bool(prefix) == self.want else 'false'
+
+
 def generate_launch_description():
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     # navigation/ lives in control_backend/ or in control_backend/ws/src/; runtime/ stays in control_backend/
@@ -89,9 +110,31 @@ def generate_launch_description():
         DeclareLaunchArgument('native_rate_hz', default_value='30.0'),
         # tests only (isolated domain): feed recorded leg odometry without publishing on /aima/*
         DeclareLaunchArgument('native_leg_topic', default_value='/aima/mc/leg_odometry'),
+        # T1: '' = python level_bridge (default, rollback); colcon prefix of qazbot_lidar_projector = C++ projector.
+        DeclareLaunchArgument('projector_prefix', default_value=''),
+        DeclareLaunchArgument('projector_params', default_value=''),
         ExecuteProcess(cmd=[LaunchConfiguration('lio_binary')] + lio_args, output='screen',
                        prefix=TasksetPrefix(LaunchConfiguration('lio_cpus'))),
-        ExecuteProcess(cmd=['python3', os.path.join(root, 'lio', 'level_bridge.py'), '--ros-args',
+        # FAST-LIO -> 2D bridge: python (projector_prefix '') or C++ projector; never both.
+        ExecuteProcess(cmd=[PathJoinSubstitution([LaunchConfiguration('projector_prefix'), 'lib',
+                                                  'qazbot_lidar_projector', 'lidar_projector']), '--ros-args',
+                            '-r', '__node:=qazbot_level_bridge',
+                            '-r', '/Odometry:=/qazbot_lio/odometry',
+                            '-r', '/cloud_registered:=/qazbot_lio/cloud_registered',
+                            '-r', '/scan:=/qazbot_lio/scan',
+                            '-r', '/odom_level:=/qazbot_lio/odom_level',
+                            '-r', '/tf:=/qazbot_d1_map/tf',
+                            '-r', '/tf_static:=/qazbot_d1_map/tf_static',
+                            '--params-file', LaunchConfiguration('projector_params'),
+                            '-p', ['publish_tf:=', LevelBridgePublishTf(LaunchConfiguration('odom_source'))]],
+                       additional_env={'LD_LIBRARY_PATH': [LaunchConfiguration('projector_prefix'), '/lib:',
+                                                           EnvironmentVariable('LD_LIBRARY_PATH', default_value='')]},
+                       condition=IfCondition(ProjectorSelected(LaunchConfiguration('projector_prefix'),
+                                                      LaunchConfiguration('projector_params'), True)),
+                       output='screen'),
+        ExecuteProcess(condition=IfCondition(ProjectorSelected(LaunchConfiguration('projector_prefix'),
+                                                      LaunchConfiguration('projector_params'), False)),
+                       cmd=['python3', os.path.join(root, 'lio', 'level_bridge.py'), '--ros-args',
                             '-r', '__node:=qazbot_level_bridge',
                             '-r', '/Odometry:=/qazbot_lio/odometry',
                             '-r', '/cloud_registered:=/qazbot_lio/cloud_registered',
