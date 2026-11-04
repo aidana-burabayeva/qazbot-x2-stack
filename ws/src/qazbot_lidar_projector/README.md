@@ -57,7 +57,8 @@ Python node's: `publish_tf true`, `range_max 25.0`, `scan_every 1`.
 | `twist_baseline_s` | double | s | 0.3 | Pose baseline for the twist |
 | `lidar_fwd_in_imu` | double[3] | unit vec | [-0.0038440, 0.00088109, -0.99999222] | LiDAR forward axis in the LiDAR IMU frame |
 | `imu_topic` | string | - | `/aima/hal/sensor/lidar_chest_front/imu` | IMU used for levelling |
-Logging: INFO once on levelling, WARN (throttled 5 s) on odometry clock step-back and on malformed clouds; nothing per cloud.
+Logging: INFO once on levelling, WARN (throttled 5 s) on odometry clock step-back, on malformed clouds and on a cloud dropped
+without a matching odometry stamp (with totals); INFO once at shutdown with the cloud/pose sync totals; nothing per cloud.
 
 ### TF ownership
 With `publish_tf: false` (running configuration, `odom_source:=native_imu`) the node creates **no** TF publisher; the single
@@ -80,10 +81,11 @@ nice -n 19 colcon build --packages-select qazbot_lidar_projector --base-paths ws
 ROS_DOMAIN_ID=77 colcon test ... same bases ...        # never domain 0
 # coverage: add --cmake-args -DENABLE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug with separate bases, then gcov
 ```
-Tests: `test_lidar_projection` (gtest, 23 cases, 100 % line coverage of `lidar_projection.cpp`); `test_parity.py` (C++ library vs
+Tests: `test_lidar_projection` (gtest, 31 cases incl. 8 `Sync.*`, 100 % line coverage of `lidar_projection.cpp`); `test_parity.py` (C++ library vs
 the Python candidate on `test/data/static_204153_w50.bin`: 50 clouds, 981 IMU, bag `d04_static_bag_204153`, t0+60 s; R_lv from the
 fixture's own first IMU second, not the live R_lv; tolerances derived in the module docstring);
-`test_integration.py` (launch_testing via the XML launch, ROS_DOMAIN_ID 77, event-based waits only; compares the node output
+`test_cloud_before_odom.py` (regression, launch_testing, ROS_DOMAIN_ID 78: same fixture, clouds k % 10 in {0, 1} published
+before their odometry; expects every in-order scan, bit-identical); `test_integration.py` (launch_testing via the XML launch, ROS_DOMAIN_ID 77, event-based waits only; compares the node output
 with the library dump, checks topics/types/frames/QoS/no TF publisher/IMU subscription dropped). `test/tools/` holds the
 fixture extractor and `bench_compare.py`.
 
@@ -95,6 +97,15 @@ of one bin that tie at `nextafter(range_max)` within rounding (max endpoint diff
 Benchmark (X2, live stack running, nice 19, same 39 clouds x 20 passes): per-cloud compute Python `on_cloud` p50/p95/p99
 4.72/5.02/5.17 ms vs C++ `CloudProcessor::process` 0.87/0.93/1.03 ms; whole process CPU per processed cloud 13.6 vs 2.3 ms; peak RSS
 102 MB vs 66 MB.
+
+### Cloud / odometry delivery order (T1 2026-11-04)
+FAST-LIO publishes `/Odometry` before `/cloud_registered` with the same stamp, but the two topics are separate DDS readers and a
+cloud can be taken before its odometry (measured 0.2-0.7 % of frames). The old node looked up the exact stamp, missed and
+returned silently (sporadic 0.4 s gaps on `/scan`, `_obstacles`, `_clearing`). Now `CloudPoseSync` (pure core, unit-tested)
+holds at most ONE cloud until the next odometry decides it: same stamp -> processed with that exact pose; newer stamp -> dropped
+(its odometry was skipped). Exact stamp matching is kept (no nearest-pose substitution); there is no timer, timeout or retry.
+Forced reproduction on bag `d04_static_bag_183015` (clouds k % 10 in {0, 1} before their odometry): old 116/145 scans, new
+145/145, common stamps bit-identical. Regression test: `test/test_cloud_before_odom.py` (old 4/19 lost, new 0/19).
 
 ## Deploy (NOT done)
 1. Build as above into the workspace. 2. Offline replay with `tests/d04/replay_d04.py` and a C++-output adapter (lethal-cell parity).

@@ -184,6 +184,43 @@ const Pose * PoseTracker::find(std::int64_t key_ns) const
   return it == poses_.end() ? nullptr : &it->second;
 }
 
+CloudPoseSync::CloudAction CloudPoseSync::onCloud(
+  std::int64_t key, bool pose_known, bool has_odom, std::int64_t newest_key)
+{
+  if (has_pending_) {
+    // A newer cloud arrived before the held one was matched: the held one is superseded.
+    has_pending_ = false;
+    ++counters_.dropped_pending;
+  }
+  if (pose_known) {
+    ++counters_.processed_direct;
+    return CloudAction::kProcess;
+  }
+  if (!has_odom || key > newest_key) {
+    // Its odometry has not been delivered yet (inter-topic delivery order): hold it.
+    has_pending_ = true;
+    pending_key_ = key;
+    ++counters_.deferred;
+    return CloudAction::kDefer;
+  }
+  ++counters_.dropped_no_pose;
+  return CloudAction::kDrop;
+}
+
+CloudPoseSync::OdomAction CloudPoseSync::onOdom(std::int64_t key)
+{
+  if (!has_pending_ || key < pending_key_) {
+    return OdomAction::kNone;
+  }
+  has_pending_ = false;
+  if (key == pending_key_) {
+    ++counters_.released;
+    return OdomAction::kRelease;
+  }
+  ++counters_.dropped_pending;
+  return OdomAction::kDropPending;
+}
+
 void BodyPoints::clear()
 {
   bx.clear(); by.clear(); r.clear(); a.clear(); z.clear(); flat.clear();

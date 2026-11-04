@@ -76,6 +76,11 @@ if(BUILD_TESTING)
     TARGET test_integration
     ENV ROS_DOMAIN_ID=77 FIXTURE=${CMAKE_CURRENT_SOURCE_DIR}/test/data/static_204153_w50.bin
     TIMEOUT 120)
+  # Regression (T1 2026-11-04): clouds delivered before their odometry are not lost (bag 183015 swap pattern).
+  add_launch_test(test/test_cloud_before_odom.py
+    TARGET test_cloud_before_odom
+    ENV ROS_DOMAIN_ID=78 FIXTURE=${CMAKE_CURRENT_SOURCE_DIR}/test/data/static_204153_w50.bin
+    TIMEOUT 120)
 endif()
 
 ament_package()

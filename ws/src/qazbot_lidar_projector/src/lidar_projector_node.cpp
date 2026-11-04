@@ -89,6 +89,26 @@ LidarProjectorNode::LidarProjectorNode(const rclcpp::NodeOptions & options)
   pub_odom_ = create_publisher<nav_msgs::msg::Odometry>("/odom_level", 50);
 }
 
+LidarProjectorNode::~LidarProjectorNode()
+{
+  const auto & k = sync_.counters();
+  RCLCPP_INFO(
+    get_logger(), "cloud/pose sync: processed %lu, deferred %lu, released %lu, dropped (no pose %lu, superseded %lu)",
+    static_cast<unsigned long>(k.processed_direct), static_cast<unsigned long>(k.deferred),
+    static_cast<unsigned long>(k.released), static_cast<unsigned long>(k.dropped_no_pose),
+    static_cast<unsigned long>(k.dropped_pending));
+}
+
+void LidarProjectorNode::warnDropped()
+{
+  const auto & k = sync_.counters();
+  RCLCPP_WARN_THROTTLE(
+    get_logger(), *get_clock(), 5000,
+    "cloud dropped without a matching odometry stamp (total: no pose %lu, superseded %lu; released late %lu)",
+    static_cast<unsigned long>(k.dropped_no_pose), static_cast<unsigned long>(k.dropped_pending),
+    static_cast<unsigned long>(k.released));
+}
+
 void LidarProjectorNode::onImu(const sensor_msgs::msg::Imu::ConstSharedPtr & m)
 {
   if (leveller_.ready() || !leveller_.hasOrientation()) {
@@ -122,6 +142,19 @@ void LidarProjectorNode::onOdom(const nav_msgs::msg::Odometry::ConstSharedPtr & 
     RCLCPP_WARN_THROTTLE(
       get_logger(), *get_clock(), 5000,
       "odometry stamp went back %.3f s: clearing pose cache and twist baseline", upd.step_back_s);
+  }
+  // A cloud delivered before this odometry is resolved by it (same stamp: process; newer: never matched).
+  switch (sync_.onOdom(key)) {
+    case CloudPoseSync::OdomAction::kRelease:
+      processCloud(*pending_cloud_, pose);
+      pending_cloud_.reset();
+      break;
+    case CloudPoseSync::OdomAction::kDropPending:
+      pending_cloud_.reset();
+      warnDropped();
+      break;
+    case CloudPoseSync::OdomAction::kNone:
+      break;
   }
   const double qz = std::sin(pose.yaw / 2), qw = std::cos(pose.yaw / 2);
   if (tf_) {
@@ -163,12 +196,35 @@ void LidarProjectorNode::onCloud(const sensor_msgs::msg::PointCloud2::ConstShare
   if (n_cloud_ % static_cast<std::uint64_t>(scan_every_)) {
     return;
   }
+  if (!leveller_.ready()) {
+    return;
+  }
   const std::int64_t key = static_cast<std::int64_t>(m->header.stamp.sec) * 1000000000LL +
     m->header.stamp.nanosec;
   const Pose * pose = tracker_.find(key);
-  if (pose == nullptr || !leveller_.ready()) {
-    return;
+  const bool had_pending = sync_.hasPending();
+  switch (sync_.onCloud(key, pose != nullptr, tracker_.hasNewest(), tracker_.newestKey())) {
+    case CloudPoseSync::CloudAction::kProcess:
+      pending_cloud_.reset();
+      if (had_pending) {warnDropped();}
+      processCloud(*m, *pose);
+      return;
+    case CloudPoseSync::CloudAction::kDefer:
+      if (had_pending) {warnDropped();}
+      pending_cloud_ = m;
+      RCLCPP_DEBUG(get_logger(), "cloud arrived before its odometry: held until the next odometry");
+      return;
+    case CloudPoseSync::CloudAction::kDrop:
+      pending_cloud_.reset();
+      warnDropped();
+      return;
   }
+}
+
+void LidarProjectorNode::processCloud(const sensor_msgs::msg::PointCloud2 & msg, const Pose & pose_in)
+{
+  const auto * m = &msg;
+  const Pose * pose = &pose_in;
   XyzView view;
   if (m->is_bigendian || !findXyz(*m, view.off_x, view.off_y, view.off_z)) {
     RCLCPP_WARN_THROTTLE(

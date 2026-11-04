@@ -2,6 +2,7 @@
 // Unit tests of the pure core (no ROS). Cases mirror the behaviour of candidates/d04/level_bridge.py.
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <limits>
@@ -369,4 +370,103 @@ TEST(Processor, EndToEndAndEmptyCloud)
   v.data = reinterpret_cast<const std::uint8_t *>(nn);
   v.count = 1; v.skip_nans = true;
   EXPECT_FALSE(proc.process(v, identity3(), Pose{}, out));
+}
+
+// ---- CloudPoseSync: cloud/odometry delivery order (root cause of the sporadic missing scans) ----
+TEST(Sync, PoseKnownIsProcessedDirectly)
+{
+  CloudPoseSync s;
+  EXPECT_EQ(s.onCloud(100, true, true, 100), CloudPoseSync::CloudAction::kProcess);
+  EXPECT_FALSE(s.hasPending());
+  EXPECT_EQ(s.onOdom(200), CloudPoseSync::OdomAction::kNone);
+  EXPECT_EQ(s.counters().processed_direct, 1u);
+}
+
+TEST(Sync, CloudBeforeItsOdometryIsHeldAndReleasedBySameStamp)
+{
+  CloudPoseSync s;
+  // newest odometry 100, cloud 200 arrives first: held, not dropped (old code returned silently here).
+  EXPECT_EQ(s.onCloud(200, false, true, 100), CloudPoseSync::CloudAction::kDefer);
+  EXPECT_TRUE(s.hasPending());
+  EXPECT_EQ(s.pendingKey(), 200);
+  EXPECT_EQ(s.onOdom(200), CloudPoseSync::OdomAction::kRelease);
+  EXPECT_FALSE(s.hasPending());
+  EXPECT_EQ(s.counters().deferred, 1u);
+  EXPECT_EQ(s.counters().released, 1u);
+  EXPECT_EQ(s.counters().dropped_pending + s.counters().dropped_no_pose, 0u);
+}
+
+TEST(Sync, CloudBeforeAnyOdometryIsHeld)
+{
+  CloudPoseSync s;
+  EXPECT_EQ(s.onCloud(5, false, false, 0), CloudPoseSync::CloudAction::kDefer);
+  EXPECT_EQ(s.onOdom(5), CloudPoseSync::OdomAction::kRelease);
+}
+
+TEST(Sync, OlderOdometryKeepsWaitingNewerOdometryDropsPending)
+{
+  CloudPoseSync s;
+  EXPECT_EQ(s.onCloud(300, false, true, 100), CloudPoseSync::CloudAction::kDefer);
+  EXPECT_EQ(s.onOdom(200), CloudPoseSync::OdomAction::kNone);   // older stamp: still waiting
+  EXPECT_TRUE(s.hasPending());
+  EXPECT_EQ(s.onOdom(400), CloudPoseSync::OdomAction::kDropPending);  // 300 was skipped by the odometry
+  EXPECT_FALSE(s.hasPending());
+  EXPECT_EQ(s.counters().dropped_pending, 1u);
+}
+
+TEST(Sync, MissingPoseOlderThanNewestOdometryIsDropped)
+{
+  CloudPoseSync s;
+  EXPECT_EQ(s.onCloud(100, false, true, 200), CloudPoseSync::CloudAction::kDrop);
+  EXPECT_FALSE(s.hasPending());
+  EXPECT_EQ(s.counters().dropped_no_pose, 1u);
+}
+
+TEST(Sync, AtMostOneHeldCloudNewerCloudSupersedes)
+{
+  CloudPoseSync s;
+  EXPECT_EQ(s.onCloud(200, false, true, 100), CloudPoseSync::CloudAction::kDefer);
+  EXPECT_EQ(s.onCloud(300, false, true, 100), CloudPoseSync::CloudAction::kDefer);
+  EXPECT_EQ(s.pendingKey(), 300);
+  EXPECT_EQ(s.counters().dropped_pending, 1u);
+  EXPECT_EQ(s.onCloud(400, true, true, 400), CloudPoseSync::CloudAction::kProcess);
+  EXPECT_FALSE(s.hasPending());
+  EXPECT_EQ(s.counters().dropped_pending, 2u);
+}
+
+TEST(Sync, TrackerExposesNewestKeyForTheSync)
+{
+  PoseTracker t(0.3);
+  EXPECT_FALSE(t.hasNewest());
+  t.push(1000, 1e-6, Pose{});
+  t.push(2000, 2e-6, Pose{});
+  EXPECT_TRUE(t.hasNewest());
+  EXPECT_EQ(t.newestKey(), 2000);
+}
+
+// Replays an interleaving like the live one: odometry k then cloud k, except some stamps where the cloud is delivered
+// first. With the sync no processed-parity cloud is lost; the old exact-lookup-or-return logic loses exactly those.
+TEST(Sync, InterleavedReplayLosesNothing)
+{
+  PoseTracker t(0.3);
+  CloudPoseSync s;
+  int processed = 0, old_logic = 0;
+  const std::vector<int> late_odom = {3, 17, 18, 40, 77};
+  for (int k = 1; k <= 100; ++k) {
+    const std::int64_t key = k * 100000000LL;
+    const bool late = std::find(late_odom.begin(), late_odom.end(), k) != late_odom.end();
+    auto cloud = [&]() {
+        old_logic += t.find(key) != nullptr;
+        if (s.onCloud(key, t.find(key) != nullptr, t.hasNewest(), t.newestKey()) ==
+          CloudPoseSync::CloudAction::kProcess) {++processed;}
+      };
+    auto odom = [&]() {
+        t.push(key, k * 0.1, Pose{});
+        if (s.onOdom(key) == CloudPoseSync::OdomAction::kRelease) {++processed;}
+      };
+    if (late) {cloud(); odom();} else {odom(); cloud();}
+  }
+  EXPECT_EQ(processed, 100);
+  EXPECT_EQ(old_logic, 100 - static_cast<int>(late_odom.size()));
+  EXPECT_EQ(s.counters().released, late_odom.size());
 }

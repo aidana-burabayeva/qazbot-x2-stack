@@ -23,11 +23,15 @@ class LidarProjectorNode : public rclcpp::Node
 {
 public:
   explicit LidarProjectorNode(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
+  ~LidarProjectorNode() override;
 
 private:
   void onImu(const sensor_msgs::msg::Imu::ConstSharedPtr & msg);
   void onOdom(const nav_msgs::msg::Odometry::ConstSharedPtr & msg);
   void onCloud(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg);
+  /// Projects one cloud with the levelled pose of its exact stamp and publishes scan / obstacles / clearing.
+  void processCloud(const sensor_msgs::msg::PointCloud2 & msg, const Pose & pose);
+  void warnDropped();
   sensor_msgs::msg::PointCloud2::UniquePtr makeXyzCloud(
     const std_msgs::msg::Header & header, const std::vector<float> & xyz) const;
 
@@ -41,6 +45,9 @@ private:
   PoseTracker tracker_;
   CloudProcessor processor_;
   CloudResult result_;
+  /// At most one cloud whose odometry was not delivered yet (see CloudPoseSync).
+  CloudPoseSync sync_;
+  sensor_msgs::msg::PointCloud2::ConstSharedPtr pending_cloud_;
 
   std::unique_ptr<tf2_ros::TransformBroadcaster> tf_;
   rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr sub_imu_;

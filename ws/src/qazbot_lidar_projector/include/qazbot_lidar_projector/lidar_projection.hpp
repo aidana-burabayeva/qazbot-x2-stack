@@ -111,6 +111,9 @@ public:
   Update push(std::int64_t key_ns, double stamp_s, const Pose & pose);
   const Pose * find(std::int64_t key_ns) const;
   std::size_t size() const {return poses_.size();}
+  /// True once any odometry was pushed; newestKey() is then the stamp of the last pushed one.
+  bool hasNewest() const {return has_last_;}
+  std::int64_t newestKey() const {return last_key_;}
 
 private:
   struct Sample
@@ -123,6 +126,38 @@ private:
   std::int64_t last_key_{0};
   std::map<std::int64_t, Pose> poses_;
   std::deque<Sample> track_;
+};
+
+/// Matches a cloud with the odometry of the SAME stamp when the two topics are delivered in either order.
+/// FAST-LIO publishes /Odometry before /cloud_registered, but they are separate DDS readers, so a cloud can be taken
+/// before its odometry. Instead of dropping that cloud, at most ONE cloud is held until the next odometry decides it:
+/// equal stamp -> release (process now), newer stamp -> the held cloud's odometry was skipped -> drop.
+/// Purely event-driven (no clock, no timeout); a newer deferred cloud replaces an older held one (counted as dropped).
+class CloudPoseSync
+{
+public:
+  enum class CloudAction {kProcess, kDefer, kDrop};
+  enum class OdomAction {kNone, kRelease, kDropPending};
+  struct Counters
+  {
+    std::uint64_t processed_direct{0};   ///< pose already known on cloud arrival
+    std::uint64_t deferred{0};           ///< cloud held, waiting for its odometry
+    std::uint64_t released{0};           ///< held cloud matched by a later odometry
+    std::uint64_t dropped_no_pose{0};    ///< pose older than the newest odometry and absent: never arrives
+    std::uint64_t dropped_pending{0};    ///< held cloud superseded by a newer odometry or a newer cloud
+  };
+  /// pose_known: tracker has the exact stamp. has_odom/newest_key: newest odometry stamp seen so far.
+  CloudAction onCloud(std::int64_t key, bool pose_known, bool has_odom, std::int64_t newest_key);
+  /// Call after every odometry was pushed into the tracker.
+  OdomAction onOdom(std::int64_t key);
+  bool hasPending() const {return has_pending_;}
+  std::int64_t pendingKey() const {return pending_key_;}
+  const Counters & counters() const {return counters_;}
+
+private:
+  bool has_pending_{false};
+  std::int64_t pending_key_{0};
+  Counters counters_{};
 };
 
 /// View on the x/y/z float32 fields of a packed point cloud (no ROS types).
