@@ -39,7 +39,7 @@ def setup(context, raw=False):
     if not radius > 0:
         raise ValueError('robot_radius must be the positive body envelope; no default')
     vmax, wmax = float(L('max_linear')), float(L('max_angular'))
-    goal_stateful=context.launch_configurations.get('goal_checker_stateful','false').lower()
+    goal_stateful=context.launch_configurations.get('goal_checker_stateful','true').lower()
     if goal_stateful not in ('true','false'):
         raise ValueError('goal_checker_stateful must be true or false')
     experimental_turn = os.environ.get('QAZBOT_SIM_MC_TURN') == '1'
@@ -181,10 +181,11 @@ def generate_launch_description():
         DeclareLaunchArgument('robot_radius', description='Body envelope radius in metres; no default'),
         DeclareLaunchArgument('max_linear', default_value='0.3', description='candidate, m/s'),
         DeclareLaunchArgument('max_angular', default_value='0.6', description='rad/s; S3b 2026-10-22: 0.5 stalled CW in place, 0.6 turns both ways'),
-        DeclareLaunchArgument('xy_tol', default_value='0.10'),
-        DeclareLaunchArgument('yaw_tol', default_value='0.10'),
-        # AMCL may correct XY during final rotation: require XY and yaw together.
-        DeclareLaunchArgument('goal_checker_stateful', default_value='false'),
+        DeclareLaunchArgument('xy_tol', default_value='0.30'),
+        DeclareLaunchArgument('yaw_tol', default_value='0.35'),
+        # Production profile (operator decision 2026-11-05, as on 2026-10-30): SimpleGoalChecker xy 0.30 m, yaw 0.35 rad,
+        # stateful (XY reached once stays reached while the robot rotates to the goal heading). Final rest distance is checked separately.
+        DeclareLaunchArgument('goal_checker_stateful', default_value='true'),
         DeclareLaunchArgument('local_frame', default_value='odom'),
         DeclareLaunchArgument('scan_topic', default_value='', description='LaserScan for the obstacle layer; empty = none'),
         DeclareLaunchArgument('output_topic', default_value='cmd_vel'),

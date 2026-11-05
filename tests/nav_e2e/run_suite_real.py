@@ -29,7 +29,7 @@ root = Path(__file__).resolve().parents[2]; nav = root / 'ws/src/navigation'; ns
 out = root / 'tests/integration_results' / sys.argv[1]
 if out.exists(): raise RuntimeError('result directory exists')
 out.mkdir()
-XY_TOL = YAW_TOL = 0.10            # nav_full.launch.py goal checker defaults xy_tol / yaw_tol
+XY_TOL, YAW_TOL = 0.30, 0.35     # nav_full.launch.py goal checker defaults xy_tol / yaw_tol (production profile 2026-11-05)
 PERIOD = 1.0 / 20.0                # controller_frequency 20 Hz
 procs, logs, results, known_defects, smac_libraries = [], [], [], {}, []
 
