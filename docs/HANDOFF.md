@@ -1,3 +1,7 @@
+## 2026-11-05 ~20:00: NAV-OBS-01 PASS (обход статической коробки 40 см)
+
+Профиль: Goal Checker 0.30/0.35/stateful + global inflation 0.80 (`63749f2`). Goal 4 м с коробкой 23.5×12×40: SUCCEEDED 11.7 с, минимальный зазор footprint–коробка 0.53 м (план 0.43), остановка у цели 0.03 м / yaw −0.07, без столкновений; два кратких collision-ahead стопа RPP. Отчёт [20261105_nav_obs_01_run.md](results/20261105_nav_obs_01_run.md), bag lossless в evidence/nav_obs_01_20261105. Ветка `fix/global-inflation-080` (Nav2 уже работает с 0.80). Дальше: следующий функциональный сценарий (по решению оператора).
+
 ## 2026-11-05 вечер: baseline навигации зафиксирован (решение оператора)
 
 Goal Checker 0.30 м / 0.35 рад / stateful true — функциональный production baseline NavigateToPose, коммит `48697e7` (ветка `fix/goal-checker-profile`). Не менять Motion Adapter, RPP, smoother, AMCL, FAST-LIO, Trust; не улучшать точность XY/yaw. Дрейф FAST-LIO в покое: [ISSUE](issues/ISSUE_20261105_fastlio_standstill_drift.md) (не в работе). Следующая задача: NAV-OBS-01, обход статической коробки 40 см (этап 1 без движения, этап 2 — после отдельного разрешения).
