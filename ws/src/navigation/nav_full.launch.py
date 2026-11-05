@@ -93,7 +93,7 @@ def setup(context):
             'inflation_layer.plugin': 'nav2_costmap_2d::InflationLayer',
             # A one-cell band produced routes with almost no localization margin.
             # Soft costs prefer clearance without enlarging the hard body envelope.
-            'inflation_layer.inflation_radius': 0.60,  # operator 2026-10-29
+            'inflation_layer.inflation_radius': 0.80,  # was 0.60 (operator 2026-10-29); 0.80 on 2026-11-05 (NAV-OBS-01): Smac hugs the radius, 0.60 gave 0.22 m footprint clearance < measured tracking error 0.36 m
             'inflation_layer.cost_scaling_factor': 1.5,  # wider repulsion band for planner 2026-10-29
             'inflation_layer.inflate_around_unknown': True,
         }},
