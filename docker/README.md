@@ -38,7 +38,7 @@ layout (`<prefix>/releases/<sha>/{install,deps}`) is relocatable and can be bind
   `ROS_LOCALHOST_ONLY=1`, `nice -n 19`, `--parallel-workers 2`, build/install outside the repository.
 
 **Do not start the Docker daemon on the production robot without operator permission** (it changes host networking
-/iptables). The images were therefore not built on the X2 during P2; `docker compose config` was validated.
+/iptables). The images were therefore not built on the X2 during P2 (the compose plugin is not installed there either); `compose.yaml` was checked as YAML only. Build/run them on a lab PC first.
 
 ## Lab usage
 ```bash
