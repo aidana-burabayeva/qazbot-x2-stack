@@ -9,6 +9,7 @@
 | governor node launch test (5, включая контракт GC и аномальный speed) | offline, domain 79 | 5 PASS |
 | Motion Adapter regression (50) | offline | 50 PASS (код не менялся) |
 | Физическая проверка governor | X2 | NOT RUN (не установлен) |
+| E1: SpeedLimit 0.10, Goal 2.5 м из покоя, через GC | X2 | не стартовал: 0.001 м/с, смещение ≤0.19 м (измерение получено; движение FAIL) |
 
 ## 2026-11-03 preservation and V continuation
 
