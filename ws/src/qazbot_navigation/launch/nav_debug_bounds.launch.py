@@ -10,7 +10,13 @@ import math
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from ament_index_python.packages import get_package_prefix, get_package_share_directory  # noqa: E402
+
+# Shared launch pacing helper (launch_stagger) is installed with qazbot_localization; python nodes in lib/<pkg>.
+sys.path.insert(0, os.path.join(get_package_prefix('qazbot_localization'), 'lib', 'qazbot_localization'))
+LIB = os.path.join(get_package_prefix('qazbot_navigation'), 'lib', 'qazbot_navigation')
+SHARE = get_package_share_directory('qazbot_navigation')
+MAPS = os.path.join(get_package_share_directory('qazbot_maps'), 'maps')
 from launch_stagger import staggered  # noqa: E402
 import tempfile
 
@@ -23,7 +29,6 @@ from launch_ros.descriptions import ParameterFile
 
 NS = 'qazbot_d1_map'
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(HERE)
 
 
 def setup(context):
@@ -67,8 +72,8 @@ def setup(context):
             'use_sim_time': False,
             'global_frame': 'map', 'robot_base_frame': 'base_footprint',
             'odom_topic': LaunchConfiguration('odom_topic').perform(context),
-            'default_nav_to_pose_bt_xml': os.path.join(HERE, 'bt', 'navigate_to_pose.xml'),
-            'default_nav_through_poses_bt_xml': os.path.join(HERE, 'bt', 'unsupported_through_poses.xml'),
+            'default_nav_to_pose_bt_xml': os.path.join(SHARE, 'bt', 'navigate_to_pose.xml'),
+            'default_nav_through_poses_bt_xml': os.path.join(SHARE, 'bt', 'unsupported_through_poses.xml'),
             'plugin_lib_names': ['nav2_compute_path_to_pose_action_bt_node',
                                  'nav2_follow_path_action_bt_node'],
         }},
@@ -105,7 +110,7 @@ def setup(context):
                       name='lifecycle_manager_navigation', output='screen',
                       parameters=[{'autostart':True,'node_names':['controller_server','velocity_smoother','planner_server','bt_navigator']}]))
     from launch.actions import RegisterEventHandler, EmitEvent, ExecuteProcess
-    nodes.append(ExecuteProcess(cmd=['python3',os.path.join(HERE,'goal_coordinator.py'),'--ros-args','-r','__ns:=/' + outer], output='screen'))
+    nodes.append(ExecuteProcess(cmd=['python3',os.path.join(LIB,'goal_coordinator.py'),'--ros-args','-r','__ns:=/' + outer], output='screen'))
     from launch.event_handlers import OnProcessExit
     from launch.events import Shutdown
     guards = [RegisterEventHandler(OnProcessExit(target_action=node,
@@ -123,7 +128,7 @@ def generate_launch_description():
         DeclareLaunchArgument('xy_tol', default_value='0.10'),
         DeclareLaunchArgument('yaw_tol', default_value='0.10'),
         DeclareLaunchArgument('robot_radius', description='Body envelope radius in metres; no default'),
-        DeclareLaunchArgument('map_yaml', default_value=os.path.join(ROOT, 'maps', 'first_map_nav2_v2', 'map.yaml')),
+        DeclareLaunchArgument('map_yaml', default_value=os.path.join(MAPS, 'first_map_nav2_v2', 'map.yaml')),
         DeclareLaunchArgument('cell_margin', default_value='true',
                               description='Add half a cell diagonal to the inscribed radius'),
         OpaqueFunction(function=setup),

@@ -1,0 +1,6 @@
+# x2_motion_adapter, profile x2_d1, mode lab: DRY RUN. live=false creates no /aima/* publisher, no
+# SetMcInputSource client and does not take the motion owner lock; commands go to ~/dry_run_cmd only.
+/qazbot_d1_map/motion_adapter:
+  ros__parameters:
+    live: false
+    odom_topic: /qazbot_lio/odom_level

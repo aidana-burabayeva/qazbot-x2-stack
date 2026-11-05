@@ -1,4 +1,4 @@
-"""Confirmed-pose persistence (Step B): ws/src/navigation/pose_store.py + seed_pose.py --from-file refusal paths.
+"""Confirmed-pose persistence (Step B): qazbot_localization/scripts/pose_store.py + seed_pose.py --from-file refusal paths.
 Pure Python, no ROS graph. Run: cd tests/loc_trust && python3 -m unittest -v test_pose_persist"""
 import hashlib
 import json
@@ -11,11 +11,11 @@ from unittest import mock
 
 from test_loc_trust import COV, HERE, L, make_inputs, room_grid, simulate_scan
 
-NAV = os.path.join(HERE, '..', '..', 'ws', 'src', 'navigation')
+NAV = os.path.join(HERE, '..', 'scripts')
 sys.path.insert(0, NAV)
 import pose_store as P  # noqa: E402
 
-MAP_YAML = os.path.join(NAV, '..', 'maps', 'first_map_nav2_v2', 'map.yaml')
+MAP_YAML = os.path.join(HERE, '..', '..', 'qazbot_maps', 'maps', 'first_map_nav2_v2', 'map.yaml')
 SHA = P.map_image_sha256(MAP_YAML)
 
 
@@ -213,7 +213,7 @@ class LaunchSeed(unittest.TestCase):
         from launch import LaunchContext
         from launch.actions import DeclareLaunchArgument, ExecuteProcess, RegisterEventHandler, TimerAction
         from launch.utilities import perform_substitutions
-        spec = importlib.util.spec_from_file_location('loc_launch', os.path.join(NAV, 'localization.launch.py'))
+        spec = importlib.util.spec_from_file_location('loc_launch', os.path.join(HERE, '..', 'launch', 'localization.launch.py'))
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
         ents = mod.generate_launch_description().entities

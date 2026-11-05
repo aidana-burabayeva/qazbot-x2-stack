@@ -1,0 +1,6 @@
+# localization_trust, profile x2_d1. map_yaml is passed by the launch (install-relative path); the expected image
+# hash pins it to maps/d1_qazbot_20261029 (manifest.json pgm_sha256). Equal to the live cmdline of 2026-11-05
+# (pid 29012). Everything else: code defaults (pose_store '' = off).
+/qazbot_d1_map/localization_trust:
+  ros__parameters:
+    expected_map_sha256: 72ee4094b394241e7b2761878774efbdd99e93731d7cb52709b2231c3975b354

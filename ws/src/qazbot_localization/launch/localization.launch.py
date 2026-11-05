@@ -1,28 +1,33 @@
 """X2 independent LIO + map_server + AMCL. No command publisher or MC calls.
 
 odom_source (reports/20261027-native-odom-nav2-design.md 3.6) selects the ONE owner of TF odom->base_footprint:
-  lio (default)  level_bridge (FAST-LIO pose), exactly as before; the native bridge is not started.
-  native_imu     native_odom_bridge (MC /aima/mc/leg_odometry, same base_footprint = LiDAR-IMU footprint);
-                 level_bridge runs with publish_tf:=false and still publishes /qazbot_lio/scan and
-                 /qazbot_lio/odom_level unchanged. Consumers of the odometry topic must then use /qazbot_native/odom
-                 (run_nav_full.sh QAZBOT_ODOM_TOPIC, trust -p odom_topic; tools/stack/stack_up.sh does both).
-  Anything else (native_base: step 2, scan not yet in a base_link frame) is refused.
+  lio (default, only)  qazbot_level_bridge (C++ projector, FAST-LIO pose) owns the TF, exactly as before.
+  native_imu was removed in the 2026-11-05 consolidation together with the python native_odom_bridge
+  (recover from git tag pre-consolidation-fb18dc1); anything other than lio is refused.
 
-projector_prefix (T1 2026-11-04) selects the FAST-LIO -> 2D bridge. '' (default) = python lio/level_bridge.py exactly as
-before (rollback path). A colcon install prefix of qazbot_lidar_projector = the C++ projector, started with the SAME
-node name qazbot_level_bridge, the SAME remaps and publish_tf (LevelBridgePublishTf) as the python bridge, plus
---params-file projector_params. Exactly one of the two is started, so topic/TF ownership is unchanged.
+projector_prefix (T1 2026-11-04) is the colcon install prefix of qazbot_lidar_projector: the C++ projector, started
+with node name qazbot_level_bridge, the remaps below, publish_tf (LevelBridgePublishTf) and --params-file
+projector_params. Consolidation 2026-11-05: the default is the installed qazbot_lidar_projector of this workspace and
+lidar_projector_switch.yaml (the live production selection); the python lio/level_bridge.py fallback ('' prefix) was
+removed (tag pre-consolidation-fb18dc1). lio_binary defaults to fastlio_mapping of the fast_lio package built from
+ws/third_party (pinned upstream + patches).
 """
 import os
 import re
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from ament_index_python.packages import PackageNotFoundError, get_package_prefix, get_package_share_directory
+
+PKG = 'qazbot_localization'
+# Python nodes and launch helpers (launch_stagger, pose_store, seed_pose) are installed to lib/<pkg>.
+LIB = os.path.join(get_package_prefix(PKG), 'lib', PKG)
+SHARE = get_package_share_directory(PKG)
+sys.path.insert(0, LIB)
 from launch_stagger import staggered  # noqa: E402
 import pose_store  # noqa: E402
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, RegisterEventHandler, EmitEvent
-from launch.conditions import IfCondition, LaunchConfigurationEquals, LaunchConfigurationNotEquals
+from launch.conditions import IfCondition, LaunchConfigurationNotEquals
 from launch.event_handlers import OnProcessExit
 from launch.events import Shutdown
 from launch.substitutions import EnvironmentVariable, LaunchConfiguration, PathJoinSubstitution
@@ -49,12 +54,12 @@ class TasksetPrefix(Substitution):
         return 'taskset -c ' + cpus
 
 
-ODOM_SOURCES = ('lio', 'native_imu')
+ODOM_SOURCES = ('lio',)   # native_imu removed 2026-11-05 (python native_odom_bridge), tag pre-consolidation-fb18dc1
 
 
 class LevelBridgePublishTf(Substitution):
-    """'true' when level_bridge owns odom->base_footprint (odom_source lio), 'false' for native_imu; refuses any
-    other source so a typo can never start zero or two TF owners."""
+    """'true' when level_bridge owns odom->base_footprint (odom_source lio); refuses any other source so a typo can
+    never start zero or two TF owners."""
 
     def __init__(self, source):
         super().__init__()
@@ -68,26 +73,75 @@ class LevelBridgePublishTf(Substitution):
 
 
 class ProjectorSelected(Substitution):
-    """'true' when projector_prefix is set (C++ qazbot_lidar_projector), else 'false' (python level_bridge)."""
+    """'true' when projector_prefix holds the C++ qazbot_lidar_projector and projector_params exists; refuses ''
+    (the python level_bridge fallback was removed in the consolidation)."""
 
-    def __init__(self, prefix, params, want):
+    def __init__(self, prefix, params):
         super().__init__()
-        self.prefix, self.params, self.want = prefix, params, want
+        self.prefix, self.params = prefix, params
 
     def perform(self, context):
         prefix = perform_substitutions(context, [self.prefix]).strip()
-        if prefix and not os.access(os.path.join(prefix, 'lib', 'qazbot_lidar_projector', 'lidar_projector'), os.X_OK):
+        if not prefix:
+            raise ValueError("projector_prefix '' selected the python level_bridge, removed 2026-11-05 "
+                             '(tag pre-consolidation-fb18dc1); omit it for the installed qazbot_lidar_projector')
+        if not os.access(os.path.join(prefix, 'lib', 'qazbot_lidar_projector', 'lidar_projector'), os.X_OK):
             raise ValueError(f'projector_prefix {prefix!r} has no lib/qazbot_lidar_projector/lidar_projector')
-        if prefix and not os.path.isfile(perform_substitutions(context, [self.params]).strip()):
+        if not os.path.isfile(perform_substitutions(context, [self.params]).strip()):
             raise ValueError('projector_prefix needs projector_params:=<copied YAML>')
-        return 'true' if bool(prefix) == self.want else 'false'
+        return 'true'
+
+
+class PackageExecutable(Substitution):
+    """Absolute path of lib/<package>/<executable>, resolved at launch time so --show-args works without it."""
+
+    def __init__(self, package, executable, hint):
+        super().__init__()
+        self.package, self.executable, self.hint = package, executable, hint
+
+    def describe(self):
+        return f'$(find-pkg-prefix {self.package})/lib/{self.package}/{self.executable}'
+
+    def perform(self, context):
+        try:
+            prefix = get_package_prefix(self.package)
+        except PackageNotFoundError:
+            raise RuntimeError(f'package {self.package!r} not found: {self.hint}') from None
+        path = os.path.join(prefix, 'lib', self.package, self.executable)
+        if not os.access(path, os.X_OK):
+            raise RuntimeError(f'{path} is not executable: {self.hint}')
+        return path
+
+
+class PackagePrefix(Substitution):
+    """Install prefix of a package (colcon layout <install>/<package>), resolved at launch time."""
+
+    def __init__(self, package):
+        super().__init__()
+        self.package = package
+
+    def describe(self):
+        return f'$(find-pkg-prefix {self.package})'
+
+    def perform(self, context):
+        return get_package_prefix(self.package)
+
+
+class PackageShareFile(Substitution):
+    """share/<package>/<relative path>, resolved at launch time."""
+
+    def __init__(self, package, *parts):
+        super().__init__()
+        self.package, self.parts = package, parts
+
+    def describe(self):
+        return f'$(find-pkg-share {self.package})/' + '/'.join(self.parts)
+
+    def perform(self, context):
+        return os.path.join(get_package_share_directory(self.package), *self.parts)
 
 
 def generate_launch_description():
-    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    # navigation/ lives in control_backend/ or in control_backend/ws/src/; runtime/ stays in control_backend/
-    backend = next((p for p in (root, os.path.dirname(os.path.dirname(root)))
-                    if os.path.isdir(os.path.join(p, 'runtime'))), root)
     ns = 'qazbot_d1_map'
     tf_remaps = [('/tf', '/qazbot_d1_map/tf'), ('/tf_static', '/qazbot_d1_map/tf_static')]
     lio_remaps = [('/Odometry', '/qazbot_lio/odometry'),
@@ -97,25 +151,26 @@ def generate_launch_description():
                   ('/Laser_map', '/qazbot_lio/map'), ('/path', '/qazbot_lio/path'),
                   ('/tf', '/qazbot_lio/tf'), ('map_save', '/qazbot_lio/map_save')]
     lio_args = ['--ros-args', '-r', '__node:=qazbot_lio_mapping', '--params-file',
-                os.path.join(root, 'lio', 'x2.yaml')]
+                os.path.join(SHARE, 'config', 'x2.yaml')]
     for source, target in lio_remaps:
         lio_args += ['-r', source + ':=' + target]
     actions = [
-        DeclareLaunchArgument('lio_binary', default_value=os.path.join(backend,'runtime','fastlio_mapping')),
-        DeclareLaunchArgument('map_yaml', default_value=os.path.join(root, 'maps', 'first_map_nav2_v2', 'map.yaml')),
+        DeclareLaunchArgument('lio_binary', default_value=[PackageExecutable(
+            'fast_lio', 'fastlio_mapping', 'build ws/third_party (FAST-LIO pinned + patches) or pass lio_binary:=')],
+            description='FAST-LIO fastlio_mapping executable; default: lib/fast_lio/fastlio_mapping of package fast_lio'),
+        DeclareLaunchArgument('map_yaml', default_value=[PackageShareFile('qazbot_maps', 'maps', 'first_map_nav2_v2',
+                                                                         'map.yaml')]),
         # Empty lio_cpus (default) leaves scheduling unchanged.
         DeclareLaunchArgument('lio_cpus', default_value=''),
         DeclareLaunchArgument('seed_pose_file', default_value=pose_store.DEFAULT_PATH),
         DeclareLaunchArgument('odom_source', default_value='lio', choices=list(ODOM_SOURCES)),
-        DeclareLaunchArgument('native_rate_hz', default_value='30.0'),
-        # tests only (isolated domain): feed recorded leg odometry without publishing on /aima/*
-        DeclareLaunchArgument('native_leg_topic', default_value='/aima/mc/leg_odometry'),
-        # T1: '' = python level_bridge (default, rollback); colcon prefix of qazbot_lidar_projector = C++ projector.
-        DeclareLaunchArgument('projector_prefix', default_value=''),
-        DeclareLaunchArgument('projector_params', default_value=''),
+        # Install prefix of the C++ projector (default: this workspace's qazbot_lidar_projector) and its params.
+        DeclareLaunchArgument('projector_prefix', default_value=[PackagePrefix('qazbot_lidar_projector')]),
+        DeclareLaunchArgument('projector_params', default_value=[PackageShareFile(
+            'qazbot_lidar_projector', 'config', 'lidar_projector_switch.yaml')]),
         ExecuteProcess(cmd=[LaunchConfiguration('lio_binary')] + lio_args, output='screen',
                        prefix=TasksetPrefix(LaunchConfiguration('lio_cpus'))),
-        # FAST-LIO -> 2D bridge: python (projector_prefix '') or C++ projector; never both.
+        # FAST-LIO -> 2D bridge: C++ projector (node name qazbot_level_bridge, the only odom->base_footprint owner).
         ExecuteProcess(cmd=[PathJoinSubstitution([LaunchConfiguration('projector_prefix'), 'lib',
                                                   'qazbot_lidar_projector', 'lidar_projector']), '--ros-args',
                             '-r', '__node:=qazbot_level_bridge',
@@ -130,36 +185,16 @@ def generate_launch_description():
                        additional_env={'LD_LIBRARY_PATH': [LaunchConfiguration('projector_prefix'), '/lib:',
                                                            EnvironmentVariable('LD_LIBRARY_PATH', default_value='')]},
                        condition=IfCondition(ProjectorSelected(LaunchConfiguration('projector_prefix'),
-                                                      LaunchConfiguration('projector_params'), True)),
-                       output='screen'),
-        ExecuteProcess(condition=IfCondition(ProjectorSelected(LaunchConfiguration('projector_prefix'),
-                                                      LaunchConfiguration('projector_params'), False)),
-                       cmd=['python3', os.path.join(root, 'lio', 'level_bridge.py'), '--ros-args',
-                            '-r', '__node:=qazbot_level_bridge',
-                            '-r', '/Odometry:=/qazbot_lio/odometry',
-                            '-r', '/cloud_registered:=/qazbot_lio/cloud_registered',
-                            '-r', '/scan:=/qazbot_lio/scan',
-                            '-r', '/odom_level:=/qazbot_lio/odom_level',
-                            '-r', '/tf:=/qazbot_d1_map/tf',
-                            '-r', '/tf_static:=/qazbot_d1_map/tf_static',
-                            '-p', 'range_max:=8.0', '-p', 'scan_every:=2',
-                            '-p', ['publish_tf:=', LevelBridgePublishTf(LaunchConfiguration('odom_source'))]],
+                                                               LaunchConfiguration('projector_params'))),
                        output='screen'),
         Node(package='nav2_map_server', executable='map_server', namespace=ns,
              name='map_server', output='screen', remappings=tf_remaps,
              parameters=[{'yaml_filename': LaunchConfiguration('map_yaml'), 'topic_name': 'map',
                           'frame_id': 'map', 'use_sim_time': False}]),
+        # AMCL parameters: config/amcl.yaml (values unchanged from the inline dict of fb18dc1).
         Node(package='nav2_amcl', executable='amcl', namespace=ns, name='amcl',
              output='screen', remappings=tf_remaps,
-             parameters=[{'use_sim_time': False, 'global_frame_id': 'map', 'odom_frame_id': 'odom',
-                          'base_frame_id': 'base_footprint', 'map_topic': 'map',
-                          # odometry trusted more than laser per operator 2026-10-28; tuning later
-                          'scan_topic': '/qazbot_lio/scan', 'max_beams': 180,
-                          'alpha1': 0.3, 'alpha2': 0.2, 'alpha3': 0.15, 'alpha4': 0.15, 'alpha5': 0.15,  # 2026-10-30: map now good; walking gait yaw noise
-                          'recovery_alpha_slow': 0.0, 'recovery_alpha_fast': 0.0,
-                          # P12 operator 2026-10-28: smaller, more frequent corrections (default 0.25 m / 0.2 rad)
-                          'update_min_d': 0.10, 'update_min_a': 0.05,
-                          'robot_model_type': 'nav2_amcl::OmniMotionModel'}]),
+             parameters=[os.path.join(SHARE, 'config', 'amcl.yaml')]),
         Node(package='nav2_lifecycle_manager', executable='lifecycle_manager', namespace=ns,
              name='lifecycle_manager_localization', output='screen',
              parameters=[{'use_sim_time': False, 'autostart': True, 'node_names': ['map_server', 'amcl']}]),
@@ -167,20 +202,10 @@ def generate_launch_description():
     # Re-seed the last CONFIRMED pose (written by the trust node, param pose_store) ONCE as initialpose with its
     # saved covariance. Missing / corrupt / other-map file: nothing is published. Never grants READY: the trust
     # node needs confirm_anchor + a clean gate on it. seed_pose_file:='' disables.
-    seed = ExecuteProcess(cmd=['python3', os.path.join(root, 'navigation', 'seed_pose.py'),
+    seed = ExecuteProcess(cmd=['python3', os.path.join(LIB, 'seed_pose.py'),
                                '--from-file', LaunchConfiguration('seed_pose_file'),
                                '--map-yaml', LaunchConfiguration('map_yaml')], output='screen',
                           condition=LaunchConfigurationNotEquals('seed_pose_file', ''))
-    # native_imu only: the odom->base_footprint owner. Started last so the lio-mode start times are unchanged.
-    native = ExecuteProcess(cmd=['python3', os.path.join(root, 'lio', 'native_odom_bridge.py'), '--ros-args',
-                                 '-r', '__node:=qazbot_native_odom_bridge',
-                                 '-r', '/tf:=/qazbot_d1_map/tf',
-                                 '-r', '/tf_static:=/qazbot_d1_map/tf_static',
-                                 '-p', 'mode:=native_imu', '-p', 'publish_tf:=true',
-                                 '-p', ['publish_rate_hz:=', LaunchConfiguration('native_rate_hz')],
-                                 '-p', ['leg_topic:=', LaunchConfiguration('native_leg_topic')]],
-                            output='screen', condition=LaunchConfigurationEquals('odom_source', 'native_imu'))
-    actions.append(native)
     guards=[RegisterEventHandler(OnProcessExit(target_action=a,on_exit=[EmitEvent(event=Shutdown(reason='Localization dependency exited'))])) for a in actions if isinstance(a,ExecuteProcess)]
-    actions.insert(len(actions) - 1, seed)   # one-shot: exits after publishing, so it has no shutdown guard
+    actions.append(seed)   # one-shot: exits after publishing, so it has no shutdown guard
     return LaunchDescription(guards+staggered(actions))

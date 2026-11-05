@@ -4,7 +4,7 @@ from pathlib import Path
 from types import SimpleNamespace as N
 import unittest
 
-NAV=Path(__file__).resolve().parents[2]/'ws/src/navigation'
+NAV=Path(__file__).resolve().parents[1]/'scripts'
 
 
 class SeedRefresh(unittest.TestCase):

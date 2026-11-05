@@ -7,7 +7,7 @@ import sys
 import unittest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(HERE, '..', '..', 'ws', 'src', 'navigation'))
+sys.path.insert(0, os.path.join(HERE, '..', 'scripts'))
 import goal_coordinator as G  # noqa: E402
 from geometry_msgs.msg import Twist  # noqa: E402
 from std_msgs.msg import Bool, String  # noqa: E402

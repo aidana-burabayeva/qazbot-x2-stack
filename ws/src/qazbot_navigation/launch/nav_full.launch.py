@@ -5,7 +5,13 @@ import json
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from ament_index_python.packages import PackageNotFoundError, get_package_prefix, get_package_share_directory  # noqa: E402
+
+# Shared launch pacing helper (launch_stagger) is installed with qazbot_localization; python nodes in lib/<pkg>.
+sys.path.insert(0, os.path.join(get_package_prefix('qazbot_localization'), 'lib', 'qazbot_localization'))
+LIB = os.path.join(get_package_prefix('qazbot_navigation'), 'lib', 'qazbot_navigation')
+SHARE = get_package_share_directory('qazbot_navigation')
+MAPS = os.path.join(get_package_share_directory('qazbot_maps'), 'maps')
 from launch_stagger import staggered  # noqa: E402
 import tempfile
 
@@ -18,7 +24,6 @@ from launch_ros.descriptions import ParameterFile
 
 NS = 'qazbot_d1_map'
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(HERE)
 
 
 def _ctl_module():
@@ -29,16 +34,23 @@ def _ctl_module():
 
 
 def setup(context):
+    # QAZBOT_SMAC_PREFIX (explicit overlay, as before) or, when unset, the nav2_smac_planner selected by the ament
+    # index (the patched build from ws/third_party installed in this workspace). Either must carry the manifest.
     prefix = os.environ.get('QAZBOT_SMAC_PREFIX')
     if not prefix:
-        raise RuntimeError('Full navigation requires the qualified Smac bounds overlay; source env.sh with QAZBOT_SMAC_PREFIX')
+        try:
+            prefix = get_package_prefix('nav2_smac_planner')
+        except PackageNotFoundError:
+            prefix = ''
+    if not prefix or not os.path.isfile(os.path.join(prefix, 'qazbot_bounds_fix.json')):
+        raise RuntimeError('Full navigation requires the qualified Smac bounds overlay (qazbot_bounds_fix.json); '
+                           f'none in {prefix!r}: build ws/third_party or set QAZBOT_SMAC_PREFIX (source env.sh)')
     with open(os.path.join(prefix,'qazbot_bounds_fix.json')) as f:
         evidence=json.load(f)
     library=os.path.join(prefix,'lib','libnav2_smac_planner_2d.so')
     with open(library,'rb') as f:
         if hashlib.sha256(f.read()).hexdigest()!=evidence['library_sha256']:
             raise RuntimeError('Smac library differs from its tested manifest')
-    from ament_index_python.packages import get_package_prefix
     if os.path.realpath(get_package_prefix('nav2_smac_planner'))!=os.path.realpath(prefix):
         raise RuntimeError('Qualified Smac prefix is not selected in the ament index')
     outer = LaunchConfiguration('ns').perform(context)
@@ -105,8 +117,8 @@ def setup(context):
             'default_server_timeout': 500,
             'global_frame': 'map', 'robot_base_frame': 'base_footprint',
             'odom_topic': LaunchConfiguration('odom_topic').perform(context),
-            'default_nav_to_pose_bt_xml': os.path.join(HERE, 'bt', 'navigate_to_pose.xml'),
-            'default_nav_through_poses_bt_xml': os.path.join(HERE, 'bt', 'unsupported_through_poses.xml'),
+            'default_nav_to_pose_bt_xml': os.path.join(SHARE, 'bt', 'navigate_to_pose.xml'),
+            'default_nav_through_poses_bt_xml': os.path.join(SHARE, 'bt', 'unsupported_through_poses.xml'),
             'plugin_lib_names': ['nav2_compute_path_to_pose_action_bt_node',
                                  'nav2_follow_path_action_bt_node',
                                  'nav2_rate_controller_bt_node', 'nav2_pipeline_sequence_bt_node',
@@ -156,7 +168,7 @@ def setup(context):
     dry_driver = LaunchConfiguration('allow_dry_run_driver', default='false').perform(context)
     if dry_driver not in ('true', 'false'):
         raise ValueError('allow_dry_run_driver must be true or false')
-    nodes.append(ExecuteProcess(cmd=['python3',os.path.join(HERE,'goal_coordinator.py'),'--ros-args','-r','__ns:=/' + outer,
+    nodes.append(ExecuteProcess(cmd=['python3',os.path.join(LIB,'goal_coordinator.py'),'--ros-args','-r','__ns:=/' + outer,
                                      '-p','allow_dry_run_driver:='+dry_driver], output='screen'))
     from launch.event_handlers import OnProcessExit
     from launch.events import Shutdown
@@ -178,7 +190,7 @@ def generate_launch_description():
         DeclareLaunchArgument('goal_checker_stateful', default_value='true'),
         DeclareLaunchArgument('local_frame', default_value='odom'),
         DeclareLaunchArgument('robot_radius', description='Body envelope radius in metres; no default'),
-        DeclareLaunchArgument('map_yaml', default_value=os.path.join(ROOT, 'maps', 'first_map_nav2_v2', 'map.yaml')),
+        DeclareLaunchArgument('map_yaml', default_value=os.path.join(MAPS, 'first_map_nav2_v2', 'map.yaml')),
         DeclareLaunchArgument('allow_dry_run_driver', default_value='false',
                               description='Accept a dry-run motion adapter (no MC output) as the goal driver'),
         DeclareLaunchArgument('autostart', default_value='true',description='Start lifecycle automatically; twin may request startup after discovery'),

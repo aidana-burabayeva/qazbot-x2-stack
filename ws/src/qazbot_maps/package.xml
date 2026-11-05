@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>qazbot_maps</name>
+  <version>0.1.0</version>
+  <description>Occupancy maps of the X2 navigation stack (map.yaml/map.pgm + manifests with sha256).</description>
+  <maintainer email="qazbot@users.noreply.github.com">QazBot</maintainer>
+  <license>Proprietary</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

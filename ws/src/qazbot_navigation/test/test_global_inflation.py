@@ -11,8 +11,8 @@ launch = pytest.importorskip('launch')
 from launch.actions import DeclareLaunchArgument  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-NAV = os.path.abspath(os.path.join(HERE, '..', '..', 'ws', 'src', 'navigation'))
-MAP = os.path.abspath(os.path.join(HERE, '..', '..', 'ws', 'src', 'maps', 'd1_qazbot_20261029', 'map.yaml'))
+NAV = os.path.abspath(os.path.join(HERE, '..', 'launch'))
+MAP = os.path.abspath(os.path.join(HERE, '..', '..', 'qazbot_maps', 'maps', 'd1_qazbot_20261029', 'map.yaml'))
 
 
 def planner_params():

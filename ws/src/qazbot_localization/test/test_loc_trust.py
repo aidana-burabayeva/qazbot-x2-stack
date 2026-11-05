@@ -1,4 +1,4 @@
-"""Scenario tests for ws/src/navigation/loc_trust.py on synthetic maps (no robot, no ROS).
+"""Scenario tests for qazbot_localization/scripts/loc_trust.py on synthetic maps (no robot, no ROS).
 Run: python3 -W ignore tests/loc_trust/test_loc_trust.py"""
 import math
 import os
@@ -8,7 +8,7 @@ import unittest
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(HERE, '..', '..', 'ws', 'src', 'navigation'))
+sys.path.insert(0, os.path.join(HERE, '..', 'scripts'))
 import loc_trust as L  # noqa: E402
 
 RES = 0.05
@@ -80,7 +80,7 @@ class Pieces(unittest.TestCase):
             self.assertAlmostEqual(x, y)
 
     def test_real_map_loads(self):
-        g = L.OccGrid.from_pgm(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../ws/src/maps/first_map_nav2_v2/map.yaml'))   # repo-relative (twin copy)
+        g = L.OccGrid.from_pgm(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../qazbot_maps/maps/first_map_nav2_v2/map.yaml'))   # repo-relative (twin copy)
         self.assertLess(g.dist.min(), 1e-9)
         self.assertTrue(np.isfinite(g.dist).all())
 

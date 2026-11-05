@@ -1,7 +1,9 @@
 # qazbot_lidar_projector
 
-C++17 port of `candidates/d04/level_bridge.py` (D-04 variant C). **Replaces `ws/src/lio/level_bridge.py`** (not deployed yet:
-status OFFLINE_VERIFIED). Pure port: same algorithm, same topics, types, QoS, frame ids and stamps.
+C++17 port of the D-04 variant C python bridge (`test/reference/level_bridge_d04.py`, kept only as the parity-test
+oracle). **Production** since 2026-11-04 (live build of 9417bed; started by qazbot_localization as `qazbot_level_bridge`);
+the old python `ws/src/lio/level_bridge.py` was removed in the 2026-11-05 consolidation (tag `pre-consolidation-fb18dc1`).
+Future role: qazbot_lidar_processing (raw-LiDAR mode, P4). Pure port: same algorithm, same topics, types, QoS, frame ids and stamps.
 
 FAST-LIO's world is its first IMU frame (not level). The node levels it from the LiDAR IMU gravity, publishes the
 gravity-levelled planar pose (`/odom_level`, optional TF `odom -> base_footprint`) and projects the deskewed
@@ -75,10 +77,10 @@ dropped, first point wins ties (stable lexsort), `a == pi` wraps to bin 0, `next
 
 ## Build, test
 ```
-cd /home/agi/control_backend
-nice -n 19 colcon build --packages-select qazbot_lidar_projector --base-paths ws/src/qazbot_lidar_projector \
-  --build-base ws_cpp_build/build --install-base ws_cpp_build/install --parallel-workers 1   # MAKEFLAGS=-j2
-ROS_DOMAIN_ID=77 colcon test ... same bases ...        # never domain 0
+# from the repository root, build/install OUTSIDE the tree (e.g. /tmp/qazbot_build); never ROS_DOMAIN_ID 0
+nice -n 19 colcon build --base-paths ws/src --packages-select qazbot_lidar_projector \
+  --build-base /tmp/qazbot_build/build --install-base /tmp/qazbot_build/install --parallel-workers 2
+ROS_DOMAIN_ID=88 ROS_LOCALHOST_ONLY=1 colcon test ... same bases ...   # launch tests set their own isolated domains 77/78
 # coverage: add --cmake-args -DENABLE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug with separate bases, then gcov
 ```
 Tests: `test_lidar_projection` (gtest, 31 cases incl. 8 `Sync.*`, 100 % line coverage of `lidar_projection.cpp`); `test_parity.py` (C++ library vs
@@ -107,15 +109,9 @@ holds at most ONE cloud until the next odometry decides it: same stamp -> proces
 Forced reproduction on bag `d04_static_bag_183015` (clouds k % 10 in {0, 1} before their odometry): old 116/145 scans, new
 145/145, common stamps bit-identical. Regression test: `test/test_cloud_before_odom.py` (old 4/19 lost, new 0/19).
 
-## Deploy (NOT done)
-1. Build as above into the workspace. 2. Offline replay with `tests/d04/replay_d04.py` and a C++-output adapter (lethal-cell parity).
-3. Stop `level_bridge.py` (one publisher per topic; running both duplicates `/qazbot_lio/scan*` and, with `publish_tf`, TF).
-4. Start `lidar_projector.launch.xml node_name:=qazbot_level_bridge` (copy of the YAML with `publish_tf` matching `odom_source`).
-5. Check `tools/stack/check.sh` (single odom->base_footprint owner) and the scan rate (5 Hz).
-
-## Rollback
-Stop the C++ node and start the unchanged `ws/src/lio/level_bridge.py` with the original arguments from `localization.launch.py`.
-The Python file is not modified by this package.
+## Deploy / rollback
+Deployed through releases (docker/deploy, root README). Rollback = previous release (`docker/deploy/rollback.sh`); the
+pre-consolidation python bridge is recoverable only from tag `pre-consolidation-fb18dc1`.
 
 ## Limitations
 * Reads only little-endian FLOAT32 x/y/z (as FAST-LIO publishes); other clouds are dropped with a throttled WARN.

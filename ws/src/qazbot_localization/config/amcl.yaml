@@ -1,0 +1,26 @@
+# nav2_amcl parameters for X2 localization (namespace /qazbot_d1_map, node amcl).
+# Package default: copy this file and pass your copy instead of editing it (Henki).
+# Values are the fb18dc1 inline launch dict, byte-equivalent to the live run of 2026-11-05
+# (/tmp/launch_params_d2kp8nob, archived in qazbot_archive/20261105_live_snapshot_fb18dc1).
+/qazbot_d1_map/amcl:
+  ros__parameters:
+    use_sim_time: false
+    global_frame_id: map
+    odom_frame_id: odom
+    base_frame_id: base_footprint
+    map_topic: map
+    # odometry trusted more than laser per operator 2026-10-28; tuning later
+    scan_topic: /qazbot_lio/scan
+    max_beams: 180
+    # 2026-10-30: map now good; walking gait yaw noise
+    alpha1: 0.3
+    alpha2: 0.2
+    alpha3: 0.15
+    alpha4: 0.15
+    alpha5: 0.15
+    recovery_alpha_slow: 0.0
+    recovery_alpha_fast: 0.0
+    # P12 operator 2026-10-28: smaller, more frequent corrections (default 0.25 m / 0.2 rad)
+    update_min_d: 0.10
+    update_min_a: 0.05
+    robot_model_type: nav2_amcl::OmniMotionModel

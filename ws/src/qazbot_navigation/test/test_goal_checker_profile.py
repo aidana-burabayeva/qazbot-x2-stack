@@ -13,8 +13,8 @@ launch = pytest.importorskip('launch')
 from launch.actions import DeclareLaunchArgument  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-NAV = os.path.abspath(os.path.join(HERE, '..', '..', 'ws', 'src', 'navigation'))
-MAP = os.path.abspath(os.path.join(HERE, '..', '..', 'ws', 'src', 'maps', 'd1_qazbot_20261029', 'map.yaml'))
+NAV = os.path.abspath(os.path.join(HERE, '..', 'launch'))
+MAP = os.path.abspath(os.path.join(HERE, '..', '..', 'qazbot_maps', 'maps', 'd1_qazbot_20261029', 'map.yaml'))
 
 
 def load(name):
@@ -71,7 +71,7 @@ def check_profile(p):
 
 def test_nav_full_generated_parameters():
     if not os.environ.get('QAZBOT_SMAC_PREFIX'):
-        pytest.skip('needs the robot environment (source ws/src/navigation/env.sh: QAZBOT_SMAC_PREFIX)')
+        pytest.skip('needs the robot environment (qualified Smac overlay: build ws/third_party or QAZBOT_SMAC_PREFIX)')
     m = load('nav_full.launch.py')
     check_profile(generated_params(m, m.setup, {}))
 

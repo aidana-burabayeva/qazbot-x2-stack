@@ -10,7 +10,7 @@ import unittest
 
 def _nav_dir():
     here = os.path.dirname(os.path.abspath(__file__))
-    for rel in (('..', '..', 'ws', 'src', 'navigation'), ('..', '..', 'deploy', 'navigation')):
+    for rel in (('..', 'scripts'),):
         p = os.path.normpath(os.path.join(here, *rel))
         if os.path.isdir(p):
             return p

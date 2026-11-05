@@ -5,7 +5,7 @@ Runs the real trust node in an isolated domain and checks the graph and its stat
   * odom_topic:=/qazbot_native/odom odom_source:=native_imu: subscribes only that topic, logs and reports the source.
 No thresholds or policy are involved: the parameters only select the input topic and label the status.
 
-Run: bash -c 'source ws/src/navigation/env.sh && cd tests/loc_trust && env -u FASTRTPS_DEFAULT_PROFILES_FILE \
+Run: bash -c 'source <install>/qazbot_bringup/lib/qazbot_bringup/env.sh && cd ws/src/qazbot_localization/test && env -u FASTRTPS_DEFAULT_PROFILES_FILE \
               ROS_DOMAIN_ID=88 ROS_LOCALHOST_ONLY=1 python3 -m unittest -v test_odom_topic_param'
 """
 import json
@@ -17,8 +17,8 @@ import time
 import unittest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-NAV = os.path.join(HERE, '..', '..', 'ws', 'src', 'navigation')
-MAP = os.path.join(NAV, '..', 'maps', 'first_map_nav2_v3', 'map.yaml')
+NAV = os.path.join(HERE, '..', 'scripts')
+MAP = os.path.join(HERE, '..', '..', 'qazbot_maps', 'maps', 'first_map_nav2_v3', 'map.yaml')
 ISOLATED = os.environ.get('ROS_DOMAIN_ID') == '88' and os.environ.get('ROS_LOCALHOST_ONLY') == '1'
 INPUTS = ('localization_trust_inputs', '/qazbot_d1_map')
 

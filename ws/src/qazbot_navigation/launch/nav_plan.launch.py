@@ -8,7 +8,13 @@ import math
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from ament_index_python.packages import get_package_prefix, get_package_share_directory  # noqa: E402
+
+# Shared launch pacing helper (launch_stagger) is installed with qazbot_localization; python nodes in lib/<pkg>.
+sys.path.insert(0, os.path.join(get_package_prefix('qazbot_localization'), 'lib', 'qazbot_localization'))
+LIB = os.path.join(get_package_prefix('qazbot_navigation'), 'lib', 'qazbot_navigation')
+SHARE = get_package_share_directory('qazbot_navigation')
+MAPS = os.path.join(get_package_share_directory('qazbot_maps'), 'maps')
 from launch_stagger import staggered  # noqa: E402
 import tempfile
 
@@ -21,7 +27,6 @@ from launch_ros.descriptions import ParameterFile
 
 NS = 'qazbot_d1_map'
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(HERE)
 
 
 def setup(context):
@@ -61,8 +66,8 @@ def setup(context):
             'use_sim_time': False,
             'global_frame': 'map', 'robot_base_frame': 'base_footprint',
             'odom_topic': '/qazbot_lio/odom_level',
-            'default_nav_to_pose_bt_xml': os.path.join(HERE, 'bt', 'plan_to_pose.xml'),
-            'default_nav_through_poses_bt_xml': os.path.join(HERE, 'bt', 'plan_through_poses.xml'),
+            'default_nav_to_pose_bt_xml': os.path.join(SHARE, 'bt', 'plan_to_pose.xml'),
+            'default_nav_through_poses_bt_xml': os.path.join(SHARE, 'bt', 'plan_through_poses.xml'),
             'plugin_lib_names': ['nav2_compute_path_to_pose_action_bt_node',
                                  'nav2_compute_path_through_poses_action_bt_node'],
         }},
@@ -90,7 +95,7 @@ def setup(context):
 def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument('robot_radius', description='Body envelope radius in metres; no default'),
-        DeclareLaunchArgument('map_yaml', default_value=os.path.join(ROOT, 'maps', 'first_map_nav2_v2', 'map.yaml')),
+        DeclareLaunchArgument('map_yaml', default_value=os.path.join(MAPS, 'first_map_nav2_v2', 'map.yaml')),
         DeclareLaunchArgument('cell_margin', default_value='true',
                               description='Add half a cell diagonal to the inscribed radius'),
         OpaqueFunction(function=setup),

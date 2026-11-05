@@ -1,0 +1,10 @@
+# x2_motion_adapter, profile x2_d1, mode production: LIVE MC output (/aima/mc/locomotion/velocity) after
+# SetMcInputSource registration (AimDK 5.1.3: SDK input source priority range 20..39).
+# Equal to the live cmdline of 2026-11-05 (pid 187287): -p live:=true -p priority:=30
+# -p registration_action:=ENABLE -p odom_topic:=/qazbot_lio/odom_level. Everything else: code defaults.
+/qazbot_d1_map/motion_adapter:
+  ros__parameters:
+    live: true
+    priority: 30
+    registration_action: ENABLE
+    odom_topic: /qazbot_lio/odom_level

@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!--
+  Canonical X2 navigation bringup (single entry point). Source <install>/qazbot_bringup/lib/qazbot_bringup/env.sh
+  first (runtime debs, DDS profile, vendor env), then:
+    ros2 launch qazbot_bringup x2_navigation.launch.xml                     # lab: dry-run adapter, isolated domain
+    ros2 launch qazbot_bringup x2_navigation.launch.xml mode:=production    # robot: live MC output
+  Start order (AimDK "二次开发边界与声明": at most 2 new ROS nodes per second while the robot stands or walks):
+  every process is spaced 0.6 s (launch_stagger.STEP_S) - localization t=0..3.0 s, trust 3.6 s, Nav2 4.2..7.2 s,
+  motion adapter 7.8 s.
+  Process names, namespaces, remaps, topics and parameter values equal the live fb18dc1 deployment of 2026-11-05.
+-->
+<launch>
+  <arg name="mode" default="lab"
+       description="lab: motion adapter dry run, requires ROS_DOMAIN_ID != 0 and a host-local graph | production: live MC output on the robot graph"/>
+  <arg name="profile" default="x2_d1" description="parameter set in share/qazbot_bringup/config/profiles/PROFILE"/>
+  <arg name="odom_source" default="lio" description="owner of odom->base_footprint; only lio (C++ projector over FAST-LIO)"/>
+  <arg name="map_yaml" default="$(find-pkg-share qazbot_maps)/maps/d1_qazbot_20261029/map.yaml"/>
+  <arg name="lio_binary" default="$(find-pkg-prefix fast_lio)/lib/fast_lio/fastlio_mapping"
+       description="FAST-LIO executable (default: fast_lio built from ws/third_party)"/>
+  <arg name="lio_cpus" default="5,6" description="taskset CPU list for FAST-LIO ('' = no pinning)"/>
+  <arg name="seed_pose_file" default="/nonexistent/qazbot_seed_disabled.json"
+       description="confirmed-pose re-seed file; the default disables re-seeding as in production"/>
+  <arg name="projector_prefix" default="$(find-pkg-prefix qazbot_lidar_projector)"/>
+  <arg name="projector_params" default="$(find-pkg-share qazbot_lidar_projector)/config/lidar_projector_switch.yaml"/>
+  <arg name="robot_radius" default="0.454" description="body envelope radius about base_footprint, m"/>
+  <arg name="scan_topic" default="/qazbot_lio/scan"/>
+  <arg name="odom_topic" default="/qazbot_lio/odom_level"/>
+  <arg name="allow_dry_run_driver" default="true" description="goal_coordinator accepts a dry-run adapter (as live)"/>
+  <arg name="start_adapter" default="true" description="start x2_motion_adapter (needs aimdk_msgs)"/>
+  <arg name="aimdk_prefix" default="/agibot/software/common" description="vendor prefix with aimdk_msgs (adapter only)"/>
+
+  <let name="profile_dir" value="$(find-pkg-share qazbot_bringup)/config/profiles/$(var profile)"/>
+
+  <!-- Guard + INFO summary: workspace, git SHA (installed manifest), mode, profile, odom/LiDAR source, TF owner,
+       control channel. Non-zero exit (wrong domain for the mode, unknown odom_source/profile) aborts the launch. -->
+  <log message="$(command 'python3 $(find-pkg-prefix qazbot_bringup)/lib/qazbot_bringup/bringup_info.py --mode $(var mode) --profile $(var profile) --odom-source $(var odom_source) --profile-dir $(var profile_dir)')"/>
+
+  <include file="$(find-pkg-share qazbot_localization)/launch/localization.launch.py">
+    <arg name="lio_binary" value="$(var lio_binary)"/>
+    <arg name="map_yaml" value="$(var map_yaml)"/>
+    <arg name="lio_cpus" value="$(var lio_cpus)"/>
+    <arg name="seed_pose_file" value="$(var seed_pose_file)"/>
+    <arg name="odom_source" value="$(var odom_source)"/>
+    <arg name="projector_prefix" value="$(var projector_prefix)"/>
+    <arg name="projector_params" value="$(var projector_params)"/>
+  </include>
+
+  <timer period="3.6">
+    <node pkg="qazbot_localization" exec="localization_trust_node.py" output="screen">
+      <param from="$(var profile_dir)/localization_trust.yaml"/>
+      <param name="map_yaml" value="$(var map_yaml)"/>
+    </node>
+  </timer>
+
+  <timer period="4.2">
+    <include file="$(find-pkg-share qazbot_navigation)/launch/nav_full.launch.py">
+      <arg name="robot_radius" value="$(var robot_radius)"/>
+      <arg name="scan_topic" value="$(var scan_topic)"/>
+      <arg name="odom_topic" value="$(var odom_topic)"/>
+      <arg name="allow_dry_run_driver" value="$(var allow_dry_run_driver)"/>
+      <arg name="map_yaml" value="$(var map_yaml)"/>
+    </include>
+  </timer>
+
+  <timer period="7.8">
+    <node pkg="qazbot_motion_control" exec="x2_motion_adapter.py" namespace="/qazbot_d1_map" output="screen"
+          if="$(var start_adapter)">
+      <param from="$(var profile_dir)/motion_adapter.$(var mode).yaml"/>
+      <!-- aimdk_env.sh equivalent, for this process only (vendor aimdk_msgs, AimDK README) -->
+      <env name="AMENT_PREFIX_PATH" value="$(var aimdk_prefix):$(env AMENT_PREFIX_PATH '')"/>
+      <env name="PYTHONPATH" value="$(var aimdk_prefix)/local/lib/python3.10/dist-packages:$(env PYTHONPATH '')"/>
+      <env name="LD_LIBRARY_PATH" value="$(var aimdk_prefix)/lib:$(env LD_LIBRARY_PATH '')"/>
+    </node>
+  </timer>
+</launch>

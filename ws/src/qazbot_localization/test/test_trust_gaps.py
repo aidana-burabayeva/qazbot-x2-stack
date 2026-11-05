@@ -10,7 +10,7 @@ import numpy as np
 from test_loc_trust import L, make_inputs, room_grid, simulate_scan, wall_grid
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-D1 = os.path.join(HERE, '..', '..', 'ws', 'src', 'maps', 'first_map_nav2_v2', 'map.yaml')
+D1 = os.path.join(HERE, '..', '..', 'qazbot_maps', 'maps', 'first_map_nav2_v2', 'map.yaml')
 
 
 class Base(unittest.TestCase):
@@ -121,7 +121,7 @@ class NodeStampReject(unittest.TestCase):
     """Node-level, no rclpy.init / no DDS: the node object is built with __new__ and fed fake messages."""
     def make(self):
         import sys, types
-        sys.path.insert(0, os.path.join(HERE, '..', '..', 'ws', 'src', 'navigation'))
+        sys.path.insert(0, os.path.join(HERE, '..', 'scripts'))
         try:
             import localization_trust_node as N
         except ImportError as e:
