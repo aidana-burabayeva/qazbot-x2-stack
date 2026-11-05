@@ -42,6 +42,9 @@ def setup(context, raw=False):
     goal_stateful=context.launch_configurations.get('goal_checker_stateful','false').lower()
     if goal_stateful not in ('true','false'):
         raise ValueError('goal_checker_stateful must be true or false')
+    goal_stopped=context.launch_configurations.get('goal_checker_stopped','false').lower()
+    if goal_stopped not in ('true','false'):
+        raise ValueError('goal_checker_stopped must be true or false')
     experimental_turn = os.environ.get('QAZBOT_SIM_MC_TURN') == '1'
     experimental_walk = os.environ.get('QAZBOT_SIM_MC_WALK') == '1'
     linear_decel = os.environ.get('QAZBOT_SIM_MC_LINEAR_DECEL')
@@ -122,6 +125,13 @@ def setup(context, raw=False):
             'velocity_timeout': 0.5,
         }},
     }
+    if goal_stopped == 'true':
+        # Success only when the robot is inside the tolerance AND at rest (E2E-02: SimpleGoalChecker reported SUCCEEDED
+        # while moving; the robot came to rest 0.21 m / 0.26 rad from the goal). Velocity comes from odom_topic twist.
+        params[f'/{ns}/controller_server']['ros__parameters'].update({
+            'goal_checker.plugin': 'nav2_controller::StoppedGoalChecker',
+            'goal_checker.trans_stopped_velocity': float(L('trans_stopped_velocity')),
+            'goal_checker.rot_stopped_velocity': float(L('rot_stopped_velocity'))})
     if experimental_turn:
         control=params[f'/{ns}/controller_server']['ros__parameters']
         control.update({'FollowPath.plugin':'qazbot_mc_turn::Controller',
@@ -185,6 +195,10 @@ def generate_launch_description():
         DeclareLaunchArgument('yaw_tol', default_value='0.10'),
         # AMCL may correct XY during final rotation: require XY and yaw together.
         DeclareLaunchArgument('goal_checker_stateful', default_value='false'),
+        DeclareLaunchArgument('goal_checker_stopped', default_value='false',
+                              description='true: nav2_controller::StoppedGoalChecker (within tolerance AND at rest)'),
+        DeclareLaunchArgument('trans_stopped_velocity', default_value='0.08', description='m/s; stationary LIO speed sd 0.02'),
+        DeclareLaunchArgument('rot_stopped_velocity', default_value='0.05', description='rad/s; stationary yaw-rate max 0.015'),
         DeclareLaunchArgument('local_frame', default_value='odom'),
         DeclareLaunchArgument('scan_topic', default_value='', description='LaserScan for the obstacle layer; empty = none'),
         DeclareLaunchArgument('output_topic', default_value='cmd_vel'),
