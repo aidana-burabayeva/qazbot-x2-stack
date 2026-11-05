@@ -1,0 +1,27 @@
+<launch>
+  <!-- Parameters come from the YAML (package default or a user copy); nothing is hard-coded here. -->
+  <arg name="params_file" default="$(find-pkg-share qazbot_approach_governor)/config/approach_governor.yaml"
+       description="parameter YAML (copy the package default to change values)"/>
+  <!-- Wiring (NOT applied in production): velocity_smoother output must be remapped to cmd_vel_in's topic, and
+       cmd_vel_out must be the topic Goal Coordinator subscribes to, so that the governor is the only publisher there. -->
+  <arg name="cmd_vel_in" default="/qazbot_d1_map/cmd_vel_smoothed"/>
+  <arg name="cmd_vel_out" default="/qazbot_d1_map/cmd_vel"/>
+  <arg name="plan_topic" default="/qazbot_d1_map/nav2/received_global_plan"/>
+  <arg name="odom_topic" default="/qazbot_lio/odom_level"/>
+  <arg name="tf_topic" default="/qazbot_d1_map/tf"/>
+  <arg name="tf_static_topic" default="/qazbot_d1_map/tf_static"/>
+  <arg name="status_topic" default="/qazbot_d1_map/approach_governor/status"/>
+  <arg name="use_sim_time" default="false"/>
+  <node pkg="qazbot_approach_governor" exec="approach_governor" name="approach_governor" namespace="qazbot_d1_map"
+        output="screen">
+    <param from="$(var params_file)"/>
+    <param name="use_sim_time" value="$(var use_sim_time)"/>
+    <remap from="cmd_vel_in" to="$(var cmd_vel_in)"/>
+    <remap from="cmd_vel_out" to="$(var cmd_vel_out)"/>
+    <remap from="plan" to="$(var plan_topic)"/>
+    <remap from="odom" to="$(var odom_topic)"/>
+    <remap from="status" to="$(var status_topic)"/>
+    <remap from="/tf" to="$(var tf_topic)"/>
+    <remap from="/tf_static" to="$(var tf_static_topic)"/>
+  </node>
+</launch>

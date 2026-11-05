@@ -1,0 +1,19 @@
+# Package defaults (do not edit; copy and pass params_file:=...). Values come from measured X2 data:
+#   stop_time_s: E2E-02 bag 20261105_1707, 8 stop events (cmd vx -> 0 at 0.32..0.78 m/s): travel until stopped
+#     0.07..0.31 m (median 0.18 m at ~0.47 m/s) => d_stop = 0.40 s * v; residual sd 0.054 m (docs/results/20261105_d05_governor.md)
+#   speed_window_s: FAST-LIO odom_level speed noise while walking: sd 0.08 (0.1 s), 0.06 (0.2 s), 0.05 (0.5 s) m/s at 0.5 m/s
+/**:
+  ros__parameters:
+    shadow: false                # true = report only, publish no command
+    plan_frame: map
+    base_frame: base_footprint
+    stop_time_s: 0.40
+    stop_margin_m: 0.0
+    speed_window_s: 0.30
+    max_speed_age_s: 0.50
+    max_plan_age_s: 3.0
+    max_pose_age_s: 0.30
+    stopped_speed_mps: 0.08
+    max_brake_hold_s: 2.0
+    min_forward_cmd: 0.02
+    status_period_s: 0.5
