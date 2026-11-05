@@ -28,6 +28,7 @@ private:
   void publish_status();
   rcl_interfaces::msg::SetParametersResult on_parameters(const std::vector<rclcpp::Parameter> & params);
   double now_s() const;
+  bool odom_clock_offset(double t) const;
 
   Params params_;
   bool shadow_{false};
@@ -38,6 +39,7 @@ private:
   Decision last_;
   uint64_t n_cmd_{0}, n_modified_{0}, n_brake_events_{0};
   State prev_state_{State::kPassThrough};
+  double last_odom_arrival_{-1.0}, last_odom_stamp_{0.0};
 
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;

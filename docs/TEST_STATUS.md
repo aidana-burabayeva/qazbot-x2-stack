@@ -4,9 +4,9 @@
 | --- | --- | --- |
 | E2E-02 NavigateToPose 3 м, SpeedLimit 0.20, через GC | X2 | SUCCEEDED (60 с), качество не принято: перелёт 0.19 м, разворотов 4 |
 | SL0.20 free 3 m (17:00 до перезапуска адаптера) | X2 | FAIL: цель не завершена, 70 с остановка поворота, yaw-loop неактивен |
-| qazbot_approach_governor unit (18) / coverage core | ПК/X2 offline | 18 PASS / 94.6 % |
+| qazbot_approach_governor unit (21) | offline | 21 PASS |
 | governor simulation regression (7, data-derived plant) | offline | 7 PASS; success 142→153/200 при боковой ошибке 0.12 м |
-| governor node launch test (3) | offline, domain 79 | 3 PASS |
+| governor node launch test (5, включая контракт GC и аномальный speed) | offline, domain 79 | 5 PASS |
 | Motion Adapter regression (50) | offline | 50 PASS (код не менялся) |
 | Физическая проверка governor | X2 | NOT RUN (не установлен) |
 
@@ -76,3 +76,5 @@ READY spans include blocked intervals; do not report 275.594 s as continuous REA
 | 2026-10-29 20:5x демо-goals (старая карта v3 despeckled, adapter 71db8ebd) | X2, оператор | **2/2 подряд SUCCEEDED**: A (-7.38,6.02)->(-5.20,2.82) 9.2 с ~3.9 м; B ->(-5.85,-2.27) 11 с ~4.9 м. Конфиг: T5 1.0/0.5, yaw tol 0.35, inflation 0.5/0.6, полигон footprint |
 | 2026-10-29 21:47-21:5x переключение на карту D1 `Qazbot_29.10` | X2 | load_map 0, AMCL 673x903; ошибка D1 map_saver `free_thresh 0.25` (unknown 205 -> FREE) исправлена на 0.196 (оригинал `map.yaml.orig_from_d1`); initialpose: READY, sigma 0.41, second_mode 0.53, **scan_score 0.47** (старая карта 0.35-0.40). Goals на D1 ещё не выполнялись |
 | 2026-10-29 21:56-22:00 P20 yaw-rate loop LIVE (adapter 9c05bb34, оператор одобрил) | X2, STAND_DEFAULT | **развёрнут** (DELETE+ADD `sdk_qazbot_nav2_1029a`). Тест 1 CCW 0.5 -> 0.563 рад/с, прерван по drift 0.30 м. Тест 2 (MAX_DRIFT 0.5): CCW 0.5 -> **0.534** рад/с (170 град, u 0.60-0.77); CW 0.5 -> **0.354** (u до 0.85); 90 град CCW: 3.3 с до 5 град, финал **+11.5 град** (обратный доворот); 90 град CW: 4.1 с, финал -4.9 град; дрейф 0.16-0.23 м на поворот. После ходьбы и в goals живьём не проверен. `evidence/nav_session_20261029/calib/p20_yaw_test_*` |
+
+| goal_checker_stopped launch test (ветка feat/e2-goal-checker-stopped) | offline | 3 PASS |

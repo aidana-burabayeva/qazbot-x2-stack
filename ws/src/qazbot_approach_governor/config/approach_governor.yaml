@@ -16,4 +16,5 @@
     stopped_speed_mps: 0.08
     max_brake_hold_s: 2.0
     min_forward_cmd: 0.02
+    max_plausible_speed_mps: 1.0   # project NO-GO bound for real speed (P-D05); an estimate above it is ignored
     status_period_s: 0.5

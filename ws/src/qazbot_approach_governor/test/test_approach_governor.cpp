@@ -252,3 +252,39 @@ TEST(Replay, RecordedStopEventsLandWithinTolerance)
   for (const auto & e : ev) {base_worst = std::max(base_worst, std::fabs(e.d - 0.10));}
   EXPECT_GT(base_worst, 0.15);  // up to 0.21 m past the tolerance edge
 }
+
+TEST(PathProgress, WindowedProjectionDoesNotJumpAcrossDoubledBackPath)
+{
+  PathProgress p;
+  p.set_path({{0, 0}, {3, 0}, {3, 0.15}, {0, 0.15}}, 0.0);  // out and back, legs 0.15 m apart; length 6.15 m
+  ASSERT_NEAR(*p.remaining({0.5, 0.0}), 5.65, 1e-9);       // first fix: unambiguous
+  // closer to the return leg (0.06 m) than to the outgoing leg (0.09 m): the old global search would jump to the end
+  EXPECT_GT(*p.remaining({1.0, 0.09}), 5.0);
+  p.set_path({{0, 0}, {3, 0}, {3, 0.15}, {0, 0.15}}, 1.0);  // a new plan restarts with a global search
+  EXPECT_LT(*p.remaining({1.0, 0.09}), 1.2);
+}
+
+TEST(Governor, ImplausibleSpeedIsIgnoredAndReported)
+{
+  ApproachGovernor g;
+  auto d = g.update(0.0, {0.12, 0, 0}, 5.0, 0.05);  // would give a 2 m stop distance: premature stop far from the goal
+  EXPECT_EQ(d.state, State::kNoData);
+  EXPECT_EQ(d.no_data, NoDataReason::kSpeedImplausible);
+  EXPECT_DOUBLE_EQ(d.out.vx, 0.12);
+  EXPECT_FALSE(g.latched());
+  d = g.update(0.1, {0.12, 0, 0}, 0.5, std::nullopt);
+  EXPECT_EQ(d.no_data, NoDataReason::kNoRemaining);
+  d = g.update(0.2, {0.12, 0, 0}, std::nullopt, 1.0);
+  EXPECT_EQ(d.no_data, NoDataReason::kNoSpeed);
+}
+
+TEST(Governor, NeverBrakesMoreThanTheMaxStopDistanceFromTheGoal)
+{
+  // Worst plausible speed 1.0 m/s * 0.40 s = 0.40 m: farther than that from the path end the command is never touched.
+  ApproachGovernor g;
+  for (double v = 0.0; v <= 1.0; v += 0.05) {
+    auto d = g.update(0.0, {0.2, 0, 0}, v, 0.41);
+    ASSERT_FALSE(d.modified) << v;
+    g.reset();
+  }
+}

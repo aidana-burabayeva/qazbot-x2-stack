@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <cmath>
 
 #include "diagnostic_msgs/msg/key_value.hpp"
 #include "rclcpp_components/register_node_macro.hpp"
@@ -19,6 +20,17 @@ const char * state_name(State s)
     case State::kBraking: return "braking";
     case State::kHeldAtStop: return "held_at_stop";
     case State::kNoData: return "no_data";
+  }
+  return "?";
+}
+
+const char * reason_name(NoDataReason r)
+{
+  switch (r) {
+    case NoDataReason::kNone: return "none";
+    case NoDataReason::kNoSpeed: return "no_speed";
+    case NoDataReason::kNoRemaining: return "no_remaining_distance";
+    case NoDataReason::kSpeedImplausible: return "speed_implausible";
   }
   return "?";
 }
@@ -44,6 +56,7 @@ ApproachGovernorNode::ApproachGovernorNode(const rclcpp::NodeOptions & options)
   params_.stopped_speed_mps = declare_parameter("stopped_speed_mps", params_.stopped_speed_mps);
   params_.max_brake_hold_s = declare_parameter("max_brake_hold_s", params_.max_brake_hold_s);
   params_.min_forward_cmd = declare_parameter("min_forward_cmd", params_.min_forward_cmd);
+  params_.max_plausible_speed_mps = declare_parameter("max_plausible_speed_mps", params_.max_plausible_speed_mps);
   shadow_ = declare_parameter("shadow", false);  // true: observe and report, never publish a command
   map_frame_ = declare_parameter("plan_frame", std::string("map"));
   base_frame_ = declare_parameter("base_frame", std::string("base_footprint"));
@@ -82,7 +95,10 @@ double ApproachGovernorNode::now_s() const {return now().seconds();}
 void ApproachGovernorNode::on_odom(const nav_msgs::msg::Odometry::SharedPtr msg)
 {
   const auto & p = msg->pose.pose.position;
-  speed_.push(rclcpp::Time(msg->header.stamp).seconds(), p.x, p.y);
+  const double stamp = rclcpp::Time(msg->header.stamp).seconds();
+  last_odom_arrival_ = now_s();
+  last_odom_stamp_ = stamp;
+  speed_.push(stamp, p.x, p.y);
 }
 
 void ApproachGovernorNode::on_plan(const nav_msgs::msg::Path::SharedPtr msg)
@@ -126,11 +142,23 @@ void ApproachGovernorNode::on_cmd(const geometry_msgs::msg::Twist::SharedPtr msg
       last_.stop_dist);
   }
   prev_state_ = last_.state;
+  if (last_.state == State::kNoData) {
+    // A forward command passed unrestricted because an input is missing: this is the old behaviour, but say so.
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), 5000, "forward command passes unrestricted: %s%s", reason_name(last_.no_data),
+      odom_clock_offset(t) ? " (odom stamps are far from the node clock: clock offset?)" : "");
+  }
   if (cmd_pub_) {
     geometry_msgs::msg::Twist out = *msg;  // all other fields (vy, wz, ...) forwarded untouched
     out.linear.x = last_.out.vx;
     cmd_pub_->publish(out);
   }
+}
+
+bool ApproachGovernorNode::odom_clock_offset(double t) const
+{
+  // Messages arrive now, but their stamps are older than the speed freshness limit: the clocks do not agree.
+  return last_odom_arrival_ > 0.0 && t - last_odom_arrival_ < 0.3 && std::fabs(t - last_odom_stamp_) > params_.max_speed_age_s;
 }
 
 void ApproachGovernorNode::publish_status()
@@ -144,7 +172,10 @@ void ApproachGovernorNode::publish_status()
     kv("shadow", shadow_ ? "true" : "false"),   kv("speed_mps", std::to_string(last_.speed)),
     kv("remaining_m", std::to_string(last_.remaining)), kv("stop_dist_m", std::to_string(last_.stop_dist)),
     kv("commands", std::to_string(n_cmd_)),      kv("modified", std::to_string(n_modified_)),
-    kv("brake_events", std::to_string(n_brake_events_))};
+    kv("brake_events", std::to_string(n_brake_events_)),
+    kv("no_data_reason", reason_name(last_.no_data)),
+    kv("odom_clock_offset", odom_clock_offset(now_s()) ? "true" : "false")};
+  if (last_.state == State::kNoData) {s.level = diagnostic_msgs::msg::DiagnosticStatus::WARN;}
   status_pub_->publish(s);
 }
 
@@ -165,6 +196,7 @@ rcl_interfaces::msg::SetParametersResult ApproachGovernorNode::on_parameters(
     else if (n == "stopped_speed_mps") {next.stopped_speed_mps = v;}
     else if (n == "max_brake_hold_s") {next.max_brake_hold_s = v;}
     else if (n == "min_forward_cmd") {next.min_forward_cmd = v;}
+    else if (n == "max_plausible_speed_mps") {next.max_plausible_speed_mps = v;}
   }
   rcl_interfaces::msg::SetParametersResult r;
   const std::string bad = next.validate();

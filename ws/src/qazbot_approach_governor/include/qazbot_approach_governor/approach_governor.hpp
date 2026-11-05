@@ -31,6 +31,7 @@ struct Params
   double stopped_speed_mps{0.08};  // below this the robot counts as stopped (brake latch released)
   double max_brake_hold_s{2.0};    // latch released after this long without a stop (fail-open to the old behaviour)
   double min_forward_cmd{0.02};    // vx below this is not a forward command (pure rotation, zero, reverse)
+  double max_plausible_speed_mps{1.0};  // above this the speed estimate is a glitch (project NO-GO bound for real speed)
 
   // Empty string when valid, otherwise the reason (used by the node's parameter callback and by tests).
   std::string validate() const;
@@ -77,12 +78,23 @@ public:
   bool has_path() const {return path_.size() >= 2;}
   double received() const {return t_received_;}
   // Remaining length in metres (0 when the robot is at or beyond the end), nullopt without a plan.
+  // The projection is restricted to a window around the previous fix on the same path (progress cannot jump across a
+  // path that doubles back); without a previous fix, or if the robot is far from the window, the whole path is searched.
   std::optional<double> remaining(const Point2 & robot) const;
 
 private:
   std::vector<Point2> path_;
   std::vector<double> cum_;  // arc length at each vertex
   double t_received_{0.0};
+  mutable double last_s_{-1.0};  // arc length of the previous projection (-1: none)
+};
+
+enum class NoDataReason
+{
+  kNone,
+  kNoSpeed,
+  kNoRemaining,
+  kSpeedImplausible
 };
 
 enum class State
@@ -101,6 +113,7 @@ struct Decision
   double remaining{-1.0};  // -1: unknown
   double stop_dist{-1.0};  // -1: unknown
   bool modified{false};
+  NoDataReason no_data{NoDataReason::kNone};
 };
 
 class ApproachGovernor

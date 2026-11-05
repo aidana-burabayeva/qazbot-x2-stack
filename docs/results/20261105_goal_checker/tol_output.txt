@@ -1,0 +1,35 @@
+Recorded track: goal (-7.998,-3.494) yaw -1.635; goal checker evaluated on the 10 Hz composed map pose (RPP/SimpleGoalChecker semantics)
+V0 actual: xy .10 yaw .10 stateless        never within 75 s
+V1 Nav2 default: xy .25 yaw .25 stateful   first OK t=  6.7s pose err 0.211 m yaw err -0.15 | speed then 0.49 m/s -> predicted rest err 0.040 m (along -0.01, lat 0.04)
+V2 xy .25 yaw .10 stateless                first OK t= 57.0s pose err 0.161 m yaw err -0.01 | speed then 0.44 m/s -> predicted rest err 0.311 m (along 0.26, lat -0.18)
+V3 xy .10 yaw .25 stateless                never within 75 s
+V4 xy .25 yaw .25 stateless                first OK t=  6.7s pose err 0.211 m yaw err -0.15 | speed then 0.49 m/s -> predicted rest err 0.040 m (along -0.01, lat 0.04)
+V5 xy .15 yaw .15 stateless                first OK t= 56.9s pose err 0.135 m yaw err -0.12 | speed then 0.48 m/s -> predicted rest err 0.296 m (along 0.25, lat -0.16)
+actual end (+2.5s after SUCCEEDED): err 0.210 m (along -0.21 lat -0.03) yaw err 0.26
+
+RPP branch around first arrival (carrot = path end): t, dist to goal, angle to carrot, yaw err, MC wz, inferred branch
+ 6.4  d=0.366  carrot angle -0.31  yaw err -0.12  MC vx 0.12 wz -0.19  -> pure pursuit
+ 6.5  d=0.312  carrot angle -0.21  yaw err -0.15  MC vx 0.12 wz -0.21  -> pure pursuit
+ 6.6  d=0.261  carrot angle -0.20  yaw err -0.18  MC vx 0.12 wz -0.20  -> pure pursuit
+ 6.7  d=0.211  carrot angle -0.32  yaw err -0.15  MC vx 0.12 wz -0.25  -> pure pursuit
+ 6.8  d=0.177  carrot angle -0.42  yaw err -0.16  MC vx 0.12 wz -0.35  -> pure pursuit
+ 6.9  d=0.140  carrot angle -0.61  yaw err -0.20  MC vx 0.12 wz -0.45  -> rotate-to-path
+ 7.0  d=0.111  carrot angle -0.92  yaw err -0.21  MC vx 0.06 wz -0.55  -> rotate-to-path
+ 7.1  d=0.092  carrot angle -1.34  yaw err -0.26  MC vx 0.00 wz -0.62  -> goal-heading
+ 7.2  d=0.086  carrot angle -1.81  yaw err -0.34  MC vx 0.00 wz -0.53  -> goal-heading
+ 7.3  d=0.096  carrot angle -2.35  yaw err -0.43  MC vx 0.00 wz -0.45  -> goal-heading
+ 7.4  d=0.100  carrot angle -2.57  yaw err -0.61  MC vx 0.00 wz -0.15  -> rotate-to-path
+ 7.5  d=0.106  carrot angle -2.37  yaw err -0.74  MC vx 0.00 wz -0.45  -> rotate-to-path
+ 7.6  d=0.110  carrot angle -2.18  yaw err -0.83  MC vx 0.00 wz -0.46  -> rotate-to-path
+ 7.7  d=0.147  carrot angle -2.26  yaw err -0.91  MC vx 0.00 wz -0.53  -> rotate-to-path
+
+== StoppedGoalChecker semantics (within tolerance AND |v|<trans_stop AND |wz|<rot_stop), recorded track, no new motion ==
+xy 0.10 yaw 0.10  stopped v<0.08 w<0.05 : never (75 s)
+xy 0.10 yaw 0.10  stopped v<0.08 w<0.10 : never (75 s)
+xy 0.15 yaw 0.15  stopped v<0.08 w<0.05 : never (75 s)
+xy 0.15 yaw 0.15  stopped v<0.08 w<0.10 : never (75 s)
+xy 0.20 yaw 0.20  stopped v<0.08 w<0.05 : t=62.1s err 0.195 m yaw 0.14
+xy 0.20 yaw 0.20  stopped v<0.08 w<0.10 : t=62.1s err 0.195 m yaw 0.14
+xy 0.25 yaw 0.25  stopped v<0.08 w<0.05 : t=61.6s err 0.200 m yaw 0.12
+xy 0.25 yaw 0.25  stopped v<0.08 w<0.10 : t=61.6s err 0.200 m yaw 0.12
+time within xy .10 / .25 (any yaw) while moving v>0.2:  64 / 299 samples (10 Hz)

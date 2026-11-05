@@ -21,6 +21,9 @@ std::string Params::validate() const
   }
   if (bad(max_brake_hold_s) || max_brake_hold_s <= 0.0) {return "max_brake_hold_s must be > 0";}
   if (bad(min_forward_cmd) || min_forward_cmd <= 0.0) {return "min_forward_cmd must be > 0";}
+  if (bad(max_plausible_speed_mps) || max_plausible_speed_mps < 0.5 || max_plausible_speed_mps > 3.0) {
+    return "max_plausible_speed_mps must be in [0.5, 3]";
+  }
   return "";
 }
 
@@ -71,24 +74,37 @@ void PathProgress::set_path(const std::vector<Point2> & path, double t_received)
   }
   if (path_.size() < 2) {path_.clear(); cum_.clear();}
   t_received_ = t_received;
+  last_s_ = -1.0;
 }
 
-void PathProgress::clear() {path_.clear(); cum_.clear();}
+void PathProgress::clear() {path_.clear(); cum_.clear(); last_s_ = -1.0;}
 
 std::optional<double> PathProgress::remaining(const Point2 & r) const
 {
   if (!has_path() || !std::isfinite(r.x) || !std::isfinite(r.y)) {return std::nullopt;}
-  double best_d2 = 1e300;
-  double best_s = 0.0;  // arc length of the best projection
-  for (size_t i = 0; i + 1 < path_.size(); ++i) {
-    const double dx = path_[i + 1].x - path_[i].x, dy = path_[i + 1].y - path_[i].y;
-    const double len2 = dx * dx + dy * dy;
-    double u = ((r.x - path_[i].x) * dx + (r.y - path_[i].y) * dy) / len2;
-    u = std::clamp(u, 0.0, 1.0);
-    const double px = path_[i].x + u * dx, py = path_[i].y + u * dy;
-    const double d2 = (r.x - px) * (r.x - px) + (r.y - py) * (r.y - py);
-    if (d2 < best_d2 - 1e-12) {best_d2 = d2; best_s = cum_[i] + u * std::sqrt(len2);}
+  auto search = [&](double s_lo, double s_hi, double & best_d2, double & best_s) {
+      best_d2 = 1e300;
+      best_s = 0.0;
+      for (size_t i = 0; i + 1 < path_.size(); ++i) {
+        if (cum_[i + 1] < s_lo || cum_[i] > s_hi) {continue;}
+        const double dx = path_[i + 1].x - path_[i].x, dy = path_[i + 1].y - path_[i].y;
+        const double len2 = dx * dx + dy * dy;
+        double u = ((r.x - path_[i].x) * dx + (r.y - path_[i].y) * dy) / len2;
+        u = std::clamp(u, 0.0, 1.0);
+        const double px = path_[i].x + u * dx, py = path_[i].y + u * dy;
+        const double d2 = (r.x - px) * (r.x - px) + (r.y - py) * (r.y - py);
+        if (d2 < best_d2 - 1e-12) {best_d2 = d2; best_s = cum_[i] + u * std::sqrt(len2);}
+      }
+    };
+  double best_d2 = 1e300, best_s = 0.0;
+  const double kBack = 0.5, kAhead = 2.0, kFar = 0.6;  // window around the previous fix [m]
+  if (last_s_ >= 0.0) {
+    search(last_s_ - kBack, last_s_ + kAhead, best_d2, best_s);
+    if (best_d2 > kFar * kFar) {search(-1e300, 1e300, best_d2, best_s);}  // lost: look at the whole path
+  } else {
+    search(-1e300, 1e300, best_d2, best_s);
   }
+  last_s_ = best_s;
   return std::max(0.0, cum_.back() - best_s);
 }
 
@@ -101,6 +117,10 @@ Decision ApproachGovernor::update(
 {
   Decision d;
   d.out = cmd;
+  if (speed && *speed > p_.max_plausible_speed_mps) {  // glitch of the estimate: never act on it
+    speed = std::nullopt;
+    d.no_data = NoDataReason::kSpeedImplausible;
+  }
   if (speed) {d.speed = *speed;}
   if (remaining) {d.remaining = *remaining;}
   const bool forward = cmd.vx >= p_.min_forward_cmd;
@@ -128,6 +148,7 @@ Decision ApproachGovernor::update(
 
   if (!speed || !remaining) {
     d.state = State::kNoData;
+    if (d.no_data == NoDataReason::kNone) {d.no_data = !speed ? NoDataReason::kNoSpeed : NoDataReason::kNoRemaining;}
     return d;
   }
 

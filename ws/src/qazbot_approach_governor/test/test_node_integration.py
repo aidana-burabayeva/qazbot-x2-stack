@@ -128,3 +128,43 @@ class TestGovernorNode(unittest.TestCase):
     def test_3_zero_command_passes_and_no_plan_passes(self):
         z = self.command(0.0, 0.0)
         self.assertEqual((z.linear.x, z.angular.z), (0.0, 0.0))
+
+    def test_4_goal_coordinator_contract_single_stable_publisher_and_zero_forwarded(self):
+        """GC trips on publisher count != 1 or a changed publisher GID on its cmd topic; zero must be forwarded."""
+        gids = set()
+        for _ in range(20):
+            infos = self.n.get_publishers_info_by_topic('cmd_vel_out')
+            self.assertEqual(len(infos), 1)
+            gids.add(bytes(infos[0].endpoint_gid))
+            z = self.command(0.0, 0.0)
+            self.assertEqual((z.linear.x, z.linear.y, z.angular.z), (0.0, 0.0, 0.0))
+        self.assertEqual(len(gids), 1)
+
+    def test_5_implausible_odom_does_not_brake_and_is_reported(self):
+        # robot at the end of the plan (remaining 0.1 m), odom jumps 20 m per sample -> speed estimate is a glitch
+        # first a stand-still at the end: the robot is stopped, so the brake latch of test_1 is released
+        for _ in range(8):
+            self.pose(2.9)
+            spin_until(self.n, lambda: False, 0.1)
+        self.command(0.0, 0.0)  # commands arrive continuously in operation; this one lets the node see the stand-still
+        for k in range(6):
+            now = self.n.get_clock().now().to_msg()
+            o = Odometry()
+            o.header.stamp = now
+            o.pose.pose.position.x = 2.9 + 20.0 * k
+            self.odom_pub.publish(o)
+            t = TransformStamped()
+            t.header.stamp = now
+            t.header.frame_id = 'map'
+            t.child_frame_id = 'base_footprint'
+            t.transform.translation.x = 2.9
+            t.transform.rotation.w = 1.0
+            self.tf.sendTransform(t)
+            spin_until(self.n, lambda: False, 0.1)
+        self.send_plan()
+        spin_until(self.n, lambda: False, 0.2)
+        out = self.command(0.12, 0.0)
+        self.assertEqual(out.linear.x, 0.12)
+        self.status.clear()
+        self.assertTrue(spin_until(self.n, lambda: any(
+            any(kv.key == 'no_data_reason' and kv.value == 'speed_implausible' for kv in s.values) for s in self.status), 5))
