@@ -37,3 +37,19 @@ Rollback = restore `nav_full.launch.py` from `fix/goal-checker-profile` (52cd81e
 ## 6. Proposed hardware run (needs a separate permission)
 One Goal 4.0 m ahead (-8.833,-2.238) with the box placed at along 2.0 m (face centre (-8.62,-4.19)), operator with RC and checked stop; record Nav2, Smac path, local/global costmap, RPP, smoother, GC, adapter, MC, FAST-LIO, TF;
 stop immediately on loss of reliable localisation, dangerous approach or unexpected motion. PASS = safe detour + physical stop at the goal (0.30 m / 0.35 rad checked separately from SUCCEEDED).
+
+## 7. Deployment and live verification (2026-11-05, operator on site, robot standing, no Goal)
+Deployed `63749f2` (robot `nav_full.launch.py` sha256 1fc9583d... = Git; diff vs the previous robot file: the single inflation line; no `.bak`). `nav_full` (Nav2 + GC) restarted via `detach.py`
+(log `logs/nav_full_20261105c.log`); localisation, Trust, adapter, MC, projector untouched. REAL parameters read once after the restart: global `inflation_radius` **0.8**, scaling 1.5, local
+inflation 0.5, Smac multiplier 4.0 / tolerance 0.3, goal checker 0.3 / 0.35 / stateful true. GC ready and not latched, Trust READY.
+
+Live Smac plan on the real costmap (box in place, start (-8.385,-6.168,1.640), Goal point 4.0 m ahead (-8.660,-2.178)): 81 poses, **4.46 m**, max lateral detour 0.84 m (to the left),
+max path cost 104, no lethal/inscribed cell on the path (`boxcheck_live080.json`).
+- Marking: GLOBAL costmap 7 lethal cells for the box (along 2.08-2.18 m, lateral -0.20..+0.01 m: the wide face, as expected). LOCAL costmap: 0 cells — expected, the rolling window is 4 x 4 m
+  (+-2.0 m) and the box is 2.1 m ahead; it enters the window at <= 2.0 m (before the restart it was marked at 2.03 m). Local obstacle layer after restart not yet verified with the box inside the window.
+- Footprint: swept X2 polygon along the whole path vs the physical box (23.5 x 12 cm placed at the marked face): **minimum clearance 0.43 m** (at along 2.49 m, lateral +0.77), required >= 0.41 m
+  (largest measured tracking excursion 0.36 m + one cell). Vertex metric against all lethal cells: 0.46 m; path centre to the box 0.80 m.
+- New obstacles on the path: none; nearest other lethal cell is 1.28 m from the path centre.
+- Note: the robot pose in the map moved ~0.2 m since the earlier check (-8.574,-6.230 -> -8.385,-6.168) while the box is marked at the same place relative to the robot (2.10 m ahead, lateral -0.10 m); consistent with
+  the open FAST-LIO standstill-drift issue, not with a moved box. No Goal sent.
+Decision pending: one physical Goal 4 m with the box in place (separate permission).
