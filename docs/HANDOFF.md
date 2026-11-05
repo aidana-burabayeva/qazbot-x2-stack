@@ -1,3 +1,7 @@
+## 2026-11-05 вечер: baseline навигации зафиксирован (решение оператора)
+
+Goal Checker 0.30 м / 0.35 рад / stateful true — функциональный production baseline NavigateToPose, коммит `48697e7` (ветка `fix/goal-checker-profile`). Не менять Motion Adapter, RPP, smoother, AMCL, FAST-LIO, Trust; не улучшать точность XY/yaw. Дрейф FAST-LIO в покое: [ISSUE](issues/ISSUE_20261105_fastlio_standstill_drift.md) (не в работе). Следующая задача: NAV-OBS-01, обход статической коробки 40 см (этап 1 без движения, этап 2 — после отдельного разрешения).
+
 ## 2026-11-05: профиль Goal Checker (решение оператора)
 
 Единый production-профиль: SimpleGoalChecker, xy 0.30 м, yaw 0.35 рад, stateful true (как 30.10); StoppedGoalChecker не используется. Ветка `fix/goal-checker-profile`; файлы на роботе обновлены с бэкапами `*.bak_20261105_pre_gcprofile`, **Nav2 ещё не перезапущен** (работают старые 0.10/0.10/false до контролируемого рестарта). Отчёт: [20261105_goal_checker_profile.md](results/20261105_goal_checker_profile.md). Далее: рестарт Nav2 при неподвижном роботе с подтверждением оператора, проверка реальных параметров controller_server, один Goal 3 м.
