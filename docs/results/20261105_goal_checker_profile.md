@@ -25,9 +25,9 @@ Recorded movement after that point (the old 0.10 checker kept the robot driving 
 Consequence: SUCCEEDED will be reported while the robot still walks at ~0.5 m/s; the final rest distance must be measured separately (done in the test below).
 
 ## 4. Deployment state and rollback
-Robot files updated (no restart yet): `ws/src/navigation/nav_full.launch.py` sha256 1be39f89...; `nav_control.launch.py` sha256 e1ab9809...; backups next to them
-`*.bak_20261105_pre_gcprofile` (sha256 9a9f963a... and 39b8a6ff...). The running Nav2 still uses the old parameters until the controlled restart.
-Rollback: `cp nav_full.launch.py.bak_20261105_pre_gcprofile nav_full.launch.py` (same for nav_control), restart Nav2 the same way as below.
+Deployed 2026-11-05 ~19:05 CST: robot `ws/src/navigation/nav_full.launch.py` sha256 1be39f89... and `nav_control.launch.py` sha256 e1ab9809... = Git `fix/goal-checker-profile` (0341ec4).
+No backup files are kept on the robot (policy: Git is the backup; the two `*.bak_20261105_pre_gcprofile` copies made during deployment were verified byte-identical to Git `4329077`
+and removed). Previous versions: Git `4329077` (sha256 9a9f963a... / 39b8a6ff...). Rollback: check out those two files from `4329077`, copy to the robot, controlled Nav2 restart as in section 5.
 
 ## 5. Controlled Nav2 restart (needs operator on site; not done)
 Preconditions: robot standing, no active Goal (GC busy false), RC and emergency stop checked, operator confirms. Stop only `nav_full` (SIGINT to the pid in
@@ -41,3 +41,9 @@ SpeedLimit returns to the configured 0.30 on restart.
 TF, AMCL, FAST-LIO, GC/Trust). PASS: SUCCEEDED; no repeated turns/returns around the goal; the robot physically stopped; REST position within 0.30 m and 0.35 rad
 (checked independently of SUCCEEDED, because stateful=true can keep XY accepted while the robot rotates); Trust and MC normal. At the first significant deviation end
 with the normal procedure, analyse, no automatic repeat.
+
+## 7. Controlled Nav2 restart - done (operator on site, robot standing, no Goal)
+`nav_full` (Nav2 + Goal Coordinator) stopped with SIGINT and started again via `detach.py` (log `logs/nav_full_20261105b.log`); localization, Trust, adapter untouched.
+REAL parameters read from `/qazbot_d1_map/nav2/controller_server`: plugin `nav2_controller::SimpleGoalChecker`, xy 0.3, yaw 0.35, stateful True; unchanged:
+desired_linear_vel 0.3, rotate_to_heading_min_angle 0.6, min_approach 0.12, progress movement_time_allowance 15; smoother max_velocity [0.3, 0, 0.6], max_accel [0.4, 0, 1.0].
+After restart: GC ready, not latched, trusted; Trust READY; adapter registered, idle. Physical test: not yet run (needs a separate permission).
