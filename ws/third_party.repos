@@ -1,0 +1,19 @@
+# Third-party sources of the X2 navigation stack, pinned to exact commits (vcstool format).
+# Checked out by ws/third_party/build_third_party.sh into ws/third_party/src (gitignored), then patched with
+# ws/third_party/patches/<package>/*.patch. Provenance proof: ws/third_party/README.md.
+repositories:
+  FAST_LIO:
+    type: git
+    url: https://github.com/hku-mars/FAST_LIO.git
+    # ROS2 branch, merge of PR #381 (2025-01-15). Live source = this commit + patches/fast_lio (byte-identical).
+    version: a4743b095409588842a5b30ddfa27e29d2f99164
+  FAST_LIO/include/ikd-Tree:
+    type: git
+    url: https://github.com/hku-mars/ikd-Tree.git
+    # submodule pin of FAST_LIO a4743b0 (branch fast_lio)
+    version: e2e3f4e9d3b95a9e66b1ba83dc98d4a05ed8a3c4
+  navigation2:
+    type: git
+    url: https://github.com/ros-navigation/navigation2.git
+    # tag 1.1.18 (Humble); only nav2_smac_planner is built, with patches/nav2_smac_planner
+    version: 1c68c212db01f9f75fcb8263a0fbb5dfa711bdea
