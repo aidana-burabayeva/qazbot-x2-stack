@@ -283,3 +283,5 @@ Bags в Git **не публикуются** (решение оператора):
 - I1 / PR #1: 2d240dbd09ca69de87e9ac4b1acde735293ad6b2 (не merged в main); main 6e70c0f9. Чужие незакоммиченные файлы сохранены: docs/X2_QUICKSTART_BRINGUP_RU.md, tests/loc_trust/run_ros_synthetic.py, tests/nav_e2e/*.
 - X2 /home/agi/control_backend — deployed-каталог без .git; Git checkout — /home/agi/control_backend/qazbot-x2-stack.
 - HAL PID2623 ранее упал в FastDDS SHM; восстановлен один штатный HAL PID204720 через em_run.sh (отсюда nice 0).
+
+**Vendor trim после reboot (2026-11-05):** user-юнит `qazbot-vendor-trim` (deploy/systemd) останавливает perception/orbbec_camera/hal_camera/drp/lx_webrtc_app после загрузки; прошивку не меняли. Проверка на реальном reboot ещё не проведена.
