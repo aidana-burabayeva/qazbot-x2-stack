@@ -1,0 +1,56 @@
+# LAB services (build / test / replay). Never production. Isolation from the robot graph and the MC (AimDK safety
+# boundary "二次开发边界与声明"): no network (network_mode: none -> no DDS discovery of the robot, no /aima/* traffic),
+# private IPC (no FastDDS shared-memory segments shared with host processes), ROS_DOMAIN_ID 88, ROS_LOCALHOST_ONLY=1,
+# no devices, no capabilities, CPU set + quota and a memory limit so the navigation stack on the same Jetson keeps
+# its cores. Portable to a lab PC unchanged (override the limits in docker/.env or the environment).
+#   docker compose -f docker/compose.yaml run --rm fetch    # needs network: third-party sources + pinned debs
+#   docker compose -f docker/compose.yaml run --rm build
+#   docker compose -f docker/compose.yaml run --rm test
+#   QAZBOT_BAG=/abs/bag docker compose -f docker/compose.yaml run --rm replay
+name: qazbot-lab
+x-lab: &lab
+  image: qazbot-lab:humble
+  build:
+    context: ..
+    dockerfile: docker/Dockerfile
+    args:
+      UID: ${QAZBOT_LAB_UID:-1000}
+      GID: ${QAZBOT_LAB_GID:-1000}
+  network_mode: none
+  ipc: private
+  init: true
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  devices: []
+  cpuset: "${QAZBOT_LAB_CPUSET:-0-3}"        # X2: FAST-LIO is pinned to 5,6 (lio_cpus); keep lab off those
+  cpus: ${QAZBOT_LAB_CPUS:-2.0}
+  mem_limit: ${QAZBOT_LAB_MEM:-6g}
+  pids_limit: 4096
+  environment:
+    ROS_DOMAIN_ID: "88"
+    ROS_LOCALHOST_ONLY: "1"
+    RMW_IMPLEMENTATION: rmw_fastrtps_cpp
+    QAZBOT_LAB: "1"
+  volumes:
+    - ..:/workspace/control_backend:ro           # sources read-only: the container cannot dirty the tree
+    - lab-out:/lab                               # build/install/log/test results and fetched third-party
+services:
+  fetch:
+    <<: *lab
+    network_mode: bridge                         # only service with network: git + snapshots.ros.org; no ROS runs
+    command: ["bash", "/workspace/control_backend/docker/lab/fetch.sh"]
+  build:
+    <<: *lab
+    command: ["bash", "/workspace/control_backend/docker/lab/build.sh"]
+  test:
+    <<: *lab
+    command: ["bash", "/workspace/control_backend/docker/lab/test.sh"]
+  replay:
+    <<: *lab
+    volumes:
+      - ..:/workspace/control_backend:ro
+      - lab-out:/lab
+      - ${QAZBOT_BAG:-/nonexistent}:/bag:ro
+    command: ["bash", "/workspace/control_backend/docker/lab/replay.sh"]
+volumes:
+  lab-out:

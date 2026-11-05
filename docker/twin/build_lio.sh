@@ -3,7 +3,7 @@
 # The upstream CMake enables MP_EN on x86; undefine it in release flags without editing vendor sources.
 set -euo pipefail
 [ "$(docker inspect -f '{{.HostConfig.NetworkMode}}' qazbot-twin-sim)" = none ]
-docker exec qazbot-twin-sim /workspace/control_backend/tools/twin/docker/env_container.sh bash -c '
+docker exec qazbot-twin-sim /workspace/control_backend/docker/twin/env_container.sh bash -c '
 colcon --log-base /workspace/control_backend/runtime_x86/lio_ws/log build \
   --base-paths /workspace/control_backend/candidates/fast_lio_portable/src \
   --build-base /workspace/control_backend/runtime_x86/lio_ws/build \

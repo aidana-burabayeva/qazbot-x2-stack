@@ -11,9 +11,9 @@ if [ "${QAZBOT_SIM_EXACT_GOAL:-0}" = 1 ]; then
   [ -f "$SMAC/qazbot_bounds_fix.json" ] || { echo 'Build the exact-goal simulation candidate first' >&2;exit 2; }
 fi
 export AMENT_PREFIX_PATH="$SMAC:$AMENT_PREFIX_PATH" LD_LIBRARY_PATH="$SMAC/lib:$LD_LIBRARY_PATH" QAZBOT_SMAC_PREFIX="$SMAC"
-export FASTRTPS_DEFAULT_PROFILES_FILE=$CB/tools/twin/dds_sim_loopback.xml
+export FASTRTPS_DEFAULT_PROFILES_FILE=$CB/ws/tools/twin/dds_sim_loopback.xml
 if [ "${QAZBOT_SIM_DDS_UDP_ONLY:-0}" = 1 ]; then
-  export FASTRTPS_DEFAULT_PROFILES_FILE=$CB/tools/twin/dds_sim_udp_loopback.xml
+  export FASTRTPS_DEFAULT_PROFILES_FILE=$CB/ws/tools/twin/dds_sim_udp_loopback.xml
 fi
 export PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
 if [ "${QAZBOT_SIM_MC_TURN:-0}" = 1 ]; then

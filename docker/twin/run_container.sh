@@ -9,7 +9,7 @@
 set -euo pipefail
 NAME="${1:-qazbot-twin-sim}"; [ $# -gt 0 ] && shift
 IMAGE=${QAZBOT_TWIN_IMAGE:-qazbot-twin-sim:humble}
-R="$(cd -P "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"       # also resolve the old compatibility symlink
+R="$(cd -P "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"       # also resolve the old compatibility symlink
 BACKEND="$(cd "$R/../../control_backend" && pwd)"
 mkdir -p "$R/runtime_x86/run/agibot_data/var" "$R/runtime_x86/run/aimdk"
 docker rm -f "$NAME" >/dev/null 2>&1 || true

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Prints MC body/fsm/action/source once (inside container env via ex.sh)
-/workspace/control_backend/tools/twin/docker/ex.sh timeout 8 ros2 topic echo --once /aima/mc/common/state 2>&1 | python3 -c "
+/workspace/control_backend/docker/twin/ex.sh timeout 8 ros2 topic echo --once /aima/mc/common/state 2>&1 | python3 -c "
 import sys,re
 t=sys.stdin.read()
 g=lambda p:(re.search(p,t).group(1) if re.search(p,t) else '?')

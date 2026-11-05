@@ -2,7 +2,7 @@
 """Create a NEW private official-MC worker after the research relocation; never replaces a container."""
 import argparse,json,os,subprocess,sys
 from pathlib import Path
-ROOT=Path(__file__).resolve().parents[3];sys.path.insert(0,str(ROOT/'tools/twin'))
+ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT/'ws/tools/twin'))
 from parallel_turn_sweep import clone_runtime,MC,SIM
 p=argparse.ArgumentParser();p.add_argument('name');a=p.parse_args()
 if not a.name.startswith('qazbot-') or any(c not in 'abcdefghijklmnopqrstuvwxyz0123456789-_' for c in a.name):p.error('use a simple qazbot- name')
