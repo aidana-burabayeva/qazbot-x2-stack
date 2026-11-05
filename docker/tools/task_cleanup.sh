@@ -54,7 +54,7 @@ while IFS= read -r p; do
   [ -z "$why" ] && h="$(in_use "$r")" && why="in use: $(echo "$h" | head -1)"
   [ -z "$why" ] && g="$(git_unsafe "$r")" && why="git: $g"
   if [ -n "$why" ]; then echo "KEPT     $p  [$why]"; echo "$p" >> "$TMP"; kept=1; continue; fi
-  if [ $DRY -eq 1 ]; then echo "would rm $p"; echo "$p" >> "$TMP"; else rm -rf -- "$r"; echo "removed  $p"; fi
+  if [ $DRY -eq 1 ]; then echo "would rm $p"; echo "$p" >> "$TMP"; else chmod -R u+w -- "$r" 2>/dev/null || true; rm -rf -- "$r"; echo "removed  $p"; fi   # releases are a-w
 done < "$M"
 mv "$TMP" "$M"
 exit $kept

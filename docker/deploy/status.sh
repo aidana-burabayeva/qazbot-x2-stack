@@ -17,7 +17,7 @@ RREAL="$(realpath -m "$PREFIX/releases")"; LREAL="$(realpath -m "$LEGACY")"
 declare -A seen=()
 for p in /proc/[0-9]*; do
   pid="${p#/proc/}"
-  cmd="$(tr '\0' ' ' < "$p/cmdline" 2>/dev/null || true)"; [ -n "$cmd" ] || continue
+  cmd="$( { tr '\0' ' ' < "$p/cmdline"; } 2>/dev/null || true)"; [ -n "$cmd" ] || continue   # process may vanish
   exe="$(readlink "$p/exe" 2>/dev/null || true)"; cwd="$(readlink "$p/cwd" 2>/dev/null || true)"
   where=""
   for s in "$exe" "$cwd" $cmd; do

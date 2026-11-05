@@ -59,6 +59,7 @@ def j(p):
     return json.load(open(p)) if os.path.isfile(p) else None
 manifest = {
     'sha': sha,
+    'dirty': False,                 # fresh checkout of exactly this commit (verified above)
     'date_utc': datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),
     'profile': profile,
     'builder': f'{getpass.getuser()}@{socket.gethostname()}',
