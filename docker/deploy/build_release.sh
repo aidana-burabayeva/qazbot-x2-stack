@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Build an immutable, SHA-pinned release of control_backend into <prefix>/releases/<sha>/.
 #   docker/deploy/build_release.sh --sha <commit> [--repo <url|path>] [--prefix DIR] [--profile x2_d1]
-#                                  [--deb-cache DIR] [--jobs N]
+#                                  [--deb-cache DIR] [--git-cache DIR] [--jobs N]
 # Layout: <prefix>/releases/<sha>/{install/,deps/,manifest.yaml}; deps = pinned runtime debs
 # (ws/third_party/runtime_debs.lock), install = third-party (FAST-LIO, Smac, from ws/third_party.repos + patches)
 # + ws/src. Sources come from a fresh clone checked out at exactly <sha> (never from a working tree); when --repo
@@ -11,10 +11,10 @@
 set -euo pipefail
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(git -C "$HERE" rev-parse --show-toplevel)"
-PREFIX="${QAZBOT_PROD_PREFIX:-$HOME/prod}"; SHA=""; PROFILE="x2_d1"; DEB_CACHE=""; JOBS=2
+PREFIX="${QAZBOT_PROD_PREFIX:-$HOME/prod}"; SHA=""; PROFILE="x2_d1"; DEB_CACHE=""; GIT_CACHE=""; JOBS=2
 while [ $# -gt 0 ]; do case "$1" in
   --sha) SHA="$2"; shift 2;; --repo) REPO="$2"; shift 2;; --prefix) PREFIX="$2"; shift 2;;
-  --profile) PROFILE="$2"; shift 2;; --deb-cache) DEB_CACHE="$2"; shift 2;; --jobs) JOBS="$2"; shift 2;;
+  --profile) PROFILE="$2"; shift 2;; --deb-cache) DEB_CACHE="$2"; shift 2;; --git-cache) GIT_CACHE="$2"; shift 2;; --jobs) JOBS="$2"; shift 2;;
   *) echo "unknown arg $1" >&2; exit 2;; esac; done
 [ -n "$SHA" ] || { echo "--sha is required" >&2; exit 2; }
 if [ -d "$REPO/.git" ] || git -C "$REPO" rev-parse --git-dir >/dev/null 2>&1; then
@@ -37,7 +37,7 @@ WS="$STAGE/src/ws"
 mkdir -p "$STAGE/out"
 "$WS/third_party/fetch_runtime_debs.sh" "$STAGE/out/deps" ${DEB_CACHE:+--cache "$DEB_CACHE"}
 nice -n 19 "$WS/third_party/build_third_party.sh" --src "$STAGE/tp_src" --build-base "$STAGE/build_tp" \
-  --install-base "$STAGE/out/install" --deps "$STAGE/out/deps" --jobs "$JOBS"
+  --install-base "$STAGE/out/install" --deps "$STAGE/out/deps" --jobs "$JOBS" ${GIT_CACHE:+--git-cache "$GIT_CACHE"}
 set +u; source /opt/ros/humble/setup.bash; set -u
 MAKEFLAGS="-j$JOBS" nice -n 19 colcon --log-base "$STAGE/log" build --base-paths "$WS/src" --build-base "$STAGE/build" \
   --install-base "$STAGE/out/install" --parallel-workers "$JOBS" --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF \

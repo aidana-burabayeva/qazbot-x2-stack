@@ -2,6 +2,7 @@
 # Reproducible build of the patched third-party packages (FAST-LIO, Smac 2D bounds fix).
 #   ws/third_party/build_third_party.sh [--src DIR] [--build-base DIR] [--install-base DIR] [--deps DIR] [--jobs N]
 #                                       [--no-fetch]   (offline: sources already fetched into --src)
+#                                       [--git-cache DIR]  (local clones laid out like --src; used before the network)
 # --deps: root produced by fetch_runtime_debs.sh (Nav2 1.1.18 debs that are not dpkg-installed on X2).
 # Sources: ws/third_party.repos (exact commits) + ws/third_party/patches. Flags = the live builds (CMakeCache):
 # fast_lio Release, USE_LIVOX=OFF; nav2_smac_planner RelWithDebInfo. Writes qazbot_bounds_fix.json (checked by
@@ -9,10 +10,10 @@
 set -euo pipefail
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 WS="$(cd "$HERE/.." && pwd)"
-SRC="$HERE/src"; BUILD="$HERE/build"; INSTALL="$HERE/install"; DEPS=""; JOBS=2; FETCH=1
+SRC="$HERE/src"; BUILD="$HERE/build"; INSTALL="$HERE/install"; DEPS=""; JOBS=2; FETCH=1; GIT_CACHE="${QAZBOT_TP_GIT_CACHE:-}"
 while [ $# -gt 0 ]; do case "$1" in
   --src) SRC="$2"; shift 2;; --build-base) BUILD="$2"; shift 2;; --install-base) INSTALL="$2"; shift 2;;
-  --deps) DEPS="$2"; shift 2;; --jobs) JOBS="$2"; shift 2;; --no-fetch) FETCH=0; shift;; *) echo "unknown arg $1" >&2; exit 2;; esac; done
+  --deps) DEPS="$2"; shift 2;; --jobs) JOBS="$2"; shift 2;; --no-fetch) FETCH=0; shift;; --git-cache) GIT_CACHE="$2"; shift 2;; *) echo "unknown arg $1" >&2; exit 2;; esac; done
 set +u; source /opt/ros/humble/setup.bash; set -u
 if [ -n "$DEPS" ]; then
   for g in nav2_bt_deps/root qazbot_nav_deps/root user_pkgs; do
@@ -22,9 +23,11 @@ if [ -n "$DEPS" ]; then
   done
 fi
 mkdir -p "$SRC"
-python3 - "$WS/third_party.repos" "$SRC" "$FETCH" <<'PY'
+python3 - "$WS/third_party.repos" "$SRC" "$FETCH" "$GIT_CACHE" <<'PY'
 import os, subprocess, sys, yaml
-repos, src, fetch = yaml.safe_load(open(sys.argv[1]))['repositories'], sys.argv[2], sys.argv[3] == '1'
+repos, src, fetch, cache = yaml.safe_load(open(sys.argv[1]))['repositories'], sys.argv[2], sys.argv[3] == '1', sys.argv[4]
+# abort stalled HTTPS transfers (< 1 kB/s for 60 s) instead of hanging; retried below
+NET = ['-c', 'http.lowSpeedLimit=1000', '-c', 'http.lowSpeedTime=60']
 def git(*a, cwd=None):
     return subprocess.run(['git', *a], cwd=cwd, check=True, capture_output=True, text=True).stdout.strip()
 for path, r in repos.items():          # parents before nested paths (dict order of the file)
@@ -33,7 +36,16 @@ for path, r in repos.items():          # parents before nested paths (dict order
         os.makedirs(d, exist_ok=True)
         git('init', '-q', cwd=d); git('remote', 'add', 'origin', r['url'], cwd=d)
     if fetch:
-        git('fetch', '-q', '--depth', '1', 'origin', r['version'], cwd=d)
+        c = os.path.join(cache, path) if cache else ''
+        if c and os.path.isdir(os.path.join(c, '.git')) and subprocess.run(
+                ['git', '-C', c, 'cat-file', '-e', r['version'] + '^{commit}'], capture_output=True).returncode == 0:
+            git('fetch', '-q', '--depth', '1', c, r['version'], cwd=d)   # local cache; the sha check below still applies
+        else:
+            for attempt in range(3):
+                if subprocess.run(['git', *NET, 'fetch', '-q', '--depth', '1', 'origin', r['version']], cwd=d).returncode == 0:
+                    break
+            else:
+                sys.exit(f'{path}: fetch of {r["version"]} failed')
     git('checkout', '-q', '--force', r['version'], cwd=d)
     git('clean', '-fdq', cwd=d)      # drop earlier patch results; nested repos (ikd-Tree) are kept by git clean -f
     head = git('rev-parse', 'HEAD', cwd=d)
