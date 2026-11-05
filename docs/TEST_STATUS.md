@@ -1,3 +1,15 @@
+## 2026-11-05: free 3 m, D-05 offline
+
+| Проверка | Среда | Результат |
+| --- | --- | --- |
+| E2E-02 NavigateToPose 3 м, SpeedLimit 0.20, через GC | X2 | SUCCEEDED (60 с), качество не принято: перелёт 0.19 м, разворотов 4 |
+| SL0.20 free 3 m (17:00 до перезапуска адаптера) | X2 | FAIL: цель не завершена, 70 с остановка поворота, yaw-loop неактивен |
+| qazbot_approach_governor unit (18) / coverage core | ПК/X2 offline | 18 PASS / 94.6 % |
+| governor simulation regression (7, data-derived plant) | offline | 7 PASS; success 142→153/200 при боковой ошибке 0.12 м |
+| governor node launch test (3) | offline, domain 79 | 3 PASS |
+| Motion Adapter regression (50) | offline | 50 PASS (код не менялся) |
+| Физическая проверка governor | X2 | NOT RUN (не установлен) |
+
 ## 2026-11-03 preservation and V continuation
 
 Current source/deploy audit, backup scope, remote verification, fresh 11-test result and corrected C1/C2 analysis: [preservation report](evidence/x2_preservation_20261103/REPORT.md). Current source snapshot branch: `robot/preservation-20261103`. D-05 and D-07 remain OPEN; full V hardware/replay validation is incomplete. No production logic or running nodes were changed. Historical entries below retain their original dates.

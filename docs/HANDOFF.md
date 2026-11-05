@@ -1,3 +1,11 @@
+## 2026-11-05 вечер: C++ projector на роботе, E2E-02 (3 м) SUCCEEDED, D-05 governor подготовлен офлайн
+
+- Robot runtime (не Git): C++ projector из `9417bed` (z_min −0.65) развёрнут; Motion Adapter перезапущен 17:00 с `odom_topic=/qazbot_lio/odom_level` (yaw-loop P20/P23 получает свежие данные, stale 0), регистрация ENABLE. Production-код больше не менялся; проверить живые PID.
+- E2E-02 (свободная прямая 3 м, SpeedLimit 0.20, через GC): NavigateToPose SUCCEEDED за 60 с, но качество НЕ принято: перелёт цели и циклические развороты. Результат: [20261105_e2e02_free3m.md](results/20261105_e2e02_free3m.md) (ветка `feat/projector-switch-prep`, SHA 4329077); bag lossless: [evidence/e2e02_20261105](evidence/e2e02_20261105/README.md) (ветка `feat/d05-approach-governor`).
+- Первопричина (уточнена): MC ~0.5 м/с при cmd 0.2, задержка 0.4–0.5 с, выбег 0.07–0.31 м; боковая ошибка 0.10–0.18 м > допуск 0.10 м → RPP выбирает rotate-to-path и разворачивается. Подробно: [20261105_d05_governor.md](results/20261105_d05_governor.md).
+- Подготовлено (НЕ установлено): C++ пакет `qazbot_approach_governor` (ветка `feat/d05-approach-governor`): только уменьшает vx при остатке пути ≤ предсказанного тормозного пути. Один недостаток: один governor проблему не закрывает (боковая ошибка). Следующий шаг — эксперименты E1/E2 из отчёта и решение оператора по боковой ошибке; установка/движение только по отдельному разрешению.
+- Не менять: xy/yaw tolerance, planner, AMCL, costmap, MC arbitration, GC, Trust.
+
 ## 2026-11-03 preservation and V continuation
 
 Current source/deploy audit, backup scope, remote verification, fresh 11-test result and corrected C1/C2 analysis: [preservation report](evidence/x2_preservation_20261103/REPORT.md). Current source snapshot branch: `robot/preservation-20261103`. D-05 and D-07 remain OPEN; full V hardware/replay validation is incomplete. No production logic or running nodes were changed. Historical entries below retain their original dates.
