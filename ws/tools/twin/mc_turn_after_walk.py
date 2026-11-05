@@ -14,7 +14,7 @@ from nav_msgs.msg import Odometry
 from tf2_msgs.msg import TFMessage
 from aimdk_msgs.msg import McLocomotionVelocity,McInputAction,McCommonState
 from aimdk_msgs.srv import SetMcInputSource
-ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT/'ws/src/navigation'))
+ROOT=Path(__file__).resolve().parents[3];sys.path.insert(0,str(ROOT/'ws/src/navigation'))
 from control_geometry import transform
 
 ap=argparse.ArgumentParser();ap.add_argument('output');ap.add_argument('--angular',type=float,default=-.5);ap.add_argument('--kick',type=float,default=0.);ap.add_argument('--kick-seconds',type=float,default=1.);ap.add_argument('--target-deg',type=float);ap.add_argument('--lead-time',type=float,default=.16);ap.add_argument('--tolerance',type=float,default=.06);ap.add_argument('--turn-seconds',type=float,default=12.);ap.add_argument('--adaptive-finish',action='store_true');ap.add_argument('--adapter-zero-burst',action='store_true');ap.add_argument('--walk-speed',type=float,default=.3);ap.add_argument('--walk-seconds',type=float,default=3.);ap.add_argument('--walk-only',action='store_true');a=ap.parse_args()

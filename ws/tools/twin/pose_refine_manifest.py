@@ -2,7 +2,7 @@
 """Fingerprint the simulation-only refinement plugin and its source."""
 import argparse,hashlib,json
 from pathlib import Path
-ROOT=Path(__file__).resolve().parents[2]
+ROOT=Path(__file__).resolve().parents[3]
 ap=argparse.ArgumentParser();ap.add_argument('--write',action='store_true');a=ap.parse_args()
 prefix=ROOT/'runtime_x86/pose_refine_ws/install/qazbot_pose_refine'
 library=prefix/'lib/libqazbot_pose_refine.so';manifest=prefix/'qazbot_pose_refine.json'

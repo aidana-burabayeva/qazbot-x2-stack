@@ -6,7 +6,7 @@ import argparse,ast,copy,json,math
 from enum import Enum
 from pathlib import Path
 from types import SimpleNamespace as S
-ROOT=Path(__file__).resolve().parents[2]
+ROOT=Path(__file__).resolve().parents[3]
 SNAPSHOT=ROOT/'vendor/review/raicom2026-agibot-X2/a97761820b398b6cab12b632ce9f313c394eeb7e'
 p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);a=p.parse_args()
 

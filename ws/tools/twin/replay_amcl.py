@@ -39,7 +39,7 @@ from sensor_msgs.msg import LaserScan
 from std_msgs.msg import String
 from tf2_msgs.msg import TFMessage
 
-root = Path(__file__).resolve().parents[2]
+root = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(root / 'ws/src/navigation'))
 from loc_trust import TrustConfig  # noqa: E402
 
@@ -157,7 +157,7 @@ def shift(stamp, d):
 
 result = {}
 try:
-    start('amcl', ['ros2', 'launch', str(root / 'tools/twin/amcl_sim.launch.py'), f'ns:={ns}', f'scan_topic:=/{ns}/scan',
+    start('amcl', ['ros2', 'launch', str(root / 'ws/tools/twin/amcl_sim.launch.py'), f'ns:={ns}', f'scan_topic:=/{ns}/scan',
                    f'map_yaml:={map_dir / "map.yaml"}'])
     end = time.monotonic() + 60
     while not amcl_state.service_is_ready():

@@ -5,7 +5,7 @@ Publishes only isolated probe TF/odometry/scan, never motion commands.
 import argparse,json,math,os,sys,threading,time
 from pathlib import Path
 if any(os.environ.get(k)!=v for k,v in {'QAZBOT_SIM':'1','ROS_DOMAIN_ID':'87','ROS_LOCALHOST_ONLY':'1'}.items()):raise RuntimeError('isolated SIM only')
-ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT/'ws/src/navigation'))
+ROOT=Path(__file__).resolve().parents[3];sys.path.insert(0,str(ROOT/'ws/src/navigation'))
 import rclpy
 from rclpy.node import Node
 from rclpy.executors import SingleThreadedExecutor,ExternalShutdownException

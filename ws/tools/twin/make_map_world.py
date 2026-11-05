@@ -14,7 +14,7 @@ import cv2
 import numpy as np
 import yaml
 
-ROOT=Path(__file__).resolve().parents[2]
+ROOT=Path(__file__).resolve().parents[3]
 DEFAULT_ROBOT=ROOT/'vendor/official/sim/sim_mujoco-x86-v1.0.0-20260522/configuration/robot/lx2501_3_t2d5'
 
 

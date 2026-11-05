@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # All ROS nodes, including RViz, stay inside the network-none twin container.
 set -euo pipefail
-CB="$(cd -P "$(dirname "$0")/../.." && pwd)"
+CB="$(cd -P "$(dirname "$0")/../../.." && pwd)"
 C=${QAZBOT_TWIN_CONTAINER:-qazbot-twin-sim}
 [[ "$C" =~ ^[a-zA-Z0-9_.-]+$ ]] || { echo 'invalid container name' >&2;exit 2; }
 plant=kinematic
@@ -24,10 +24,10 @@ if docker exec "$C" pgrep -f 'test_live_chain.py|interactive_navigation.py|sim_s
 fi
 if [ "$plant" = official ]; then
   if [ ! -f "$CB/runtime_x86/rviz_map_v3/configuration/manifest.json" ]; then
-    python3 "$CB/tools/twin/make_map_world.py" "$CB/ws/src/maps/first_map_nav2_v3/map.yaml" "$CB/runtime_x86/rviz_map_v3/configuration"
+    python3 "$CB/ws/tools/twin/make_map_world.py" "$CB/ws/src/maps/first_map_nav2_v3/map.yaml" "$CB/runtime_x86/rviz_map_v3/configuration"
   fi
   QAZBOT_TWIN_CONTAINER="$C" QAZBOT_TWIN_MODEL=map_world QAZBOT_SIM_CONFIG=/workspace/control_backend/runtime_x86/rviz_map_v3/configuration \
-    "$CB/tools/twin/docker/sim_restart.sh" "rviz_$(date +%Y%m%d_%H%M%S)"
+    "$CB/docker/twin/sim_restart.sh" "rviz_$(date +%Y%m%d_%H%M%S)"
 else
   # Virtual MC has the same service/topic names; only one MC may own this isolated graph.
   for pattern in inside_sim.sh start_sim.sh aima-sim-app inside_mc.sh em_run.sh aima-mc-app-main; do
@@ -37,10 +37,10 @@ else
   for pattern in aima-sim-app aima-mc-app-main iox-roudi; do docker exec "$C" pkill -9 -f "$pattern" || true;done
 fi
 # docker exec without a TTY does not reliably forward Ctrl+C to its Python child.
-cleanup() { docker exec "$C" pkill -INT -f '^python3 /workspace/control_backend/tools/twin/interactive_navigation.py( |$)' >/dev/null 2>&1 || true; }
+cleanup() { docker exec "$C" pkill -INT -f '^python3 /workspace/control_backend/ws/tools/twin/interactive_navigation.py( |$)' >/dev/null 2>&1 || true; }
 trap cleanup EXIT
 extra_env=()
 if [ -n "${QAZBOT_SIM_MC_LINEAR_DECEL:-}" ]; then extra_env=(-e "QAZBOT_SIM_MC_LINEAR_DECEL=$QAZBOT_SIM_MC_LINEAR_DECEL"); fi
 docker exec -i "${extra_env[@]}" -e QAZBOT_SIM_DDS_UDP_ONLY="${QAZBOT_SIM_DDS_UDP_ONLY:-0}" -e QAZBOT_SIM_MC_WALK="${QAZBOT_SIM_MC_WALK:-0}" -e QAZBOT_SIM_MC_WALK_LEAD="${QAZBOT_SIM_MC_WALK_LEAD:-0.45}" -e QAZBOT_SIM_POSE_REFINE="${QAZBOT_SIM_POSE_REFINE:-0}" -e QAZBOT_SIM_MC_TURN="${QAZBOT_SIM_MC_TURN:-0}" -e QAZBOT_SIM_EXACT_GOAL="${QAZBOT_SIM_EXACT_GOAL:-0}" -e LIBGL_ALWAYS_SOFTWARE=true -e LIBGL_DRI3_DISABLE=1 -e QT_X11_NO_MITSHM=1 "$C" \
-  /workspace/control_backend/tools/twin/docker/env_container.sh python3 \
-  /workspace/control_backend/tools/twin/interactive_navigation.py "${args[@]}"
+  /workspace/control_backend/docker/twin/env_container.sh python3 \
+  /workspace/control_backend/ws/tools/twin/interactive_navigation.py "${args[@]}"

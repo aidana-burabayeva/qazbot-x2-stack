@@ -14,7 +14,7 @@ import subprocess
 import time
 from analyze_navigation_accuracy import analyze
 
-ROOT=Path(__file__).resolve().parents[2]
+ROOT=Path(__file__).resolve().parents[3]
 ap=argparse.ArgumentParser();ap.add_argument('targets',type=Path);ap.add_argument('output',type=Path)
 ap.add_argument('--containers',nargs='+',required=True);ap.add_argument('--prefix',required=True)
 ap.add_argument('--transform-tolerance',type=float)
@@ -32,13 +32,13 @@ def run_group(pair):
     for target in targets:
         name=f"{a.prefix}_{target['index']:02d}";session=ROOT/'tests/integration_results'/name
         if session.exists():raise RuntimeError('refusing overwrite '+str(session))
-        log=a.output/(name+'.log');command=[str(ROOT/'tools/twin/run_interactive.sh'),'--no-rviz','--name',name,'--test-timeout',str(a.test_timeout),'--test-pose',*[str(v) for v in target['goal']]]
+        log=a.output/(name+'.log');command=[str(ROOT/'ws/tools/twin/run_interactive.sh'),'--no-rviz','--name',name,'--test-timeout',str(a.test_timeout),'--test-pose',*[str(v) for v in target['goal']]]
         if a.transform_tolerance is not None:command+=['--amcl-transform-tolerance',str(a.transform_tolerance)]
         if a.laser_model is not None:command+=['--amcl-laser-model',a.laser_model]
         if a.max_beams is not None:command+=['--amcl-max-beams',str(a.max_beams)]
         env=dict(os.environ,QAZBOT_TWIN_CONTAINER=worker,QAZBOT_SIM_MC_TURN='0',QAZBOT_SIM_MC_WALK='0',QAZBOT_SIM_POSE_REFINE='1' if a.pose_refine else '0',QAZBOT_SIM_EXACT_GOAL='1' if a.exact_goal else '0')
         env.pop('QAZBOT_SIM_MC_LINEAR_DECEL', None)
-        source_files=['tools/twin/dds_sim_udp_loopback.xml' if env.get('QAZBOT_SIM_DDS_UDP_ONLY')=='1' else 'tools/twin/dds_sim_loopback.xml','tools/twin/docker/env_container.sh','tools/twin/interactive_navigation.py','ws/src/navigation/nav_full.launch.py','ws/src/navigation/nav_control.launch.py','ws/src/navigation/bt/navigate_to_pose.xml','tools/twin/amcl_sim.launch.py','ws/src/navigation/goal_coordinator.py','ws/src/navigation/goal_alignment_watch.py','ws/src/navigation/localization_trust_node.py','ws/src/navigation/source_stamp.py']
+        source_files=['ws/tools/twin/dds_sim_udp_loopback.xml' if env.get('QAZBOT_SIM_DDS_UDP_ONLY')=='1' else 'ws/tools/twin/dds_sim_loopback.xml','docker/twin/env_container.sh','ws/tools/twin/interactive_navigation.py','ws/src/navigation/nav_full.launch.py','ws/src/navigation/nav_control.launch.py','ws/src/navigation/bt/navigate_to_pose.xml','ws/tools/twin/amcl_sim.launch.py','ws/src/navigation/goal_coordinator.py','ws/src/navigation/goal_alignment_watch.py','ws/src/navigation/localization_trust_node.py','ws/src/navigation/source_stamp.py']
         if a.pose_refine:source_files+=['candidates/nav2_pose_refine/controller.cpp','runtime_x86/pose_refine_ws/install/qazbot_pose_refine/lib/libqazbot_pose_refine.so']
         if a.exact_goal:source_files+=['candidates/nav2_exact_goal/goal_endpoint.patch','runtime_x86/exact_goal_ws/install/nav2_smac_planner/lib/libnav2_smac_planner_2d.so']
         hashes={p:hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in source_files}

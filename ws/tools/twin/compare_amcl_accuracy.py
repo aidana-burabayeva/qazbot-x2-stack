@@ -8,7 +8,7 @@ import argparse,copy,json,math,os,signal,subprocess,sys,time
 from pathlib import Path
 import numpy as np
 if any(os.environ.get(k)!=v for k,v in {'QAZBOT_SIM':'1','ROS_DOMAIN_ID':'87','ROS_LOCALHOST_ONLY':'1'}.items()):raise RuntimeError('isolated SIM only')
-ROOT=Path(__file__).resolve().parents[2];sys.path[:0]=[str(ROOT/'ws/src/navigation'),str(ROOT/'tools/twin')]
+ROOT=Path(__file__).resolve().parents[3];sys.path[:0]=[str(ROOT/'ws/src/navigation'),str(ROOT/'ws/tools/twin')]
 import loc_trust as L
 from sensor_model import WedgeRays
 import rclpy
@@ -24,7 +24,7 @@ from std_srvs.srv import Empty
 ap=argparse.ArgumentParser();ap.add_argument('trace',type=Path);ap.add_argument('output',type=Path);ap.add_argument('--refine',action='store_true');ap.add_argument('--probability-model',action='store_true');args=ap.parse_args()
 args.output.mkdir();source=[json.loads(s) for s in args.trace.read_text().splitlines()]
 source=[r for r in source if r.get('truth')];ts=np.array([r['t']-source[0]['t'] for r in source]);poses=np.array([r['truth'] for r in source]);poses[:,2]=np.unwrap(poses[:,2])
-profile=json.loads((ROOT/'tools/twin/profiles/robot66_observation_v1.json').read_text());rays=WedgeRays(profile);grid=L.OccGrid.from_pgm(str(ROOT/'ws/src/maps/first_map_nav2_v3/map.yaml'))
+profile=json.loads((ROOT/'ws/tools/twin/profiles/robot66_observation_v1.json').read_text());rays=WedgeRays(profile);grid=L.OccGrid.from_pgm(str(ROOT/'ws/src/maps/first_map_nav2_v3/map.yaml'))
 variants=dict(baseline={},updates=dict(update_min_d=.05,update_min_a=.05),beams60=dict(max_beams=60),reference_sensor=dict(z_hit=.9,laser_likelihood_max_dist=4.))
 if args.refine:
     variants=dict(updates=dict(update_min_d=.05,update_min_a=.05),sigma010=dict(update_min_d=.05,update_min_a=.05,sigma_hit=.1),sigma005=dict(update_min_d=.05,update_min_a=.05,sigma_hit=.05),updates_ref=dict(update_min_d=.05,update_min_a=.05,z_hit=.9,laser_likelihood_max_dist=4.))
@@ -71,7 +71,7 @@ try:
         pubs=dict(tf=n.create_publisher(TFMessage,f'/{ns}/tf',20),scan=n.create_publisher(LaserScan,f'/{ns}/scan',10),seed=n.create_publisher(PoseWithCovarianceStamped,f'/{ns}/initialpose',10))
         publishers[key]=pubs;n.create_subscription(PoseWithCovarianceStamped,f'/{ns}/amcl_pose',lambda m,k=key:receive(k,m),10)
         log=(args.output/(key+'.log')).open('w');logs.append(log)
-        processes.append(subprocess.Popen(['ros2','launch',str(ROOT/'tools/twin/amcl_sim.launch.py'),f'ns:={ns}',f'scan_topic:=/{ns}/scan',f'map_yaml:={ROOT}/ws/src/maps/first_map_nav2_v3/map.yaml'],stdout=log,stderr=subprocess.STDOUT,start_new_session=True))
+        processes.append(subprocess.Popen(['ros2','launch',str(ROOT/'ws/tools/twin/amcl_sim.launch.py'),f'ns:={ns}',f'scan_topic:=/{ns}/scan',f'map_yaml:={ROOT}/ws/src/maps/first_map_nav2_v3/map.yaml'],stdout=log,stderr=subprocess.STDOUT,start_new_session=True))
         client=n.create_client(GetState,f'/{ns}/amcl/get_state');deadline=time.monotonic()+60
         while call(client,GetState.Request()).current_state.id!=3:
             if time.monotonic()>deadline:raise RuntimeError('not active '+key)

@@ -6,7 +6,7 @@ Skill Claude Code для приёма результатов лаборатор�
 ## Кто и как запускает
 
 - Только оператор: `disable-model-invocation: true`, модель не вызывает skill сама и не видит его в списке skills.
-- Запуск: открыть Claude Code в checkout `qazbot-x2-stack` (ветка, содержащая `.claude/skills/robot-sync-validate/`) и ввести `/robot-sync-validate`.
+- Запуск: открыть Claude Code в checkout `control_backend` (бывш. `qazbot-x2-stack`) (ветка, содержащая `.claude/skills/robot-sync-validate/`) и ввести `/robot-sync-validate`.
 - Команда видна только в сессии, запущенной из этого checkout; в `~/control_backend` (deployed, без `.git`) её нет.
 
 ## Что команда делает и чего не делает

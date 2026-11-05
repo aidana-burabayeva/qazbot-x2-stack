@@ -14,7 +14,7 @@ from collections import deque
 import numpy as np
 if any(os.environ.get(k)!=v for k,v in {'QAZBOT_SIM':'1','ROS_DOMAIN_ID':'87','ROS_LOCALHOST_ONLY':'1'}.items()):
     raise RuntimeError('isolated SIM only')
-ROOT=Path(__file__).resolve().parents[2]
+ROOT=Path(__file__).resolve().parents[3]
 sys.path[:0]=[str(ROOT/'tests/nav_e2e'),str(ROOT/'ws/src/navigation')]
 import rclpy
 from rclpy.node import Node

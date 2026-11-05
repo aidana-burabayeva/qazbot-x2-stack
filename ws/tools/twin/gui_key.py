@@ -3,7 +3,7 @@
 Usage: gui_key.py KEYSYM   e.g. BackSpace (MuJoCo: reset simulation), space (pause/run). Host-side, display only."""
 import sys, time
 import pathlib
-sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / 'runtime_x86/run/pylib'))   # pip install --target runtime_x86/run/pylib python-xlib
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[3] / 'runtime_x86/run/pylib'))   # pip install --target runtime_x86/run/pylib python-xlib
 from Xlib import X, XK, display
 from Xlib.ext import xtest
 d = display.Display()

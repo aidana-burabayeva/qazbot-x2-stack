@@ -9,7 +9,7 @@ from geometry_msgs.msg import TransformStamped
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import LaserScan
 from tf2_msgs.msg import TFMessage
-ROOT=Path(__file__).resolve().parents[2];NAV=ROOT/'ws/src/navigation'
+ROOT=Path(__file__).resolve().parents[3];NAV=ROOT/'ws/src/navigation'
 p=argparse.ArgumentParser();p.add_argument('output',type=Path);p.add_argument('--source',type=Path,default=NAV/'localization_trust_node.py');p.add_argument('--cycles',type=int,default=20);a=p.parse_args();a.output.mkdir(exist_ok=False,parents=True)
 rclpy.init();node=rclpy.create_node('trust_shutdown_probe',namespace='shutdown_probe');pubs=[node.create_publisher(TFMessage,'tf',10),node.create_publisher(Odometry,'odom',qos_profile_sensor_data),node.create_publisher(LaserScan,'scan',qos_profile_sensor_data)];rows=[]
 def feed():

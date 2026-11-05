@@ -3,7 +3,7 @@
 import argparse,json,math,sys
 from pathlib import Path
 import numpy as np
-ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT/'ws/src/navigation'))
+ROOT=Path(__file__).resolve().parents[3];sys.path.insert(0,str(ROOT/'ws/src/navigation'))
 from loc_trust import OccGrid,wrap
 ap=argparse.ArgumentParser();ap.add_argument('batch',type=Path);ap.add_argument('targets',type=Path);ap.add_argument('--prefix',default='random_base');a=ap.parse_args()
 targets=json.loads(a.targets.read_text());grid=OccGrid.from_pgm(str(ROOT/'ws/src/maps/first_map_nav2_v3/map.yaml'));rows=[]

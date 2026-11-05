@@ -24,7 +24,7 @@ from geometry_msgs.msg import PoseStamped
 from std_msgs.msg import String
 from std_srvs.srv import Trigger
 
-ROOT=Path(__file__).resolve().parents[2]
+ROOT=Path(__file__).resolve().parents[3]
 ap=argparse.ArgumentParser();ap.add_argument('session',type=Path);ap.add_argument('output',type=Path)
 ap.add_argument('--count',type=int,default=8);ap.add_argument('--seed',type=int,default=20261026)
 ap.add_argument('--timeout',type=float,default=240.)

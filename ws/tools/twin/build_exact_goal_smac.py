@@ -4,7 +4,7 @@ import difflib,hashlib,json,os,shutil,subprocess
 from pathlib import Path
 if any(os.environ.get(k)!=v for k,v in {'QAZBOT_SIM':'1','ROS_DOMAIN_ID':'87','ROS_LOCALHOST_ONLY':'1'}.items()):
     raise RuntimeError('isolated simulation only')
-ROOT=Path(__file__).resolve().parents[2]
+ROOT=Path(__file__).resolve().parents[3]
 source=ROOT/'runtime_x86/build_ws/src/smac_only/nav2_smac_planner'
 workspace=ROOT/'runtime_x86/exact_goal_ws';dest=workspace/'src/nav2_smac_planner'
 relative=Path('src/smac_planner_2d.cpp');before=(source/relative).read_text()

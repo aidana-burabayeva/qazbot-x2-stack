@@ -1,29 +1,33 @@
-# bytecode / backups
-__pycache__/
-*.pyc
-*.bak
-*.bak_*
-*.orig
-# build / runtime artifacts
+# colcon / python build products (build in a directory OUTSIDE the repo; these catch accidents)
 build/
 install/
 log/
-logs/
-runtime/
-runtime_x86
-runtime_arm64.tar.gz
-vendor
-vendor_snapshots/
-candidates/
+build_*/
+__pycache__/
+*.pyc
 .pytest_cache/
-fastdds.log
-# Raw/derived bags remain ignored; approved lossless .db3.gz evidence is tracked under docs/evidence.
-# Existing large historical evidence and runtime archives stay excluded.
-docs/roadmap_v13/evidence/
-tests/integration_results/
+.coverage
+# task registry (docker/tools/task_register.sh) and third-party checkouts/builds of ws/third_party
+.task/
+ws/third_party/src/
+ws/third_party/build/
+ws/third_party/install/
+# data, evidence and backups never live in this repository (archive: /home/agi/qazbot_archive/<sha>/)
+*.bag
 *.db3
 *.mcap
 *.npy
 *.tar.gz
 *.tgz
 *.zip
+*.bak*
+*.orig
+core
+core.[0-9]*
+fastdds.log
+logs/
+runtime/
+runtime_x86
+candidates/
+vendor
+vendor_snapshots/

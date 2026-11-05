@@ -38,7 +38,7 @@ def extract(bags):
         db.close()
     period={k:quantiles(v) for k,v in periods.items()};age={k:quantiles(v) for k,v in ages.items()}
     probability=np.mean(masks,axis=0)
-    config_path=Path(__file__).resolve().parents[2]/'ws/src/lio/x2.yaml'
+    config_path=Path(__file__).resolve().parents[3]/'ws/src/lio/x2.yaml'
     mapping=yaml.safe_load(config_path.read_text())['/**']['ros__parameters']['mapping']
     imu_lidar=np.eye(4);imu_lidar[:3,:3]=np.array(mapping['extrinsic_R']).reshape(3,3);imu_lidar[:3,3]=mapping['extrinsic_T']
     return dict(imu_from_lidar=imu_lidar.tolist(),snapshot_scope='Recorded bags; current live .66 settings not verified',lio_config_sha256=hashlib.sha256(config_path.read_bytes()).hexdigest(),schema=1,id='robot66_observation_v1',qualification='Partial sensor parity; NOT validated dynamics or simulated FAST-LIO.',

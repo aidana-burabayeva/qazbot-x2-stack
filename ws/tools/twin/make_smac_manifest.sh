@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Writes the manifest nav_full.launch.py checks (sha256 of the locally built, bounds-patched Smac library).
 set -e
-TWIN_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
+TWIN_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../../.." && pwd)"
 P="$TWIN_ROOT/runtime_x86/build_ws/install/nav2_smac_planner"
 python3 - "$P" "$TWIN_ROOT/candidates/nav2_smac_bounds/bounds.patch" <<'PY'
 import hashlib, json, sys

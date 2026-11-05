@@ -16,7 +16,7 @@ import time
 
 if (os.environ.get('QAZBOT_SIM'),os.environ.get('ROS_DOMAIN_ID'),os.environ.get('ROS_LOCALHOST_ONLY'))!=('1','87','1'):
     raise RuntimeError('isolated SIM only')
-ROOT=Path(__file__).resolve().parents[2];NAV=ROOT/'ws/src/navigation'
+ROOT=Path(__file__).resolve().parents[3];NAV=ROOT/'ws/src/navigation'
 sys.path[:0]=[str(ROOT/'tests/nav_e2e'),str(NAV)]
 import numpy as np
 import rclpy
@@ -181,7 +181,7 @@ class FrontScan:
     """
     def init_scan(self):
         from sensor_model import WedgeRays
-        self.scan_config=json.loads((ROOT/'tools/twin/profiles/robot66_observation_v1.json').read_text())
+        self.scan_config=json.loads((ROOT/'ws/tools/twin/profiles/robot66_observation_v1.json').read_text())
         self.rays=WedgeRays(self.scan_config);self.last_scan=float('-inf')
         self.scan_timer.cancel()
         self.scan_timer=self.create_timer(1/self.scan_config['model']['scan_hz'],self.pub_scan)
@@ -278,7 +278,7 @@ def main():
             # Unknown is a planning constraint, not a fictitious physical wall.
             motion=L.OccGrid.from_pgm(str(MAP));motion.dist[[0,-1],:]=0;motion.dist[:,[0,-1]]=0
             plant=KinematicPlant(grid,motion)
-            start('virtual_mc',['python3',str(ROOT/'tools/twin/virtual_mc.py'),f'/{NS}/mc_plant_cmd'])
+            start('virtual_mc',['python3',str(ROOT/'ws/tools/twin/virtual_mc.py'),f'/{NS}/mc_plant_cmd'])
         else:
             from mc_plant_bridge import HalPlant
             manifest=json.loads((ROOT/'runtime_x86/rviz_map_v3/configuration/manifest.json').read_text())
@@ -294,7 +294,7 @@ def main():
             class OfficialFrontPlant(FrontScan,HalPlant):pass
             plant=OfficialFrontPlant(NS,grid=grid,start=START,fixed_world=True);plant.init_scan()
         n.plant=plant;ex.add_node(plant);wait(lambda:n.truth is not None)
-        start('amcl',['ros2','launch',str(ROOT/'tools/twin/amcl_sim.launch.py'),f'ns:={NS}',f'scan_topic:=/{NS}/scan',f'map_yaml:={MAP}'])
+        start('amcl',['ros2','launch',str(ROOT/'ws/tools/twin/amcl_sim.launch.py'),f'ns:={NS}',f'scan_topic:=/{NS}/scan',f'map_yaml:={MAP}'])
         start('trust',['python3',str(NAV/'localization_trust_node.py'),'--ros-args','-r',f'__ns:=/{NS}',
             '-r',f'/qazbot_d1_map/tf:=/{NS}/tf','-r',f'/qazbot_lio/odom_level:=/{NS}/odom','-r',f'/qazbot_lio/scan:=/{NS}/scan',
             '-p',f'map_yaml:={MAP}','-p',f'expected_map_sha256:={pose_store.map_image_sha256(str(MAP))}'])
@@ -334,7 +334,7 @@ def main():
         response=call(n.create_client(Trigger,'motion_adapter/register'))
         if not response.success:raise RuntimeError(response.message)
         wait(lambda:n.coord.get('ready') and n.client.server_is_ready() and n.pose() is not None,120);spin(1);n.ready()
-        if not args.no_rviz:start('rviz',['rviz2','-d',str(ROOT/'tools/twin/interactive.rviz'),'--ros-args','-r',f'/tf:=/{NS}/tf','-r',f'/tf_static:=/{NS}/tf_static'])
+        if not args.no_rviz:start('rviz',['rviz2','-d',str(ROOT/'ws/tools/twin/interactive.rviz'),'--ros-args','-r',f'/tf:=/{NS}/tf','-r',f'/tf_static:=/{NS}/tf_static'])
         print('READY: RViz 2D Goal Pose -> outbound -> automatic return; SIM only; plant='+args.plant,flush=True)
         if args.test_goal is not None or args.test_pose is not None or args.test_turn_deg is not None:
             target=(n.home[0],n.home[1],L.wrap(n.home[2]+math.radians(args.test_turn_deg))) if args.test_turn_deg is not None else (args.test_pose if args.test_pose is not None else (n.home[0]+args.test_goal,n.home[1],n.home[2]))

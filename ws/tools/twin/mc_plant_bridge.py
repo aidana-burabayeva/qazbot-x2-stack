@@ -18,8 +18,8 @@ import sys
 from pathlib import Path
 
 if os.environ.get('QAZBOT_SIM') != '1' or os.environ.get('ROS_DOMAIN_ID') != '87' or os.environ.get('ROS_LOCALHOST_ONLY') != '1':
-    raise RuntimeError('plant bridge runs only in the isolated SIM (source tools/twin/env_sim.sh or env_container.sh)')
-ROOT = Path(__file__).resolve().parents[2]
+    raise RuntimeError('plant bridge runs only in the isolated SIM (source ws/tools/twin/env_sim.sh or env_container.sh)')
+ROOT = Path(__file__).resolve().parents[3]
 sys.path[:0] = [str(ROOT / 'tests/nav_e2e'), str(ROOT / 'tests/controller_dry'), str(ROOT / 'ws/src/navigation')]
 
 import rclpy

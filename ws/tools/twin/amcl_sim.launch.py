@@ -8,7 +8,7 @@ import os
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(os.path.dirname(HERE))                 # control_backend/
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))  # repo root (ws/tools/twin -> root)
 sys.path.insert(0, os.path.join(ROOT, 'ws/src/navigation'))
 from launch_stagger import staggered  # noqa: E402
 from launch import LaunchDescription

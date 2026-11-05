@@ -18,7 +18,7 @@ import subprocess
 import time
 import numpy as np
 
-ROOT=Path(__file__).resolve().parents[2]
+ROOT=Path(__file__).resolve().parents[3]
 MC=ROOT/'vendor/official/mc/mc-x86-v1.0.0-20260522'
 SIM=ROOT/'vendor/official/sim/sim_mujoco-x86-v1.0.0-20260522'
 
@@ -105,7 +105,7 @@ def main():
         (run/'startup_logs').mkdir()
     else:
         out=archive;out.mkdir();runtime=ROOT/'runtime_x86/turn_grid_workers'/a.name;runtime.mkdir(parents=True,exist_ok=False)
-    sources={str(p.relative_to(ROOT)):digest(p) for p in [ROOT/'tools/twin/mc_turn_after_walk.py',ROOT/'tools/twin/turn_regulator.py']}
+    sources={str(p.relative_to(ROOT)):digest(p) for p in [ROOT/'ws/tools/twin/mc_turn_after_walk.py',ROOT/'ws/tools/twin/turn_regulator.py']}
     resumed=[]
     if a.resume:
         prior=json.loads((a.resume/'manifest.json').read_text())
@@ -156,7 +156,7 @@ def main():
             if a.scratch_root:
                 env.update(QAZBOT_TWIN_LOG_DIR='/workspace/turn_sweep/startup_logs',QAZBOT_TWIN_HOST_LOG_DIR=str(run/'startup_logs'))
             with (out/f'worker{index}_startup.log').open('w') as log:
-                ready=subprocess.run([str(ROOT/'tools/twin/docker/sim_restart.sh'),f'{a.name}_w{index}'],env=env,stdout=log,stderr=subprocess.STDOUT,timeout=240)
+                ready=subprocess.run([str(ROOT/'docker/twin/sim_restart.sh'),f'{a.name}_w{index}'],env=env,stdout=log,stderr=subprocess.STDOUT,timeout=240)
             if ready.returncode:raise RuntimeError('MC/sim startup failed')
             print(f'worker {index} READY ({name})',flush=True)
             while True:
@@ -165,8 +165,8 @@ def main():
                 result=dict(case,worker=index,container=name)
                 destination=out/case['id']
                 inside='/workspace/turn_sweep/results/'+case['id'] if a.scratch_root else '/workspace/control_backend/'+str(destination.relative_to(ROOT))
-                argv=['docker','exec',name,'/workspace/control_backend/tools/twin/docker/env_container.sh','python3',
-                      '/workspace/control_backend/tools/twin/mc_turn_after_walk.py',inside,'--angular','.8','--target-deg',str(case.get('target_deg',0)),
+                argv=['docker','exec',name,'/workspace/control_backend/docker/twin/env_container.sh','python3',
+                      '/workspace/control_backend/ws/tools/twin/mc_turn_after_walk.py',inside,'--angular','.8','--target-deg',str(case.get('target_deg',0)),
                       '--lead-time',str(case.get('lead_time',.2)),'--tolerance',str(a.tolerance),'--turn-seconds',str(a.turn_seconds)]
                 if 'walk_speed' in case:argv+=['--walk-only','--walk-speed',str(case['walk_speed']),'--walk-seconds',str(a.walk_seconds)]
                 if a.adaptive_finish:argv+=['--adaptive-finish']

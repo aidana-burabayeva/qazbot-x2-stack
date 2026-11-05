@@ -1,3 +1,14 @@
+# Документация control_backend
+
+> **Консолидация 2026-11-05.** Исторические документы ниже ссылаются на раскладку до консолидации. Соответствие путей:
+> `ws/src/navigation/*.launch.py` → `ws/src/qazbot_localization/launch/localization.launch.py`, `ws/src/qazbot_navigation/launch/nav_*.launch.py`;
+> `ws/src/navigation/{localization_trust_node,loc_trust,pose_store,seed_pose,source_stamp,launch_stagger}.py` → `qazbot_localization/scripts/`;
+> `goal_coordinator.py`, `goal_alignment_watch.py`, `bt/`, `rviz/` → `qazbot_navigation/`; `x2_motion_adapter.py` → `qazbot_motion_control/scripts/`;
+> `env.sh`, `aimdk_env.sh`, `run_*.sh`, `dds_*.xml` → `qazbot_bringup/`; `ws/src/lio/x2.yaml` → `qazbot_localization/config/x2.yaml`;
+> `ws/src/maps/*` → `qazbot_maps/maps/*`; `tools/*` → `ws/tools/*`; `tests/*` → `ws/tests/*` (юнит-тесты → `ws/src/<pkg>/test/`).
+> Удалены: `ws/src/lio/{level_bridge,native_odom*,raw_scan_bridge}.py` (тег `pre-consolidation-fb18dc1`). Доказательства
+> (`docs/evidence`, результаты) — `/home/agi/qazbot_archive/repo_tree_fb18dc1/`. Релизы и откат: [RELEASE.md](RELEASE.md).
+
 # Актуальный статус
 
 См. INTEGRATION_STATUS.md и ../README.md. Некоторые исторические разделы ниже

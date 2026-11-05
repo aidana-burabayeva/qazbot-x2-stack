@@ -16,7 +16,7 @@ from rclpy.time import Time
 from tf2_ros import Buffer,TransformException
 from tf2_msgs.msg import TFMessage
 from nav_msgs.msg import Odometry
-ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT/'ws/src/navigation'))
+ROOT=Path(__file__).resolve().parents[3];sys.path.insert(0,str(ROOT/'ws/src/navigation'))
 from control_geometry import transform
 
 

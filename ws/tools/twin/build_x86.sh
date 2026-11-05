@@ -3,7 +3,7 @@
 #   aimdk_msgs (official SDK source) and nav2_smac_planner 1.1.20 + QazBot bounds.patch.
 # Output: runtime_x86/build_ws/install (+ Smac manifest checked by nav_full.launch.py). Needs network once (git clone).
 set -eo pipefail   # no -u: ROS setup.bash uses unset variables
-CB="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+CB="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 W="$CB/runtime_x86/build_ws"; mkdir -p "$W/src"
 source /opt/ros/humble/setup.bash
 if [ ! -d "$W/src/aimdk_msgs" ]; then
@@ -15,4 +15,4 @@ if [ ! -d "$W/src/smac_only/nav2_smac_planner" ]; then
   (cd "$W/src/smac_only" && patch -p1 < "$CB/candidates/nav2_smac_bounds/bounds.patch")
 fi
 cd "$W" && colcon build --packages-select aimdk_msgs nav2_smac_planner --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF
-"$CB/tools/twin/make_smac_manifest.sh"
+"$CB/ws/tools/twin/make_smac_manifest.sh"

@@ -11,7 +11,7 @@ from geometry_msgs.msg import PoseStamped,Twist
 from nav_msgs.msg import Odometry
 from nav2_msgs.action import ComputePathToPose
 ap=argparse.ArgumentParser();ap.add_argument('output',type=Path);ap.add_argument('--baseline',action='store_true');a=ap.parse_args();a.output.mkdir()
-ROOT=Path(__file__).resolve().parents[2];m=yaml.safe_load((ROOT/'ws/src/maps/first_map_nav2_v3/map.yaml').read_text());res=m['resolution'];ox,oy,_=m['origin'];cx=ox+math.floor((-1.275-ox)/res)*res;cy=oy+math.floor((-4.825-oy)/res)*res
+ROOT=Path(__file__).resolve().parents[3];m=yaml.safe_load((ROOT/'ws/src/maps/first_map_nav2_v3/map.yaml').read_text());res=m['resolution'];ox,oy,_=m['origin'];cx=ox+math.floor((-1.275-ox)/res)*res;cy=oy+math.floor((-4.825-oy)/res)*res
 rclpy.init();n=Node('exact_goal_plan_probe',namespace='qazbot_sim');client=ActionClient(n,ComputePathToPose,'nav2/compute_path_to_pose');motions=[];truth=[];rows=[]
 n.create_subscription(Twist,'cmd_vel_authorized',lambda v:motions.append((v.linear.x,v.linear.y,v.angular.z)),10)
 n.create_subscription(Odometry,'model_truth',lambda v:truth.append((v.pose.pose.position.x,v.pose.pose.position.y)),10)
