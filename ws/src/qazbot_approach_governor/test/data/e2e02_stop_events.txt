@@ -1,0 +1,10 @@
+stop t 7.1 v0 0.47 travel 0.16 m in 0.5 s
+stop t 14.9 v0 0.52 travel 0.27 m in 0.7 s
+stop t 23.2 v0 0.44 travel 0.20 m in 0.9 s
+stop t 31.1 v0 0.42 travel 0.07 m in 0.3 s
+stop t 34.7 v0 0.32 travel 0.17 m in 0.7 s
+stop t 40.1 v0 0.78 travel 0.23 m in 0.5 s
+stop t 44.9 v0 0.51 travel 0.78 m in 2.4 s
+stop t 52.7 v0 0.37 travel 0.18 m in 0.9 s
+stop t 56.6 v0 0.78 travel 0.31 m in 0.7 s
+clean events 8, fit d = 0.381 s * v, residual of 0.40 s*v: sd 0.054 max 0.095
