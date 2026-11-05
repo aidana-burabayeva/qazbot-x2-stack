@@ -1,4 +1,4 @@
-"""Parity of the C++ core library against the Python reference candidates/d04/level_bridge.py (D-04 variant C).
+"""Parity of the C++ core library against the Python reference test/reference/level_bridge_d04.py (D-04 variant C).
 
 The recorded fixture (50 clouds, lidar IMU, LIO odometry of bag d04_static_bag_204153) is replayed through
   * the real Python LevelBridge.on_imu / on_odom / on_cloud (called with a stub `self`, as tests/d04/replay_d04.py
@@ -51,7 +51,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, 'tools'))
 import fixture  # noqa: E402
 
-CANDIDATE = os.environ.get('CANDIDATE', '/home/agi/control_backend/candidates/d04/level_bridge.py')
+CANDIDATE = os.environ.get('CANDIDATE', os.path.join(HERE, 'reference', 'level_bridge_d04.py'))
 FIXTURE = os.environ.get('FIXTURE', os.path.join(HERE, 'data', 'static_204153_w50.bin'))
 PARITY_DUMP = os.environ.get('PARITY_DUMP', '')
 EPS = 2.0 ** -53

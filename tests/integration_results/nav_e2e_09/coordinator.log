@@ -1,9 +1,0 @@
-[WARN] [1792573687.405402045] [qazbot_e2e.goal_coordinator]: Goal rejected: busy=False latched=True trust=True zero=True nav2_ready=True
-Traceback (most recent call last):
-  File "/home/agi/control_backend/ws/src/navigation/goal_coordinator.py", line 131, in <module>
-    if __name__=='__main__':main()
-  File "/home/agi/control_backend/ws/src/navigation/goal_coordinator.py", line 130, in main
-    finally:node.gate=False;node.pub.publish(Twist());node.destroy_node();rclpy.try_shutdown()
-  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/publisher.py", line 70, in publish
-    self.__publisher.publish(msg)
-rclpy._rclpy_pybind11.RCLError: Failed to publish: publisher's context is invalid, at /home/run/ros2_humble/src/ros2/rcl/rcl/src/rcl/publisher.c:389

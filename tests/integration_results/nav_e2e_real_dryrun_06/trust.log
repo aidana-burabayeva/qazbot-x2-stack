@@ -1,3 +1,0 @@
-/usr/lib/python3/dist-packages/scipy/__init__.py:146: UserWarning: A NumPy version >=1.17.3 and <1.25.0 is required for this version of SciPy (detected version 1.26.1
-  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
-[INFO] [1792589415.608122772] [qazbot_e2e.localization_trust]: localization_trust started, map=/home/agi/control_backend/ws/src/navigation/../maps/first_map_nav2_v2/map.yaml

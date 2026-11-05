@@ -1,7 +1,0 @@
-{"state": "idle", "reason": "registration_not_requested", "latch": "", "live": true, "mode": "live", "dry_run": false, "mc_source": "rc", "trusted": true, "registration": "not_requested", "registration_error": "", "sdk_service_ready": true, "motion_armed": false, "ready": false, "foreign_publishers": [], "counters": {"saturated": 0, "rejected": 0, "latched": 0, "published": 0}}
----
-
-Endpoint type: PUBLISHER	Node name: soc0_rc3123
-Node namespace: /	Endpoint type: PUBLISHER
-Endpoint type: PUBLISHER	Node name: soc2_interaction_slave1592
-Node namespace: /	Endpoint type: PUBLISHER

@@ -1,2 +1,0 @@
-source /home/agi/control_backend/docs/evidence/latency_20261028_192628/dds_nav_two_iface.xml 29d4c736a364691689ccc8f27c62f566c65af946df1b6fc9dd5ec03ae239ec63
-918f941dd5654a94c4654e3c544ab3f930cc6eacc4f9cbf48fb4b67da534b3a0  /home/agi/control_backend/docs/evidence/nav_bringup_20261028_195035/dds_nav_two_iface_log.xml

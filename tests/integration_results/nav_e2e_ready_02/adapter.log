@@ -1,1 +1,0 @@
-[INFO] [1792648792.026196732] [qazbot_e2e.motion_adapter]: x2_motion_adapter started: live=False cmd_topic=/qazbot_e2e/cmd_vel_authorized source=sdk_qazbot_nav2 priority=30

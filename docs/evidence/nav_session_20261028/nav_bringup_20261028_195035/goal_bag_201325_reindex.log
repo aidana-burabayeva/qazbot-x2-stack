@@ -1,3 +1,0 @@
-[INFO] [1793195169.921427669] [rosbag2_cpp]: Beginning reindexing bag in directory: /home/agi/control_backend/docs/evidence/nav_bringup_20261028_195035/goal_bag_201325
-[INFO] [1793195169.923766641] [rosbag2_storage]: Opened database '/home/agi/control_backend/docs/evidence/nav_bringup_20261028_195035/goal_bag_201325/goal_bag_201325_0.db3' for READ_ONLY.
-[INFO] [1793195190.014939479] [rosbag2_cpp]: Reindexing complete.

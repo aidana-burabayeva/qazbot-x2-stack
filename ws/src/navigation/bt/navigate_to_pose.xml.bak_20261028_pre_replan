@@ -1,9 +1,0 @@
-<!-- No autonomous recovery motion: failure terminates the task. -->
-<root main_tree_to_execute="MainTree">
-  <BehaviorTree ID="MainTree">
-    <Sequence>
-      <ComputePathToPose goal="{goal}" path="{path}" planner_id="GridBased"/>
-      <FollowPath path="{path}" controller_id="FollowPath" goal_checker_id="goal_checker"/>
-    </Sequence>
-  </BehaviorTree>
-</root>

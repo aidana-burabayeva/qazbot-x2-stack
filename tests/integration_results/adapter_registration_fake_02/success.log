@@ -1,1 +1,0 @@
-[INFO] [1792583691.193920712] [adapter_registration_success]: x2_motion_adapter started: live=True cmd_topic=/qazbot_d1_map/cmd_vel_authorized source=sdk_qazbot_nav2 priority=30

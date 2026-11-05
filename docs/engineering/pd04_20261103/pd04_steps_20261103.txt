@@ -1,4 +1,0 @@
-18:30:15.935072199 START P-D04 recording
-18:30:49.095772592 STEP0 empty baseline done
-18:37:28.603451664 operator: all steps done
-18:52:24.859019009 operator correction: boxes were 21 cm and 45 cm (step4 R=45, step5 F=21 then 45)

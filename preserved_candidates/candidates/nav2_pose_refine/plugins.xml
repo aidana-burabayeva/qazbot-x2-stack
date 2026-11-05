@@ -1,5 +1,0 @@
-<library path="qazbot_pose_refine">
-  <class type="qazbot_pose_refine::Controller" base_class_type="nav2_core::Controller">
-    <description>RPP path tracking with a persistent, stopped final-alignment phase.</description>
-  </class>
-</library>

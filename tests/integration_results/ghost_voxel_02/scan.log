@@ -1,3 +1,0 @@
-[ERROR] [1793021256.583641935] [ghost_scan_container]: Could not find requested resource in ament index
-Failed to load component: Could not find requested resource in ament index, interrupting container node
-[INFO] [1793021256.584850602] [rclcpp]: signal_handler(SIGINT/SIGTERM)

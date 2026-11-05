@@ -1,4 +1,0 @@
-inactive
-active
-Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
-CONTAINER ID  IMAGE       COMMAND     CREATED     STATUS      PORTS       NAMES

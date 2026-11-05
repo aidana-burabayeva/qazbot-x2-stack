@@ -1,1 +1,0 @@
-Linux agi 5.15.148-tegra #1 SMP PREEMPT Thu Jul 23 11:41:26 UTC 2026 aarch64 aarch64 aarch64 GNU/Linux

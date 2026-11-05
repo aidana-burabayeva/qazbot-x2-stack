@@ -1,6 +1,0 @@
-[14:28:07.970441466] profile 661979e23665ed3c nav_full=167fb63eb4867fc6 nav_control=67bbddbdb2bdc9b3 gc=aed37cb57ab03313 adapter=71db8ebd7520a8f1 source=sdk_qazbot_nav2_1029a
-[14:28:10.590606649] adapter started live (pid 17061)
-[14:29:53.011232478] nav_full: managed_active=1
-[14:29:58.911193446] adapter status before ADD: {"state": "idle", "reason": "registration_not_requested", "latch": "", "live": true, "mode": "live", "dry_run": false, "mc_source": "", "trusted": true, "registration": "not_requested", "registration_error": "", "sdk_service_ready": true, "motion_armed": false, "t1_pause": false, "ready": false, "foreign_publishers": [], "counters": {"saturated": 0, "rejected": 0, "latched": 0, "published": 0}}
-[14:29:58.931431611] ADD NOT sent: precondition failed
-[14:29:58.966999930] owned nav/motion: 17061 17194 17222 17250 17279 17300 17320 17343 

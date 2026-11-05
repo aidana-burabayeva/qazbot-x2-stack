@@ -1,8 +1,0 @@
-no crontab for agi
-total 24
-drwxr-xr-x 2 root root  109 Aug  6 12:55 .
-drwxr-xr-x 1 root root 4096 Oct 30 13:41 ..
--rw-r--r-- 1 root root  217 Jan 10  2022 atop
--rw-r--r-- 1 root root  202 Jan  9  2022 e2scrub_all
--rw-r--r-- 1 root root  102 Mar 23  2022 .placeholder
--rw-r--r-- 1 root root  396 Feb  3  2021 sysstat

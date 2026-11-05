@@ -1,6 +1,0 @@
-/qazbot_d1_map/map_server:
-  ros__parameters:
-    frame_id: map
-    topic_name: map
-    use_sim_time: false
-    yaml_filename: /home/agi/control_backend/ws/src/maps/d1_qazbot_20261029/map.yaml

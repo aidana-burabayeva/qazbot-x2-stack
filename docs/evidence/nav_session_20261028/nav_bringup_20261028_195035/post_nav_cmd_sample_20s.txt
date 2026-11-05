@@ -1,4 +1,0 @@
-{}
-trust {'n': 101, 'ready': 101, 'motion_ok': 83, 'T1_scan_stale': 18, 'T1_odom_message_stale': 2, 'T1_tf_stale': 3}
-gc {"busy": false, "latched": false, "gate": false, "fault": "", "source_zero": true, "trusted": true, "driver_ready": true, "driver_mode": "live", "ready": true, "child_uuid": null}
-adapter {"state": "idle", "reason": "driver_not_armed", "latch": "", "live": true, "mode": "live", "dry_run": false, "mc_source": "rc", "trusted": true, "registration": "registered", "registration_error": "", "sdk_service_ready": true, "motion_armed": false, "ready": true, "foreign_publishers": [], "counters": {"saturated": 0, "rejected": 0, "latched": 0, "published": 0}}

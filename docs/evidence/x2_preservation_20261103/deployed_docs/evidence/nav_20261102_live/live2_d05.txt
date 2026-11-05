@@ -1,8 +1,0 @@
-MC velocity msgs total 366 ours 366 sources ['sdk_qazbot_nav2_1102a']
-cmd window 10.40 s (nonzero 1793617058.90..1793617065.80)
-authorized vx mean(nonzero) 0.273 integral 1.899 m
-MC-published vx mean(nonzero) 0.273 integral 1.898 m n 366
-/qazbot_native/odom          net 2.865 m [ 2.354 -1.632 -0.   ]
-/aima/mc/leg_odometry        net 2.865 m [ 2.354 -1.632 -0.   ]
-/qazbot_d1_map/amcl_pose     net 3.039 m [0.33  3.021 0.   ]
-/qazbot_lio/odometry         net 3.117 m [-0.225 -1.13   2.896]

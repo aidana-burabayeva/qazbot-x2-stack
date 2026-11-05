@@ -1,2 +1,0 @@
-[INFO] [1792584100.952963680] [gate_driver]: x2_motion_adapter started: live=True cmd_topic=/qazbot_d1_map/cmd_vel_authorized source=sdk_qazbot_nav2 priority=30
-[INFO] [1792584101.701713412] [gate_driver]: SDK source registered; waiting for fresh authorized command

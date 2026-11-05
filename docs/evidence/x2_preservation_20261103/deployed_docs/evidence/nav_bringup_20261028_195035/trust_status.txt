@@ -1,5 +1,0 @@
-data: '{"trusted": false, "ready": false, "motion_ok": false, "reasons": ["T1_tf_stale", "not_ready:awaiting_initialpose_and_amcl"], "d...'
----
-
-data: false
----

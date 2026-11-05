@@ -1,1 +1,0 @@
-[INFO] [1792583422.153649196] [adapter_test_node]: x2_motion_adapter started: live=False cmd_topic=/adapter_test/cmd source=sdk_qazbot_nav2 priority=30

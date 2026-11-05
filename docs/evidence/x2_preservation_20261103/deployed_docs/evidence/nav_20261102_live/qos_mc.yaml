@@ -1,4 +1,0 @@
-/aima/mc/locomotion/velocity:
-  reliability: best_effort
-  history: keep_last
-  depth: 50

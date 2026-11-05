@@ -1,6 +1,0 @@
-{
-  "ws/src/navigation/x2_motion_adapter.py": "e0a297670ae917953dc5ce97fba5f96c0b21ead71d86c7263a97e0741f8720fb",
-  "ws/src/navigation/goal_coordinator.py": "f77b3b22e04ce78457964880f9e4ab8b0b1811b67d4d7c5ab989ef36596def1f",
-  "ws/src/navigation/run_x2_driver.sh": "d49ae8cdabea6f1edbbf91548781fa79864ae7b721aeae9c8328249378882a6d",
-  "tests/motion_adapter/real_register_observe.py": "a7fdd6d11466bc695175172652889cf5ee5f747d0a085235a53f7af6095b283c"
-}

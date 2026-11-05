@@ -1,2 +1,0 @@
-[INFO] [1793017344.345902595] [seed_stationary_test.localization_trust]: localization_trust started, map=/workspace/control_backend/ws/src/navigation/../maps/first_map_nav2_v2/map.yaml, policy=go2
-[WARN] [1793017345.533096928] [seed_stationary_test.localization_trust]: initialpose received: READY cleared; policy=go2

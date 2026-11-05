@@ -1,6 +1,0 @@
-# Clock (2026-10-30, captured 19:07 robot local)
-robot local: 2026-10-30 19:06:57 CST (+0800, TZ Asia/Shanghai); robot UTC 11:06:57; "System clock synchronized: yes"; RTC in UTC.
-external check: HTTP Date www.baidu.com 11:07:05 GMT vs robot 11:07:05 UTC (github.com 11:06:57 vs 11:07:06, CDN-cached) -> robot UTC correct to ~1 s.
-=> All bag/receive stamps are correct UTC epoch. The reported "robot clock ~1 h behind operator" is a local-time/timezone display offset, not a UTC error
-   (robot TZ +0800; operator wall clock reported ~1 h ahead). Convert operator wall-clock notes with that offset; do not shift bag stamps.
-PTP: ptp4l master on sensor0 (master0_time_sync.conf), slave on develop0 (slave1_time_sync.conf) — sensor time domain synced to Orin.

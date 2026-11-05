@@ -1,3 +1,0 @@
-NRestarts=1502
-ActiveState=activating
-SubState=auto-restart

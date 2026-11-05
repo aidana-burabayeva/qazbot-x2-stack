@@ -1,3 +1,0 @@
-{"radius": 0.65, "pairs": 20, "succeeded": 17, "min_clear": 0.6612299146287923, "p5_clear": 0.6702273952440653, "violations_lt_R": 0, "violations_lt_R_minus_1mm": 0}
-/usr/lib/python3/dist-packages/scipy/__init__.py:146: UserWarning: A NumPy version >=1.17.3 and <1.25.0 is required for this version of SciPy (detected version 1.26.1
-  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"

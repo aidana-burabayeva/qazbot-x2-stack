@@ -1,5 +1,0 @@
-map->base composed x -8.557 y -6.211 yaw 1.637
-MC input_source rc prio 80 body 1 fsm 4 speed_mode 1 fwd -1.0 0.8 ang -1.0 1.0
-GC {"busy": false, "latched": false, "gate": false, "fault": "", "source_zero": true, "trusted": true, "paused": false, "driver_ready": true, "driver_mode": "live", "ready": true, "child_uuid": null}
-TRUST {'trusted': True, 'ready': True, 'reasons': [], 'diagnostics': ['T2_covariance', 'T3_particles', 'T4_no_baseline', 'T6_no_anchor'], 'metrics': {'sigma_xy': 0.283139358375803, 'sigma_yaw': 0.10533250892152593, 'cloud_std': 0.21511031782714085, 'second_mod
-AD {"state": "idle", "reason": "no_command", "latch": "", "live": true, "mode": "live", "dry_run": false, "mc_source": "rc", "trusted": true, "registration": "registered", "registration_error": "", "sdk_service_ready": true, "motion_armed": true, "t1_pause": f

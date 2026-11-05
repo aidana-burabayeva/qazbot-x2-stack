@@ -1,7 +1,0 @@
-/qazbot_d1_map/lifecycle_manager_localization:
-  ros__parameters:
-    autostart: true
-    node_names: !!python/tuple
-    - map_server
-    - amcl
-    use_sim_time: false

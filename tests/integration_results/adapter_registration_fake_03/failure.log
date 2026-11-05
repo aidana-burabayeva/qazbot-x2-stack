@@ -1,2 +1,0 @@
-[INFO] [1792583754.774724382] [adapter_registration_failure]: x2_motion_adapter started: live=True cmd_topic=/qazbot_d1_map/cmd_vel_authorized source=sdk_qazbot_nav2 priority=30
-[ERROR] [1792583755.715245309] [adapter_registration_failure]: SDK response code=99; no retry or ENABLE fallback

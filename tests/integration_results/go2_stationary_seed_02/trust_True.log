@@ -1,6 +1,0 @@
-[INFO] [1793017350.305633305] [seed_stationary_test.localization_trust]: localization_trust started, map=/workspace/control_backend/ws/src/navigation/../maps/first_map_nav2_v2/map.yaml, policy=go2
-[WARN] [1793017352.921335762] [seed_stationary_test.localization_trust]: initialpose received: READY cleared; policy=go2
-[INFO] [1793017353.476349142] [seed_stationary_test.localization_trust]: initialpose: requested AMCL update without motion, attempt 1
-[WARN] [1793017353.753445392] [seed_stationary_test.localization_trust]: initialpose received: READY cleared; policy=go2
-[INFO] [1793017354.275827313] [seed_stationary_test.localization_trust]: initialpose: requested AMCL update without motion, attempt 1
-[WARN] [1793017355.313230144] [seed_stationary_test.localization_trust]: initialpose received: READY cleared; policy=go2

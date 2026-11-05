@@ -1,9 +1,0 @@
-[16:55:08.584513366] profile /home/agi/control_backend/docs/evidence/nav_20261102_live/dds_nav_two_iface_log.xml d0f2441516fa5737 launch_sha=14ca420206984861
-[16:55:14.108466667] localization: managed_active=1 levelled=1 native=1
-[16:55:19.360647705] trust: started=1
-[16:55:22.520583465] owned: 175238 175284 175316 175332 175366 175384 175415 175457 
-[18:21:31.972497486] ABORT: stack component already running
-[18:25:11.953227534] profile /home/agi/control_backend/docs/evidence/nav_20261102_live/dds_nav_two_iface_log.xml d0f2441516fa5737 launch_sha=14ca420206984861
-[18:25:18.622411152] localization: managed_active=1 levelled=1 native=1
-[18:25:20.668503667] trust: started=1
-[18:25:23.776596872] owned: 241856 241862 241894 241920 241951 241968 242005 242066 

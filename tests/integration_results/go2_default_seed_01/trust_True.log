@@ -1,8 +1,0 @@
-[INFO] [1793021000.156212599] [seed_stationary_test.localization_trust]: localization_trust started, map=/workspace/control_backend/ws/src/navigation/../maps/first_map_nav2_v2/map.yaml, policy=go2
-[WARN] [1793021002.379024354] [seed_stationary_test.localization_trust]: initialpose received: READY cleared; policy=go2
-[INFO] [1793021002.916375462] [seed_stationary_test.localization_trust]: initialpose: requested AMCL update without motion, attempt 1
-[WARN] [1793021003.139381394] [seed_stationary_test.localization_trust]: initialpose received: READY cleared; policy=go2
-[INFO] [1793021003.716158754] [seed_stationary_test.localization_trust]: initialpose: requested AMCL update without motion, attempt 1
-[WARN] [1793021004.780579591] [seed_stationary_test.localization_trust]: initialpose received: READY cleared; policy=go2
-[WARN] [1793021007.160930698] [seed_stationary_test.localization_trust]: initialpose received: READY cleared; policy=go2
-The following exception was never retrieved: cannot use Destroyable because destruction was requested

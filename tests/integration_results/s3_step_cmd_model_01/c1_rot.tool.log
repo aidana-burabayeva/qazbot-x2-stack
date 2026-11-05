@@ -1,6 +1,0 @@
-[   0.00] waiting for: adapter_status, trust, odometry
-[   1.29] preconditions ok: adapter mode=dry_run registration=dry_run mc_source=sdk_qazbot_nav2 coordinator latched=False
-[   1.38] coordinator latched (Nav2 goals locked out) fault=operator_stop
-[   6.43] ABORT: localization_untrusted
-[   7.44] adapter stop (disarm): True
-[   7.44] coordinator stays latched: run goal_coordinator/resume explicitly before the next Nav2 goal
