@@ -2,6 +2,7 @@
 
 Единый production-профиль: SimpleGoalChecker, xy 0.30 м, yaw 0.35 рад, stateful true (как 30.10); StoppedGoalChecker не используется. Ветка `fix/goal-checker-profile`; файлы на роботе обновлены с бэкапами `*.bak_20261105_pre_gcprofile`, **Nav2 ещё не перезапущен** (работают старые 0.10/0.10/false до контролируемого рестарта). Отчёт: [20261105_goal_checker_profile.md](results/20261105_goal_checker_profile.md). Далее: рестарт Nav2 при неподвижном роботе с подтверждением оператора, проверка реальных параметров controller_server, один Goal 3 м.
 
+- 2026-11-05 19:14 P0: Goal 3 м с профилем 0.30/0.35/stateful: SUCCEEDED за 6.6 с (было 60 с, 4 разворота), остановка у цели в 0.09 м, столкновений нет; конечный yaw −0.36…−0.42 рад (граница 0.35) → PARTIAL PASS. Отчёт [20261105_p0_goal3m_profile.md](results/20261105_p0_goal3m_profile.md). Находка: FAST-LIO плавает на 0.2 м в покое после остановки (leg odom стоит).
 ## 2026-11-03 preservation and V continuation
 
 Current source/deploy audit, backup scope, remote verification, fresh 11-test result and corrected C1/C2 analysis: [preservation report](evidence/x2_preservation_20261103/REPORT.md). Current source snapshot branch: `robot/preservation-20261103`. D-05 and D-07 remain OPEN; full V hardware/replay validation is incomplete. No production logic or running nodes were changed. Historical entries below retain their original dates.

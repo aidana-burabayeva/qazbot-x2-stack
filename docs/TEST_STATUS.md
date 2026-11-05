@@ -1,3 +1,9 @@
+## 2026-11-05 19:14 P0
+
+| Проверка | Среда | Результат |
+| --- | --- | --- |
+| Goal 3 м, SimpleGoalChecker 0.30/0.35 stateful, прежняя скорость, через GC | X2 | SUCCEEDED 6.6 с; остановка 0.09 м от цели; yaw −0.36…−0.42 (>0.35 на 0.01-0.07) → PARTIAL PASS |
+
 ## 2026-11-03 preservation and V continuation
 
 Current source/deploy audit, backup scope, remote verification, fresh 11-test result and corrected C1/C2 analysis: [preservation report](evidence/x2_preservation_20261103/REPORT.md). Current source snapshot branch: `robot/preservation-20261103`. D-05 and D-07 remain OPEN; full V hardware/replay validation is incomplete. No production logic or running nodes were changed. Historical entries below retain their original dates.
