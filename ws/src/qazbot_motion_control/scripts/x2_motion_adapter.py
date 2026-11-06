@@ -11,8 +11,9 @@ Design rules (see docs/X2_MOTION_ADAPTER.md for the evidence behind each):
     "control acquired" is not required; instead the MC input source observed when
     the shadow became active (or our own source name) is accepted, and any other
     source appearing while active is an operator takeover. On the stock robot the
-    idle source is already 'rc' (docs/CURRENT_CONSTRAINTS.md), so a PS5 takeover
-    is only observable in dry run when MC reports a source change.
+    idle source is already 'rc' (docs/CURRENT_CONSTRAINTS.md), so the source name alone
+    is no evidence; see TakeoverMonitor (non-zero foreign MC command or loss of our source,
+    in IDLE as well as ACTIVE while a goal owns the driver).
   * Live mode needs live:=true. It then takes an exclusive owner lock, registers a
     source named sdk_* once, automatically, as soon as the SDK service is discovered (ADD, on failure one ENABLE:
     RegistrationSequence), and publishes only while armed with a fresh, valid, non-zero command.
@@ -460,6 +461,51 @@ def driver_input(live, registration_state, motion_armed, cmd, cmd_stamp):
     return cmd, cmd_stamp, ''
 
 
+class TakeoverMonitor:
+    """Evidence of a manual (or any other source's) intervention while a goal owns the driver (no ROS imports).
+
+    AimDK X2 1.1.0 5.1.3 arbitration: another source takes control only by sending a NON-ZERO command; zero commands
+    do not reset the timeout; after a timeout "command data is cleared (robot stops), but the input source remains
+    unchanged". So McCommonState.input_source == 'rc' is NOT evidence (it stays 'rc' after the stick is released and
+    is the idle source after boot). Evidence used instead, each sufficient on its own:
+      * command: a non-zero McLocomotionVelocity on /aima/mc/locomotion/velocity whose source is not ours. 5.1.2: the
+        remote controller (and other native modules) command on this topic; live 2026-11-06 soc0_rc streams
+        source='rc' zeros at ~45 Hz while the stick is untouched. Non-zero is exactly MC's "valid command".
+      * edge: the MC input source leaving OUR source after it was observed (only another source's non-zero command
+        can cause it, 5.1.3), independent of the command stream.
+    Armed = a goal owns the driver (~/arm_motion .. ~/disarm_motion / latch). Both checks run whatever the adapter
+    state is, so a takeover while IDLE inside a busy goal (T1 pause, Nav2 command gap) is caught (T6 2026-11-06)."""
+
+    def __init__(self, source_name):
+        self.source_name = source_name
+        self.ours_seen = False             # MC reported our source since arm()
+        self.evidence = ''                 # last takeover evidence (diagnostics)
+
+    def arm(self, mc_source):
+        self.ours_seen, self.evidence = mc_source == self.source_name, ''
+
+    def on_mc_source(self, armed, source):
+        """McCommonState.input_source.name; returns evidence text or ''."""
+        if source == self.source_name:
+            self.ours_seen = True
+            return ''
+        was_ours, self.ours_seen = self.ours_seen, False
+        if armed and was_ours:
+            return self._found(f'MC input source {self.source_name} -> {source or "<empty>"}')
+        return ''
+
+    def on_command(self, armed, source, values):
+        """One McLocomotionVelocity (source, (forward, lateral, angular)); returns evidence text or ''."""
+        if not armed or source == self.source_name or all(v == 0.0 for v in values):
+            return ''
+        return self._found('non-zero MC command from source {!r} ({})'.format(
+            source, ', '.join(f'{v:+.3f}' for v in values)))
+
+    def _found(self, text):
+        self.evidence = text
+        return text
+
+
 def validate_source_name(name):
     """Never operate on built-in sources; AimDK asks SDK sources to use an sdk_ prefix."""
     if name in BUILTIN_SOURCES or not name.startswith('sdk_'):
@@ -549,6 +595,11 @@ def main():
             self.create_subscription(McCommonState, '/aima/mc/common/state', self._on_state,
                                      QoSProfile(depth=1, reliability=ReliabilityPolicy.BEST_EFFORT,
                                                 durability=DurabilityPolicy.VOLATILE))
+            # Read-only: manual-takeover evidence (TakeoverMonitor). VOLATILE: no history of vendor publishers.
+            self.takeover = TakeoverMonitor(self.cfg.source_name)
+            self.create_subscription(McLocomotionVelocity, '/aima/mc/locomotion/velocity', self._on_mc_command,
+                                     QoSProfile(depth=10, reliability=ReliabilityPolicy.BEST_EFFORT,
+                                                durability=DurabilityPolicy.VOLATILE))
             self.create_subscription(TFMessage, tf_topic, self._on_tf, QoSProfile(depth=50))
             self.create_subscription(Bool, p('trust_topic', '/qazbot_d1_map/localization_trust/trusted').value,
                                      self._on_trust, 10)
@@ -564,6 +615,7 @@ def main():
             self.create_service(Trigger, '~/stop', lambda q, r: self._svc(r, self.core.stop, 'stopped'))
             self.create_service(Trigger, '~/resume', self._resume)
             self.create_service(Trigger, '~/arm_motion', self._arm_motion)
+            self.create_service(Trigger, '~/disarm_motion', self._disarm_motion)
             if self.cfg.live:
                 self.lock.acquire()
                 self.registration_client = self.create_client(
@@ -632,6 +684,21 @@ def main():
                 s.fwd = (sp.forward_bounds.min_value, sp.forward_bounds.max_value)
                 s.lat = (sp.lateral_bounds.min_value, sp.lateral_bounds.max_value)
                 s.ang = (sp.angular_bounds.min_value, sp.angular_bounds.max_value)
+            self._takeover(self.takeover.on_mc_source(self.motion_armed, s.source))
+
+        def _on_mc_command(self, m):
+            self._takeover(self.takeover.on_command(
+                self.motion_armed, m.source, (m.forward_velocity, m.lateral_velocity, m.angular_velocity)))
+
+        def _takeover(self, evidence):
+            # Latch in IDLE as well as ACTIVE; only ~/resume clears it and only a NEW goal (~/arm_motion) re-arms.
+            if not evidence:
+                return
+            self.motion_armed = False
+            self.cmd, self.cmd_stamp = None, float('-inf')
+            self.core.stop('operator_takeover')
+            self.get_logger().warn(f'operator takeover while a goal owns the driver: {evidence}. Latched; the goal '
+                                   f'does not resume. Needs ~/resume and a NEW goal')
 
         # -- services
         def _svc(self, resp, fn, text):
@@ -668,9 +735,18 @@ def main():
                 self.motion_armed = True
                 self.cmd, self.cmd_stamp = None, float('-inf')
                 self.core.resume_after = self._now()
+                self.takeover.arm(self.mc.source)
                 resp.message = 'armed for fresh authorized commands'
             else:
                 resp.message = fault or ('requires registered (live) or dry-run, idle, unlatched adapter')
+            return resp
+
+        def _disarm_motion(self, req, resp):
+            # Called by the coordinator when its goal is terminal (or rejected after arming): the goal no longer
+            # owns the driver, so operator RC use between goals does not latch.
+            self.motion_armed = False
+            self.cmd, self.cmd_stamp = None, float('-inf')
+            resp.success, resp.message = True, 'disarmed'
             return resp
 
         # -- one registration sequence per process (RegistrationSequence: ADD, on failure one ENABLE; no retry)
@@ -731,8 +807,14 @@ def main():
                 nxt, level, text = self.reg.on_response(r.header.code, r.task_id, r.state.value)
             except Exception as exc:
                 nxt, level, text = self.reg.on_exception(exc)
-            {'info': self.get_logger().info, 'warn': self.get_logger().warn,
-             'error': self.get_logger().error}[level](text)
+            # One call site per severity: rclpy refuses a severity change at the same call site ("Logger severity
+            # cannot be changed between calls", G2b 2026-11-06: ADD warn -> ENABLE info crashed the node).
+            if level == 'error':
+                self.get_logger().error(text)
+            elif level == 'warn':
+                self.get_logger().warn(text)
+            else:
+                self.get_logger().info(text)
             if nxt is not None:
                 self._send_registration(nxt)
                 return
@@ -792,7 +874,7 @@ def main():
                 'mc_source': self.mc.source, 'trusted': self.trust,
                 'registration': self.registration_state, 'registration_error': self.registration_error,
                 'sdk_service_ready': bool(self.cfg.live and self.registration_client.service_is_ready()),
-                'motion_armed': self.motion_armed,
+                'motion_armed': self.motion_armed, 'takeover_evidence': self.takeover.evidence,
                 't1_pause': bool(self.core.pause_since is not None or (self._health_fault(self._now()) and self._t1_ok(self._now())
                                  and not self.core._fault(self._now(), self.mc, True, '', ','.join(self.foreign)))),
                 'ready': bool(self._driver_path_ok()

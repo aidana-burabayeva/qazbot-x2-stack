@@ -21,9 +21,18 @@ ros2 run qazbot_motion_control x2_motion_adapter.py --ros-args -r __ns:=/qazbot_
 
 ## API (`/qazbot_d1_map/motion_adapter`)
 Sub: `cmd_vel_topic` (Twist), `tf_topic` (TFMessage), `odom_topic` (Odometry), `trust_topic` (Bool), `trust_status_topic`
-(String), `/aima/mc/common/state` (McCommonState). Pub: `~/status` (String JSON, 2 Hz), `~/dry_run_cmd` (Twist),
-live only `/aima/mc/locomotion/velocity`. Srv: `~/stop`, `~/resume`, `~/arm_motion`, live only `~/register` (Trigger;
-kept for compatibility, refused once the automatic registration sequence has run).
+(String), `/aima/mc/common/state` (McCommonState), `/aima/mc/locomotion/velocity` (McLocomotionVelocity, read-only:
+manual-takeover evidence). Pub: `~/status` (String JSON, 2 Hz; `takeover_evidence` = last evidence), `~/dry_run_cmd`
+(Twist), live only `/aima/mc/locomotion/velocity`. Srv: `~/stop`, `~/resume`, `~/arm_motion` (NEW goal owns the
+driver), `~/disarm_motion` (goal terminal; called by goal_coordinator), live only `~/register` (Trigger; kept for
+compatibility, refused once the automatic registration sequence has run).
+
+Manual takeover (T6 2026-11-06, `TakeoverMonitor`): while armed, in IDLE as well as ACTIVE, a non-zero MC command with a
+source other than ours, or the MC input source leaving ours after we held it, latches `operator_takeover` (AimDK 5.1.3:
+only a non-zero command switches the source and the name stays after a timeout, so `input_source == rc` alone is no
+evidence; 5.1.2: the remote controller commands on `/aima/mc/locomotion/velocity`). Goal coordinator cancels the goal on
+the latch; motion again only after `~/resume` and a NEW goal (`~/arm_motion`). The extra ~45 Hz subscription is in this
+legacy Python node (C++ port tracked above); the callback is an O(1) filter.
 Client (live): `/aimdk_5Fmsgs/srv/SetMcInputSource`. Live mode takes the cooperative lock `lock_path`.
 
 | Parameter | Type | Default | Description |

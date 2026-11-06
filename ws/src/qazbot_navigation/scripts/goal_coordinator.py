@@ -51,6 +51,9 @@ class GoalCoordinator(Node):
         self.group=ReentrantCallbackGroup()
         self.arm=self.create_client(Trigger,'localization_trust/arm_check',callback_group=self.group)
         self.driver_arm=self.create_client(Trigger,'motion_adapter/arm_motion',callback_group=self.group)
+        # T6: the adapter treats manual intervention as a takeover only while a goal owns the driver (armed);
+        # disarm when the goal is terminal (or rejected after arming) so RC use between goals does not latch it.
+        self.driver_disarm=self.create_client(Trigger,'motion_adapter/disarm_motion',callback_group=self.group)
         self.life=self.create_client(GetState,'nav2/bt_navigator/get_state',callback_group=self.group)
         self.trust_waiter=None
         self.nav_active=False;self.nav_state_future=None;self.nav_transition_seen=False
@@ -178,7 +181,8 @@ class GoalCoordinator(Node):
             # after it returns, rather than carrying a pre-check verdict into execution.
             self.trust_waiter=Future()
             clean=await self.trust_waiter
-            if not clean or self.latched or not self.good() or not self.driver_ready:return self.reject(f'post_arm clean={clean}')
+            if not clean or self.latched or not self.good() or not self.driver_ready:
+                self.disarm_driver();return self.reject(f'post_arm clean={clean}')
             self.busy=True;self.gate=False;self.cancel_sent=False;self.child=None;self.pause_since=None
             self.execution_failure='';self.fault='';self.alignment_watch.reset()
             return GoalResponse.ACCEPT
@@ -209,6 +213,11 @@ class GoalCoordinator(Node):
             return NavigateToPose.Result()
         finally:
             self.gate=False;self.busy=False;self.child=None;self.public=None;self.pause_since=None
+            self.disarm_driver()
+    def disarm_driver(self):
+        # Fire-and-forget. If the adapter is unreachable it stays armed: RC use then latches it (fail-safe direction).
+        if self.driver_disarm.service_is_ready():self.driver_disarm.call_async(Trigger.Request())
+        else:self.get_logger().warn('motion_adapter/disarm_motion not available: adapter stays armed until latch/resume')
     def check(self):
         if self.busy and not self.good() and not self.latched:self.hold()
         elif self.busy and self.pause_since is not None and self.good() and not self.latched and self.driver_ready:

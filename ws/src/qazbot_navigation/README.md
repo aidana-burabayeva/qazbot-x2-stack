@@ -38,7 +38,10 @@ index; its `qazbot_bounds_fix.json` must match the library sha256 (written by `w
 ## goal_coordinator (`/qazbot_d1_map/goal_coordinator`, Python, 20 Hz gate)
 Sub `goal_pose` (PoseStamped), `cmd_vel` (Twist), `localization_trust/trusted|status`, `motion_adapter/status`,
 `nav2/bt_navigator/transition_event`; pub `cmd_vel_authorized` (Twist), `~/status` (String JSON); srv `~/stop`, `~/resume`;
-clients `localization_trust/arm_check`, `motion_adapter/arm_motion`, `nav2/bt_navigator/get_state`, action NavigateToPose.
+clients `localization_trust/arm_check`, `motion_adapter/arm_motion`, `motion_adapter/disarm_motion` (goal terminal or
+rejected after arming, T6), `nav2/bt_navigator/get_state`, action NavigateToPose. An adapter `operator_takeover` latch
+(also while the adapter is idle inside the goal) trips: gate closed, zero, Nav2 goal cancelled, latched; `~/resume` only
+after the old action is terminal, and only a NEW goal moves the robot (no replay).
 
 | Parameter | Type | Default | Description |
 |---|---|---|---|
