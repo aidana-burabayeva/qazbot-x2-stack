@@ -3,7 +3,10 @@
 # a shell profile or .bashrc. Usage:  source <install>/qazbot_bringup/lib/qazbot_bringup/env.sh
 #   QAZBOT_RUNTIME  pinned Nav2 runtime debs (ws/third_party/fetch_runtime_debs.sh); default <release>/deps,
 #                   layout {qazbot_nav_deps/root,nav2_bt_deps/root,user_pkgs} as the legacy control_backend/runtime
-#   QAZBOT_DDS_PROFILE  FastDDS profile; default share/qazbot_bringup/config/dds_qazbot.xml (robot, 10.0.1.41 + Wi-Fi)
+#   QAZBOT_MODE    lab (default) | production. lab: loopback-only DDS profile (config/dds_loopback.xml) and
+#                  ROS_LOCALHOST_ONLY=1, nothing leaves the host; production: robot-LAN profile config/dds_qazbot.xml
+#                  (10.0.1.41 + Wi-Fi), ROS_LOCALHOST_ONLY untouched. Must match the launch argument mode:=.
+#   QAZBOT_DDS_PROFILE  explicit FastDDS profile; overrides the profile chosen by QAZBOT_MODE
 #   QAZBOT_SMAC_PREFIX / QAZBOT_LIFECYCLE_PREFIX  explicit candidate overlays (unchanged semantics)
 source /opt/ros/humble/setup.bash
 QAZBOT_INSTALL="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../../.." && pwd)"
@@ -21,8 +24,16 @@ fi
 source "$QAZBOT_INSTALL/setup.bash"
 if [ -f "$HOME/.aima/env/bashrc" ]; then source "$HOME/.aima/env/bashrc"; fi   # vendor env (robot only)
 export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE
-# Stack-only DDS profile: vendor profile + wifi address so a PC on 192.168.1.0/24 (RViz2) can discover this stack.
-export FASTRTPS_DEFAULT_PROFILES_FILE="${QAZBOT_DDS_PROFILE:-$QAZBOT_INSTALL/qazbot_bringup/share/qazbot_bringup/config/dds_qazbot.xml}"
+# Stack-only DDS profile, selected by QAZBOT_MODE (default lab = host-local only, never the robot LAN).
+QAZBOT_MODE="${QAZBOT_MODE:-lab}"
+case "$QAZBOT_MODE" in
+  lab) _qz_dds=dds_loopback.xml; export ROS_LOCALHOST_ONLY=1;;
+  production) _qz_dds=dds_qazbot.xml;;   # vendor profile + wifi address so a PC on 192.168.1.0/24 (RViz2) can discover this stack
+  *) echo "qazbot env.sh: QAZBOT_MODE must be lab or production, got '$QAZBOT_MODE'" >&2; return 1 2>/dev/null || exit 1;;
+esac
+export QAZBOT_MODE
+export FASTRTPS_DEFAULT_PROFILES_FILE="${QAZBOT_DDS_PROFILE:-$QAZBOT_INSTALL/qazbot_bringup/share/qazbot_bringup/config/$_qz_dds}"
+unset _qz_dds
 
 # Explicit candidate overlay; never replaces system/vendor packages.
 if [ -n "${QAZBOT_SMAC_PREFIX:-}" ]; then

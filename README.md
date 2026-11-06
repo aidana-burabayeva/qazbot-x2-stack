@@ -32,14 +32,14 @@ ROS_DOMAIN_ID=88 ROS_LOCALHOST_ONLY=1 colcon --log-base $B/work/log test --base-
 `build_workspace.sh` (используют также `docker/lab/build.sh` и `docker/deploy/build_release.sh`): pinned runtime debs →
 `ws/third_party.repos` + патчи → FAST-LIO и patched Smac в `$B/install` → `ws/src` поверх → `$B/manifest.yaml`.
 После `source` `lio_binary`, `projector_prefix` и overlay Smac находятся через ament index, `QAZBOT_SMAC_PREFIX` не нужен.
-Тесты, требующие patched Smac, при его отсутствии пропускаются (`skip` с причиной), а не падают.
+Overlay (FAST-LIO и patched Smac) обязателен: при его отсутствии зависящие от него тесты и запуск падают (hard failure), а не пропускаются.
 Или контейнер: `docker/README.md` (сеть отключена, домен 88, без устройств, лимиты CPU/памяти).
 
 ## Запуск
 ```bash
-QAZBOT_RUNTIME=$B/deps source $B/install/qazbot_bringup/lib/qazbot_bringup/env.sh
-ROS_DOMAIN_ID=88 ROS_LOCALHOST_ONLY=1 ros2 launch qazbot_bringup x2_navigation.launch.xml      # lab: адаптер dry-run
-ros2 launch qazbot_bringup x2_navigation.launch.xml mode:=production   # робот, только с разрешения оператора
+QAZBOT_RUNTIME=$B/deps source $B/install/qazbot_bringup/lib/qazbot_bringup/env.sh   # QAZBOT_MODE=lab (по умолчанию): DDS dds_loopback.xml + ROS_LOCALHOST_ONLY=1
+ROS_DOMAIN_ID=88 ros2 launch qazbot_bringup x2_navigation.launch.xml      # lab: адаптер dry-run
+QAZBOT_MODE=production ROS_DOMAIN_ID=0 ros2 launch qazbot_bringup x2_navigation.launch.xml mode:=production   # (env.sh с QAZBOT_MODE=production → dds_qazbot.xml) робот, только с разрешения оператора
 ```
 Первая строка лога: `QAZBOT BRINGUP mode=… git_sha=… odom_source=lio lidar_source=… tf_owner=… control_channel=…`.
 Отдельные компоненты: `ros2 launch qazbot_localization localization.launch.py`, `qazbot_navigation nav_full.launch.py`

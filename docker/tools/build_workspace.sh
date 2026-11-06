@@ -1,22 +1,23 @@
 #!/usr/bin/env bash
 # CANONICAL build of the whole control_backend workspace from a clean clone (lab, container and release use this one).
 #   docker/tools/build_workspace.sh --prefix DIR [--deps DIR] [--deb-cache DIR] [--git-cache DIR] [--no-fetch]
-#                                   [--jobs N] [--build-root DIR] [--release] [--profile NAME] [--cmake-args ...]
+#                                   [--jobs N] [--build-root DIR] [--release] [--kind dev|release] [--profile NAME] [--cmake-args ...]
 # Steps: (1) pinned runtime debs -> <prefix>/deps (skipped with --deps DIR); (2) ws/third_party/build_third_party.sh:
 # ws/third_party.repos + patches -> FAST-LIO and patched Smac into <prefix>/install; (3) colcon build ws/src into
 # the SAME <prefix>/install (overlay on top); (4) <prefix>/manifest.yaml (sha, dirty, third-party pins, patch sha256).
 # Afterwards `source <prefix>/install/setup.bash` is all that is needed: lio_binary, projector_prefix and the Smac
 # overlay then resolve through the ament index (no QAZBOT_SMAC_PREFIX needed). --prefix is required (outside the repo).
+# --kind: manifest kind, dev (default) or release; only docker/deploy/build_release.sh passes release (production gate).
 # --release: Release, BUILD_TESTING=OFF (no test deps needed); default is Release with tests. --build-root: where
 # build/log/tp_src live (default <prefix>/work). Does not touch /home/agi/prod or any running process.
 set -euo pipefail
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(git -C "$HERE" rev-parse --show-toplevel)"; WS="$REPO/ws"
-PREFIX=""; DEPS=""; DEB_CACHE=""; GIT_CACHE=""; NOFETCH=0; JOBS=2; WORK=""; RELEASE=0; PROFILE="x2_d1"
+PREFIX=""; DEPS=""; DEB_CACHE=""; GIT_CACHE=""; NOFETCH=0; JOBS=2; WORK=""; RELEASE=0; KIND=dev; PROFILE="x2_d1"
 while [ $# -gt 0 ]; do case "$1" in
   --prefix) PREFIX="$2"; shift 2;; --deps) DEPS="$2"; shift 2;; --deb-cache) DEB_CACHE="$2"; shift 2;;
   --git-cache) GIT_CACHE="$2"; shift 2;; --no-fetch) NOFETCH=1; shift;; --jobs) JOBS="$2"; shift 2;;
-  --build-root) WORK="$2"; shift 2;; --release) RELEASE=1; shift;; --profile) PROFILE="$2"; shift 2;;
+  --build-root) WORK="$2"; shift 2;; --release) RELEASE=1; shift;; --kind) KIND="$2"; shift 2;; --profile) PROFILE="$2"; shift 2;;
   *) echo "unknown arg $1" >&2; exit 2;; esac; done
 [ -n "$PREFIX" ] || { echo "REFUSED: --prefix DIR is required (build outside the repository)" >&2; exit 2; }
 PREFIX="$(realpath -m -- "$PREFIX")"; WORK="$(realpath -m -- "${WORK:-$PREFIX/work}")"
@@ -37,9 +38,9 @@ MAKEFLAGS="-j$JOBS" nice -n 19 colcon --log-base "$WORK/log" build --base-paths 
   --install-base "$PREFIX/install" --parallel-workers "$JOBS" --cmake-args "${CM[@]}" --event-handlers console_direct-
 SHA="$(git -C "$REPO" rev-parse HEAD)"
 DIRTY=false; [ -z "$(git -C "$REPO" status --porcelain --untracked-files=no)" ] || DIRTY=true
-python3 - "$REPO" "$PREFIX" "$SHA" "$DIRTY" "$PROFILE" <<'PY'
+python3 - "$REPO" "$PREFIX" "$SHA" "$DIRTY" "$PROFILE" "$KIND" <<'PY'
 import datetime, getpass, hashlib, json, os, socket, subprocess, sys, yaml
-repo, out, sha, dirty, profile = sys.argv[1:]
+repo, out, sha, dirty, profile, kind = sys.argv[1:]
 ws = os.path.join(repo, 'ws')
 fsha = lambda p: hashlib.sha256(open(p, 'rb').read()).hexdigest()
 dpkg = subprocess.run(['dpkg-query', '-W', '-f', '${Package} ${Version}\n'], capture_output=True, text=True).stdout
@@ -50,7 +51,7 @@ patches = {f'{d}/{f}': fsha(os.path.join(pd, d, f)) for d in sorted(os.listdir(p
 inst = os.path.join(out, 'install')
 j = lambda p: json.load(open(p)) if os.path.isfile(p) else None
 manifest = {
-    'sha': sha, 'dirty': dirty == 'true',
+    'kind': kind, 'sha': sha, 'dirty': dirty == 'true',
     'date_utc': datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'), 'profile': profile,
     'builder': f'{getpass.getuser()}@{socket.gethostname()}', 'arch': os.uname().machine,
     'commit_subject': subprocess.run(['git', '-C', repo, 'log', '-1', '--format=%s'], capture_output=True, text=True).stdout.strip(),

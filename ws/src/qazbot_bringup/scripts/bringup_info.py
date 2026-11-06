@@ -60,6 +60,8 @@ def release_errors(root, env=os.environ):
         return ['mode production runs only from a release: no <release>/manifest.yaml and no QAZBOT_RELEASE_MANIFEST '
                 '(build with docker/deploy/build_release.sh)']
     errs = []
+    if m.get('kind') != 'release':
+        errs.append(f'manifest {path} is not kind: release (kind={m.get("kind", "missing")}); only docker/deploy/build_release.sh makes a release')
     if not re.fullmatch(r'[0-9a-f]{40}', m.get('sha', '')):
         errs.append(f'release manifest {path} has no 40-hex sha')
     if m.get('dirty', '').lower() != 'false':

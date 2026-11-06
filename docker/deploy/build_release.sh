@@ -36,9 +36,10 @@ git -C "$STAGE/src" checkout -q --detach "$SHA"
 # One canonical build (docker/tools/build_workspace.sh, from the fresh checkout): pinned debs, third-party overlay,
 # ws/src on top, manifest.yaml (sha, dirty=false because the checkout is exactly $SHA and was verified clean above).
 mkdir -p "$STAGE/out"
-"$STAGE/src/docker/tools/build_workspace.sh" --prefix "$STAGE/out" --build-root "$STAGE/work" --release --profile "$PROFILE" \
+"$STAGE/src/docker/tools/build_workspace.sh" --prefix "$STAGE/out" --build-root "$STAGE/work" --release --kind release --profile "$PROFILE" \
   --jobs "$JOBS" ${DEB_CACHE:+--deb-cache "$DEB_CACHE"} ${GIT_CACHE:+--git-cache "$GIT_CACHE"}
 [ -z "$(git -C "$STAGE/src" status --porcelain)" ] || { echo "REFUSED: build modified the source checkout" >&2; exit 3; }
+grep -q '^kind: release' "$STAGE/out/manifest.yaml" || { echo "REFUSED: manifest not kind: release" >&2; exit 3; }
 grep -q '^dirty: false' "$STAGE/out/manifest.yaml" || { echo "REFUSED: manifest not dirty:false" >&2; exit 3; }
 
 mv "$STAGE/out" "$REL"

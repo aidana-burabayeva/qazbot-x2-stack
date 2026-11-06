@@ -33,7 +33,7 @@ def _release(tmp_path, body):
 
 
 def test_production_only_on_robot_domain(tmp_path):
-    root = _release(tmp_path, f'sha: {SHA40}\ndirty: false\n')
+    root = _release(tmp_path, f'kind: release\nsha: {SHA40}\ndirty: false\n')
     assert not B.check_environment('production', 'lio', {}, root=root)
     assert not B.check_environment('production', 'lio', {'ROS_DOMAIN_ID': '0'}, root=root)
     assert B.check_environment('production', 'lio', {'ROS_DOMAIN_ID': '88'}, root=root)
@@ -41,7 +41,7 @@ def test_production_only_on_robot_domain(tmp_path):
 
 def test_production_accepts_env_manifest(tmp_path):
     m = tmp_path / 'm.yaml'
-    m.write_text(f'sha: {SHA40}\ndirty: false\n')
+    m.write_text(f'kind: release\nsha: {SHA40}\ndirty: false\n')
     assert not B.check_environment('production', 'lio', {'QAZBOT_RELEASE_MANIFEST': str(m)}, root=str(tmp_path / 'x' / 'install'))
 
 
@@ -50,17 +50,27 @@ def test_production_refuses_without_release_manifest(tmp_path):
     assert errs and 'release' in errs[0]
 
 
+def test_production_refuses_dev_manifest_and_missing_kind(tmp_path):
+    errs = B.check_environment('production', 'lio', {}, root=_release(tmp_path, f'kind: dev\nsha: {SHA40}\ndirty: false\n'))
+    assert errs and 'kind: release' in errs[0]
+    assert B.check_environment('production', 'lio', {}, root=_release(tmp_path / 'b', f'sha: {SHA40}\ndirty: false\n'))
+
+
+def test_production_accepts_release_manifest(tmp_path):
+    assert not B.check_environment('production', 'lio', {}, root=_release(tmp_path, f'kind: release\nsha: {SHA40}\ndirty: false\n'))
+
+
 def test_production_refuses_dirty_or_bad_sha(tmp_path):
-    assert B.check_environment('production', 'lio', {}, root=_release(tmp_path, f'sha: {SHA40}\ndirty: true\n'))
-    assert B.check_environment('production', 'lio', {}, root=_release(tmp_path / 'b', 'sha: abc123\ndirty: false\n'))
-    assert B.check_environment('production', 'lio', {}, root=_release(tmp_path / 'c', f'sha: {SHA40}\n'))
+    assert B.check_environment('production', 'lio', {}, root=_release(tmp_path, f'kind: release\nsha: {SHA40}\ndirty: true\n'))
+    assert B.check_environment('production', 'lio', {}, root=_release(tmp_path / 'b', 'kind: release\nsha: abc123\ndirty: false\n'))
+    assert B.check_environment('production', 'lio', {}, root=_release(tmp_path / 'c', f'kind: release\nsha: {SHA40}\n'))
 
 
 def test_production_never_falls_back_to_dev_build_manifest(tmp_path):
     root = tmp_path / 'install'
     d = root / 'qazbot_bringup' / 'share' / 'qazbot_bringup'
     d.mkdir(parents=True)
-    (d / 'build_manifest.yaml').write_text(f'sha: {SHA40}\ndirty: false\n')
+    (d / 'build_manifest.yaml').write_text(f'kind: release\nsha: {SHA40}\ndirty: false\n')
     assert B.check_environment('production', 'lio', {}, root=str(root))
 
 

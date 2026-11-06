@@ -122,7 +122,9 @@ class TestLidarProjector(unittest.TestCase):
         self.assertGreater(len(exp_keys), 15)
 
         # graph: the node is up with its publishers/subscribers (discovery events)
-        self.spin_until(lambda: self.node.count_subscribers('/qazbot_lio/odometry') == 1 and
+        # node-name discovery (participant data) can lag endpoint discovery: wait for it before by-node queries
+        self.spin_until(lambda: NODE in {n for n, ns in self.node.get_node_names_and_namespaces() if ns == '/'} and
+                        self.node.count_subscribers('/qazbot_lio/odometry') == 1 and
                         self.node.count_subscribers('/qazbot_lio/cloud_registered') == 1 and
                         self.node.count_subscribers(IMU) == 1 and
                         self.node.count_publishers('/qazbot_lio/scan') == 1 and

@@ -47,7 +47,7 @@ parameter values equal the live fb18dc1 deployment of 2026-11-05 (verified, see 
 
 ## Scripts (lib/qazbot_bringup)
 `env.sh` (source first: ROS, pinned runtime debs `QAZBOT_RUNTIME` = `<release>/deps`, workspace, vendor env,
-`FASTRTPS_DEFAULT_PROFILES_FILE` = `config/dds_qazbot.xml` or `QAZBOT_DDS_PROFILE`), `aimdk_env.sh`,
+`FASTRTPS_DEFAULT_PROFILES_FILE` by `QAZBOT_MODE`: lab (default) = `config/dds_loopback.xml` + `ROS_LOCALHOST_ONLY=1`, production = `config/dds_qazbot.xml`; `QAZBOT_DDS_PROFILE` overrides), `aimdk_env.sh`,
 `bringup_info.py` (guard + summary), legacy single-component runners `run_localization.sh`, `run_nav_full.sh`,
 `run_nav_plan.sh`, `run_trust.sh`, `run_trust_go2_shadow.sh`, `run_x2_driver.sh`.
 
