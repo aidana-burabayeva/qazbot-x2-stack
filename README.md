@@ -29,6 +29,7 @@ B=/tmp/qazbot_build                                  # любой каталог
 ws/third_party/fetch_runtime_debs.sh $B/deps --cache /home/agi/qazbot_archive/third_party_debs
 nice -n 19 ws/third_party/build_third_party.sh --src $B/tp_src --build-base $B/build_tp --install-base $B/install --deps $B/deps --jobs 2
 nice -n 19 colcon --log-base $B/log build --base-paths ws/src --build-base $B/build --install-base $B/install --parallel-workers 2
+source $B/install/setup.bash                                # third-party (patched Smac, FAST-LIO) для тестов запуска
 ROS_DOMAIN_ID=88 ROS_LOCALHOST_ONLY=1 colcon --log-base $B/log test --base-paths ws/src --build-base $B/build --install-base $B/install
 ```
 Или контейнер: `docker/README.md` (сеть отключена, домен 88, без устройств, лимиты CPU/памяти).
