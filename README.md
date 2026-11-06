@@ -22,16 +22,17 @@ docs/                        лёгкая документация (архите
 Доказательства (bags, логи, результаты прогонов) в репозитории **не хранятся**: `/home/agi/qazbot_archive/<sha>/`
 (дерево до консолидации: `repo_tree_fb18dc1/INDEX.md`).
 
-## Сборка (всегда вне дерева)
+## Сборка и тесты (всегда вне дерева; одна процедура с чистого клона)
 ```bash
-source /opt/ros/humble/setup.bash
 B=/tmp/qazbot_build                                  # любой каталог вне репозитория
-ws/third_party/fetch_runtime_debs.sh $B/deps --cache /home/agi/qazbot_archive/third_party_debs
-nice -n 19 ws/third_party/build_third_party.sh --src $B/tp_src --build-base $B/build_tp --install-base $B/install --deps $B/deps --jobs 2
-nice -n 19 colcon --log-base $B/log build --base-paths ws/src --build-base $B/build --install-base $B/install --parallel-workers 2
-source $B/install/setup.bash                                # third-party (patched Smac, FAST-LIO) для тестов запуска
-ROS_DOMAIN_ID=88 ROS_LOCALHOST_ONLY=1 colcon --log-base $B/log test --base-paths ws/src --build-base $B/build --install-base $B/install
+docker/tools/build_workspace.sh --prefix $B --deb-cache /home/agi/qazbot_archive/third_party_debs   # nice 19, --jobs 2
+source /opt/ros/humble/setup.bash && source $B/install/setup.bash   # единственное ручное действие (его же печатает скрипт)
+ROS_DOMAIN_ID=88 ROS_LOCALHOST_ONLY=1 colcon --log-base $B/work/log test --base-paths ws/src --build-base $B/work/build --install-base $B/install
 ```
+`build_workspace.sh` (используют также `docker/lab/build.sh` и `docker/deploy/build_release.sh`): pinned runtime debs →
+`ws/third_party.repos` + патчи → FAST-LIO и patched Smac в `$B/install` → `ws/src` поверх → `$B/manifest.yaml`.
+После `source` `lio_binary`, `projector_prefix` и overlay Smac находятся через ament index, `QAZBOT_SMAC_PREFIX` не нужен.
+Тесты, требующие patched Smac, при его отсутствии пропускаются (`skip` с причиной), а не падают.
 Или контейнер: `docker/README.md` (сеть отключена, домен 88, без устройств, лимиты CPU/памяти).
 
 ## Запуск

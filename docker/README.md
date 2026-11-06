@@ -4,7 +4,7 @@
 |---|---|
 | `Dockerfile`, `compose.yaml`, `lab/` | LAB build / test / offline replay environment (ROS 2 Humble) |
 | `deploy/` | SHA-pinned releases on the robot host: `build_release.sh`, `deploy.sh`, `rollback.sh`, `status.sh` |
-| `tools/` | task debris registry and cleanup: `task_register.sh`, `task_cleanup.sh`, `cleanup_candidates.sh` (read-only) |
+| `tools/` | `build_workspace.sh` (canonical build: third-party overlay + ws/src + manifest; used by README, lab/build.sh, build_release.sh); task debris registry and cleanup: `task_register.sh`, `task_cleanup.sh`, `cleanup_candidates.sh` (read-only) |
 | `twin/` | digital-twin container scripts (official AimDK MuJoCo sim + MC, x86); moved from `tools/twin/docker` |
 
 ## Where things run: production on the host, lab in a container

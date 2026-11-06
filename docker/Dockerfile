@@ -3,6 +3,7 @@
 # System dependencies come from the package.xml files (rosdep). aimdk_msgs (vendor, not in rosdep) and fast_lio
 # (built from ws/third_party) are skipped here. Nav2 1.1.18 runtime parity with the robot: fetch the pinned debs
 # (ws/third_party/fetch_runtime_debs.sh) and point QAZBOT_RUNTIME at them (docker/lab/build.sh does this).
+# The workspace itself is built by docker/tools/build_workspace.sh (via lab/build.sh), never by hand.
 # Production does NOT run in this image (see docker/README.md).
 ARG ROS_IMAGE=ros:humble-ros-base-jammy
 FROM ${ROS_IMAGE}

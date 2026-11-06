@@ -33,50 +33,14 @@ trap 'echo "build failed; staging kept for inspection: $STAGE" >&2' ERR
 git clone -q --no-checkout "$REPO" "$STAGE/src"
 git -C "$STAGE/src" checkout -q --detach "$SHA"
 [ -z "$(git -C "$STAGE/src" status --porcelain)" ] || { echo "REFUSED: checkout of $SHA not clean" >&2; exit 3; }
-WS="$STAGE/src/ws"
-
+# One canonical build (docker/tools/build_workspace.sh, from the fresh checkout): pinned debs, third-party overlay,
+# ws/src on top, manifest.yaml (sha, dirty=false because the checkout is exactly $SHA and was verified clean above).
 mkdir -p "$STAGE/out"
-"$WS/third_party/fetch_runtime_debs.sh" "$STAGE/out/deps" ${DEB_CACHE:+--cache "$DEB_CACHE"}
-nice -n 19 "$WS/third_party/build_third_party.sh" --src "$STAGE/tp_src" --build-base "$STAGE/build_tp" \
-  --install-base "$STAGE/out/install" --deps "$STAGE/out/deps" --jobs "$JOBS" ${GIT_CACHE:+--git-cache "$GIT_CACHE"}
-set +u; source /opt/ros/humble/setup.bash; set -u
-MAKEFLAGS="-j$JOBS" nice -n 19 colcon --log-base "$STAGE/log" build --base-paths "$WS/src" --build-base "$STAGE/build" \
-  --install-base "$STAGE/out/install" --parallel-workers "$JOBS" --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF \
-  --event-handlers console_direct-
+"$STAGE/src/docker/tools/build_workspace.sh" --prefix "$STAGE/out" --build-root "$STAGE/work" --release --profile "$PROFILE" \
+  --jobs "$JOBS" ${DEB_CACHE:+--deb-cache "$DEB_CACHE"} ${GIT_CACHE:+--git-cache "$GIT_CACHE"}
 [ -z "$(git -C "$STAGE/src" status --porcelain)" ] || { echo "REFUSED: build modified the source checkout" >&2; exit 3; }
+grep -q '^dirty: false' "$STAGE/out/manifest.yaml" || { echo "REFUSED: manifest not dirty:false" >&2; exit 3; }
 
-python3 - "$STAGE/src" "$STAGE/out" "$SHA" "$PROFILE" <<'PY'
-import datetime, getpass, hashlib, json, os, socket, subprocess, sys, yaml
-src, out, sha, profile = sys.argv[1:]
-ws = os.path.join(src, 'ws')
-fsha = lambda p: hashlib.sha256(open(p, 'rb').read()).hexdigest()
-dpkg = subprocess.run(['dpkg-query', '-W', '-f', '${Package} ${Version}\n'], capture_output=True, text=True).stdout
-ros = dict(l.split(' ', 1) for l in dpkg.splitlines() if l.startswith('ros-humble-'))
-repos = yaml.safe_load(open(os.path.join(ws, 'third_party.repos')))['repositories']
-pd = os.path.join(ws, 'third_party', 'patches')
-patches = {f'{d}/{f}': fsha(os.path.join(pd, d, f)) for d in sorted(os.listdir(pd)) for f in sorted(os.listdir(os.path.join(pd, d)))}
-inst = os.path.join(out, 'install')
-def j(p):
-    return json.load(open(p)) if os.path.isfile(p) else None
-manifest = {
-    'sha': sha,
-    'dirty': False,                 # fresh checkout of exactly this commit (verified above)
-    'date_utc': datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),
-    'profile': profile,
-    'builder': f'{getpass.getuser()}@{socket.gethostname()}',
-    'arch': os.uname().machine,
-    'commit_subject': subprocess.run(['git', '-C', src, 'log', '-1', '--format=%s'], capture_output=True, text=True).stdout.strip(),
-    'third_party': {k: {'url': v['url'], 'version': v['version']} for k, v in repos.items()},
-    'third_party_patches_sha256': patches,
-    'third_party_builds': {'fast_lio': j(os.path.join(inst, 'fast_lio', 'share', 'fast_lio', 'qazbot_build.json')),
-                           'nav2_smac_planner': j(os.path.join(inst, 'nav2_smac_planner', 'qazbot_bounds_fix.json'))},
-    'runtime_debs_lock_sha256': fsha(os.path.join(ws, 'third_party', 'runtime_debs.lock')),
-    'dpkg_ros_humble': ros,
-}
-with open(os.path.join(out, 'manifest.yaml'), 'w') as f:
-    f.write('# control_backend release manifest (docker/deploy/build_release.sh)\n')
-    yaml.safe_dump(manifest, f, sort_keys=False)
-PY
 mv "$STAGE/out" "$REL"
 rm -rf "$STAGE"
 trap - ERR
