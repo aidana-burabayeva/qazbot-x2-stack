@@ -68,10 +68,17 @@ def check_profile(p):
     assert p['goal_checker.stateful'] is True
     assert 'goal_checker.trans_stopped_velocity' not in p
 
+def _require_smac_overlay():
+    """The patched Smac overlay is a REQUIRED dependency: absent -> hard failure (never a skip)."""
+    from ament_index_python.packages import get_package_prefix
+    prefix = os.environ.get('QAZBOT_SMAC_PREFIX') or get_package_prefix('nav2_smac_planner')
+    assert os.path.isfile(os.path.join(prefix, 'qazbot_bounds_fix.json')), (
+        f'REQUIRED qualified Smac overlay missing in {prefix!r}: run docker/tools/build_workspace.sh --prefix DIR '
+        'and source DIR/install/setup.bash')
+
 
 def test_nav_full_generated_parameters():
-    if not os.environ.get('QAZBOT_SMAC_PREFIX'):
-        pytest.skip('needs the robot environment (qualified Smac overlay: build ws/third_party or QAZBOT_SMAC_PREFIX)')
+    _require_smac_overlay()
     m = load('nav_full.launch.py')
     check_profile(generated_params(m, m.setup, {}))
 

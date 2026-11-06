@@ -18,7 +18,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(os.environ.get('OPSKILLS_ROOT', Path(__file__).resolve().parents[2]))
+ROOT = Path(os.environ.get('OPSKILLS_ROOT', Path(__file__).resolve().parents[3]))
 SKILLS = ROOT / '.claude' / 'skills'
 MANIFEST = SKILLS / 'OPERATOR_SKILLS.json'
 HANDOFF = ROOT / 'docs' / 'hardware' / 'LAB_TO_ROBOT_HANDOFF.md'

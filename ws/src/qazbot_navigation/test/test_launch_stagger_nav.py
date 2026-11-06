@@ -55,10 +55,6 @@ class Pacing(unittest.TestCase):
         self.check(times, 3)
 
     def test_full_nav_launch_is_paced(self):
-        overlay = _smac_overlay_prefix()
-        if not overlay:
-            self.skipTest('qualified Smac overlay absent (no qazbot_bounds_fix.json in QAZBOT_SMAC_PREFIX / ament index): '
-                          'build with docker/tools/build_workspace.sh --prefix DIR and source DIR/install/setup.bash')
         mod=load('nav_full.launch.py');ctx=LaunchContext()
         ctx.launch_configurations.update(ns='qazbot_test',robot_radius='0.454',cell_margin='true',
             map_yaml=os.path.join(MAPS,'first_map_nav2_v2','map.yaml'),
@@ -74,18 +70,6 @@ class Pacing(unittest.TestCase):
         with patch.dict(os.environ,{'AMENT_PREFIX_PATH': os.pathsep.join(unq)},clear=True):
             with self.assertRaisesRegex(RuntimeError,'qualified Smac'):
                 mod.setup(LaunchContext())
-
-
-def _smac_overlay_prefix():
-    """Prefix of the qualified (patched, manifest-carrying) nav2_smac_planner, or '' when it is not built/sourced."""
-    prefix = os.environ.get('QAZBOT_SMAC_PREFIX')
-    if not prefix:
-        try:
-            from ament_index_python.packages import get_package_prefix
-            prefix = get_package_prefix('nav2_smac_planner')
-        except Exception:
-            return ''
-    return prefix if os.path.isfile(os.path.join(prefix, 'qazbot_bounds_fix.json')) else ''
 
 
 if __name__ == '__main__':

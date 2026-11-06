@@ -13,7 +13,7 @@
 
 ## Единый источник истины
 - `.claude/skills/OPERATOR_SKILLS.json`: версия пакета, `contract_version`, роль и версия каждого skill, sha256 `SKILL.md`.
-- `tools/operator_skills/opskills.py`: `validate` (целостность, operator-only, дрейф, конфликты имён с `~/.claude`, версия контракта), `sync` (есть ли новая совместимая версия; сам ничего не тянет), `hashes --update` (переподпись после осознанной правки), `role`.
+- `ws/tools/operator_skills/opskills.py`: `validate` (целостность, operator-only, дрейф, конфликты имён с `~/.claude`, версия контракта), `sync` (есть ли новая совместимая версия; сам ничего не тянет), `hashes --update` (переподпись после осознанной правки), `role`.
 - Логика Git/handoff не дублируется: LAB-skills вызывают `lab.py`, ROBOT-skill — работает по тому же контракту документов. Существующий `robot-sync-validate` (`ce4537e`) включён без изменений.
 - Роль: `QAZBOT_ROLE=LAB|ROBOT` или файл `~/.config/qazbot/role`. `lab.py stop|resume` отказывается работать в роли ROBOT. При UNKNOWN skill не выполняет действий над железом.
 
@@ -26,9 +26,9 @@
 ## Установка и обновление (оба checkout)
 ```bash
 git fetch --prune
-python3 tools/operator_skills/opskills.py sync        # UP_TO_DATE | UPDATE_AVAILABLE | INCOMPATIBLE_MAJOR
+python3 ws/tools/operator_skills/opskills.py sync        # UP_TO_DATE | UPDATE_AVAILABLE | INCOMPATIBLE_MAJOR
 git merge --ff-only origin/<ветка>                      # только если sync сказал так и дерево чистое
-python3 tools/operator_skills/opskills.py validate --role lab   # или robot
+python3 ws/tools/operator_skills/opskills.py validate --role lab   # или robot
 ```
 Dirty или diverged checkout: `sync` пишет `do not pull blindly` — интегрировать в чистом worktree, не перезаписывать. Новая сессия Claude Code подхватывает skills из `.claude/skills/` рабочего каталога.
 Выпуск новой версии: правка skill → поднять версию в манифесте → `opskills.py hashes --update` → тесты → commit.

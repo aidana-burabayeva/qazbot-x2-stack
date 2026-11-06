@@ -1,6 +1,6 @@
 {
  "package": "qazbot-operator-skills",
- "version": "1.1.0",
+ "version": "1.1.1",
  "contract_version": 1,
  "skills": {
   "nightly-stop": {
@@ -20,8 +20,8 @@
   },
   "robot-sync-validate": {
    "role": "ROBOT",
-   "version": "1.1.0",
-   "sha256": "0a39ea555b55adfcbdefbd4bd5c9c05007d29bd514a05d09cb7fa5337e2ee146"
+   "version": "1.1.1",
+   "sha256": "a2a8f26cd6c25aaf07c8768332804c21b2ff4b9295e9d2cd2a0827a775d8a927"
   }
  },
  "unmanaged": [

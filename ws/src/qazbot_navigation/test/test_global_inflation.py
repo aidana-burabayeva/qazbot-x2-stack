@@ -14,10 +14,17 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 NAV = os.path.abspath(os.path.join(HERE, '..', 'launch'))
 MAP = os.path.abspath(os.path.join(HERE, '..', '..', 'qazbot_maps', 'maps', 'd1_qazbot_20261029', 'map.yaml'))
 
+def _require_smac_overlay():
+    """The patched Smac overlay is a REQUIRED dependency: absent -> hard failure (never a skip)."""
+    from ament_index_python.packages import get_package_prefix
+    prefix = os.environ.get('QAZBOT_SMAC_PREFIX') or get_package_prefix('nav2_smac_planner')
+    assert os.path.isfile(os.path.join(prefix, 'qazbot_bounds_fix.json')), (
+        f'REQUIRED qualified Smac overlay missing in {prefix!r}: run docker/tools/build_workspace.sh --prefix DIR '
+        'and source DIR/install/setup.bash')
+
 
 def planner_params():
-    if not os.environ.get('QAZBOT_SMAC_PREFIX'):
-        pytest.skip('needs the robot environment (QAZBOT_SMAC_PREFIX, source env.sh)')
+    _require_smac_overlay()
     sys.path.insert(0, NAV)
     spec = importlib.util.spec_from_file_location('nf', os.path.join(NAV, 'nav_full.launch.py'))
     m = importlib.util.module_from_spec(spec)

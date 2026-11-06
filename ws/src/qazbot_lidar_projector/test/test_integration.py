@@ -45,10 +45,10 @@ DEADLINE_S = 20.0
 
 @pytest.mark.launch_test
 def generate_test_description():
-    # Isolated graph: the domain comes from the environment (lab default 88), never 0 (robot graph); host-local only.
+    # Isolated graph: the domain comes from the environment (set by the caller), never 0 (robot graph); host-local only.
     os.environ['ROS_LOCALHOST_ONLY'] = '1'
     if os.environ.get('ROS_DOMAIN_ID', '').strip() in ('', '0'):
-        os.environ['ROS_DOMAIN_ID'] = '88'
+        raise RuntimeError('set an isolated ROS_DOMAIN_ID (not unset/0, the robot graph) for this test, e.g. ROS_DOMAIN_ID=88')
     share = get_package_share_directory('qazbot_lidar_projector')
     return launch.LaunchDescription([
         launch.actions.IncludeLaunchDescription(
