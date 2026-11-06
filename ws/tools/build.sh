@@ -21,7 +21,7 @@ CLEAN=0; DEB_CACHE="${QAZBOT_DEB_CACHE:-}"; GIT_CACHE="${QAZBOT_TP_GIT_CACHE:-}"
 while [ $# -gt 0 ]; do case "$1" in
   --clean) CLEAN=1; shift;; --deb-cache) DEB_CACHE="$2"; shift 2;; --git-cache) GIT_CACHE="$2"; shift 2;;
   --jobs) JOBS="$2"; shift 2;;
-  -h|--help) sed -n '2,17p' "$0"; exit 0;; *) echo "unknown arg $1" >&2; exit 2;; esac; done
+  -h|--help) sed -n '2,16p' "$0"; exit 0;; *) echo "unknown arg $1" >&2; exit 2;; esac; done
 
 # 1. never rebuild under a running stack
 for p in /proc/[0-9]*; do
