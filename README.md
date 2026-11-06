@@ -60,5 +60,8 @@ docker/deploy/status.sh            # current/previous + SHA по путям за
 ## Откат
 `docker/deploy/rollback.sh --prefix <prefix>` (меняет местами `current` и `previous`), перезапуск, `status.sh`. Откат на состояние до
 консолидации (каталог `/home/agi/control_backend`, fb18dc1) — `docs/RELEASE.md`, раздел «Legacy».
+## Host-юниты (production)
+`docker/deploy/systemd/`: `qazbot-vendor-trim.service` (после загрузки останавливает hal_camera/orbbec_camera/perception/drp/lx_webrtc_app через `aima em stop-app`; лог `~/.local/state/qazbot/vendor_trim.log`).
+Установка: `docker/deploy/systemd/install_user_units.sh [--dry-run]`; откат: `... --uninstall`. Подробности: `docker/deploy/systemd/README.md`.
 
 Правила работы агентов и DoD: [AGENTS.md](AGENTS.md).

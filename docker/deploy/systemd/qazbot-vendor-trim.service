@@ -1,0 +1,10 @@
+[Unit]
+Description=QazBot: stop vendor apps not needed for navigation (camera, perception, drp, webrtc)
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.config/qazbot/qazbot_vendor_trim.sh
+
+[Install]
+WantedBy=default.target

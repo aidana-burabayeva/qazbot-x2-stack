@@ -21,6 +21,13 @@
 
 Ничего из этого не запускает, не останавливает и не сигналит процессы; перезапуск стека на роботе — только оператор.
 
+## Host-юниты
+| Юнит | Назначение |
+|---|---|
+| `qazbot-vendor-trim.service` (user, `docker/deploy/systemd/`) | после boot останавливает vendor-приложения, не нужные навигации (`aima em stop-app`); лог `~/.local/state/qazbot/vendor_trim.log` |
+
+Установка: `docker/deploy/systemd/install_user_units.sh --dry-run`, затем без флага (идемпотентно, без sudo). Откат: `install_user_units.sh --uninstall` (`systemctl --user disable qazbot-vendor-trim.service`). Вручную вернуть приложения: `aima em start-app hal_camera|orbbec_camera|perception`.
+
 ## Legacy (состояние до консолидации)
 Текущее production (2026-11-05) работает из `/home/agi/control_backend` (не релиз; == fb18dc1 + rviz d01f779, проектор
 9417bed, FAST-LIO/Smac из `candidates/`, Nav2 из `runtime/`). Это цель отката «legacy-fb18dc1»: остановить стек релиза
