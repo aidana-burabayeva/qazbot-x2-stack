@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
-# Process-local environment of the X2 navigation stack (installed layout). Never source it from a robot service,
-# a shell profile or .bashrc. Usage:  source <install>/qazbot_bringup/lib/qazbot_bringup/env.sh
-#   QAZBOT_RUNTIME  pinned Nav2 runtime debs (ws/third_party/fetch_runtime_debs.sh); default <release>/deps,
-#                   layout {qazbot_nav_deps/root,nav2_bt_deps/root,user_pkgs} as the legacy control_backend/runtime
+# Process-local environment of the X2 navigation stack. Never source it from a robot service, a shell profile or
+# .bashrc. Usage (repo root):  [QAZBOT_MODE=production] source ws/install/qazbot_bringup/lib/qazbot_bringup/env.sh
+#   QAZBOT_RUNTIME  pinned Nav2 runtime debs; default <install>/_runtime_deps, extracted there by ws/tools/build.sh
+#                   from ws/third_party/runtime_debs.lock (layout {qazbot_nav_deps/root,nav2_bt_deps/root,user_pkgs})
 #   QAZBOT_MODE    lab (default) | production. lab: loopback-only DDS profile (config/dds_loopback.xml) and
 #                  ROS_LOCALHOST_ONLY=1, nothing leaves the host; production: robot-LAN profile config/dds_qazbot.xml
 #                  (10.0.1.41 + Wi-Fi), ROS_LOCALHOST_ONLY untouched. Must match the launch argument mode:=.
 #   QAZBOT_DDS_PROFILE  explicit FastDDS profile; overrides the profile chosen by QAZBOT_MODE
-#   QAZBOT_SMAC_PREFIX / QAZBOT_LIFECYCLE_PREFIX  explicit candidate overlays (unchanged semantics)
+#   QAZBOT_SMAC_PREFIX / QAZBOT_LIFECYCLE_PREFIX  explicit candidate overlays (lab only; production refuses them)
 source /opt/ros/humble/setup.bash
 QAZBOT_INSTALL="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../../.." && pwd)"
 export QAZBOT_INSTALL
-QAZBOT_RUNTIME="${QAZBOT_RUNTIME:-$(cd -- "$QAZBOT_INSTALL/.." && pwd)/deps}"
+QAZBOT_RUNTIME="${QAZBOT_RUNTIME:-$QAZBOT_INSTALL/_runtime_deps}"
 export QAZBOT_RUNTIME
 if [ -d "$QAZBOT_RUNTIME/qazbot_nav_deps" ]; then
   export AMENT_PREFIX_PATH="$QAZBOT_RUNTIME/nav2_bt_deps/root/opt/ros/humble:$QAZBOT_RUNTIME/qazbot_nav_deps/root/opt/ros/humble:$QAZBOT_RUNTIME/user_pkgs/opt/ros/humble:${AMENT_PREFIX_PATH:-}"

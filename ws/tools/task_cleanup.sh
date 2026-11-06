@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Delete ONLY the paths registered for a task (docker/tools/task_register.sh), each after safety checks.
-#   docker/tools/task_cleanup.sh <task_id> [--dry-run]
+# Delete ONLY the paths registered for a task (ws/tools/task_register.sh), each after safety checks.
+#   ws/tools/task_cleanup.sh <task_id> [--dry-run]
 # A path is deleted only if ALL hold, otherwise it is kept and reported:
 #   1. it is inside an allowed root: QAZBOT_CLEANUP_ROOTS (colon list), default "/tmp:$HOME/lab:$HOME/qazbot_scratch"
 #   2. it is not (inside) a protected path: QAZBOT_PROTECTED (colon list), default
-#      "$HOME/control_backend:$HOME/worktrees:$HOME/aimdk:$HOME/prod/current:$HOME/prod/previous:$HOME/qazbot_archive",
-#      and not the target of <prod>/current or <prod>/previous (QAZBOT_PROD_PREFIX, default $HOME/prod)
+#      "$HOME/control_backend:$HOME/control_backend_legacy_fb18dc1:$HOME/worktrees:$HOME/aimdk:$HOME/qazbot_archive"
+#      (the robot workspace, the legacy rollback target, worktrees, vendor SDK, evidence archive)
 #   3. no process has it (or a file below it) open, as cwd, exe or mapped (lsof; fuser fallback)
 #   4. if it is a git checkout/worktree: no uncommitted or untracked changes, no stash, no commit that is not on a remote;
 #      for a main repository the same holds for every LINKED worktree (`git worktree list`), and a repository with a
@@ -17,9 +17,7 @@ REPO="$(git -C "$(dirname -- "${BASH_SOURCE[0]}")" rev-parse --show-toplevel)"
 M="${QAZBOT_TASK_DIR:-$REPO/.task}/$ID.manifest"
 [ -f "$M" ] || { echo "no manifest $M" >&2; exit 2; }
 IFS=: read -r -a ROOTS <<< "${QAZBOT_CLEANUP_ROOTS:-/tmp:$HOME/lab:$HOME/qazbot_scratch}"
-IFS=: read -r -a PROT <<< "${QAZBOT_PROTECTED:-$HOME/control_backend:$HOME/worktrees:$HOME/aimdk:$HOME/prod/current:$HOME/prod/previous:$HOME/qazbot_archive}"
-PROD="${QAZBOT_PROD_PREFIX:-$HOME/prod}"
-for l in current previous; do t="$(realpath -e "$PROD/$l" 2>/dev/null || true)"; [ -n "$t" ] && PROT+=("$t"); done
+IFS=: read -r -a PROT <<< "${QAZBOT_PROTECTED:-$HOME/control_backend:$HOME/control_backend_legacy_fb18dc1:$HOME/worktrees:$HOME/aimdk:$HOME/qazbot_archive}"
 under() { [ "$1" = "$2" ] || [[ "$1" == "$2"/* ]]; }
 in_use() {  # prints holders; returns 0 when something uses the path
   local p="$1" out=""
@@ -70,7 +68,7 @@ while IFS= read -r p; do
   [ -z "$why" ] && h="$(in_use "$r")" && why="in use: $(echo "$h" | head -1)"
   [ -z "$why" ] && g="$(git_unsafe "$r")" && why="git: $g"
   if [ -n "$why" ]; then echo "KEPT     $p  [$why]"; echo "$p" >> "$TMP"; kept=1; continue; fi
-  if [ $DRY -eq 1 ]; then echo "would rm $p"; echo "$p" >> "$TMP"; else chmod -R u+w -- "$r" 2>/dev/null || true; rm -rf -- "$r"; echo "removed  $p"; fi   # releases are a-w
+  if [ $DRY -eq 1 ]; then echo "would rm $p"; echo "$p" >> "$TMP"; else chmod -R u+w -- "$r" 2>/dev/null || true; rm -rf -- "$r"; echo "removed  $p"; fi   # u+w: read-only trees
 done < "$M"
 mv "$TMP" "$M"
 exit $kept

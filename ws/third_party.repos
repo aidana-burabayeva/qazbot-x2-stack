@@ -1,5 +1,5 @@
 # Third-party sources of the X2 navigation stack, pinned to exact commits (vcstool format).
-# Checked out by ws/third_party/build_third_party.sh into ws/third_party/src (gitignored), then patched with
+# Imported by ws/third_party/import_sources.py (ws/tools/build.sh) into ws/src/third_party (gitignored), patched with
 # ws/third_party/patches/<package>/*.patch. Provenance proof: ws/third_party/README.md.
 repositories:
   FAST_LIO:

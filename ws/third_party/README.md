@@ -31,12 +31,15 @@ reproduced from pinned upstream sources + patches (`../third_party.repos`, `patc
   `/home/agi/qazbot_archive/third_party_debs/` (not in git).
 
 ## Use
-```bash
-ws/third_party/fetch_runtime_debs.sh <deps-dir> [--cache /home/agi/qazbot_archive/third_party_debs]
-nice -n 19 ws/third_party/build_third_party.sh --src <dir> --build-base <dir> --install-base <install> --deps <deps-dir> --jobs 2
-```
-`build_third_party.sh` writes `nav2_smac_planner/qazbot_bounds_fix.json` (checked by `nav_full.launch.py`) and
-`fast_lio/share/fast_lio/qazbot_build.json`. Release builds (`docker/deploy/build_release.sh`) call both.
+Only through `ws/tools/build.sh` (root README), which runs, in place:
+* `fetch_runtime_debs.sh ws/install/_runtime_deps --download-dir ws/build/_runtime_debs [--cache DIR]` (offline cache:
+  `--deb-cache DIR` / `$QAZBOT_DEB_CACHE`, e.g. the archive's `third_party_debs/`); `env.sh` uses `<install>/_runtime_deps`;
+* `import_sources.py [--git-cache DIR]`: `../third_party.repos` at the pinned commits -> `ws/src/third_party/` (gitignored,
+  `COLCON_IGNORE`) + `patches/`; idempotent (pin and patch state are verified as git tree ids) and it refuses a checkout
+  that is neither the pristine pin nor pin + patches (delete that directory to re-import);
+* colcon `--paths src/third_party/FAST_LIO` (Release, USE_LIVOX=OFF) and `--paths src/third_party/navigation2/nav2_smac_planner`
+  (RelWithDebInfo) into `ws/build` + `ws/install`, then writes `nav2_smac_planner/qazbot_bounds_fix.json` (checked by
+  `nav_full.launch.py`) and `fast_lio/share/fast_lio/qazbot_build.json`.
 
 ## Rebuild vs live (2026-11-05, lab rebuild on the X2, nice 19, 2 jobs)
 * fastlio_mapping: same size (1 717 112 B), same dynamic symbols, same NEEDED libraries, same function symbol set,

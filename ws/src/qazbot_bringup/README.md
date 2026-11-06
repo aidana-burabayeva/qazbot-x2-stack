@@ -9,16 +9,22 @@ see docker/README.md), `Interface/control_mod/locomotion.html` 5.1.2/5.1.3 (MC v
 
 ## Usage
 ```bash
-source <install>/qazbot_bringup/lib/qazbot_bringup/env.sh
+# from the repository root, after ws/tools/build.sh
+source ws/install/qazbot_bringup/lib/qazbot_bringup/env.sh
 # lab (default): adapter dry run; refuses ROS_DOMAIN_ID 0 and a non-local graph
-ROS_DOMAIN_ID=88 ROS_LOCALHOST_ONLY=1 ros2 launch qazbot_bringup x2_navigation.launch.xml
-# production (operator permission; ROS_DOMAIN_ID unset/0): live MC output
+ROS_DOMAIN_ID=88 ros2 launch qazbot_bringup x2_navigation.launch.xml
+# production (operator permission; ROS_DOMAIN_ID unset/0; only a tagged release build, see docs/RELEASE.md)
+QAZBOT_MODE=production source ws/install/qazbot_bringup/lib/qazbot_bringup/env.sh
 ros2 launch qazbot_bringup x2_navigation.launch.xml mode:=production
 ```
-At start it logs one INFO line: `QAZBOT BRINGUP mode=… profile=… workspace=… git_sha=… dirty=… manifest=…
+At start it logs one INFO line: `QAZBOT BRINGUP mode=… profile=… workspace=… git_sha=… dirty=… release_tag=… manifest=…
 odom_source=lio lidar_source=/aima/hal/sensor/lidar_chest_front/lidar_pointcloud -> FAST-LIO tf_owner=[…]
-control_channel=[…]`. The SHA comes from `<release>/manifest.yaml` (docker/deploy) or the build manifest
-`share/qazbot_bringup/build_manifest.yaml` (generated at every build from the source checkout).
+control_channel=[…]`. The SHA comes from `ws/install/qazbot_build_manifest.yaml` (ws/tools/build.sh) or, for a plain
+colcon build, `share/qazbot_bringup/build_manifest.yaml` (generated at every build from the source checkout).
+`mode:=production` is refused unless the running install is `<repo>/ws/install`, its manifest sha == `git rev-parse HEAD`,
+dirty false, built in this location, the tree is clean, HEAD has an annotated `x2-release-YYYYMMDD-N` tag, env.sh was
+sourced with `QAZBOT_MODE=production` from this install and no `QAZBOT_SMAC_PREFIX`/`QAZBOT_LIFECYCLE_PREFIX` is set.
+`bringup_info.py --release-check` prints the build/git part (used by `ws/tools/status.sh`).
 
 ## x2_navigation.launch.xml
 Starts, 0.6 s apart: `qazbot_localization/localization.launch.py` (t=0), `localization_trust_node.py` (3.6 s),
@@ -46,7 +52,7 @@ parameter values equal the live fb18dc1 deployment of 2026-11-05 (verified, see 
 `motion_adapter.lab.yaml` (live false), `localization_trust.yaml` (expected map sha256). Package defaults: copy, don't edit.
 
 ## Scripts (lib/qazbot_bringup)
-`env.sh` (source first: ROS, pinned runtime debs `QAZBOT_RUNTIME` = `<release>/deps`, workspace, vendor env,
+`env.sh` (source first: ROS, pinned runtime debs `QAZBOT_RUNTIME` = `<install>/_runtime_deps`, workspace, vendor env,
 `FASTRTPS_DEFAULT_PROFILES_FILE` by `QAZBOT_MODE`: lab (default) = `config/dds_loopback.xml` + `ROS_LOCALHOST_ONLY=1`, production = `config/dds_qazbot.xml`; `QAZBOT_DDS_PROFILE` overrides), `aimdk_env.sh`,
 `bringup_info.py` (guard + summary), legacy single-component runners `run_localization.sh`, `run_nav_full.sh`,
 `run_nav_plan.sh`, `run_trust.sh`, `run_trust_go2_shadow.sh`, `run_x2_driver.sh`.

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Regression test of task_cleanup.sh git safety (runs entirely in its own mktemp dir, removes it at the end).
-#   docker/tools/test_task_cleanup.sh        # exit 0 = all cases pass
+#   ws/tools/test_task_cleanup.sh        # exit 0 = all cases pass
 set -uo pipefail
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 T="$(mktemp -d)"; trap 'chmod -R u+w "$T" 2>/dev/null; rm -rf "$T"' EXIT
-export QAZBOT_TASK_DIR="$T/task" QAZBOT_CLEANUP_ROOTS="$T/allowed" QAZBOT_PROTECTED="$T/none" QAZBOT_PROD_PREFIX="$T/prod"
+export QAZBOT_TASK_DIR="$T/task" QAZBOT_CLEANUP_ROOTS="$T/allowed" QAZBOT_PROTECTED="$T/none"
 export GIT_AUTHOR_NAME=t GIT_AUTHOR_EMAIL=t@t GIT_COMMITTER_NAME=t GIT_COMMITTER_EMAIL=t@t
 mkdir -p "$T/allowed" "$T/elsewhere"
 git init -q --bare "$T/origin.git"

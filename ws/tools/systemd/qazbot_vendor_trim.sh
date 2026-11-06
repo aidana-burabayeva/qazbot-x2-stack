@@ -2,7 +2,7 @@
 # Stops vendor apps not needed by navigation after every boot (EM default_apps are root-owned firmware config).
 # AgiBot docs: ~/aimdk/extra/mc-rl/README_en.md (Step 0.5 / Teardown) use `aima em stop-app/start-app`; docs otherwise silent on trimming default_apps.
 # Same method as the manual trim (P8a): `aima em stop-app`. Repeated passes cover EM's staggered start.
-AIMA="$(command -v aima || echo /home/agi/.local/bin/aima)"
+AIMA="$(command -v aima || echo "$HOME/.local/bin/aima")"
 APPS="hal_camera orbbec_camera perception drp lx_webrtc_app"
 LOG="${XDG_STATE_HOME:-$HOME/.local/state}/qazbot/vendor_trim.log"
 mkdir -p "$(dirname "$LOG")"

@@ -36,7 +36,7 @@ Client (live): `/aimdk_5Fmsgs/srv/SetMcInputSource`. Live mode takes the coopera
 | `tf_topic` | string | /qazbot_d1_map/tf | localization liveness |
 | `odom_topic` | string | /qazbot_native/odom | odometry (production: /qazbot_lio/odom_level) |
 | `trust_topic` / `trust_status_topic` | string | /qazbot_d1_map/localization_trust/{trusted,status} | trust gate |
-| `lock_path` | string | ~/control_backend/run/x2_motion_owner.lock | motion owner lock (kept for compatibility with the running legacy stack) |
+| `lock_path` | string | ~/control_backend/run/x2_motion_owner.lock | motion owner lock (live mode only; the directory is created on demand). On the robot `~/control_backend` is the workspace repository, so this is `<repo>/run/` (gitignored); the legacy stack used the same path, so legacy and new stack exclude each other |
 | `allow_lateral`, `require_localization`, `require_trust` | bool | false, true, true | safety gates |
 | `tf_max_age_s`, `t1_pause_max_s` | float | 1.0, 3.0 | freshness / pause limits |
 | `yaw_loop`, `yaw_u_min_ccw`, `yaw_u_min_cw`, `yaw_u_max`, `yaw_ki` | bool/float | true, 0.6, 0.45, 1.0, see code | in-place yaw-rate loop (P20/P23) |

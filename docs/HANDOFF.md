@@ -285,3 +285,10 @@ Bags в Git **не публикуются** (решение оператора):
 - HAL PID2623 ранее упал в FastDDS SHM; восстановлен один штатный HAL PID204720 через em_run.sh (отсюда nice 0).
 
 **Vendor trim (2026-11-05):** user-юнит `qazbot-vendor-trim` перенесён в `docker/deploy/systemd/` (install_user_units.sh); лог теперь `~/.local/state/qazbot/vendor_trim.log`. Проверка на реальном reboot не проведена.
+
+**In-place workspace (2026-11-06, T3 p3-cutover):** схема префиксов/релизов (`/home/agi/prod`, `releases/`, `current`/`previous`,
+`docker/deploy/*`) удалена. Один каталог на роботе — `/home/agi/control_backend` = корень git; сборка `ws/tools/build.sh`
+на месте (`ws/build`, `ws/install`, third-party в `ws/src/third_party`, debs в `ws/install/_runtime_deps`, манифест
+`ws/install/qazbot_build_manifest.yaml`); production-гейт: тег `x2-release-YYYYMMDD-N` + sha == HEAD + чистое дерево;
+статус `ws/tools/status.sh`; `docker/deploy/systemd` → `ws/tools/systemd`, task-инструменты → `ws/tools/`. Переход с
+legacy и откат: docs/RELEASE.md. Переход на роботе ещё НЕ выполнен (legacy работает из `/home/agi/control_backend`).

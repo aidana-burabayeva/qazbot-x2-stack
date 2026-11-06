@@ -1,4 +1,12 @@
-# colcon / python build products (build in a directory OUTSIDE the repo; these catch accidents)
+# the ONE colcon workspace, built in place by ws/tools/build.sh, and the third-party checkouts it imports
+/ws/build/
+/ws/install/
+/ws/log/
+/ws/src/third_party/*
+!/ws/src/third_party/COLCON_IGNORE
+# motion owner lock of x2_motion_adapter (lock_path default ~/control_backend/run/ = <repo>/run on the robot)
+/run/
+# any other colcon / python build products (accidents)
 build/
 install/
 log/
@@ -7,11 +15,8 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .coverage
-# task registry (docker/tools/task_register.sh) and third-party checkouts/builds of ws/third_party
+# task registry (ws/tools/task_register.sh)
 .task/
-ws/third_party/src/
-ws/third_party/build/
-ws/third_party/install/
 # data, evidence and backups never live in this repository (archive: /home/agi/qazbot_archive/<sha>/)
 *.bag
 *.db3

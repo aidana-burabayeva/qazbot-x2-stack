@@ -6,7 +6,7 @@ Firmware config (EM `default_apps`, root-owned) is not edited. Log: `${XDG_STATE
 
 AgiBot docs: `~/aimdk/extra/mc-rl/README_en.md` uses `aima em stop-app/start-app`; docs are silent on trimming default_apps.
 
-Install (no sudo, idempotent): `docker/deploy/systemd/install_user_units.sh [--dry-run]`
-Undo: `docker/deploy/systemd/install_user_units.sh --uninstall` (= `systemctl --user disable qazbot-vendor-trim.service`).
+Install (no sudo, idempotent): `ws/tools/systemd/install_user_units.sh [--dry-run]`
+Undo: `ws/tools/systemd/install_user_units.sh --uninstall` (= `systemctl --user disable qazbot-vendor-trim.service`).
 Restore vendor apps manually: `aima em start-app hal_camera; aima em start-app orbbec_camera; aima em start-app perception`.
 Boot-time behaviour must be verified on a real reboot (operator permission).

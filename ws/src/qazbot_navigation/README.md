@@ -33,7 +33,7 @@ Parameters are computed from arguments (footprint padding from the map resolutio
 `robot_radius` (required), `map_yaml` (`qazbot_maps/maps/first_map_nav2_v2/map.yaml`), `allow_dry_run_driver` (false),
 `autostart` (true), `cell_margin` (true).
 The qualified Smac overlay is required: `QAZBOT_SMAC_PREFIX` if set, else the `nav2_smac_planner` selected by the ament
-index; its `qazbot_bounds_fix.json` must match the library sha256 (written by `ws/third_party/build_third_party.sh`).
+index; its `qazbot_bounds_fix.json` must match the library sha256 (written by `ws/tools/build.sh`).
 
 ## goal_coordinator (`/qazbot_d1_map/goal_coordinator`, Python, 20 Hz gate)
 Sub `goal_pose` (PoseStamped), `cmd_vel` (Twist), `localization_trust/trusted|status`, `motion_adapter/status`,

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Register paths a task created, so task_cleanup.sh may delete them later (and nothing else).
-#   docker/tools/task_register.sh <task_id> <path> [<path> ...]
+#   ws/tools/task_register.sh <task_id> <path> [<path> ...]
 # Manifest: <repo>/.task/<task_id>.manifest (gitignored), one absolute path per line, with a header comment.
 set -euo pipefail
 ID="${1:?usage: task_register.sh <task_id> <path>...}"; shift

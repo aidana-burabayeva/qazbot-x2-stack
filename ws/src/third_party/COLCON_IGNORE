@@ -1,0 +1,3 @@
+# Third-party sources imported by ws/tools/build.sh (ws/third_party/import_sources.py) from
+# ws/third_party.repos + ws/third_party/patches; gitignored. Built by build.sh with explicit --paths, so a plain
+# `colcon build/test --base-paths src` skips them.

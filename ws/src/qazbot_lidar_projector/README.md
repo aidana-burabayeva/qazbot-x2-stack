@@ -110,8 +110,8 @@ Forced reproduction on bag `d04_static_bag_183015` (clouds k % 10 in {0, 1} befo
 145/145, common stamps bit-identical. Regression test: `test/test_cloud_before_odom.py` (old 4/19 lost, new 0/19).
 
 ## Deploy / rollback
-Deployed through releases (docker/deploy, root README). Rollback = previous release (`docker/deploy/rollback.sh`); the
-pre-consolidation python bridge is recoverable only from tag `pre-consolidation-fb18dc1`.
+Built in place by `ws/tools/build.sh`; production = a tagged release commit (root README, docs/RELEASE.md). Rollback =
+previous release tag (`git checkout x2-release-…`, rebuild, restart); the pre-consolidation python bridge is recoverable only from tag `pre-consolidation-fb18dc1`.
 
 ## Limitations
 * Reads only little-endian FLOAT32 x/y/z (as FAST-LIO publishes); other clouds are dropped with a throttled WARN.

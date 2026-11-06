@@ -73,8 +73,8 @@ def _require_smac_overlay():
     from ament_index_python.packages import get_package_prefix
     prefix = os.environ.get('QAZBOT_SMAC_PREFIX') or get_package_prefix('nav2_smac_planner')
     assert os.path.isfile(os.path.join(prefix, 'qazbot_bounds_fix.json')), (
-        f'REQUIRED qualified Smac overlay missing in {prefix!r}: run docker/tools/build_workspace.sh --prefix DIR '
-        'and source DIR/install/setup.bash')
+        f'REQUIRED qualified Smac overlay missing in {prefix!r}: run ws/tools/build.sh '
+        'and source ws/install/setup.bash')
 
 
 def test_nav_full_generated_parameters():
