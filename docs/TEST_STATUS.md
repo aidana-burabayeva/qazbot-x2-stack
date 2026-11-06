@@ -1,3 +1,10 @@
+## 2026-11-06 P3-T5 регистрация источника MC ADD->ENABLE
+
+| Проверка | Среда | Результат |
+| --- | --- | --- |
+| `colcon test` qazbot_motion_control (60) + qazbot_navigation (27), вкл. `test_registration_sequence.py`, `test_gc_takeover.py` | хост, домен 88, unit | PASS 0 failures |
+| Регистрация на роботе (холодный старт / рестарт) | X2 | НЕ ПРОВЕРЕНО (live не запускался) |
+
 ## 2026-11-05 NAV-OBS-01
 
 | Проверка | Среда | Результат |

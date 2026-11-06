@@ -145,7 +145,7 @@ def summary(mode, profile, odom_source, root, manifest_path, manifest, lidar):
     sha = manifest.get('sha', 'unknown')
     dirty = manifest.get('dirty', 'unknown')
     tag = manifest.get('release_tag') if manifest.get('release_tag') not in (None, '', 'null') else 'none'
-    control = (f'/{NS}/cmd_vel_authorized -> x2_motion_adapter LIVE (SDK source, priority 30, ENABLE) -> '
+    control = (f'/{NS}/cmd_vel_authorized -> x2_motion_adapter LIVE (SDK source, priority 30, ADD->ENABLE) -> '
                '/aima/mc/locomotion/velocity' if mode == 'production' else
                f'/{NS}/cmd_vel_authorized -> x2_motion_adapter DRY RUN (~/dry_run_cmd, no /aima/* publisher)')
     return (f'QAZBOT BRINGUP mode={mode} profile={profile} workspace={root} git_sha={sha} dirty={dirty} release_tag={tag} '

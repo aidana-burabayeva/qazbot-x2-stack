@@ -22,14 +22,15 @@ ros2 run qazbot_motion_control x2_motion_adapter.py --ros-args -r __ns:=/qazbot_
 ## API (`/qazbot_d1_map/motion_adapter`)
 Sub: `cmd_vel_topic` (Twist), `tf_topic` (TFMessage), `odom_topic` (Odometry), `trust_topic` (Bool), `trust_status_topic`
 (String), `/aima/mc/common/state` (McCommonState). Pub: `~/status` (String JSON, 2 Hz), `~/dry_run_cmd` (Twist),
-live only `/aima/mc/locomotion/velocity`. Srv: `~/stop`, `~/resume`, `~/arm_motion`, live only `~/register` (Trigger).
+live only `/aima/mc/locomotion/velocity`. Srv: `~/stop`, `~/resume`, `~/arm_motion`, live only `~/register` (Trigger;
+kept for compatibility, refused once the automatic registration sequence has run).
 Client (live): `/aimdk_5Fmsgs/srv/SetMcInputSource`. Live mode takes the cooperative lock `lock_path`.
 
 | Parameter | Type | Default | Description |
 |---|---|---|---|
 | `live` | bool | false | publish to MC (production profile: true) |
 | `priority` | int | 30 | SDK input-source priority (20..39) |
-| `registration_action` | string | ADD | ADD or explicit ENABLE (production: ENABLE) |
+| `registration_action` | string | add_then_enable | only accepted value (anything else, incl. the former ADD / ENABLE, refuses to start). Live: once per process, automatically when `/aimdk_5Fmsgs/srv/SetMcInputSource` is discovered: ADD; if ADD code != 0 exactly one ENABLE (official example `mc_locomotion_velocity.py`, "likely already registered"); ENABLE != 0 or an exception -> `registration=failed`, no MC publisher, no further call. Never DELETE |
 | `source_name` | string | sdk_qazbot_nav2 | input source name (must start with sdk_) |
 | `publish_hz` / `controller_hz` | float | 50.0 / 20.0 | MC publish rate / expected Nav2 rate |
 | `cmd_vel_topic` | string | /qazbot_d1_map/cmd_vel_authorized | input velocity |

@@ -14,7 +14,8 @@ Design rules (see docs/X2_MOTION_ADAPTER.md for the evidence behind each):
     idle source is already 'rc' (docs/CURRENT_CONSTRAINTS.md), so a PS5 takeover
     is only observable in dry run when MC reports a source change.
   * Live mode needs live:=true. It then takes an exclusive owner lock, registers a
-    source named sdk_*, and publishes only while a fresh, valid, non-zero command exists.
+    source named sdk_* once, automatically, as soon as the SDK service is discovered (ADD, on failure one ENABLE:
+    RegistrationSequence), and publishes only while armed with a fresh, valid, non-zero command.
   * Values are passed through, never raised to a minimum. Out-of-bounds values are
     saturated to the MC bounds and counted; non-finite or lateral values stop the robot.
     Exception (P20, 2026-10-29): a PURE in-place turn (|vx| < 0.02, |wz| > 0.05) is closed-loop on the measured
@@ -380,6 +381,85 @@ class AdapterCore:
         return d
 
 
+REG_ADD, REG_ENABLE = 'ADD', 'ENABLE'
+#: Only accepted value of the registration_action parameter (the former ADD / ENABLE values are refused so a stale
+#: config fails closed instead of being silently ignored).
+REGISTRATION_ADD_THEN_ENABLE = 'add_then_enable'
+
+
+class RegistrationSequence:
+    """The one SetMcInputSource registration sequence of a process (no ROS imports).
+
+    AimDK X2 1.1.0 5.1.3 (input sources are reset by a system restart; header.code 0 = success, anything else =
+    failure, no distinct "already exists" code and no query of registered sources) and the official example
+    py_examples/mc_locomotion_velocity.py:89-97 (src/mc/mc_locomotion_velocity.cpp:61-76): ADD first; if ADD fails
+    ("likely already registered") exactly one ENABLE. ADD code 0 -> registered (cold start after reboot, ENABLE never
+    sent); ADD code != 0 -> one ENABLE; ENABLE code 0 -> registered; anything else -> failed, no further call. A
+    transport exception fails the sequence immediately (it is not an SDK answer). No retry, never DELETE/MODIFY."""
+
+    def __init__(self):
+        self.state = 'not_requested'       # -> pending -> registered | failed
+        self.action = None                 # request in flight / last sent
+        self.error = ''
+        self.add = None                    # (code, task_id, state.value) of the ADD response
+
+    @property
+    def registered(self):
+        """The only condition under which an MC publisher may exist."""
+        return self.state == 'registered'
+
+    def start(self):
+        """Returns REG_ADD exactly once per process, None afterwards."""
+        if self.state != 'not_requested':
+            return None
+        self.state, self.action = 'pending', REG_ADD
+        return REG_ADD
+
+    def on_response(self, code, task_id=0, state_value=0):
+        """SDK answer to the request in flight. Returns (next_action or None, log level, message)."""
+        if self.state != 'pending':
+            raise RuntimeError('registration response without a pending request')
+        resp = f'code={code} task_id={task_id} state={state_value}'
+        if self.action == REG_ADD:
+            self.add = (code, task_id, state_value)
+            if code == 0:
+                self.state = 'registered'
+                return None, 'info', f'SDK source registered by ADD ({resp}); ENABLE not sent'
+            self.action = REG_ENABLE
+            return REG_ENABLE, 'warn', (
+                f'ADD failed ({resp}). Following the AgiBot example mc_locomotion_velocity.py (ADD failed -> "likely '
+                f'already registered"): sending exactly one ENABLE; the SDK code does not distinguish this case')
+        add = 'ADD code={} task_id={} state={}'.format(*self.add)
+        if code == 0:
+            self.state = 'registered'
+            return None, 'info', (f'SDK source registered by ENABLE ({resp}) after {add}; ENABLE does not re-assert '
+                                  f'priority/timeout of an existing source')
+        self.state = 'failed'
+        self.error = f'{add}; ENABLE {resp}'
+        return None, 'error', (f'SDK registration failed: {self.error}. No further call; Nav2 motion forbidden '
+                               f'(no MC publisher). Action: check the MC input sources, restart the adapter')
+
+    def on_exception(self, exc):
+        """The request in flight raised (service vanished, transport error). Returns the same tuple as on_response."""
+        if self.state != 'pending':
+            raise RuntimeError('registration exception without a pending request')
+        add = '' if self.add is None else ' after ADD code={} task_id={} state={}'.format(*self.add)
+        self.state = 'failed'
+        self.error = f'{self.action} raised{add}: {exc}'
+        return None, 'error', (f'SDK registration failed: {self.error}. No further call; Nav2 motion forbidden '
+                               f'(no MC publisher). Action: check the SDK service, restart the adapter')
+
+
+def driver_input(live, registration_state, motion_armed, cmd, cmd_stamp):
+    """Command the core may see this tick: (cmd, cmd_stamp, blocked_reason). Live needs a registered source; both
+    modes need motion_armed (set only by ~/arm_motion for a NEW goal). Blocked -> (None, -inf, reason)."""
+    if live and registration_state != 'registered':
+        return None, float('-inf'), 'registration_' + registration_state
+    if not motion_armed:
+        return None, float('-inf'), ''
+    return cmd, cmd_stamp, ''
+
+
 def validate_source_name(name):
     """Never operate on built-in sources; AimDK asks SDK sources to use an sdk_ prefix."""
     if name in BUILTIN_SOURCES or not name.startswith('sdk_'):
@@ -456,14 +536,13 @@ def main():
             self.lock = OwnerLock(lock_path)
             self.pub = None
             self.trust, self.trust_stamp, self.foreign = False, float('-inf'), []
-            self.registration_state = 'not_requested' if self.cfg.live else 'dry_run'
-            self.registration_error = ''
-            self.registration_future = None
+            self.reg = RegistrationSequence()        # live only; one sequence per process
             self.motion_armed = False
             self.foreign = ['graph_unobserved']
-            self.registration_action = p('registration_action', 'ADD').value
-            if self.registration_action not in ('ADD', 'ENABLE'):
-                raise ValueError('registration_action must be ADD or explicit ENABLE')
+            registration_action = p('registration_action', REGISTRATION_ADD_THEN_ENABLE).value
+            if registration_action != REGISTRATION_ADD_THEN_ENABLE:   # stale ADD / ENABLE configs fail closed
+                raise ValueError(f'registration_action must be {REGISTRATION_ADD_THEN_ENABLE!r} (got '
+                                 f'{registration_action!r}); single ADD / ENABLE modes were removed')
             self.vendor_pub_re = [re.compile(x) for x in p('vendor_publishers', list(VENDOR_PUBLISHERS)).value]
             be = QoSProfile(depth=1, reliability=ReliabilityPolicy.BEST_EFFORT)
             self.create_subscription(Twist, cmd_topic, self._on_cmd, 10)
@@ -490,6 +569,8 @@ def main():
                 self.registration_client = self.create_client(
                     SetMcInputSource, '/aimdk_5Fmsgs/srv/SetMcInputSource')
                 self.create_service(Trigger, '~/register', self._request_registration)
+                # Automatic, once: as soon as the SDK service is discovered (event check, no sleep, no deadline).
+                self.registration_timer = self.create_timer(0.5, self._auto_register)
             self.mc_qos = be
             self.create_timer(1.0 / self.cfg.publish_hz, self._tick)
             self.create_timer(0.5, self._report)
@@ -574,7 +655,7 @@ def main():
             return self.core._fault(now, self.mc, localized, reason, ','.join(self.foreign))
 
         def _driver_path_ok(self):
-            # Live: only after an explicit, acknowledged registration. Dry run: the explicit
+            # Live: only after a successful registration sequence. Dry run: the explicit
             # dry-run driver path (no MC publisher, no lock, no registration ever exists).
             return self.registration_state == 'registered' if self.cfg.live else self.registration_state == 'dry_run'
 
@@ -592,50 +673,71 @@ def main():
                 resp.message = fault or ('requires registered (live) or dry-run, idle, unlatched adapter')
             return resp
 
-        # -- one explicit registration request per process, no retry or fallback
-        def _request_registration(self, req, resp):
-            if self.registration_state != 'not_requested':
-                resp.success = False
-                resp.message = 'registration already requested: ' + self.registration_state
-                return resp
+        # -- one registration sequence per process (RegistrationSequence: ADD, on failure one ENABLE; no retry)
+        @property
+        def registration_state(self):
+            return self.reg.state if self.cfg.live else 'dry_run'
+
+        @property
+        def registration_error(self):
+            return self.reg.error
+
+        def _registration_blocker(self):
+            if self.reg.state != 'not_requested':
+                return 'registration sequence already ran: ' + self.reg.state
             if not self.registration_client.service_is_ready():
-                resp.success = False
-                resp.message = 'SDK registration service is not discovered; no request sent'
-                return resp
+                return 'SDK registration service is not discovered; no request sent'
             if self.core.state == LATCHED:
-                resp.success = False
-                resp.message = 'adapter is latched; no request sent'
+                return 'adapter is latched; no request sent'
+            return ''
+
+        def _auto_register(self):
+            if self.reg.state != 'not_requested':
+                self.registration_timer.cancel()
+            elif not self._registration_blocker():
+                self.registration_timer.cancel()
+                self._start_registration('automatic at start')
+
+        def _request_registration(self, req, resp):
+            # Kept for compatibility; normally the automatic sequence has already run and this is refused.
+            blocker = self._registration_blocker()
+            resp.success = not blocker
+            if blocker:
+                resp.message = blocker
                 return resp
+            self._start_registration('~/register')
+            resp.message = 'registration sequence started; check status.registration for result'
+            return resp
+
+        def _start_registration(self, why):
+            self.get_logger().info(f'SDK source registration ({why}): {self.cfg.source_name} priority={self.priority}')
+            self._send_registration(self.reg.start())
+
+        def _send_registration(self, action):
             request = SetMcInputSource.Request()
-            request.action.value = (McInputAction.INPUTACTION_ADD if self.registration_action == 'ADD'
+            request.action.value = (McInputAction.INPUTACTION_ADD if action == REG_ADD
                                     else McInputAction.INPUTACTION_ENABLE)
             request.input_source.name = self.cfg.source_name
             request.input_source.priority = self.priority
             request.input_source.timeout = 1000  # SDK input-source lease, official example
             request.request.header.stamp = self.get_clock().now().to_msg()
-            self.registration_state = 'pending'
-            self.registration_future = self.registration_client.call_async(request)
-            self.registration_future.add_done_callback(self._registration_result)
-            resp.success = True
-            resp.message = 'one request submitted; check status.registration for result'
-            return resp
+            self.registration_client.call_async(request).add_done_callback(self._registration_result)
 
         def _registration_result(self, future):
             if not self.cfg.live:                       # unreachable by construction; never create an MC publisher in dry run
                 raise RuntimeError('registration result in dry run')
             try:
-                code = future.result().response.header.code
+                r = future.result().response
+                nxt, level, text = self.reg.on_response(r.header.code, r.task_id, r.state.value)
             except Exception as exc:
-                self.registration_state = 'failed'
-                self.registration_error = str(exc)
-                self.get_logger().error('SDK registration failed: ' + str(exc))
+                nxt, level, text = self.reg.on_exception(exc)
+            {'info': self.get_logger().info, 'warn': self.get_logger().warn,
+             'error': self.get_logger().error}[level](text)
+            if nxt is not None:
+                self._send_registration(nxt)
                 return
-            if code != 0:
-                self.registration_state = 'failed'
-                self.registration_error = 'SDK response code=' + str(code)
-                self.get_logger().error(self.registration_error + '; no retry or ENABLE fallback')
+            if not self.reg.registered:
                 return
-            self.registration_state = 'registered'
             self.motion_armed = False
             # Discard commands queued before registration completed.
             self.cmd, self.cmd_stamp = None, float('-inf')
@@ -647,12 +749,12 @@ def main():
         # -- control tick
         def _tick(self):
             now = self._now()
-            if self.cfg.live and self.registration_state != 'registered':
-                self.cmd, self.cmd_stamp = None, float('-inf')
-                self._last = Decision(self.core.state, reason='registration_' + self.registration_state)
+            cmd, stamp, blocked = driver_input(self.cfg.live, self.registration_state, self.motion_armed,
+                                               self.cmd, self.cmd_stamp)
+            self.cmd, self.cmd_stamp = cmd, stamp            # never queue a command while blocked / not armed
+            if blocked:
+                self._last = Decision(self.core.state, reason=blocked)
                 return
-            if not self.motion_armed:                        # live and dry-run shadow alike
-                self.cmd, self.cmd_stamp = None, float('-inf')
             tf_ok = (now - self.tf_seen) <= self.cfg.tf_max_age_s
             trust_ok = (now - self.trust_stamp) <= self.cfg.trust_max_age_s and self.trust
             localized = tf_ok and (trust_ok or not self.cfg.require_trust)
