@@ -80,14 +80,14 @@ dropped, first point wins ties (stable lexsort), `a == pi` wraps to bin 0, `next
 # from the repository root, build/install OUTSIDE the tree (e.g. /tmp/qazbot_build); never ROS_DOMAIN_ID 0
 nice -n 19 colcon build --base-paths ws/src --packages-select qazbot_lidar_projector \
   --build-base /tmp/qazbot_build/build --install-base /tmp/qazbot_build/install --parallel-workers 2
-ROS_DOMAIN_ID=88 ROS_LOCALHOST_ONLY=1 colcon test ... same bases ...   # launch tests set their own isolated domains 77/78
+ROS_DOMAIN_ID=88 ROS_LOCALHOST_ONLY=1 colcon test ... same bases ...   # launch tests use ROS_DOMAIN_ID from the environment (default 88 if unset/0), ROS_LOCALHOST_ONLY=1
 # coverage: add --cmake-args -DENABLE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug with separate bases, then gcov
 ```
 Tests: `test_lidar_projection` (gtest, 31 cases incl. 8 `Sync.*`, 100 % line coverage of `lidar_projection.cpp`); `test_parity.py` (C++ library vs
 the Python candidate on `test/data/static_204153_w50.bin`: 50 clouds, 981 IMU, bag `d04_static_bag_204153`, t0+60 s; R_lv from the
 fixture's own first IMU second, not the live R_lv; tolerances derived in the module docstring);
-`test_cloud_before_odom.py` (regression, launch_testing, ROS_DOMAIN_ID 78: same fixture, clouds k % 10 in {0, 1} published
-before their odometry; expects every in-order scan, bit-identical); `test_integration.py` (launch_testing via the XML launch, ROS_DOMAIN_ID 77, event-based waits only; compares the node output
+`test_cloud_before_odom.py` (regression, launch_testing, isolated domain from env: same fixture, clouds k % 10 in {0, 1} published
+before their odometry; expects every in-order scan, bit-identical); `test_integration.py` (launch_testing via the XML launch, isolated domain from env, event-based waits only; compares the node output
 with the library dump, checks topics/types/frames/QoS/no TF publisher/IMU subscription dropped). `test/tools/` holds the
 fixture extractor and `bench_compare.py`.
 

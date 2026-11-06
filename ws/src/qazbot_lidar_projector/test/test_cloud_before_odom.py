@@ -8,7 +8,7 @@ their odometry): old node 116/145 scans (29 lost), fixed node 145/145.
 This test applies the same swap pattern to the small fixture already in the repository (no bag): after levelling, every
 cloud with index k % 10 in {0, 1} is published and processed (barrier) BEFORE its odometry. Expected: exactly the scans of
 the in-order replay (parity_dump of the same fixture), bit-identical; i.e. exact stamp matching, no cloud lost.
-Isolated domain 78, no sleeps (waits are message / service events with a timeout).
+Isolated domain from ROS_DOMAIN_ID (default 88, never 0, ROS_LOCALHOST_ONLY=1), no sleeps (waits are message / service events with a timeout).
 """
 import os
 import subprocess
@@ -45,7 +45,10 @@ DEADLINE_S = 20.0
 
 @pytest.mark.launch_test
 def generate_test_description():
-    assert os.environ.get('ROS_DOMAIN_ID') == '78', 'regression test must run in the isolated domain 78'
+    # Isolated graph: the domain comes from the environment (lab default 88), never 0 (robot graph); host-local only.
+    os.environ['ROS_LOCALHOST_ONLY'] = '1'
+    if os.environ.get('ROS_DOMAIN_ID', '').strip() in ('', '0'):
+        os.environ['ROS_DOMAIN_ID'] = '88'
     share = get_package_share_directory('qazbot_lidar_projector')
     return launch.LaunchDescription([
         launch.actions.IncludeLaunchDescription(

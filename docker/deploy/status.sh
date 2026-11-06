@@ -18,9 +18,10 @@ declare -A seen=()
 for p in /proc/[0-9]*; do
   pid="${p#/proc/}"
   cmd="$( { tr '\0' ' ' < "$p/cmdline"; } 2>/dev/null || true)"; [ -n "$cmd" ] || continue   # process may vanish
+  read -r -a cmd_a <<< "$cmd"   # array split: no pathname expansion of argv words
   exe="$(readlink "$p/exe" 2>/dev/null || true)"; cwd="$(readlink "$p/cwd" 2>/dev/null || true)"
   where=""
-  for s in "$exe" "$cwd" $cmd; do
+  for s in "$exe" "$cwd" "${cmd_a[@]}"; do
     case "$s" in
       "$RREAL"/*) r="${s#"$RREAL"/}"; where="release ${r%%/*}"; break;;
       "$PREFIX/current"/*) where="release $(basename "$(realpath "$PREFIX/current")")"; break;;

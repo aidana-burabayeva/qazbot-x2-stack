@@ -52,7 +52,7 @@ The twin (`twin/`) has its own image (`twin/Dockerfile`, x86, network none, doma
 runtime and the research root of the lab lineage (`lab/stable`); not runnable from this tree alone (unchanged).
 
 ## Releases (robot host)
-See the root README "LAB → PRODUCTION" and `docs/RELEASE.md`. Prefix default `$QAZBOT_PROD_PREFIX` or `$HOME/prod`.
+See the root README "LAB → PRODUCTION" and `docs/RELEASE.md`. `build_release.sh`, `deploy.sh`, `rollback.sh` REFUSE without `--prefix DIR` or an explicitly exported `$QAZBOT_PROD_PREFIX` (no default, so a stray command cannot touch `/home/agi/prod`); read-only `status.sh` defaults to `$HOME/prod`.
 ```bash
 docker/deploy/build_release.sh --sha <sha> [--deb-cache /home/agi/qazbot_archive/third_party_debs]
 docker/deploy/deploy.sh --sha <sha>      # switches current/previous only
@@ -68,4 +68,4 @@ docker/tools/cleanup_candidates.sh [root...]        # read-only report
 ```
 `task_cleanup.sh` deletes a registered path only if it is inside `QAZBOT_CLEANUP_ROOTS`, not protected
 (`QAZBOT_PROTECTED`, release `current`/`previous`, legacy production, worktrees, aimdk, archive), not open/used by
-any process (lsof, /proc cwd/exe), and holds no unique git work (uncommitted/untracked, stash, unpushed commits).
+any process (lsof, /proc cwd/exe), and holds no unique git work (uncommitted/untracked, stash, unpushed commits) in the checkout or in ANY linked worktree (`git worktree list`; a repository with a linked worktree outside the deleted path is always kept). Regression test: `docker/tools/test_task_cleanup.sh`.

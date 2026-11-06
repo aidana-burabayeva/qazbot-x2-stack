@@ -14,7 +14,8 @@ ws/src/                      ROS 2 пакеты (colcon)
   qazbot_bringup             единая точка входа x2_navigation.launch.xml, env.sh, профили, DDS
 ws/third_party.repos         сторонние исходники с точными коммитами (FAST-LIO, navigation2 1.1.18)
 ws/third_party/              патчи, runtime_debs.lock (sha256 debs Nav2), скрипты сборки
-ws/tools/, ws/tests/         лабораторные инструменты и стенды (не собираются colcon; см. их README)
+ws/tools/, ws/tests/         лабораторные инструменты и стенды (в обоих каталогах COLCON_IGNORE: `cd ws && colcon build` собирает только ws/src; см. их README)
+.claude/                     служебный каталог инструментов Claude Code: project skills оператора (`skills/robot-sync-validate`, `OPERATOR_SKILLS.json`); не код робота
 docker/                      LAB Dockerfile/compose, deploy/ (релизы, откат), tools/ (очистка), twin/
 docs/                        лёгкая документация (архитектура, runbooks, сводки результатов)
 ```
@@ -50,12 +51,12 @@ docker/deploy/status.sh            # current/previous + SHA по путям за
 
 ## LAB → PRODUCTION
 1. Ветка → PR → проверка в LAB (сборка/тесты/replay, домен 88, вне дерева) → merge; независимая верификация.
-2. На роботе: `docker/deploy/build_release.sh --sha <sha>` → `<prefix>/releases/<sha>/` (чистый checkout ровно этого
+2. На роботе: `docker/deploy/build_release.sh --prefix <prefix> --sha <sha>` (`--prefix` или явный `QAZBOT_PROD_PREFIX` обязателен, умолчания нет) → `<prefix>/releases/<sha>/` (чистый checkout ровно этого
    коммита, грязные деревья отклоняются, `manifest.yaml`: sha, дата, профиль, версии ros-humble-* dpkg, пины third-party).
-3. С разрешения оператора: `docker/deploy/deploy.sh --sha <sha>` (только симлинки `current`/`previous`), перезапуск
+3. С разрешения оператора: `docker/deploy/deploy.sh --prefix <prefix> --sha <sha>` (только симлинки `current`/`previous`), перезапуск
    стека из `<prefix>/current`, `docker/deploy/status.sh`.
 ## Откат
-`docker/deploy/rollback.sh` (меняет местами `current` и `previous`), перезапуск, `status.sh`. Откат на состояние до
+`docker/deploy/rollback.sh --prefix <prefix>` (меняет местами `current` и `previous`), перезапуск, `status.sh`. Откат на состояние до
 консолидации (каталог `/home/agi/control_backend`, fb18dc1) — `docs/RELEASE.md`, раздел «Legacy».
 
 Правила работы агентов и DoD: [AGENTS.md](AGENTS.md).

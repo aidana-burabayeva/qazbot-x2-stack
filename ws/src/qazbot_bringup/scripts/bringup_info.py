@@ -6,7 +6,9 @@ from the installed manifest, mode, profile, odom source, LiDAR source, TF owner,
 (message on stderr, launch aborts) when the requested mode does not match the environment:
   lab         ROS_DOMAIN_ID must be set and != 0, and the graph must be host-local (ROS_LOCALHOST_ONLY=1 or a
               FastDDS profile whitelisting only 127.0.0.1); the motion adapter runs dry (no /aima/* publisher).
-  production  ROS_DOMAIN_ID unset or 0 (the AgiBot MC graph); the motion adapter is live.
+  production  ROS_DOMAIN_ID unset or 0 (the AgiBot MC graph); the motion adapter is live; only from a release:
+              <release>/manifest.yaml (or QAZBOT_RELEASE_MANIFEST) with a 40-hex sha and dirty: false. A dev
+              build_manifest.yaml is never accepted.
 Pure functions below are unit-tested (test/test_bringup_info.py).
 """
 import argparse
@@ -47,6 +49,24 @@ def manifest_candidates(root, env=os.environ):
             os.path.join(root, 'qazbot_bringup', 'share', 'qazbot_bringup', 'build_manifest.yaml')]
 
 
+def release_manifest_candidates(root, env=os.environ):
+    return [env.get('QAZBOT_RELEASE_MANIFEST'), os.path.join(os.path.dirname(root), 'manifest.yaml')]
+
+
+def release_errors(root, env=os.environ):
+    """Reasons why root is not a clean release (production gate)."""
+    path, m = read_manifest(release_manifest_candidates(root, env))
+    if not path:
+        return ['mode production runs only from a release: no <release>/manifest.yaml and no QAZBOT_RELEASE_MANIFEST '
+                '(build with docker/deploy/build_release.sh)']
+    errs = []
+    if not re.fullmatch(r'[0-9a-f]{40}', m.get('sha', '')):
+        errs.append(f'release manifest {path} has no 40-hex sha')
+    if m.get('dirty', '').lower() != 'false':
+        errs.append(f'release manifest {path} is not dirty: false (dirty={m.get("dirty", "missing")})')
+    return errs
+
+
 def loopback_only_profile(path):
     """True when the FastDDS profile whitelists only 127.0.0.1 (no other interface address)."""
     if not path or not os.path.isfile(path):
@@ -56,7 +76,7 @@ def loopback_only_profile(path):
     return bool(addrs) and all(a == '127.0.0.1' for a in addrs)
 
 
-def check_environment(mode, odom_source, env=os.environ):
+def check_environment(mode, odom_source, env=os.environ, root=None):
     """List of reasons why this mode must not start here (empty = ok)."""
     errors = []
     if mode not in MODES:
@@ -74,6 +94,8 @@ def check_environment(mode, odom_source, env=os.environ):
                           '(qazbot_bringup config/dds_loopback.xml)')
     if mode == 'production' and domain not in ('', '0'):
         errors.append(f'mode production runs on the robot graph (ROS_DOMAIN_ID unset or 0), got {domain!r}')
+    if mode == 'production':
+        errors += release_errors(root if root is not None else install_root(), env)
     return errors
 
 
@@ -105,13 +127,13 @@ def main(argv=None):
     ap.add_argument('--odom-source', required=True)
     ap.add_argument('--profile-dir', default='')
     a = ap.parse_args(argv)
-    errors = check_environment(a.mode, a.odom_source)
+    root = install_root()
+    errors = check_environment(a.mode, a.odom_source, root=root)
     if a.profile_dir and not os.path.isdir(a.profile_dir):
         errors.append(f'profile {a.profile!r} has no directory {a.profile_dir}')
     if errors:
-        sys.stderr.write('QAZBOT BRINGUP REFUSED: ' + '; '.join(errors) + '\n')
+        sys.stderr.write('[ERROR] QAZBOT BRINGUP REFUSED: ' + '; '.join(errors) + '\n')
         return 1
-    root = install_root()
     path, manifest = read_manifest(manifest_candidates(root))
     lidar = lidar_topic(os.path.join(root, 'qazbot_localization', 'share', 'qazbot_localization', 'config', 'x2.yaml'))
     sys.stdout.write(summary(a.mode, a.profile, a.odom_source, root, path, manifest, lidar))

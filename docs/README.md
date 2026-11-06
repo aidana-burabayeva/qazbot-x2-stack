@@ -65,7 +65,7 @@ control_backend/                 (X2: ~/control_backend)
 | Контроллер на модели MC, 19 проверок (домен 87) | `bash tests/controller_dry/run_dry.sh` |
 | Сквозной сухой прогон реальной цепочки (адаптер live=false, trust, Nav2, координатор, модель; домен 87; последний полный 160/160) | `bash tests/nav_e2e/run_model.sh NEW_UNIQUE_RESULT_NAME` (легаси 73: `--legacy NAME`) |
 | Производная карта Nav2 из карты D1 | `python3 -I tools/derive_nav2_map.py ws/src/maps/first_map ws/src/maps/first_map_nav2_v2 "ИСТОЧНИК" --extra` |
-| Темп запуска нод (не больше 2 в секунду), нужен ROS Humble и `QAZBOT_SMAC_PREFIX` (5 тестов) | `python3 -m unittest -v tests/launch_stagger/test_launch_stagger.py` |
+| Темп запуска нод (не больше 2 в секунду), нужен ROS Humble и `QAZBOT_SMAC_PREFIX` (5 тестов) | `colcon test --packages-select qazbot_localization qazbot_navigation` (test_launch_stagger*.py) |
 | Регрессия зазоров Smac на ПК (на карте v2 базовой линии нет, не запускалась; широкий `pkill` не запускать на роботе с живым стеком) | `tests/planner_clearance/run_variant.sh true OUT.json` |
 | Огибающая в покое внутри вендорского footprint | `X2_URDF_DIR=/agibot/software/aimdk/extra/mc-rl/x2_urdf/X2_URDF-v1.3.0 python3 -m unittest -v tests/footprint/test_envelope_rest.py` |
 | Интерфейсы AimDK на роботе | `bash tests/aimdk/check_aimdk_interfaces.sh` (на X2) |

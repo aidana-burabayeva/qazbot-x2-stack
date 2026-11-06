@@ -1,6 +1,6 @@
 # Релизы, деплой, откат (control_backend)
 
-Скрипты: `docker/deploy/`. Префикс: `$QAZBOT_PROD_PREFIX` или `$HOME/prod`.
+Скрипты: `docker/deploy/`. Префикс: `--prefix DIR` или явно экспортированный `$QAZBOT_PROD_PREFIX` — ОБЯЗАТЕЛЕН для `build_release.sh`, `deploy.sh`, `rollback.sh` (без него отказ, умолчания нет); только `status.sh` (чтение) по умолчанию смотрит в `$HOME/prod`.
 
 ```
 <prefix>/releases/<sha>/install/        colcon install: ws/src + fast_lio + nav2_smac_planner (патч), read-only
@@ -13,11 +13,11 @@
 
 | Шаг | Команда | Что делает |
 |---|---|---|
-| Сборка | `build_release.sh --sha <sha> [--deb-cache DIR] [--jobs 2]` | свежий clone, checkout ровно `<sha>`; отказ, если исходный рабочий каталог грязный, если релиз уже есть, если сборка испачкала checkout; staging → атомарный `mv`; `chmod a-w` |
-| Деплой | `deploy.sh --sha <sha>` | только симлинки: `previous` ← старый `current`, `current` ← `<sha>` (атомарный rename). Процессы не трогает |
+| Сборка | `build_release.sh --prefix DIR --sha <sha> [--deb-cache DIR] [--jobs 2]` | свежий clone, checkout ровно `<sha>`; отказ, если исходный рабочий каталог грязный, если релиз уже есть, если сборка испачкала checkout; staging → атомарный `mv`; `chmod a-w` |
+| Деплой | `deploy.sh --prefix DIR --sha <sha>` | только симлинки: `previous` ← старый `current`, `current` ← `<sha>` (атомарный rename). Процессы не трогает |
 | Запуск | `source <prefix>/current/install/qazbot_bringup/lib/qazbot_bringup/env.sh; ros2 launch qazbot_bringup x2_navigation.launch.xml mode:=production` | оператор; env.sh сам берёт `<release>/deps` |
 | Статус | `status.sh` | SHA в `current`/`previous` (manifest) и SHA по путям запущенных процессов (`release <sha>` / `legacy`) |
-| Откат | `rollback.sh` | меняет местами `current` и `previous`; повторный вызов возвращает обратно; затем перезапуск |
+| Откат | `rollback.sh --prefix DIR` | меняет местами `current` и `previous`; повторный вызов возвращает обратно; затем перезапуск |
 
 Ничего из этого не запускает, не останавливает и не сигналит процессы; перезапуск стека на роботе — только оператор.
 

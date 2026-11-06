@@ -7,15 +7,16 @@
 # + ws/src. Sources come from a fresh clone checked out at exactly <sha> (never from a working tree); when --repo
 # is a local working tree that has uncommitted changes, the build is refused so nobody believes those changes are
 # in the release. Does NOT touch current/previous and does not start or stop anything (deploy.sh switches links).
-# Defaults: --prefix $QAZBOT_PROD_PREFIX or $HOME/prod; --repo = the repository containing this script.
+# --prefix DIR (or an explicitly exported $QAZBOT_PROD_PREFIX) is REQUIRED, no default; --repo = the repository containing this script.
 set -euo pipefail
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(git -C "$HERE" rev-parse --show-toplevel)"
-PREFIX="${QAZBOT_PROD_PREFIX:-$HOME/prod}"; SHA=""; PROFILE="x2_d1"; DEB_CACHE=""; GIT_CACHE=""; JOBS=2
+PREFIX="${QAZBOT_PROD_PREFIX:-}"; SHA=""; PROFILE="x2_d1"; DEB_CACHE=""; GIT_CACHE=""; JOBS=2
 while [ $# -gt 0 ]; do case "$1" in
   --sha) SHA="$2"; shift 2;; --repo) REPO="$2"; shift 2;; --prefix) PREFIX="$2"; shift 2;;
   --profile) PROFILE="$2"; shift 2;; --deb-cache) DEB_CACHE="$2"; shift 2;; --git-cache) GIT_CACHE="$2"; shift 2;; --jobs) JOBS="$2"; shift 2;;
   *) echo "unknown arg $1" >&2; exit 2;; esac; done
+[ -n "$PREFIX" ] || { echo "REFUSED: no release prefix; pass --prefix DIR or export QAZBOT_PROD_PREFIX explicitly (no default: the production tree is never implied)" >&2; exit 2; }
 [ -n "$SHA" ] || { echo "--sha is required" >&2; exit 2; }
 if [ -d "$REPO/.git" ] || git -C "$REPO" rev-parse --git-dir >/dev/null 2>&1; then
   if [ -n "$(git -C "$REPO" status --porcelain --untracked-files=no)" ]; then

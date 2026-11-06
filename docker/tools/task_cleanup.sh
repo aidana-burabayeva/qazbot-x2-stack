@@ -7,7 +7,9 @@
 #      "$HOME/control_backend:$HOME/worktrees:$HOME/aimdk:$HOME/prod/current:$HOME/prod/previous:$HOME/qazbot_archive",
 #      and not the target of <prod>/current or <prod>/previous (QAZBOT_PROD_PREFIX, default $HOME/prod)
 #   3. no process has it (or a file below it) open, as cwd, exe or mapped (lsof; fuser fallback)
-#   4. if it is a git checkout/worktree: no uncommitted or untracked changes, no stash, no commit that is not on a remote
+#   4. if it is a git checkout/worktree: no uncommitted or untracked changes, no stash, no commit that is not on a remote;
+#      for a main repository the same holds for every LINKED worktree (`git worktree list`), and a repository with a
+#      linked worktree outside the deleted path is always kept
 # Paths that no longer exist are dropped from the manifest. Exit status 1 when anything was kept.
 set -euo pipefail
 ID="${1:?usage: task_cleanup.sh <task_id> [--dry-run]}"; DRY=0; [ "${2:-}" = "--dry-run" ] && DRY=1
@@ -31,15 +33,29 @@ in_use() {  # prints holders; returns 0 when something uses the path
   [ -n "${out//[$'\n ']/}" ] && { echo "$out" | head -5; return 0; }
   return 1
 }
+wt_state() {  # $1 = worktree/checkout dir; prints reasons (empty = clean and fully pushed)
+  local w="$1" r=""
+  [ -n "$(git -C "$w" status --porcelain 2>/dev/null)" ] && r+="$w: uncommitted/untracked changes; "
+  [ -n "$(git -C "$w" stash list 2>/dev/null)" ] && r+="$w: stash entries; "
+  [ -n "$(git -C "$w" log --oneline --branches --not --remotes 2>/dev/null | head -1)" ] && r+="$w: commits not on any remote; "
+  [ -n "$(git -C "$w" log --oneline -1 HEAD --not --remotes 2>/dev/null)" ] && r+="$w: detached HEAD not on a remote; "
+  printf '%s' "$r"
+}
 git_unsafe() {  # prints reason; returns 0 when a git checkout under p holds unique work
-  local g reason=""
+  local g reason="" root="$1"
   while IFS= read -r g; do
     local w; w="$(dirname "$g")"
-    [ -n "$(git -C "$w" status --porcelain 2>/dev/null)" ] && reason+="$w: uncommitted/untracked changes; "
-    [ -n "$(git -C "$w" stash list 2>/dev/null)" ] && reason+="$w: stash entries; "
-    [ -n "$(git -C "$w" log --oneline --branches --not --remotes 2>/dev/null | head -1)" ] && reason+="$w: commits not on any remote; "
-    [ -n "$(git -C "$w" log --oneline -1 HEAD --not --remotes 2>/dev/null)" ] && reason+="$w: detached HEAD not on a remote; "
-  done < <(find "$1" -maxdepth 6 -name .git \( -type d -o -type f \) 2>/dev/null)
+    reason+="$(wt_state "$w")"
+    # Main repository: its linked worktrees live outside .git; deleting the repo orphans them and drops their index/HEAD.
+    if [ -d "$g" ]; then
+      local wp
+      while IFS= read -r wp; do
+        [ -n "$wp" ] && [ "$(realpath -m "$wp")" != "$(realpath -m "$w")" ] || continue
+        if ! under "$(realpath -m "$wp")" "$root"; then reason+="$w: has linked worktree outside the deleted path ($wp); "; fi
+        [ -d "$wp" ] && reason+="$(wt_state "$wp")"
+      done < <(git -C "$w" worktree list --porcelain 2>/dev/null | sed -n 's/^worktree //p')
+    fi
+  done < <(find "$root" -maxdepth 6 -name .git \( -type d -o -type f \) 2>/dev/null)
   [ -n "$reason" ] && { echo "$reason"; return 0; }
   return 1
 }

@@ -4,9 +4,10 @@
 # Only switches symlinks (atomic rename). It never starts, stops or signals processes: restart the stack from
 # <prefix>/current yourself (operator permission required on the robot), then check docker/deploy/status.sh.
 set -euo pipefail
-PREFIX="${QAZBOT_PROD_PREFIX:-$HOME/prod}"; SHA=""
+PREFIX="${QAZBOT_PROD_PREFIX:-}"; SHA=""
 while [ $# -gt 0 ]; do case "$1" in
   --sha) SHA="$2"; shift 2;; --prefix) PREFIX="$2"; shift 2;; *) echo "unknown arg $1" >&2; exit 2;; esac; done
+[ -n "$PREFIX" ] || { echo "REFUSED: no release prefix; pass --prefix DIR or export QAZBOT_PROD_PREFIX explicitly (no default: the production tree is never implied)" >&2; exit 2; }
 [ -n "$SHA" ] || { echo "--sha is required" >&2; exit 2; }
 REL="$PREFIX/releases/$SHA"
 [ -f "$REL/manifest.yaml" ] || { echo "REFUSED: $REL/manifest.yaml missing (build_release.sh first)" >&2; exit 3; }

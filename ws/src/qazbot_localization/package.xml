@@ -7,6 +7,9 @@
   <maintainer email="qazbot@users.noreply.github.com">QazBot</maintainer>
   <license>Proprietary</license>
 
+  <!-- fast_lio is third-party (ws/third_party.repos, built by ws/third_party/build_third_party.sh); it has no rosdep key,
+       so it is intentionally NOT an exec_depend. It is resolved at launch (find-pkg-prefix fast_lio). -->
+
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <exec_depend>rclpy</exec_depend>

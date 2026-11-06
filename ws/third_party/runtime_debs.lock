@@ -1,7 +1,7 @@
 # Runtime Debian packages of the X2 navigation stack (pinned by sha256).
 # group<TAB>file<TAB>sha256<TAB>url. group = extraction root layout, identical to the legacy control_backend/runtime/<group>
 # (qazbot_nav_deps, nav2_bt_deps: dpkg -x into <group>/root; user_pkgs: dpkg -x into <group>).
-# Proven 2026-11-05: dpkg -x of these files is byte-identical to the live runtime/ trees (940 + 261 + 877 files).
+# Proven 2026-11-05: dpkg -x of these files equals the live runtime/ trees (every live file is byte-identical to the extracted one; the live trees omit usr/share/doc, i.e. live is a subset of the extraction; 940 + 261 + 877 files).
 nav2_bt_deps	ros-humble-behaviortree-cpp-v3_3.8.7-1jammy.20250719.145757_arm64.deb	4c03859995160d6001f2765c83633565206c21fb87893d853b6a8addfb092205	http://snapshots.ros.org/humble/2025-08-15/ubuntu/pool/main/r/ros-humble-behaviortree-cpp-v3/ros-humble-behaviortree-cpp-v3_3.8.7-1jammy.20250719.145757_arm64.deb
 nav2_bt_deps	ros-humble-nav2-behavior-tree_1.1.18-1jammy.20250728.174545_arm64.deb	5b481c5cdbcb3bc3dbaad0c52d8da90193623920b36cbcc1ecbce2aa6c4a2eba	http://snapshots.ros.org/humble/2025-08-15/ubuntu/pool/main/r/ros-humble-nav2-behavior-tree/ros-humble-nav2-behavior-tree_1.1.18-1jammy.20250728.174545_arm64.deb
 nav2_bt_deps	ros-humble-nav2-bt-navigator_1.1.18-1jammy.20250729.010551_arm64.deb	7154f0470de505f5510e4421985cc443f6e408d694ea2b9e84147a5e5c8af6d6	http://snapshots.ros.org/humble/2025-08-15/ubuntu/pool/main/r/ros-humble-nav2-bt-navigator/ros-humble-nav2-bt-navigator_1.1.18-1jammy.20250729.010551_arm64.deb

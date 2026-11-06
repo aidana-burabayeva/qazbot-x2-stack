@@ -5,8 +5,9 @@
 # returns to the original state. The pre-consolidation production (legacy control_backend directory, fb18dc1) is
 # not a release: rolling back to it means restarting the legacy commands (docs/RELEASE.md, "legacy rollback").
 set -euo pipefail
-PREFIX="${QAZBOT_PROD_PREFIX:-$HOME/prod}"
+PREFIX="${QAZBOT_PROD_PREFIX:-}"
 while [ $# -gt 0 ]; do case "$1" in --prefix) PREFIX="$2"; shift 2;; *) echo "unknown arg $1" >&2; exit 2;; esac; done
+[ -n "$PREFIX" ] || { echo "REFUSED: no release prefix; pass --prefix DIR or export QAZBOT_PROD_PREFIX explicitly (no default: the production tree is never implied)" >&2; exit 2; }
 CUR="$(readlink "$PREFIX/current" 2>/dev/null || true)"
 PREV="$(readlink "$PREFIX/previous" 2>/dev/null || true)"
 [ -n "$PREV" ] || { echo "REFUSED: no $PREFIX/previous" >&2; exit 3; }
